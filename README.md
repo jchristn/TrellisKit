@@ -1,3 +1,11 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-light.png">
+    <source media="(prefers-color-scheme: light)" srcset="assets/logo-dark.png">
+    <img src="assets/logo-dark.png" alt="TrellisKit logo" width="600">
+  </picture>
+</p>
+
 # TrellisKit
 
 **TrellisKit** is a reusable community and membership engine: a C# backend (REST and WebSocket API, workers), a website (marketing pages, web member app, admin console), an iOS and Android app, a local Docker stack, and AWS infrastructure as code. A **property** is one configured community that runs on the engine: its name, brand, copy, domains, legal text, profile taxonomy, reactions, and products. Deployments support one property by default or multiple isolated properties.
