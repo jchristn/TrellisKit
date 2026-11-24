@@ -3,7 +3,7 @@ import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-
 import { router as appRouter } from 'expo-router';
 import { renderRouter } from 'expo-router/testing-library';
 import path from 'path';
-import { Dimensions, Platform } from 'react-native';
+import { Dimensions, Keyboard, Platform } from 'react-native';
 import { destinationMatches, drawerHeaderOptions } from '../src/navigation/AppNavigation';
 import { enumerationResult } from '../test-utils/community';
 import { installFakeServer, makeUser, resetEnvironment, signedInAs } from '../test-utils/fakeServer';
@@ -172,4 +172,14 @@ test('native iOS menus use SF Symbol bar items and Android uses a React button',
   expect(navigation.open).toHaveBeenCalledTimes(1);
   expect(drawerHeaderOptions(navigation, 'android').headerLeft).toEqual(expect.any(Function));
   expect(drawerHeaderOptions(null, 'ios')).toEqual({});
+});
+
+
+test('opening the drawer dismisses the keyboard and permits both app orientations', async () => {
+  const dismiss = jest.spyOn(Keyboard, 'dismiss');
+  serve(); await renderRouter(APP_DIR, { initialUrl: '/profile' });
+  dismiss.mockClear();
+  await openMenu();
+  expect(dismiss).toHaveBeenCalledTimes(1);
+  expect(screen.getByTestId('navigation-drawer-modal')).toHaveProp('supportedOrientations', ['portrait', 'landscape']);
 });

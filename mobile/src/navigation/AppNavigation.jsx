@@ -2,7 +2,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { resolveMobileNavigation } from '@trelliskit/shared';
 import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
 import { createContext, createElement, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, findNodeHandle, Modal, Platform, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { AccessibilityInfo, Animated, findNodeHandle, Keyboard, Modal, Platform, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '../auth/AuthProvider';
 import { canEnterTabs } from '../auth/routing';
@@ -100,7 +100,7 @@ export function AppNavigationProvider({ children }) {
   }), [property, user]);
   const isMainDestination = navigation.drawerItems.some((item) => destinationMatches(item, pathname, section));
   const open = useCallback((trigger) => {
-    if (enabled) { triggerRef.current = trigger; restoreFocusRef.current = true; setDrawerState({ visible: true, pathname, section, property, enabled }); }
+    if (enabled) { Keyboard.dismiss(); triggerRef.current = trigger; restoreFocusRef.current = true; setDrawerState({ visible: true, pathname, section, property, enabled }); }
   }, [enabled, pathname, section, property]);
   const close = useCallback(() => setDrawerState((current) => ({ ...current, visible: false })), []);
   const value = useMemo(() => ({ enabled, isMainDestination, open, close }), [enabled, isMainDestination, open, close]);
@@ -172,7 +172,7 @@ export function AppNavigationProvider({ children }) {
             </View>
           ) : null}
         </View>
-        <Modal testID="navigation-drawer-modal" visible={visible && enabled} transparent animationType="none" statusBarTranslucent navigationBarTranslucent onRequestClose={close}
+        <Modal testID="navigation-drawer-modal" visible={visible && enabled} transparent animationType="none" supportedOrientations={['portrait', 'landscape']} statusBarTranslucent navigationBarTranslucent onRequestClose={close}
           onShow={() => { const node = findNodeHandle(closeRef.current); if (node) AccessibilityInfo.setAccessibilityFocus(node); }}>
           <View testID="navigation-drawer" style={styles.overlay} accessibilityViewIsModal onAccessibilityEscape={close} {...(Platform.OS === 'web' ? { onKeyDown: (event) => { if (event.key === 'Escape') close(); } } : {})}>
             <Pressable testID="drawer-backdrop" accessibilityRole="button" accessibilityLabel={strings.navigation.closeMenu} onPress={close} style={styles.scrim} importantForAccessibility="no" accessible={false} />
