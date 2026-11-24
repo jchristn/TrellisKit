@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "9667514c30ca562d2093fca90edf6d41f7b37106800f09e47252cb1da68a449c",
+ "sha256": "5cf582e7bb767ced33aaa37d80ae274099fb62efc825d30571696e969718d286",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -852,7 +852,7 @@
   {
    "key": "mobile.appContent.linkExternalHint",
    "client": "mobile",
-   "default": "Opens in your browser",
+   "default": "Opens inside the app",
    "tokens": [],
    "maxLength": 200
   },
@@ -3204,7 +3204,7 @@
   {
    "key": "mobile.events.detailsHint",
    "client": "mobile",
-   "default": "Opens the event page in the browser",
+   "default": "Opens the event page inside the app",
    "tokens": [],
    "maxLength": 200
   },
@@ -7048,6 +7048,69 @@
    "maxLength": 200
   },
   {
+   "key": "mobile.links.blocked",
+   "client": "mobile",
+   "default": "This link cannot be opened here.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.links.close",
+   "client": "mobile",
+   "default": "Close",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.links.downloadFailedBody",
+   "client": "mobile",
+   "default": "Check your connection and try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.links.downloadFailedTitle",
+   "client": "mobile",
+   "default": "Could not open this file",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.links.loadFailedBody",
+   "client": "mobile",
+   "default": "Check your connection and try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.links.loadFailedTitle",
+   "client": "mobile",
+   "default": "Could not load this page",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.links.title",
+   "client": "mobile",
+   "default": "Web content",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.links.unavailableBody",
+   "client": "mobile",
+   "default": "Use Back to return to your previous screen.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.links.unavailableTitle",
+   "client": "mobile",
+   "default": "This page is unavailable in the app",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "mobile.member.block",
    "client": "mobile",
    "default": "Block member",
@@ -8320,6 +8383,167 @@
    "key": "mobile.metadata.tooMany",
    "client": "mobile",
    "default": "You can add up to 50.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.current",
+   "client": "mobile",
+   "default": "Current period",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.deniedBody",
+   "client": "mobile",
+   "default": "Your account does not have access to these metrics.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.deniedTitle",
+   "client": "mobile",
+   "default": "Administrator access required",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.detailEmpty",
+   "client": "mobile",
+   "default": "Open Notifications to find the complete message.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.detailTitle",
+   "client": "mobile",
+   "default": "Notification details",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.empty",
+   "client": "mobile",
+   "default": "No observations for this time range.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.hideData",
+   "client": "mobile",
+   "default": "Hide observations",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.loadFailed",
+   "client": "mobile",
+   "default": "Could not load metrics",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.loadMore",
+   "client": "mobile",
+   "default": "Load more observations",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.month",
+   "client": "mobile",
+   "default": "Last 30 days",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.pageLabel",
+   "client": "mobile",
+   "default": "Metrics page",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.partial",
+   "client": "mobile",
+   "default": "Incomplete",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.previous",
+   "client": "mobile",
+   "default": "Previous period",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.rangeLabel",
+   "client": "mobile",
+   "default": "Time range",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.refresh",
+   "client": "mobile",
+   "default": "Refresh",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.showData",
+   "client": "mobile",
+   "default": "Show observations",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.staffDetail",
+   "client": "mobile",
+   "default": "This staff notification is shown inside the app. Related administrative actions are not available on this screen.",
+   "tokens": [],
+   "maxLength": 226
+  },
+  {
+   "key": "mobile.nativeMetrics.suppressed",
+   "client": "mobile",
+   "default": "Hidden for privacy",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.title",
+   "client": "mobile",
+   "default": "Metrics",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.unavailable",
+   "client": "mobile",
+   "default": "Not available",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.unknownPage",
+   "client": "mobile",
+   "default": "This metrics page is no longer available.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.viewNotifications",
+   "client": "mobile",
+   "default": "All notifications",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.nativeMetrics.week",
+   "client": "mobile",
+   "default": "Last 7 days",
    "tokens": [],
    "maxLength": 200
   },
@@ -11572,7 +11796,7 @@
   {
    "key": "mobile.publicPage.openHint",
    "client": "mobile",
-   "default": "Opens your public page in the browser",
+   "default": "Opens your profile inside the app",
    "tokens": [],
    "maxLength": 200
   },
