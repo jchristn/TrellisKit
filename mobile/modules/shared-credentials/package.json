@@ -1,0 +1,8 @@
+{
+  "name": "shared-credentials",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offers to save a sign-in to the iCloud Keychain for the app's webcredentials associated domain",
+  "license": "MIT",
+  "main": "index.js"
+}

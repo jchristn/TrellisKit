@@ -1,0 +1,20 @@
+/* Palette swatches and preset cards (docs/TRELLISKIT.md section 2.1), used by the admin preset
+   gallery and the member Appearance page. Swatch colors are inline styles of the palette shown. */
+.palette-swatches { display: grid; grid-template-columns: 1fr 1fr; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--color-border); }
+.palette-swatch { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); min-height: 44px; }
+.palette-swatch-button { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; height: 24px; padding: 0 var(--space-2); border-radius: var(--radius-sm); font-weight: var(--font-weight-bold); font-size: var(--font-size-xs); }
+.palette-swatch-dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; }
+.palette-swatch-chip { display: inline-flex; align-items: center; padding: 0 var(--space-2); height: 22px; border-radius: var(--radius-pill); font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); }
+
+.preset-gallery { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-3); }
+.preset-card { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); min-width: 0; }
+.preset-card-text { display: flex; flex-direction: column; gap: var(--space-1); flex: 1; }
+.preset-card .button { align-self: flex-start; }
+.member-presets-list { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.member-presets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-2); }
+
+.appearance-options { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-3); }
+.appearance-option { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); cursor: pointer; min-width: 0; }
+.appearance-option:has(input:checked) { border-color: var(--brand-primary); box-shadow: 0 0 0 1px var(--brand-primary); }
+.appearance-option:has(input:focus-visible) { outline: 2px solid var(--brand-primary); outline-offset: 2px; }
+.appearance-option-head { display: flex; align-items: center; gap: var(--space-2); }

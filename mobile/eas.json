@@ -1,0 +1,50 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "environment": "development",
+      "ios": {
+        "simulator": true
+      },
+      "env": {
+        "APP_VARIANT": "development",
+        "TK_UPDATES_CHANNEL": "development"
+      }
+    },
+    "development-device": {
+      "extends": "development",
+      "ios": {
+        "simulator": false
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "environment": "preview",
+      "env": {
+        "APP_VARIANT": "preview",
+        "TK_UPDATES_CHANNEL": "preview"
+      }
+    },
+    "production": {
+      "environment": "production",
+      "env": {
+        "APP_VARIANT": "production",
+        "TK_UPDATES_CHANNEL": "production"
+      },
+      "autoIncrement": true
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "track": "internal",
+        "releaseStatus": "draft"
+      }
+    }
+  }
+}

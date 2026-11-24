@@ -1,0 +1,18 @@
+{
+  "id": "fixture-shared",
+  "name": "Fixture Shared Platform",
+  "topology": "Shared",
+  "properties": [
+    "../../../samples/example",
+    "second"
+  ],
+  "platform": {
+    "hosts": ["platform.example.test"],
+    "bootstrapAdminEmail": "platform-admin@example.test"
+  },
+  "alarmEmail": "alarms@example.test",
+  "github": {
+    "owner": "fixture-owner",
+    "repository": "fixture-repository"
+  }
+}

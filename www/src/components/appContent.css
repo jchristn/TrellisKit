@@ -1,0 +1,37 @@
+/* Live content banners (docs/LIVE_UPDATES_CONTRACT.md section 14.1) and the console asset grid. */
+.tk-banners { display: flex; flex-direction: column; gap: var(--space-2, 8px); margin-bottom: var(--space-4, 16px); }
+.tk-banner { display: flex; align-items: flex-start; gap: var(--space-3, 12px); padding: var(--space-3, 12px) var(--space-4, 16px); border: 1px solid var(--color-border); border-left-width: 4px; border-radius: var(--radius-md, 8px); background: var(--color-surface); color: var(--color-text); }
+.tk-banner > .icon { flex: 0 0 auto; margin-top: 2px; }
+.tk-banner-content { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1, 4px); }
+.tk-banner-title { font-weight: 600; }
+.tk-banner-body p { margin: 0; }
+.tk-banner-link { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+.tk-banner-image { flex: 0 0 auto; max-width: 96px; max-height: 64px; width: auto; height: auto; border-radius: var(--radius-sm, 4px); object-fit: cover; }
+.tk-banner-dismiss { flex: 0 0 auto; }
+.tk-banner-info { background: var(--color-info-soft); border-color: var(--color-info); }
+.tk-banner-info > .icon { color: var(--color-info); }
+.tk-banner-success { background: var(--color-success-soft); border-color: var(--color-success); }
+.tk-banner-success > .icon { color: var(--color-success); }
+.tk-banner-warning { background: var(--color-warning-soft); border-color: var(--color-warning); }
+.tk-banner-warning > .icon { color: var(--color-warning); }
+.tk-banner-critical { background: var(--color-danger-soft); border-color: var(--color-danger); }
+.tk-banner-critical > .icon { color: var(--color-danger); }
+
+.tk-asset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--space-4, 16px); }
+.tk-asset-card { display: flex; flex-direction: column; gap: var(--space-2, 8px); padding: var(--space-3, 12px); border: 1px solid var(--color-border); border-radius: var(--radius-md, 8px); background: var(--color-surface); min-width: 0; }
+.tk-asset-thumbs { display: flex; gap: var(--space-2, 8px); }
+.tk-asset-thumb { flex: 1 1 0; min-width: 0; aspect-ratio: 4 / 3; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm, 4px); background: var(--color-surface-sunken); overflow: hidden; }
+.tk-asset-thumb-dark { background: #111; }
+.tk-asset-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.tk-asset-card .tk-asset-actions { display: flex; flex-wrap: wrap; gap: var(--space-2, 8px); margin-top: auto; }
+
+.tk-string-editor { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-4, 16px); }
+.tk-string-default { white-space: pre-wrap; padding: var(--space-3, 12px); border-radius: var(--radius-sm, 4px); background: var(--color-surface-sunken); }
+.tk-string-preview { white-space: pre-wrap; padding: var(--space-3, 12px); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-sm, 4px); }
+.tk-banner-preview { padding: var(--space-3, 12px); border: 1px dashed var(--color-border-strong); border-radius: var(--radius-md, 8px); background: var(--color-bg); }
+
+.tk-frames { list-style: decimal; padding-left: 1.5em; display: flex; flex-direction: column; gap: var(--space-2, 8px); }
+.tk-frames code { word-break: break-all; }
+.tk-frame-original { display: block; }
+.tk-symbolicated { white-space: pre-wrap; word-break: break-all; max-height: 360px; overflow: auto; padding: var(--space-3, 12px); border-radius: var(--radius-sm, 4px); background: var(--color-surface-sunken); }
+.tk-banners-site { margin-top: var(--space-4, 16px); }

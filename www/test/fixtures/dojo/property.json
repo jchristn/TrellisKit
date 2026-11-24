@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "id": "app_fixt5e09_5e09bf5728351d0F904bd282",
+  "slug": "dojo",
+  "name": "Fixture Dojo",
+  "shortName": "Dojo",
+  "tagline": "Practice together",
+  "description": "A fixture property with ranks and levels.",
+  "owner": {
+    "name": "Fixture Owner"
+  },
+  "locale": "en-US",
+  "domains": {
+    "web": "dojo.test",
+    "api": "api.dojo.test",
+    "media": "media.dojo.test",
+    "redirects": []
+  },
+  "contact": {
+    "supportEmail": "help@dojo.test",
+    "emailFromName": "Fixture Dojo",
+    "emailFromAddress": "no-reply@dojo.test"
+  },
+  "brand": {
+    "logo": "brand/logo.png",
+    "icon": "brand/icon.png",
+    "iconIco": "brand/icon.ico",
+    "colors": {
+      "light": {
+        "primary": "#AA2200",
+        "primaryHover": "#882200",
+        "onPrimary": "#FFFFFF",
+        "accent": "#111111",
+        "onAccent": "#FFFFFF",
+        "accentSoft": "#FFEEEE",
+        "themeColor": "#111111"
+      },
+      "dark": {
+        "primary": "#FF8866",
+        "primaryHover": "#FF9977",
+        "onPrimary": "#111111",
+        "accent": "#EEEEEE",
+        "onAccent": "#111111",
+        "accentSoft": "#331111",
+        "themeColor": "#111111"
+      }
+    }
+  },
+  "membership": {
+    "productName": "Dojo Membership",
+    "priceUsdCents": 4500,
+    "interval": "Month",
+    "storeProductId": "dojo.monthly",
+    "minimumAge": 21,
+    "trialDays": 0
+  },
+  "profile": {
+    "affiliation": {
+      "enabled": true,
+      "label": "School"
+    },
+    "rank": {
+      "enabled": true,
+      "label": "Tier",
+      "levelLabel": "Stars",
+      "maxLevel": 3,
+      "values": [
+        {
+          "key": "Bronze",
+          "label": "Bronze",
+          "color": "#CD7F32"
+        },
+        {
+          "key": "Silver",
+          "label": "Silver",
+          "color": "#C0C0C0"
+        },
+        {
+          "key": "Gold",
+          "label": "Gold",
+          "color": "#FFD700"
+        }
+      ]
+    },
+    "rankHistory": {
+      "enabled": true,
+      "label": "Tier history",
+      "awardedByLabel": "Awarded by",
+      "maxEntries": 3
+    },
+    "goals": {
+      "enabled": true,
+      "label": "Focus",
+      "values": [
+        {
+          "key": "Speed",
+          "label": "Speed"
+        },
+        {
+          "key": "Form",
+          "label": "Form"
+        },
+        {
+          "key": "Else",
+          "label": "Something else",
+          "freeText": true
+        }
+      ]
+    }
+  },
+  "reactions": [
+    {
+      "key": "clap",
+      "emoji": "👏",
+      "label": "Clap"
+    },
+    {
+      "key": "star",
+      "emoji": "⭐",
+      "label": "Star"
+    }
+  ],
+  "features": {
+    "signupCodes": true,
+    "directory": true,
+    "events": true,
+    "library": true,
+    "messaging": true
+  },
+  "terminology": {
+    "member": "student",
+    "members": "students",
+    "community": "dojo"
+  },
+  "web": {
+    "theme": "web/theme.css",
+    "content": "web/content",
+    "legal": "legal",
+    "storeBadges": false
+  },
+  "mobile": {
+    "bundleId": "test.dojo",
+    "androidPackage": "test.dojo",
+    "scheme": "dojo",
+    "easProjectId": ""
+  }
+}

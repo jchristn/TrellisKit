@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrellisKit.Core\TrellisKit.Core.csproj" />
+    <ProjectReference Include="..\TrellisKit.Server\TrellisKit.Server.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Touchstone.Core" Version="1.1.0" />
+  </ItemGroup>
+
+</Project>

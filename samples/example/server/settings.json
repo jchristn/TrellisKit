@@ -1,0 +1,122 @@
+{
+  "Rest": {
+    "Hostname": "0.0.0.0",
+    "Port": 8000,
+    "Ssl": false
+  },
+  "Cors": {
+    "AllowedOrigins": [
+      "http://127.0.0.1:8080",
+      "http://localhost:8080",
+      "http://127.0.0.1:5173",
+      "http://localhost:5173"
+    ]
+  },
+  "Property": {
+    "Directory": "/app/property"
+  },
+  "Database": {
+    "Type": "Postgresql",
+    "Hostname": "postgres",
+    "Port": 5432,
+    "DatabaseName": "trelliskit",
+    "Username": "trelliskit",
+    "Password": "",
+    "Schema": null,
+    "CommandTimeoutSeconds": 30,
+    "MaxPoolSize": 20
+  },
+  "Logging": {
+    "ConsoleLogging": true,
+    "FileLogging": false,
+    "LogDirectory": "logs",
+    "LogFilename": "trelliskit.log",
+    "LogRequests": false
+  },
+  "RequestHistory": {
+    "Enabled": true,
+    "MaxRequestBodyBytes": 65536,
+    "MaxResponseBodyBytes": 65536,
+    "RetentionDays": 30,
+    "PruneIntervalMinutes": 60
+  },
+  "Telemetry": {
+    "Enabled": true,
+    "ServiceName": "trelliskit-server",
+    "OtlpEndpoint": "http://otel-collector:4317",
+    "OtlpProtocol": "Grpc"
+  },
+  "Auth": {
+    "AdminToken": "tk_local_dev_admin_token_not_for_production_0001",
+    "TokenEncryptionKey": "",
+    "BootstrapAdminEmail": "admin@example.test",
+    "MinimumAdminTokenLength": 32,
+    "AccessTokenMinutes": 60,
+    "RefreshTokenDays": 90,
+    "LockoutThreshold": 10,
+    "LockoutMinutes": 15,
+    "SessionCacheSeconds": 30,
+    "PasswordResetRequestsPerHour": 5,
+    "VerificationResendsPerHour": 5
+  },
+  "OAuth": {
+    "AppleBundleId": "",
+    "AppleServicesId": "",
+    "GoogleWebClientId": "",
+    "GoogleIosClientId": "",
+    "GoogleAndroidClientId": "",
+    "FacebookAppId": "",
+    "FacebookAppSecret": "",
+    "AppleAudiences": [],
+    "GoogleAudiences": []
+  },
+  "Stripe": {
+    "SecretKey": "",
+    "WebhookSecret": "",
+    "PriceId": "",
+    "ApiBaseUrl": "https://api.stripe.com"
+  },
+  "AppStore": {
+    "BundleId": "",
+    "ProductId": "",
+    "AppAppleId": 0,
+    "IssuerId": "",
+    "KeyId": "",
+    "PrivateKeyPem": "",
+    "AllowSandbox": true
+  },
+  "GooglePlay": {
+    "PackageName": "",
+    "ProductId": "",
+    "ServiceAccountJson": "",
+    "PubSubAudience": "",
+    "PubSubServiceAccountEmail": ""
+  },
+  "Email": {
+    "SmtpHost": "mailpit",
+    "UseTls": false,
+    "Username": "",
+    "Password": "",
+    "FromAddress": "",
+    "FromName": "",
+    "SmtpPort": 1025
+  },
+  "Web": {
+    "PublicBaseUrl": "http://127.0.0.1:8080"
+  },
+  "Storage": {
+    "Directory": "/app/data/objects",
+    "MaxAvatarBytes": 5242880
+  },
+  "SignupCodes": {
+    "AttemptsPerHour": 10,
+    "GeneratedLength": 10,
+    "FirstReminderDays": 14,
+    "FinalReminderDays": 3
+  },
+  "Membership": {
+    "ReconcileIntervalMinutes": 1440,
+    "ReconcileBatchSize": 1000,
+    "ReminderIntervalMinutes": 60
+  }
+}

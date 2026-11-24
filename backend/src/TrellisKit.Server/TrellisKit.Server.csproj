@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TrellisKit.Server</RootNamespace>
+    <AssemblyName>TrellisKit.Server</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TrellisKit.Core\TrellisKit.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlPageBuilder" Version="1.2.0" />
+    <PackageReference Include="Radiant" Version="0.1.3" />
+    <PackageReference Include="SyslogLogging" Version="2.4.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="11.0.0" />
+    <PackageReference Include="Verbex" Version="0.2.2" />
+    <PackageReference Include="Voltaic" Version="2.4.1" />
+    <PackageReference Include="Watson" Version="7.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Test.Shared" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\string-catalog.json" LogicalName="TrellisKit.Server.Assets.string-catalog.json" />
+    <EmbeddedResource Include="Benchmarks\scope-benchmark.json" LogicalName="TrellisKit.Server.Benchmarks.scope-benchmark.json" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "app_mwd0f1x7_SecondFixture0001",
+  "slug": "fixture-second",
+  "name": "Fixture Second Community",
+  "domains": {
+    "web": "second.test",
+    "api": "api.second.test",
+    "media": "media.second.test",
+    "redirects": ["second-vanity.test"]
+  },
+  "contact": {
+    "supportEmail": "support@second.test",
+    "emailFromName": "Fixture Second Community",
+    "emailFromAddress": "no-reply@second.test"
+  }
+}

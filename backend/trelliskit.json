@@ -1,0 +1,55 @@
+{
+  "Rest": {
+    "Hostname": "127.0.0.1",
+    "Port": 8000,
+    "Ssl": false
+  },
+  "Cors": {
+    "AllowedOrigins": [
+      "http://127.0.0.1:8080",
+      "http://localhost:8080",
+      "http://127.0.0.1:5173",
+      "http://localhost:5173"
+    ]
+  },
+  "Property": {
+    "Directory": ""
+  },
+  "Database": {
+    "Type": "Postgresql",
+    "Hostname": "127.0.0.1",
+    "Port": 5432,
+    "DatabaseName": "trelliskit",
+    "Username": "trelliskit",
+    "Password": "",
+    "CommandTimeoutSeconds": 30,
+    "MaxPoolSize": 20
+  },
+  "Logging": {
+    "ConsoleLogging": true,
+    "FileLogging": false,
+    "LogDirectory": "logs",
+    "LogFilename": "trelliskit.log",
+    "LogRequests": false
+  },
+  "RequestHistory": {
+    "Enabled": true,
+    "MaxRequestBodyBytes": 65536,
+    "MaxResponseBodyBytes": 65536,
+    "RetentionDays": 30,
+    "PruneIntervalMinutes": 60
+  },
+  "Telemetry": {
+    "Enabled": true,
+    "ServiceName": "trelliskit-server",
+    "OtlpEndpoint": "http://127.0.0.1:14317",
+    "OtlpProtocol": "Grpc"
+  },
+  "Web": {
+    "PublicBaseUrl": "http://127.0.0.1:8080"
+  },
+  "Auth": {
+    "AdminToken": "",
+    "MinimumAdminTokenLength": 32
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "app_fixt2b7b_2b7B62Fcb721F7287d46eFf9",
+  "slug": "bookclub",
+  "name": "Fixture Book Club",
+  "shortName": "Book Club",
+  "tagline": "Read together",
+  "description": "A fixture property with no ranks.",
+  "owner": { "name": "Club Host" },
+  "locale": "en-US",
+  "domains": { "web": "books.test", "api": "api.books.test", "media": "media.books.test", "redirects": [] },
+  "contact": { "supportEmail": "hello@books.test", "emailFromName": "Fixture Book Club", "emailFromAddress": "no-reply@books.test" },
+  "brand": {
+    "logo": "brand/logo.png", "icon": "brand/icon.png", "iconIco": "brand/icon.ico",
+    "colors": {
+      "light": { "primary": "#2E7D32", "primaryHover": "#1B5E20", "onPrimary": "#FFFFFF", "accent": "#263238", "onAccent": "#FFFFFF", "accentSoft": "#E8F5E9", "themeColor": "#263238" },
+      "dark": { "primary": "#81C784", "primaryHover": "#A5D6A7", "onPrimary": "#102010", "accent": "#ECEFF1", "onAccent": "#102010", "accentSoft": "#1B2E1C", "themeColor": "#102010" }
+    }
+  },
+  "membership": { "productName": "Book Club Pass", "priceUsdCents": 1200, "interval": "Year", "storeProductId": "books.annual", "minimumAge": 13, "trialDays": 0 },
+  "profile": {
+    "affiliation": { "enabled": false },
+    "rank": { "enabled": false },
+    "rankHistory": { "enabled": false },
+    "goals": { "enabled": false }
+  },
+  "reactions": [ { "key": "like", "emoji": "👍", "label": "Like" } ],
+  "features": { "signupCodes": true, "directory": false, "events": true, "library": false, "messaging": true },
+  "terminology": { "member": "reader", "members": "readers", "community": "club" }
+}

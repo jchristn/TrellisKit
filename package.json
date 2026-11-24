@@ -1,0 +1,16 @@
+{
+  "name": "trelliskit",
+  "private": true,
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "Joel Christner",
+  "description": "TrellisKit monorepo (npm workspaces: shared, www; mobile is a standalone Expo project that depends on shared via file:../shared)",
+  "workspaces": [
+    "shared",
+    "www"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present && npm --prefix mobile test",
+    "lint": "npm run lint --workspaces --if-present"
+  }
+}

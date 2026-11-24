@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "id": "app_fixtf9ac_F9aC14B63A75Faf57d8db6f9",
+  "slug": "custom",
+  "name": "Custom Climbing Club",
+  "shortName": "Custom",
+  "tagline": "Read together",
+  "description": "A fixture property with custom profile labels.",
+  "owner": {
+    "name": "Casey Fixture"
+  },
+  "locale": "en-US",
+  "domains": {
+    "web": "custom.test",
+    "api": "api.custom.test",
+    "media": "media.custom.test",
+    "redirects": []
+  },
+  "contact": {
+    "supportEmail": "help@plain.test",
+    "emailFromName": "Plain Reading Circle",
+    "emailFromAddress": "no-reply@plain.test"
+  },
+  "brand": {
+    "logo": "brand/logo.png",
+    "icon": "brand/icon.png",
+    "iconIco": "brand/icon.ico",
+    "colors": {
+      "light": {
+        "primary": "#2E6B30",
+        "primaryHover": "#255A27",
+        "onPrimary": "#FFFFFF",
+        "accent": "#1B1F1B",
+        "onAccent": "#FFFFFF",
+        "accentSoft": "#E7F1E7",
+        "themeColor": "#1B1F1B"
+      },
+      "dark": {
+        "primary": "#8FD18F",
+        "primaryHover": "#A6DCA6",
+        "onPrimary": "#0F140F",
+        "accent": "#F0F4F0",
+        "onAccent": "#0F140F",
+        "accentSoft": "#1E2E1E",
+        "themeColor": "#0F140F"
+      }
+    }
+  },
+  "mobile": {
+    "bundleId": "test.custom.app",
+    "androidPackage": "test.custom.app",
+    "scheme": "customclub",
+    "easProjectId": "00000000-0000-4000-8000-000000000000"
+  },
+  "membership": {
+    "productName": "Custom Club Membership",
+    "priceUsdCents": 1500,
+    "interval": "Year",
+    "storeProductId": "custom.membership.yearly",
+    "minimumAge": 21,
+    "trialDays": 0
+  },
+  "profile": {
+    "affiliation": {
+      "enabled": true,
+      "label": "Team"
+    },
+    "rank": {
+      "enabled": true,
+      "label": "Grade",
+      "levelLabel": "Pips",
+      "maxLevel": 2,
+      "values": [
+        {
+          "key": "Green",
+          "label": "Green",
+          "color": "#2E7D32"
+        },
+        {
+          "key": "Gold",
+          "label": "Gold",
+          "color": "#B8860B"
+        }
+      ]
+    },
+    "rankHistory": {
+      "enabled": true,
+      "label": "Milestones",
+      "awardedByLabel": "Granted by",
+      "maxEntries": 2
+    },
+    "goals": {
+      "enabled": true,
+      "label": "Focus",
+      "values": [
+        {
+          "key": "Bouldering",
+          "label": "Bouldering"
+        },
+        {
+          "key": "Else",
+          "label": "Something else",
+          "freeText": true
+        }
+      ]
+    }
+  },
+  "reactions": [
+    {
+      "key": "like",
+      "emoji": "👍",
+      "label": "Like"
+    }
+  ],
+  "features": {
+    "signupCodes": false,
+    "directory": false,
+    "events": false,
+    "library": true,
+    "messaging": true
+  },
+  "web": {
+    "theme": "web/theme.css",
+    "content": "web/content",
+    "legal": "legal",
+    "storeBadges": false
+  },
+  "terminology": {
+    "member": "reader",
+    "members": "readers",
+    "community": "circle"
+  }
+}

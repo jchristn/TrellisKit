@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "id": "app_fixt68c4_68c46e84d76d2e7E686e5158",
+  "slug": "plain",
+  "name": "Plain Reading Circle",
+  "shortName": "Plain",
+  "tagline": "Read together",
+  "description": "A fixture property with no ranks, used to prove the engine is property-neutral.",
+  "owner": {
+    "name": "Pat Fixture"
+  },
+  "locale": "en-US",
+  "domains": {
+    "web": "plain.test",
+    "api": "api.plain.test",
+    "media": "media.plain.test",
+    "redirects": []
+  },
+  "contact": {
+    "supportEmail": "help@plain.test",
+    "emailFromName": "Plain Reading Circle",
+    "emailFromAddress": "no-reply@plain.test"
+  },
+  "brand": {
+    "logo": "brand/logo.png",
+    "icon": "brand/icon.png",
+    "iconIco": "brand/icon.ico",
+    "colors": {
+      "light": {
+        "primary": "#2E6B30",
+        "primaryHover": "#255A27",
+        "onPrimary": "#FFFFFF",
+        "accent": "#1B1F1B",
+        "onAccent": "#FFFFFF",
+        "accentSoft": "#E7F1E7",
+        "themeColor": "#1B1F1B"
+      },
+      "dark": {
+        "primary": "#8FD18F",
+        "primaryHover": "#A6DCA6",
+        "onPrimary": "#0F140F",
+        "accent": "#F0F4F0",
+        "onAccent": "#0F140F",
+        "accentSoft": "#1E2E1E",
+        "themeColor": "#0F140F"
+      }
+    }
+  },
+  "mobile": {
+    "bundleId": "test.plain.app",
+    "androidPackage": "test.plain.app",
+    "scheme": "plaincircle",
+    "easProjectId": ""
+  },
+  "membership": {
+    "productName": "Plain Circle Pass",
+    "priceUsdCents": 499,
+    "interval": "Month",
+    "storeProductId": "plain.pass.monthly",
+    "minimumAge": 13,
+    "trialDays": 0
+  },
+  "profile": {
+    "affiliation": {
+      "enabled": false,
+      "label": "Chapter"
+    },
+    "rank": {
+      "enabled": false
+    },
+    "rankHistory": {
+      "enabled": false
+    },
+    "goals": {
+      "enabled": false
+    }
+  },
+  "reactions": [
+    {
+      "key": "like",
+      "emoji": "👍",
+      "label": "Like"
+    }
+  ],
+  "features": {
+    "signupCodes": false,
+    "directory": false,
+    "events": false,
+    "library": true,
+    "messaging": true
+  },
+  "web": {
+    "theme": "web/theme.css",
+    "content": "web/content",
+    "legal": "legal",
+    "storeBadges": false
+  },
+  "terminology": {
+    "member": "reader",
+    "members": "readers",
+    "community": "circle"
+  }
+}

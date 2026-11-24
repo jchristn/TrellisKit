@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "description": "Small neutral demo data for the engine's sample property (Example Community). Used to exercise the seeding tool engine-side.",
+  "propertyId": "app_mwczw7mg_F8RsDcNidltPWZS1seB",
+  "namespace": "seed",
+  "accounts": {
+    "emailDomain": "demo.example.test",
+    "credentialsFile": "ACCOUNTS.local.md",
+    "adminMember": "admin"
+  },
+  "defaults": { "reactionKeys": ["like", "heart", "idea"] },
+  "signupCodes": [
+    { "key": "code-welcome", "code": "EXAMPLE-WELCOME", "name": "Welcome code", "description": "Six free months.", "grantType": "DurationMonths", "grantMonths": 6, "maxRedemptions": 20 },
+    { "key": "code-unused", "code": "EXAMPLE-TRY", "name": "Unused test code", "grantType": "DurationMonths", "grantMonths": 1, "maxRedemptions": 5, "notes": "Unused" }
+  ],
+  "members": [
+    { "key": "admin", "displayName": "Alex Admin", "handle": "alex.admin", "notes": "SystemAdmin (test)", "roles": [{ "role": "SystemAdmin" }], "flags": { "canPostToFeed": true }, "membership": { "type": "comp", "months": 12, "reason": "Staff" }, "avatar": "av-admin",
+      "profile": { "rank": { "key": "Advanced", "level": 2 }, "affiliation": "Example Club", "city": "Exampleville", "country": "US", "goals": { "keys": ["Teaching"] } } },
+    { "key": "editor", "displayName": "Robin Editor", "handle": "robin.editor", "notes": "LibraryEditor and EventManager", "grants": [{ "resourceType": "Library" }, { "resourceType": "Events" }], "membership": { "type": "comp", "months": 12, "reason": "Staff" },
+      "profile": { "rank": { "key": "Intermediate", "level": 1 } } },
+    { "key": "support", "displayName": "Sam Support", "handle": "sam.support", "notes": "SupportAgent", "roles": [{ "role": "SupportAgent" }], "membership": { "type": "comp", "months": 12, "reason": "Staff" },
+      "profile": { "rank": { "key": "Intermediate", "level": 0 } } },
+    { "key": "pat", "displayName": "Pat Example", "handle": "pat.example", "bio": "Member since the beginning.", "flags": { "canPostToFeed": true }, "membership": { "type": "code", "code": "code-welcome" },
+      "profile": { "rank": { "key": "Intermediate", "level": 2 }, "affiliation": "Example Club", "city": "Exampleville", "country": "US", "goals": { "keys": ["Learning"] },
+        "rankHistory": [ { "values": { "rank": { "key": "Intermediate" }, "awardedBy": { "name": "Alex Admin" }, "affiliation": "Example Club", "dateAwarded": "2024-05-01" } } ] } },
+    { "key": "jo", "displayName": "Jo Sample", "handle": "jo.sample", "membership": { "type": "comp", "months": 6, "reason": "Demo" }, "profile": { "rank": { "key": "Beginner", "level": 1 }, "goals": { "keys": ["Learning"] } } },
+    { "key": "lee", "displayName": "Lee Visitor", "handle": "lee.visitor", "notes": "No membership", "membership": { "type": "none" }, "profile": { "rank": { "key": "Beginner", "level": 0 } } }
+  ],
+  "forums": [
+    { "key": "forum-questions", "name": "Questions", "slug": "questions", "description": "Ask the community.", "icon": { "emoji": "❓" }, "allowedThreadTypes": ["Discussion", "Question", "Poll"] }
+  ],
+  "assets": [
+    { "key": "av-admin", "kind": "image", "style": "avatar", "file": "assets/avatar-admin.jpg", "title": "Alex Admin", "background": "#1F5FBF" },
+    { "key": "img-welcome", "kind": "image", "file": "assets/welcome.jpg", "title": "Welcome to Example Community", "subtitle": "Sample image", "background": "#1F5FBF" },
+    { "key": "vid-sample", "kind": "video", "file": "assets/sample.mp4", "durationSeconds": 6, "title": "Sample clip", "subtitle": "Generated demo video", "background": "#1F2933" }
+  ],
+  "feed": [
+    { "key": "post-welcome", "author": "admin", "title": "Welcome", "body": "Welcome to the community. Introduce yourself below.", "media": ["img-welcome"], "pin": true, "labels": ["welcome"], "autoReactions": { "count": 3 },
+      "comments": [ { "key": "c1", "author": "pat", "body": "Hello everyone!", "replies": [ { "key": "c1r1", "author": "jo", "body": "Hi {@pat}!" } ] } ] },
+    { "key": "post-video", "author": "pat", "title": "A short clip", "body": "Testing video posts.", "media": ["vid-sample"], "labels": ["video"] },
+    { "key": "post-public", "author": "admin", "title": "A public sample", "body": "Visible on the public feed.", "audience": "Public", "labels": ["sample"] }
+  ],
+  "threads": [
+    { "key": "thread-q", "forum": "forum-questions", "author": "jo", "type": "Question", "title": "Where do I start?", "body": "New here. What should I read first?",
+      "comments": [ { "key": "a1", "author": "pat", "body": "Start with the library series." } ], "acceptAnswer": "a1" },
+    { "key": "thread-poll", "forum": "forum-questions", "author": "pat", "type": "Poll", "title": "Best meetup day?", "body": "Pick one.",
+      "poll": { "options": ["Saturday", "Sunday"], "closesInDays": 7 }, "votes": { "0": ["pat", "jo"], "1": ["admin"] } }
+  ],
+  "venues": [
+    { "key": "venue-main", "name": "Example Hall", "summary": "The main meeting place.", "address": { "line1": "100 Example Street", "locality": "Exampleville", "region": "EX", "postalCode": "00000", "countryCode": "US" }, "geo": { "lat": 40.0, "lng": -100.0 }, "timeZone": "America/Chicago", "verified": true }
+  ],
+  "instructors": [
+    { "key": "inst-robin", "displayName": "Robin Editor", "bio": "Runs the workshops.", "venues": [ { "venue": "venue-main", "role": "Head" } ], "linkMember": "editor" }
+  ],
+  "venueReviews": [
+    { "key": "review-pat", "author": "pat", "venue": "venue-main", "stars": 5, "text": "Welcoming people and a great space for meetups.", "reply": { "text": "Thanks for coming, see you next week!" } },
+    { "key": "review-jo", "author": "jo", "venue": "venue-main", "stars": 4, "text": "Good sessions; parking can be tight on Saturdays." }
+  ],
+  "venueMedia": [
+    { "key": "venue-media-lee", "member": "lee", "venue": "venue-main", "asset": "img-welcome" }
+  ],
+  "directorySubmissions": [
+    { "key": "sub-new", "submitter": "pat", "type": "NewVenue", "note": "A second place to meet.", "fields": { "name": "Example Annex", "summary": "Overflow space.", "address": { "line1": "200 Example Street", "locality": "Exampleville", "region": "EX", "postalCode": "00000", "countryCode": "US" } } }
+  ],
+  "events": [
+    { "key": "event-weekly", "creator": "editor", "title": "Weekly meetup", "summary": "Every Saturday.", "description": "Come say hello.", "format": "InPerson", "timeZone": "America/Chicago", "start": { "weekday": "Sat", "time": "10:00" }, "durationMinutes": 60, "venue": "venue-main", "capacity": 20, "recurrence": { "frequency": "Weekly", "weekdays": ["Sat"], "count": 4 }, "rsvps": { "going": ["pat", "jo"] } },
+    { "key": "event-workshop", "creator": "editor", "title": "Small workshop", "summary": "Three seats.", "description": "Hands-on.", "format": "InPerson", "timeZone": "America/Chicago", "start": { "inDays": 5, "time": "18:00" }, "durationMinutes": 90, "venue": "venue-main", "capacity": 1, "waitlistEnabled": true, "rsvps": { "going": ["pat", "jo"] } }
+  ],
+  "library": {
+    "editor": "editor",
+    "series": [
+      { "key": "series-start", "title": "Getting started", "summary": "Two short lessons.", "description": "The basics.", "lessons": [
+        { "key": "lesson-1", "title": "Lesson one", "summary": "A short video.", "description": "Watch this first.", "video": "vid-sample", "audience": "Public" },
+        { "key": "lesson-2", "title": "Lesson two", "summary": "A short article.", "kind": "Article", "description": "## Next steps\n\nRead, then practice." }
+      ] }
+    ],
+    "progress": [ { "member": "pat", "lesson": "lesson-1", "complete": true } ]
+  },
+  "conversations": [
+    { "key": "dm-pat-jo", "from": "pat", "to": "jo", "messages": [ { "from": "pat", "body": "Hi Jo, see you Saturday?" }, { "from": "jo", "body": "Yes!" } ] }
+  ],
+  "tickets": [
+    { "key": "ticket-open", "requester": "jo", "type": "Support", "title": "Question about my account", "body": "Where do I change my display name?", "state": "Open" },
+    { "key": "ticket-idea", "requester": "pat", "type": "Enhancement", "title": "Calendar export", "body": "Please add a way to export events to my calendar app.", "state": "Resolved", "publishIdea": { "ideaKey": "idea-calendar", "showRequester": true } }
+  ],
+  "ideas": [
+    { "key": "idea-calendar", "fromTicket": "ticket-idea", "status": "Planned", "voters": ["pat", "jo"] },
+    { "key": "idea-dark", "creator": "support", "title": "Dark mode", "body": "A dark theme.", "status": "UnderReview", "voters": ["jo"] }
+  ],
+  "broadcasts": [
+    { "key": "broadcast-hello", "creator": "admin", "action": "send", "title": "Hello members", "inApp": { "title": "Hello members", "body": "Thanks for being here.", "path": "/app/feed" }, "channels": { "inApp": true, "push": false, "email": false }, "segment": { "filters": [ { "field": "membership", "operator": "eq", "value": "Active" } ] } }
+  ],
+  "ai": {
+    "leaveEnabled": false,
+    "endpoints": [
+      { "key": "ai-chat", "name": "Local chat model", "kind": "Completion", "apiType": "Ollama", "model": "llama3.1:8b", "endpointUrl": "http://host.docker.internal:11434", "authType": "None" }
+    ],
+    "assistants": [
+      { "key": "ai-helper", "name": "Helper", "title": "Community helper", "audience": "Members", "systemPrompt": "You help members of {name}. Today is {date}.", "chat": "ai-chat", "knowledge": { "enabled": true, "mode": "Keyword", "sources": [ { "targetType": "FeedPost", "labels": ["welcome"], "maxItems": 50 } ] } }
+    ]
+  }
+}

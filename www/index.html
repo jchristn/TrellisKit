@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="__TK_DESCRIPTION__" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="__TK_THEME_COLOR__" />
+    <meta property="og:site_name" content="__TK_NAME__" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>__TK_NAME__</title>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('tk.theme');
+          var theme = saved === 'light' || saved === 'dark' ? saved : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+        // The last live brand palette (src/property/runtimeTheme.js), applied before the first paint so an
+        // admin-edited palette does not flash the build-time colors. Only the exact generated shape is used.
+        try {
+          var css = localStorage.getItem('tk.palette');
+          if (css && css.length < 4000 && /^(html:root(\[data-theme='dark'\])? \{\n( {2}--[a-z-]+: #[0-9a-f]{6};\n)*\}\n){2}$/.test(css)) {
+            var style = document.createElement('style');
+            style.id = 'tk-runtime-palette';
+            style.textContent = css;
+            document.head.appendChild(style);
+          }
+        } catch (e) {
+          // Storage unavailable: the build-time colors stand until the live palette loads.
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

@@ -1,0 +1,272 @@
+/*
+ * Design tokens: colors, type scale, spacing, radii, shadows, and control sizes. Light theme is
+ * the default; dark overrides follow. The brand values here are neutral engine defaults: the
+ * active property's theme (generated from property.json brand.colors, plus its optional
+ * web/theme.css) is loaded after this file and overrides them.
+ */
+:root {
+  /* Brand (neutral defaults, overridden by the property theme) */
+  --brand-primary: #3b5bdb;
+  --brand-primary-hover: #364fc7;
+  --brand-primary-contrast: #ffffff;
+  --brand-accent: #1f2933;
+  --brand-accent-contrast: #ffffff;
+  --brand-theme-color: #1f2933;
+  /* Text and icons on --color-accent-soft (brand.colors onAccentSoft; defaults to the primary color). */
+  --brand-accent-soft-contrast: var(--brand-primary);
+
+  /* Semantic colors */
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f4f6f9;
+  --color-surface-sunken: #eef1f5;
+  --color-border: #dde2ea;
+  --color-border-strong: #c3cbd7;
+  --color-text: #17202c;
+  --color-text-muted: #576274;
+  --color-accent: var(--brand-primary);
+  --color-accent-hover: var(--brand-primary-hover);
+  --color-accent-contrast: var(--brand-primary-contrast);
+  --color-accent-soft: #e7ecfb;
+  --color-on-accent-soft: var(--brand-accent-soft-contrast);
+  --color-success: #15803d;
+  --color-success-soft: #dcfce7;
+  --color-warning: #b45309;
+  --color-warning-soft: #fef3c7;
+  --color-danger: #c81e1e;
+  --color-danger-soft: #fee2e2;
+  --color-info: #1d4ed8;
+  --color-info-soft: #dbeafe;
+  --color-focus: #2563eb;
+  --color-placeholder-bg: #fff8e1;
+  --color-placeholder-border: #e0b84a;
+  --color-chart-success: #22a05a;
+  --color-chart-failure: #dc3b3b;
+  --color-overlay: rgba(15, 23, 42, 0.5);
+
+  /* Method colors */
+  --method-get: #1d4ed8;
+  --method-post: #15803d;
+  --method-put: #b45309;
+  --method-patch: #7c3aed;
+  --method-delete: #c81e1e;
+  --method-other: #576274;
+
+  /* Typography */
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'PingFang SC', 'Hiragino Sans', 'Microsoft YaHei', sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-base: 0.9375rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.375rem;
+  --font-size-2xl: 1.75rem;
+  --font-size-3xl: 2.25rem;
+  --font-size-display: clamp(2.25rem, 6vw, 3.5rem);
+  --font-size-code: 0.8125rem;
+  --line-height-tight: 1.2;
+  --line-height-base: 1.5;
+  --line-height-code: 1.45;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.18);
+
+  /* Controls and layout */
+  --control-height: 36px;
+  --control-height-sm: 30px;
+  --sidebar-width: 236px;
+  --sidebar-collapsed-width: 60px;
+  --topbar-height: 56px;
+  --site-max-width: 1120px;
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --brand-primary: #91a7ff;
+  --brand-primary-hover: #a5b8ff;
+  --brand-primary-contrast: #101820;
+  --brand-accent: #f3f4f6;
+  --brand-accent-contrast: #101820;
+
+  --color-bg: #0e141d;
+  --color-surface: #151c27;
+  --color-surface-alt: #1a2230;
+  --color-surface-sunken: #0b1018;
+  --color-border: #2a3444;
+  --color-border-strong: #3a4659;
+  --color-text: #e6ebf2;
+  --color-text-muted: #9aa6b8;
+  --color-accent-soft: #1c2440;
+  --color-success: #4ade80;
+  --color-success-soft: #12301f;
+  --color-warning: #fbbf24;
+  --color-warning-soft: #3a2c0b;
+  --color-danger: #f87171;
+  --color-danger-soft: #3b1616;
+  --color-info: #60a5fa;
+  --color-info-soft: #132a4a;
+  --color-focus: #60a5fa;
+  --color-placeholder-bg: #2b2412;
+  --color-placeholder-border: #8a6d1f;
+  --color-chart-success: #34c374;
+  --color-chart-failure: #f06464;
+  --color-overlay: rgba(0, 0, 0, 0.6);
+
+  --method-get: #60a5fa;
+  --method-post: #4ade80;
+  --method-put: #fbbf24;
+  --method-patch: #c4b5fd;
+  --method-delete: #f87171;
+  --method-other: #9aa6b8;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  overflow-x: hidden;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, p, ul, ol, dl, dd, figure, blockquote {
+  margin: 0;
+}
+
+h1, h2, h3, h4 {
+  line-height: var(--line-height-tight);
+  font-weight: var(--font-weight-semibold);
+}
+
+ul, ol {
+  padding: 0;
+}
+
+a {
+  color: var(--color-accent);
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+}
+
+img, svg {
+  max-width: 100%;
+}
+
+code, pre, .mono {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-code);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-accent-soft);
+}
+
+input, select, textarea {
+  font: inherit;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  min-height: var(--control-height);
+  padding: 0 var(--space-3);
+  width: 100%;
+  min-width: 0;
+}
+
+textarea {
+  padding: var(--space-2) var(--space-3);
+  line-height: var(--line-height-code);
+  resize: vertical;
+}
+
+input[type='checkbox'], input[type='radio'] {
+  width: 16px;
+  height: 16px;
+  min-height: 0;
+  padding: 0;
+  accent-color: var(--color-accent);
+}
+
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 0;
+  border-color: var(--color-focus);
+}
+
+input:disabled, select:disabled, textarea:disabled {
+  background: var(--color-surface-alt);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+
+input[aria-invalid='true'], select[aria-invalid='true'], textarea[aria-invalid='true'] {
+  border-color: var(--color-danger);
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-text);
+  -webkit-box-shadow: 0 0 0 100px var(--color-surface) inset;
+}
+
+button {
+  font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

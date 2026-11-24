@@ -1,0 +1,76 @@
+/* Usage metering pages (docs/USAGE_METERING_CONTRACT.md section 8). Colors come from the theme tokens. */
+
+:root {
+  /* Categorical chart slots, fixed order (identity, never rank). */
+  --usage-series-1: #2a78d6;
+  --usage-series-2: #eb6834;
+  --usage-series-3: #1baf7a;
+  --usage-series-4: #eda100;
+  --usage-series-5: #e87ba4;
+  --usage-series-6: #008300;
+}
+
+:root[data-theme='dark'] {
+  --usage-series-1: #3987e5;
+  --usage-series-2: #d95926;
+  --usage-series-3: #199e70;
+  --usage-series-4: #c98500;
+  --usage-series-5: #d55181;
+  --usage-series-6: #008300;
+}
+
+.usage-dashboard { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+
+.usage-toolbar { gap: var(--space-3); }
+.usage-period { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.usage-segmented { flex-wrap: wrap; overflow: visible; }
+.usage-segmented .segment { flex: 1 0 auto; }
+.usage-range { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-3); }
+.usage-range .field { min-width: 10rem; }
+.usage-range input[type='date'] { min-height: var(--control-height-sm); }
+.usage-toolbar-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.usage-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
+.usage-meta { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: 0; }
+
+.usage-group { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.usage-group-title { font-size: var(--font-size-lg); margin: var(--space-2) 0 0; }
+
+.usage-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: var(--space-3); }
+.usage-change { display: inline-flex; align-items: center; gap: 2px; font-size: var(--font-size-xs); font-weight: var(--font-weight-semibold); color: var(--color-text-muted); }
+.usage-change-good { color: var(--color-success); }
+.usage-change-bad { color: var(--color-danger); }
+
+.usage-charts { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
+.usage-chart-card { margin: 0; gap: var(--space-2); }
+.usage-chart-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.usage-chart-title { font-size: var(--font-size-base); margin: 0; }
+.usage-chart-img { width: 100%; min-width: 0; overflow: hidden; }
+.usage-chart-canvas { width: 100%; min-height: 200px; }
+.usage-chart-caption { margin: 0; }
+.usage-data-table { max-height: 320px; overflow: auto; }
+.usage-data-table caption { text-align: left; font-size: var(--font-size-xs); color: var(--color-text-muted); padding-bottom: var(--space-1); }
+
+/* uPlot renders its own legend; keep it in the theme's ink. */
+.usage-chart-card .u-legend { color: var(--color-text); font-size: var(--font-size-xs); }
+.usage-chart-card .u-legend th { font-weight: var(--font-weight-medium); }
+.usage-chart-card .u-select { background: var(--color-accent-soft); }
+
+/* Platform usage comparison */
+.usage-overview-filters { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: flex-end; }
+.usage-overview-filters .field { min-width: 12rem; }
+.usage-overview-table th, .usage-overview-table td { white-space: nowrap; }
+.usage-overview-table tfoot td, .usage-overview-table tfoot th { font-weight: var(--font-weight-semibold); border-top: 2px solid var(--color-border-strong); background: var(--color-surface-alt); }
+.usage-sort-button { background: none; border: 0; padding: 0; color: inherit; font: inherit; cursor: pointer; display: inline-flex; align-items: center; gap: 2px; text-transform: inherit; letter-spacing: inherit; }
+.usage-sort-button[aria-pressed='true'] { color: var(--color-accent); }
+
+@media (max-width: 900px) {
+  .usage-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 560px) {
+  .usage-cards { grid-template-columns: 1fr; }
+  .usage-range { flex-direction: column; align-items: stretch; }
+  .usage-range .field { min-width: 0; width: 100%; }
+  .usage-range input[type='date'] { width: 100%; }
+  .usage-toolbar-row { flex-direction: column; align-items: stretch; }
+}

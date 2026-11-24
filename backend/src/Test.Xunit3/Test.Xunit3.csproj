@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Test.Shared\Test.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="10.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+    <PackageReference Include="Touchstone.Xunit3Adapter" Version="1.1.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.1" />
+    <PackageReference Include="xunit.v3.mtp-off" Version="4.0.3" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+{
+  "fallback": true,
+  "contentVersion": null,
+  "flags": {},
+  "killSwitches": {},
+  "strings": {
+    "upserts": {},
+    "deletes": []
+  },
+  "banners": {
+    "objects": []
+  },
+  "assets": {
+    "upserts": [],
+    "deletes": []
+  }
+}

@@ -1,0 +1,177 @@
+name: Tests
+
+# Engine repository (this folder is the repository root). Engine jobs: every job builds and tests the TrellisKit engine with the neutral sample property
+# (samples/example). Property builds run in each property's own repository.
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    # TrellisKit is PostgreSQL-only (docs/TRELLISKIT.md section 13): the full backend suite runs on Linux against a
+    # pgvector service container. Service containers only run on Linux runners, so Windows and macOS build only.
+    name: Backend full suite (ubuntu-latest, PostgreSQL with pgvector)
+    runs-on: ubuntu-latest
+    services:
+      postgresql:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_PASSWORD: Test_Passw0rd
+          POSTGRES_DB: trelliskit_test
+        ports:
+          - 127.0.0.1:5432:5432
+        options: >-
+          --health-cmd "pg_isready -h 127.0.0.1 -U postgres"
+          --health-interval 10s --health-timeout 5s --health-retries 10
+    env:
+      TK_TEST_PG_HOST: 127.0.0.1
+      TK_TEST_PG_PORT: "5432"
+      TK_TEST_PG_DATABASE: trelliskit_test
+      TK_TEST_PG_USERNAME: postgres
+      TK_TEST_PG_PASSWORD: Test_Passw0rd
+    defaults:
+      run:
+        working-directory: backend/src
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore TrellisKit.sln
+
+      - name: Build
+        run: dotnet build TrellisKit.sln --no-restore
+
+      - name: Size PostgreSQL lock table for isolated test schemas
+        env:
+          TEST_PG_CONTAINER: ${{ job.services.postgresql.id }}
+        run: |
+          docker exec "$TEST_PG_CONTAINER" psql -U postgres -d postgres -c "ALTER SYSTEM SET max_locks_per_transaction = '1024'"
+          docker restart --time 60 "$TEST_PG_CONTAINER"
+          for attempt in $(seq 1 30); do
+            if docker exec "$TEST_PG_CONTAINER" pg_isready -U postgres -d trelliskit_test; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+
+      - name: Run console tests
+        run: dotnet run --project Test.Automated --no-build -- --results results-console.json
+
+      - name: Run xUnit v3 tests
+        run: dotnet test Test.Xunit3 --no-build
+
+      - name: Run xUnit v2 tests
+        run: dotnet test Test.Xunit2 --no-build
+
+      - name: Run NUnit tests
+        run: dotnet test Test.Nunit --no-build
+
+      - name: Run MSTest tests
+        run: dotnet test Test.Mstest --no-build
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-backend-ubuntu-latest
+          path: backend/src/results-*.json
+
+  backend-build:
+    name: Backend build only (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    defaults:
+      run:
+        working-directory: backend/src
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore TrellisKit.sln
+
+      - name: Build
+        run: dotnet build TrellisKit.sln --no-restore
+
+  web:
+    name: Website and shared package (sample property)
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --no-experimental-webstorage
+      TK_PROPERTY_DIR: ${{ github.workspace }}/samples/example
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Shared tests
+        run: npm test --workspace shared
+
+      - name: Lint website
+        run: npm run lint --workspace www
+
+      - name: Test website
+        run: npm test --workspace www
+
+      - name: Build website
+        run: npm run build --workspace www
+
+      - name: Install Playwright browser
+        run: npx --workspace www playwright install --with-deps chromium
+
+      - name: End-to-end smoke tests
+        run: npm run test:e2e --workspace www
+
+  mobile:
+    name: Mobile app (sample property)
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --no-experimental-webstorage
+      TK_PROPERTY_DIR: ${{ github.workspace }}/samples/example
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test -- --maxWorkers=2
+
+      - name: Bundle (proves Metro resolves the shared package)
+        run: npx expo export --platform ios --output-dir dist-ci

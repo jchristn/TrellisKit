@@ -1,0 +1,95 @@
+/* Forums (PHASE3_CONTRACT.md section 19): forum index, forum page, threads, polls, search. */
+
+.forum-section { display: flex; flex-direction: column; gap: var(--space-2); }
+.forum-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.forum-card { display: flex; align-items: flex-start; gap: var(--space-3); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); min-width: 0; }
+.forum-card-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.forum-card-title { margin: 0; font-size: var(--font-size-md); display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.forum-card-meta { margin: 0; overflow-wrap: anywhere; }
+.forum-card p { margin: 0; }
+.forum-view-bar { display: flex; justify-content: flex-end; }
+/* Cards: a grid, each forum a card with its description. */
+.forum-list-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-3); }
+.forum-list-cards .forum-card { flex-direction: column; height: 100%; padding: var(--space-4); }
+.forum-list-cards .forum-card-main { flex: 1; }
+.forum-list-cards .forum-card-last { display: none; }
+/* Gallery: large icons with the name and thread count; descriptions and the latest thread are left out. */
+.forum-list-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: var(--space-3); }
+.forum-list-gallery .forum-card { flex-direction: column; align-items: center; text-align: center; height: 100%; padding: var(--space-4) var(--space-3); }
+.forum-list-gallery .forum-card-main { align-items: center; flex: 1; }
+.forum-list-gallery .forum-card-title { justify-content: center; }
+.forum-list-gallery .forum-card-description, .forum-list-gallery .forum-card-last { display: none; }
+.forum-list-gallery .forum-icon { border-radius: var(--radius-lg); font-size: 2.2rem; }
+.forum-icon { flex: none; display: inline-flex; align-items: center; justify-content: center; border-radius: var(--radius-md); background: var(--color-surface-alt); color: var(--color-text-muted); overflow: hidden; }
+.forum-icon img { width: 100%; height: 100%; object-fit: cover; }
+.forum-icon-colored { color: #ffffff; }
+.forum-icon-emoji { font-size: 1.3em; line-height: 1; }
+.forum-header { align-items: center; gap: var(--space-3); }
+.forum-header .page-header-text { flex: 1 1 auto; min-width: 0; }
+.forum-guidelines summary { cursor: pointer; font-weight: 600; }
+.unread-badge { min-width: 1.5em; justify-content: center; }
+.unread-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--color-accent); margin-right: var(--space-1); vertical-align: middle; }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.chip-toggle { border: 1px solid var(--color-border-strong); background: var(--color-surface); color: var(--color-text); border-radius: 999px; padding: var(--space-1) var(--space-3); font: inherit; font-size: var(--font-size-sm); cursor: pointer; min-height: 32px; }
+.chip-toggle.active { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-contrast); }
+
+.thread-list { display: flex; flex-direction: column; gap: var(--space-2); }
+.thread-row { display: flex; gap: var(--space-3); justify-content: space-between; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); min-width: 0; }
+.thread-row.thread-pinned { border-color: color-mix(in srgb, var(--color-accent) 45%, var(--color-border)); }
+.thread-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.thread-row-title { margin: 0; font-size: var(--font-size-md); overflow-wrap: anywhere; }
+.thread-unread .thread-row-title { font-weight: 700; }
+.thread-row-meta { margin: 0; }
+.thread-row-stats { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-1); white-space: nowrap; }
+.thread-badges { flex-wrap: wrap; }
+.follow-row { display: flex; align-items: center; gap: var(--space-2); }
+.follow-row > .thread-row { flex: 1; }
+.feedback-focus p { margin: var(--space-1) 0 0; }
+.accepted-answer { border-left: 4px solid var(--color-success); display: flex; flex-direction: column; gap: var(--space-2); }
+.forum-source-badge { text-decoration: none; }
+
+.search-snippet { margin: 0; color: var(--color-text-muted); overflow-wrap: anywhere; }
+.search-snippet mark { background: var(--color-warning-soft); color: var(--color-text); padding: 0 2px; border-radius: 2px; }
+.search-form { display: flex; gap: var(--space-2); }
+.search-form input { flex: 1; min-width: 0; }
+.search-results { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-3); }
+.search-result { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); display: flex; flex-direction: column; gap: var(--space-1); }
+.search-result-title { margin: 0; font-size: var(--font-size-md); }
+
+.type-picker { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.type-picker-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-2); }
+.type-option { display: flex; gap: var(--space-2); align-items: flex-start; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); cursor: pointer; }
+.type-option.selected { border-color: var(--color-accent); background: var(--color-accent-soft); }
+.type-option span { display: flex; flex-direction: column; }
+
+.poll-card { display: flex; flex-direction: column; gap: var(--space-3); }
+.poll-title { margin: 0; font-size: var(--font-size-md); }
+.poll-options { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.poll-option { display: flex; align-items: center; gap: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); cursor: pointer; min-height: 44px; }
+.poll-option.selected { border-color: var(--color-accent); background: var(--color-accent-soft); }
+.poll-results { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.poll-result-head { display: flex; justify-content: space-between; gap: var(--space-2); }
+.poll-result.leading .poll-result-label { font-weight: 700; }
+.poll-bar { height: 10px; border-radius: 999px; background: var(--color-surface-sunken); overflow: hidden; }
+.poll-bar-fill { display: block; height: 100%; background: var(--color-accent); border-radius: 999px; }
+.poll-foot { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+.poll-builder { border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-3); margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.poll-builder-options { margin: 0; padding-left: var(--space-5); display: flex; flex-direction: column; gap: var(--space-2); }
+.poll-builder-option { display: flex; gap: var(--space-1); align-items: center; }
+.poll-builder-option input { flex: 1; min-width: 0; }
+.poll-builder-locked { border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.voter-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+
+.forum-order-row[draggable='true'] { cursor: grab; }
+.forum-order-row.dragging { opacity: 0.5; }
+
+@media (max-width: 640px) {
+  .thread-row { flex-direction: column; }
+  .thread-row-stats { flex-direction: row; align-items: center; }
+  .forum-card { flex-wrap: wrap; }
+}
+
+/* Title links in rows and cards read as headings, not raw links. */
+.thread-row-title a, .forum-card-title a { color: inherit; text-decoration: none; }
+.thread-row-title a:hover, .forum-card-title a:hover { color: var(--color-accent); text-decoration: underline; }

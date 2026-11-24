@@ -1,0 +1,404 @@
+# TrellisKit stack from the published server image (jchristn77/trelliskit-server, built for linux/amd64 and
+# linux/arm64/v8 by ../build-server.sh). The image runs the server and the website (port 8080) in one container and
+# bakes in the neutral sample property. (../build-www.sh also publishes a standalone website image, which this stack
+# does not use.)
+#
+#   cd docker
+#   ./update.sh            # pull the pinned images and start (creates docker/.env.local with random secrets first)
+#   ./factory/reset.sh     # destroy every volume and start fresh
+#
+# Development from source (any property folder, with hot property edits): ./dev.sh [<property>/deploy/local.env],
+# which adds compose.dev.yaml (build sections, the property mount, and local image names).
+#
+# update.sh, dev.sh, and factory/reset.sh first create docker/.env.local with random secrets when it does not exist
+# (never committed), then run docker compose --env-file .env [--env-file <property env>] --env-file .env.local.
+# Running docker compose by hand needs the same --env-file arguments; the passwords are required variables.
+#
+# Images: TK_SERVER_IMAGE overrides the pinned default (for example a property's own images).
+#
+# Deployment mode: SingleProperty by default. Set TK_DEPLOYMENT_MODE=MultiProperty, TK_PLATFORM_HOSTS, and
+# TK_PLATFORM_BOOTSTRAP_ADMIN_EMAIL (plus TK_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD in .env.local) for a multi-property stack.
+#
+# Website and admin console   http://127.0.0.1:8080          (served by the server container; admin token: see docker/README.md)
+# API                         http://127.0.0.1:8000/api/v1/health
+# Grafana                     http://127.0.0.1:3000          (admin / admin unless TK_GRAFANA_ADMIN_PASSWORD is set)
+# Prometheus                  http://127.0.0.1:9090
+# Tempo                       http://127.0.0.1:3200
+# Loki                        http://127.0.0.1:3100
+# PostgreSQL (pgvector)       127.0.0.1:5432                 (databases trelliskit and recalldb; passwords in .env.local)
+# RecallDB                    http://127.0.0.1:8600          (admin API key TK_RECALLDB_ADMIN_API_KEY in .env.local)
+# Mailpit (local email inbox) http://127.0.0.1:8025          (SMTP mailpit:1025 inside the stack)
+# OTLP collector (host)       127.0.0.1:14317 (gRPC), 127.0.0.1:14318 (HTTP)
+#
+# Every host port is a TK_*_PORT variable and every container name starts with TK_STACK_NAME (default trelliskit),
+# so a second stack can run beside this one: docker compose -p other with other ports and TK_STACK_NAME=other.
+# TK_PUBLIC_BIND (default 127.0.0.1) is the host address of the website (8080) and Grafana (3000) ports only.
+#
+# Startup order: postgres, mailpit, tempo, loki -> otel-collector -> server (with the website), recalldb; prometheus after the
+# collector; grafana after prometheus, tempo, and loki.
+
+name: trelliskit
+
+services:
+
+  postgres:
+    container_name: ${TK_STACK_NAME:-trelliskit}-postgres
+    # PostgreSQL 17 with pgvector: the system of record (database trelliskit) and RecallDB's store (database
+    # recalldb). postgres/init/01-databases.sh creates both databases and roles on first boot, with passwords from
+    # the environment.
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${TK_POSTGRES_PASSWORD:?TK_POSTGRES_PASSWORD is required; run ./env-local.sh (or ./update.sh) to create docker/.env.local}
+      POSTGRES_DB: postgres
+      TK_DB_NAME: trelliskit
+      TK_DB_USERNAME: trelliskit
+      TK_DB_PASSWORD: ${TK_DB_PASSWORD:?TK_DB_PASSWORD is required; run ./env-local.sh (or ./update.sh) to create docker/.env.local}
+      TK_RECALLDB_DB_NAME: recalldb
+      TK_RECALLDB_DB_USERNAME: recalldb
+      TK_RECALLDB_DB_PASSWORD: ${TK_RECALLDB_DB_PASSWORD:?TK_RECALLDB_DB_PASSWORD is required; run ./env-local.sh (or ./update.sh) to create docker/.env.local}
+    ports:
+      - "127.0.0.1:${TK_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      # Not an HTTP service. -h 127.0.0.1 forces a TCP check so the database reports healthy only once it
+      # accepts network connections (not during first-boot initialization on the local socket), and -d trelliskit
+      # waits for the init script to have created the database.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 -U postgres -d trelliskit"]
+      interval: 5s
+      timeout: 2s
+      retries: 2
+      start_period: 20s
+    restart: unless-stopped
+
+  recalldb:
+    container_name: ${TK_STACK_NAME:-trelliskit}-recalldb
+    # RecallDB: vector and retrieval store for assistant knowledge grounding and semantic search
+    # (docs/TRELLISKIT.md section 13), on the same PostgreSQL server with its own database and role.
+    image: jchristn77/recalldb-server:v0.2.1
+    # The published image is linux/amd64 only; Apple silicon runs it under emulation.
+    platform: linux/amd64
+    # The image binds to localhost and ships the well-known admin key recalldbadmin, with no environment variable
+    # for either. recalldb/start.sh writes recalldb.json (all interfaces, the admin key from .env.local) and then
+    # makes sure the server's credential (TK_RECALLDB_TOKEN) exists on tenant default.
+    entrypoint: ["/bin/sh", "/usr/local/bin/recalldb-start.sh"]
+    volumes:
+      - ./recalldb/start.sh:/usr/local/bin/recalldb-start.sh:ro
+    environment:
+      RECALLDB_ADMIN_API_KEY: ${TK_RECALLDB_ADMIN_API_KEY:?TK_RECALLDB_ADMIN_API_KEY is required; run ./env-local.sh (or ./update.sh) to add it to docker/.env.local}
+      RECALLDB_SERVER_TOKEN: ${TK_RECALLDB_TOKEN:?TK_RECALLDB_TOKEN is required; run ./env-local.sh (or ./update.sh) to add it to docker/.env.local}
+      RECALLDB_TENANT: default
+      RECALLDB_DB_REQUIRE_ENCRYPTION: "false"
+      RECALLDB_DB_HOST: postgres
+      RECALLDB_DB_PORT: "5432"
+      RECALLDB_DB_NAME: recalldb
+      RECALLDB_DB_USER: recalldb
+      RECALLDB_DB_PASS: ${TK_RECALLDB_DB_PASSWORD:?TK_RECALLDB_DB_PASSWORD is required; run ./env-local.sh (or ./update.sh) to create docker/.env.local}
+      RECALLDB_DB_SCHEMA: public
+      RECALLDB_MCP_ENABLED: "false"
+      RECALLDB_OBS_ENABLED: "true"
+      RECALLDB_OBS_PROM_HOSTNAME: "*"
+      RECALLDB_OBS_PROM_PORT: "9464"
+      RECALLDB_OTLP_ENDPOINT: http://otel-collector:4317
+      RECALLDB_OTLP_PROTOCOL: grpc
+      RECALLDB_OBS_SERVICE_NAME: recalldb-server
+    ports:
+      - "127.0.0.1:${TK_RECALLDB_PORT:-8600}:8600"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8600/"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+
+  mailpit:
+    container_name: ${TK_STACK_NAME:-trelliskit}-mailpit
+    image: axllent/mailpit:v1.32.0
+    environment:
+      MP_MAX_MESSAGES: "5000"
+      MP_SMTP_AUTH_ACCEPT_ANY: "true"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "true"
+    ports:
+      # Only the web UI and API are published; SMTP (1025) stays on the compose network for the server.
+      - "127.0.0.1:${TK_MAILPIT_PORT:-8025}:8025"
+    healthcheck:
+      # The image has no shell or curl; its binary includes a readyz probe.
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 5s
+      timeout: 2s
+      retries: 2
+      start_period: 10s
+    restart: unless-stopped
+
+  tempo:
+    container_name: ${TK_STACK_NAME:-trelliskit}-tempo
+    image: grafana/tempo:2.6.1
+    command: ["-config.file=/etc/tempo.yaml"]
+    ports:
+      - "127.0.0.1:${TK_TEMPO_PORT:-3200}:3200"
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo.yaml:ro
+      - tempo-data:/var/tempo
+    healthcheck:
+      # The Tempo image ships wget, not curl.
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3200/ready || exit 1"]
+      interval: 5s
+      timeout: 2s
+      retries: 2
+      start_period: 30s
+    restart: unless-stopped
+
+  loki:
+    container_name: ${TK_STACK_NAME:-trelliskit}-loki
+    image: grafana/loki:3.5.5
+    command: ["-config.file=/etc/loki/loki.yaml"]
+    ports:
+      - "127.0.0.1:${TK_LOKI_PORT:-3100}:3100"
+    volumes:
+      - ./loki/loki.yaml:/etc/loki/loki.yaml:ro
+      - loki-data:/loki
+    healthcheck:
+      # The Loki image ships wget, not curl.
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3100/ready || exit 1"]
+      interval: 5s
+      timeout: 2s
+      retries: 2
+      start_period: 30s
+    restart: unless-stopped
+
+  otel-collector:
+    container_name: ${TK_STACK_NAME:-trelliskit}-otel-collector
+    # The upstream image is built FROM scratch (no shell or curl), so it has no container health check; dependents
+    # wait for it to start, and its own health endpoint (:13133) stays on the compose network.
+    image: otel/opentelemetry-collector-contrib:0.135.0
+    command: ["--config=/etc/otel-collector.yaml"]
+    volumes:
+      - ./otel-collector/otel-collector.yaml:/etc/otel-collector.yaml:ro
+    ports:
+      # OTLP for a server running outside Docker (point telemetry.otlpEndpoint at http://127.0.0.1:14317).
+      # Host ports 14317/14318 avoid clashing with other local collectors on 4317/4318.
+      - "127.0.0.1:${TK_OTLP_GRPC_PORT:-14317}:4317"
+      - "127.0.0.1:${TK_OTLP_HTTP_PORT:-14318}:4318"
+    depends_on:
+      tempo:
+        condition: service_healthy
+      loki:
+        condition: service_healthy
+    restart: unless-stopped
+
+  server: &tk-server
+    container_name: ${TK_STACK_NAME:-trelliskit}-server
+    # The published image is the Dockerfile's combined target: the server (with ffmpeg, so videos are transcoded to
+    # HLS) plus the website on port 8080, built for the sample property, which is also baked in at /app/property.
+    image: ${TK_SERVER_IMAGE:-jchristn77/trelliskit-server:v1.0.2}
+    environment: &tk-server-environment
+      TK_SETTINGS_FILE: /app/config/trelliskit.json
+      TK_PROPERTY_DIR: /app/property
+      # Stack wiring. These override the settings file so any property (including one without
+      # server/settings.json) runs against this stack's database, mail catcher, and collector.
+      TK_REST_HOSTNAME: 0.0.0.0
+      TK_REST_PORT: "8000"
+      # A hosted stack (behind a load balancer) sets TK_PUBLIC_WEB_URL to its public origin; locally it is the site port.
+      TK_CORS_ORIGINS: ${TK_PUBLIC_WEB_URL:-http://127.0.0.1:${TK_WWW_PORT:-8080}},http://127.0.0.1:${TK_WWW_PORT:-8080},http://localhost:${TK_WWW_PORT:-8080},http://127.0.0.1:5173,http://localhost:5173
+      TK_WEB_PUBLIC_BASE_URL: ${TK_PUBLIC_WEB_URL:-http://127.0.0.1:${TK_WWW_PORT:-8080}}
+      # Break-glass admin token. Empty keeps the settings file's token (local); a hosted stack sets a random one in .env.local.
+      TK_ADMIN_TOKEN: ${TK_ADMIN_TOKEN:-}
+      TK_DB_TYPE: Postgresql
+      TK_DB_HOSTNAME: postgres
+      TK_DB_PORT: "5432"
+      TK_DB_DATABASE: trelliskit
+      TK_DB_USERNAME: trelliskit
+      TK_DB_PASSWORD: ${TK_DB_PASSWORD:?TK_DB_PASSWORD is required; run ./env-local.sh (or ./update.sh) to create docker/.env.local}
+      # Deployment mode (docs/TRELLISKIT.md section 10). SingleProperty serves the property in TK_PROPERTY_DIR.
+      TK_DEPLOYMENT_MODE: ${TK_DEPLOYMENT_MODE:-SingleProperty}
+      TK_PLATFORM_HOSTS: ${TK_PLATFORM_HOSTS:-}
+      TK_PLATFORM_BOOTSTRAP_ADMIN_EMAIL: ${TK_PLATFORM_BOOTSTRAP_ADMIN_EMAIL:-}
+      TK_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD: ${TK_PLATFORM_BOOTSTRAP_ADMIN_PASSWORD:-}
+      # Optional first property administrator, created at startup when the property has no members (local only;
+      # a property's env file sets these). Empty leaves the settings file in charge.
+      TK_BOOTSTRAP_ADMIN_EMAIL: ${TK_BOOTSTRAP_ADMIN_EMAIL:-}
+      TK_BOOTSTRAP_ADMIN_PASSWORD: ${TK_BOOTSTRAP_ADMIN_PASSWORD:-}
+      # Secrets encryption key from docker/.env.local; stacks created before it existed fall back to a
+      # generated local key (local development only; never set TK_SECRETS_ALLOW_GENERATED_KEY in AWS).
+      TK_SECRETS_ENCRYPTION_KEY: ${TK_SECRETS_ENCRYPTION_KEY:-}
+      TK_SECRETS_ALLOW_GENERATED_KEY: "true"
+      TK_SMTP_HOST: mailpit
+      TK_SMTP_PORT: "1025"
+      TK_SMTP_USE_TLS: "false"
+      TK_TELEMETRY_ENABLED: "true"
+      TK_OTLP_ENDPOINT: http://otel-collector:4317
+      TK_OTLP_PROTOCOL: Grpc
+      TK_STORAGE_DIRECTORY: /app/data/objects
+      # Media (Phase 2): local storage under storage.directory (source/, video-source/, images/, transcoded/,
+      # retained/ next to avatars/) on the server-data volume, served by the backend at /api/v1/media/files, and
+      # ffmpeg HLS transcoding inside this container. Root-relative media URLs (no media CDN locally).
+      TK_MEDIA_STORAGE_MODE: Local
+      TK_MEDIA_VIDEO_PROCESSOR: Ffmpeg
+      TK_FFMPEG_PATH: /usr/bin/ffmpeg
+      TK_MEDIA_PUBLIC_BASE_URL: ""
+      # Assistant knowledge (docs/AI_CONTRACT.md): RecallDB on the compose network, tenant default, with the server's
+      # own credential (created by recalldb/start.sh). These live settings are locked in the console by the stack.
+      TK_RECALLDB_ENDPOINT: http://recalldb:8600
+      TK_RECALLDB_TENANT: default
+      TK_RECALLDB_TOKEN: ${TK_RECALLDB_TOKEN:?TK_RECALLDB_TOKEN is required; run ./env-local.sh (or ./update.sh) to add it to docker/.env.local}
+      # Live updates signing keys (docs/LIVE_UPDATES_CONTRACT.md section 18). The key folder below is mounted
+      # read-only at /app/keys; the entrypoint sets TK_UPDATES_SIGNING_KEY_FILE and TK_UPDATES_STANDBY_SIGNING_KEY_FILE
+      # only for the files that exist, so a stack without keys starts normally (updates then report no signing key).
+      TK_UPDATES_KEYS_DIR: /app/keys
+      # frame-ancestors sources of /embed/assistants/* (space separated CSP sources) for the website. Default 'self'.
+      TK_EMBED_FRAME_ANCESTORS: ${TK_EMBED_FRAME_ANCESTORS:-'self'}
+    ports:
+      # The website (nginx in the same container) on 8080, proxying /api to the server; this is the load balancer
+      # target. TK_PUBLIC_BIND (default 127.0.0.1) is its host address; a hosted stack sets 0.0.0.0 and limits access
+      # with its firewall or security group.
+      - "${TK_PUBLIC_BIND:-127.0.0.1}:${TK_WWW_PORT:-8080}:8080"
+      # The API directly, for tools on the host only.
+      - "127.0.0.1:${TK_SERVER_PORT:-8000}:8000"
+    volumes:
+      # Writable settings (trelliskit.json) on a named volume. The entrypoint seeds it on first start from the
+      # property's server/settings.json; settings saved from the admin console survive restarts and container
+      # recreation, and the server can replace the file atomically. A factory reset deletes the volume.
+      - server-config:/app/config
+      # Uploaded objects under storage.directory: avatars and all media (originals, image variants, posters, HLS,
+      # link preview images, retained removed content). Survives restarts and rebuilds; a factory reset deletes it.
+      - server-data:/app/data
+      # Private keys of this property's live update signing certificates, written by the mobile
+      # updates-certificate script to ~/.trelliskit/keys/<property slug>/ (TK_UPDATES_KEYS_HOST_DIR overrides the
+      # folder). Created empty when absent, so the stack never fails without keys.
+      - type: bind
+        source: ${TK_UPDATES_KEYS_HOST_DIR:-${HOME:-.}/.trelliskit/keys/${TK_PROPERTY_SLUG:-example}}
+        target: /app/keys
+        read_only: true
+        bind:
+          create_host_path: true
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/api/v1/health && curl -fsS http://127.0.0.1:8080/healthz"]
+      interval: 5s
+      timeout: 2s
+      retries: 2
+      start_period: 30s
+    # The admin console's Restart button exits the process; this policy relaunches it with the saved settings.
+    restart: unless-stopped
+
+  # Optional second API server for exercising the realtime bus across tasks locally (docs/PHASE5_CONTRACT.md
+  # section 4.14): docker compose --profile realtime-scale up -d. It shares the database, settings, and data volumes
+  # with server, and events cross the two through PostgreSQL LISTEN and NOTIFY exactly as between ECS tasks. Its
+  # API (and /api/v1/ws) is on 127.0.0.1:${TK_SERVER2_PORT:-8001}; the website keeps proxying to server.
+  server-2:
+    <<: *tk-server
+    container_name: ${TK_STACK_NAME:-trelliskit}-server-2
+    profiles: ["realtime-scale"]
+    ports:
+      - "127.0.0.1:${TK_SERVER2_PORT:-8001}:8000"
+
+  # Optional background agent worker; build only when the worker profile is selected.
+  worker:
+    <<: *tk-server
+    container_name: ${TK_STACK_NAME:-trelliskit}-worker
+    profiles: ["worker"]
+    image: trelliskit/worker:${TK_IMAGE_TAG:-local}
+    build:
+      context: ..
+      dockerfile: docker/server/Dockerfile
+      target: worker
+      additional_contexts:
+        property: ${TK_PROPERTY_DIR:-../samples/example}
+    ports: []
+    environment:
+      <<: *tk-server-environment
+      TK_JOBS_RUN_HARNESSES: "true"
+      TK_WWW_ENABLED: "false"
+      ANTHROPIC_API_KEY: ${TK_HARNESS_ANTHROPIC_API_KEY:-}
+      CLAUDE_CODE_OAUTH_TOKEN: ${TK_HARNESS_CLAUDE_OAUTH_TOKEN:-}
+      CODEX_API_KEY: ${TK_HARNESS_OPENAI_API_KEY:-}
+      OPENAI_API_KEY: ${TK_HARNESS_OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${TK_HARNESS_GEMINI_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/api/v1/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 2
+      start_period: 30s
+
+  prometheus:
+    container_name: ${TK_STACK_NAME:-trelliskit}-prometheus
+    image: prom/prometheus:v3.5.4
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--enable-feature=exemplar-storage"
+    ports:
+      - "127.0.0.1:${TK_PROMETHEUS_PORT:-9090}:9090"
+    volumes:
+      - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - prometheus-data:/prometheus
+    depends_on:
+      otel-collector:
+        condition: service_started
+    healthcheck:
+      # The Prometheus image ships wget, not curl.
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:9090/-/healthy || exit 1"]
+      interval: 5s
+      timeout: 2s
+      retries: 2
+      start_period: 20s
+    restart: unless-stopped
+
+  grafana:
+    container_name: ${TK_STACK_NAME:-trelliskit}-grafana
+    image: grafana/grafana-oss:13.0.2
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      # admin / admin locally; a hosted stack sets TK_GRAFANA_ADMIN_PASSWORD (.env.local), its public URL, and optionally
+      # anonymous read-only dashboards.
+      GF_SECURITY_ADMIN_PASSWORD: ${TK_GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_SERVER_ROOT_URL: ${TK_GRAFANA_ROOT_URL:-}
+      GF_AUTH_ANONYMOUS_ENABLED: ${TK_GRAFANA_ANONYMOUS:-false}
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+    ports:
+      - "${TK_PUBLIC_BIND:-127.0.0.1}:${TK_GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../assets/grafana:/var/lib/grafana/dashboards/trelliskit:ro
+    depends_on:
+      prometheus:
+        condition: service_healthy
+      tempo:
+        condition: service_healthy
+      loki:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:3000/api/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 2
+      start_period: 30s
+    restart: unless-stopped
+
+
+volumes:
+  postgres-data:
+  server-config:
+  server-data:
+  tempo-data:
+  loki-data:
+  prometheus-data:
+  grafana-data:

@@ -1,0 +1,8 @@
+{
+  "app": "dotnet run --project src/TrellisKit.Infra/TrellisKit.Infra.csproj",
+  "watch": {
+    "include": ["src/TrellisKit.Infra/**"],
+    "exclude": ["**/bin", "**/obj"]
+  },
+  "context": {}
+}

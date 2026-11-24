@@ -1,0 +1,2 @@
+# Generated locally by update.sh and factory/reset.sh (database passwords). Never commit it.
+.env.local

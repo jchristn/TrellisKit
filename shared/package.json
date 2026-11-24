@@ -1,0 +1,18 @@
+{
+  "name": "@trelliskit/shared",
+  "private": true,
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "Joel Christner",
+  "description": "Code shared by the TrellisKit website and mobile app: API client, enums, validators, formatters, and property helpers.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./testing": "./src/testing/index.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "strings:catalog": "node scripts/strings-catalog.mjs"
+  }
+}

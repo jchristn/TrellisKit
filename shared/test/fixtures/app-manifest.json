@@ -1,0 +1,8 @@
+{
+  "contentVersion": 7,
+  "flags": { "example.flag": true },
+  "killSwitches": { "feed": { "killed": true, "message": "Paused" } },
+  "strings": { "upserts": {}, "deletes": [] },
+  "banners": { "objects": [] },
+  "assets": { "upserts": [], "deletes": [] }
+}

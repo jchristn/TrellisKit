@@ -1,0 +1,415 @@
+{
+  "schemaVersion": 1,
+  "id": "app_mwczw7mg_F8RsDcNidltPWZS1seB",
+  "slug": "example",
+  "name": "Example Community",
+  "shortName": "Example",
+  "tagline": "A sample TrellisKit property",
+  "description": "A neutral sample property used for TrellisKit development and tests.",
+  "owner": {
+    "name": "Example Owner"
+  },
+  "locale": "en-US",
+  "domains": {
+    "web": "example.test",
+    "api": "api.example.test",
+    "media": "media.example.test",
+    "redirects": []
+  },
+  "contact": {
+    "supportEmail": "support@example.test",
+    "emailFromName": "Example Community",
+    "emailFromAddress": "no-reply@example.test"
+  },
+  "brand": {
+    "logo": "brand/logo.png",
+    "icon": "brand/icon.png",
+    "iconIco": "brand/icon.ico",
+    "colors": {
+      "light": {
+        "primary": "#1F5FBF",
+        "primaryHover": "#194D9C",
+        "onPrimary": "#FFFFFF",
+        "accent": "#1F2933",
+        "onAccent": "#FFFFFF",
+        "accentSoft": "#E6EEF9",
+        "onAccentSoft": "#1F5FBF",
+        "themeColor": "#1F2933"
+      },
+      "dark": {
+        "primary": "#8DB4F0",
+        "primaryHover": "#A8C6F4",
+        "onPrimary": "#101820",
+        "accent": "#F3F4F6",
+        "onAccent": "#101820",
+        "accentSoft": "#1C2A40",
+        "onAccentSoft": "#8DB4F0",
+        "themeColor": "#101820"
+      }
+    }
+  },
+  "mobile": {
+    "bundleId": "test.example.trelliskit",
+    "androidPackage": "test.example.trelliskit",
+    "scheme": "trelliskitexample",
+    "easProjectId": ""
+  },
+  "membership": {
+    "productName": "Example Membership",
+    "priceUsdCents": 999,
+    "interval": "Year",
+    "storeProductId": "example.membership.annual",
+    "minimumAge": 16,
+    "trialDays": 0
+  },
+  "profile": {
+    "affiliation": {
+      "enabled": true,
+      "label": "Club"
+    },
+    "rank": {
+      "enabled": true,
+      "label": "Level",
+      "levelLabel": "Stars",
+      "maxLevel": 3,
+      "values": [
+        {
+          "key": "Beginner",
+          "label": "Beginner",
+          "color": "#9CA3AF"
+        },
+        {
+          "key": "Intermediate",
+          "label": "Intermediate",
+          "color": "#1F5FBF"
+        },
+        {
+          "key": "Advanced",
+          "label": "Advanced",
+          "color": "#1F2933"
+        }
+      ]
+    },
+    "rankHistory": {
+      "enabled": true,
+      "label": "History",
+      "awardedByLabel": "Awarded by",
+      "maxEntries": 12
+    },
+    "goals": {
+      "enabled": true,
+      "label": "Interests",
+      "values": [
+        {
+          "key": "Learning",
+          "label": "Learning"
+        },
+        {
+          "key": "Teaching",
+          "label": "Teaching"
+        },
+        {
+          "key": "Other",
+          "label": "Other",
+          "freeText": true
+        }
+      ]
+    }
+  },
+  "profileFields": [
+    {
+      "key": "rank",
+      "label": "Level",
+      "type": "Rank",
+      "options": [
+        {
+          "key": "Beginner",
+          "label": "Beginner",
+          "color": "#9CA3AF"
+        },
+        {
+          "key": "Intermediate",
+          "label": "Intermediate",
+          "color": "#1F5FBF"
+        },
+        {
+          "key": "Advanced",
+          "label": "Advanced",
+          "color": "#1F2933"
+        }
+      ],
+      "rank": {
+        "levelLabel": "Stars",
+        "maxLevel": 3
+      },
+      "validation": {
+        "required": true
+      },
+      "collectAt": "SignUp",
+      "editableBy": "Member",
+      "visibility": "Public",
+      "showOnProfile": true,
+      "showOnCard": true,
+      "searchable": false,
+      "filterable": true,
+      "enabled": true,
+      "profileOrder": 10
+    },
+    {
+      "key": "affiliation",
+      "label": "Club",
+      "type": "Text",
+      "validation": {
+        "maxLength": 100
+      },
+      "collectAt": "Profile",
+      "editableBy": "Member",
+      "visibility": "Public",
+      "showOnProfile": true,
+      "showOnCard": false,
+      "searchable": true,
+      "filterable": true,
+      "enabled": true,
+      "profileOrder": 20
+    },
+    {
+      "key": "city",
+      "label": "City",
+      "type": "Text",
+      "validation": {
+        "maxLength": 100
+      },
+      "collectAt": "Profile",
+      "editableBy": "Member",
+      "visibility": "Public",
+      "showOnProfile": true,
+      "showOnCard": false,
+      "searchable": false,
+      "filterable": false,
+      "enabled": true,
+      "profileOrder": 30
+    },
+    {
+      "key": "region",
+      "label": "Region",
+      "type": "Text",
+      "validation": {
+        "maxLength": 100
+      },
+      "collectAt": "Profile",
+      "editableBy": "Member",
+      "visibility": "Public",
+      "showOnProfile": true,
+      "showOnCard": false,
+      "searchable": false,
+      "filterable": false,
+      "enabled": true,
+      "profileOrder": 40
+    },
+    {
+      "key": "country",
+      "label": "Country",
+      "type": "Country",
+      "collectAt": "Profile",
+      "editableBy": "Member",
+      "visibility": "Public",
+      "showOnProfile": true,
+      "showOnCard": false,
+      "searchable": false,
+      "filterable": true,
+      "enabled": true,
+      "profileOrder": 50
+    },
+    {
+      "key": "goals",
+      "label": "Interests",
+      "type": "MultiSelect",
+      "options": [
+        {
+          "key": "Learning",
+          "label": "Learning"
+        },
+        {
+          "key": "Teaching",
+          "label": "Teaching"
+        },
+        {
+          "key": "Other",
+          "label": "Other",
+          "freeText": true
+        }
+      ],
+      "collectAt": "Profile",
+      "editableBy": "Member",
+      "visibility": "Private",
+      "showOnProfile": true,
+      "showOnCard": false,
+      "searchable": false,
+      "filterable": true,
+      "enabled": true,
+      "profileOrder": 60
+    },
+    {
+      "key": "rankHistory",
+      "label": "History",
+      "type": "History",
+      "subFields": [
+        {
+          "key": "rank",
+          "label": "Level",
+          "type": "RankValue",
+          "required": true,
+          "rankFieldKey": "rank",
+          "withLevel": false
+        },
+        {
+          "key": "awardedBy",
+          "label": "Awarded by",
+          "type": "Member"
+        },
+        {
+          "key": "affiliation",
+          "label": "Club",
+          "type": "Text",
+          "maxLength": 100
+        },
+        {
+          "key": "dateAwarded",
+          "label": "Date",
+          "type": "Date",
+          "notInFuture": true
+        }
+      ],
+      "validation": {
+        "maxEntries": 12
+      },
+      "collectAt": "Profile",
+      "editableBy": "Member",
+      "visibility": "Public",
+      "showOnProfile": true,
+      "showOnCard": false,
+      "searchable": false,
+      "filterable": false,
+      "enabled": true,
+      "profileOrder": 70
+    }
+  ],
+  "reactions": [
+    {
+      "key": "like",
+      "emoji": "👍",
+      "label": "Like"
+    },
+    {
+      "key": "heart",
+      "emoji": "❤️",
+      "label": "Love"
+    },
+    {
+      "key": "idea",
+      "emoji": "💡",
+      "label": "Idea"
+    }
+  ],
+  "features": {
+    "signupCodes": true,
+    "directory": true,
+    "events": true,
+    "library": true,
+    "messaging": true
+  },
+  "web": {
+    "theme": "web/theme.css",
+    "content": "web/content",
+    "legal": "legal",
+    "storeBadges": false
+  },
+  "documents": [
+    {
+      "key": "terms",
+      "title": "Terms of Service",
+      "file": "legal/terms-of-service.md",
+      "version": "1.0",
+      "kind": "Terms",
+      "acceptance": "AcceptedWithTerms",
+      "separateCheckbox": false,
+      "reacceptOnChange": false,
+      "slug": "terms",
+      "footer": true
+    },
+    {
+      "key": "privacy",
+      "title": "Privacy Policy",
+      "file": "legal/privacy-policy.md",
+      "version": "1.0",
+      "kind": "Privacy",
+      "acceptance": "AcceptedWithTerms",
+      "separateCheckbox": false,
+      "reacceptOnChange": false,
+      "slug": "privacy",
+      "footer": true
+    },
+    {
+      "key": "community-guidelines",
+      "title": "Community Guidelines",
+      "file": "legal/community-guidelines.md",
+      "version": "1.0",
+      "kind": "Guidelines",
+      "acceptance": "AcceptedWithTerms",
+      "separateCheckbox": false,
+      "reacceptOnChange": false,
+      "slug": "community-guidelines",
+      "footer": true
+    },
+    {
+      "key": "participation-agreement",
+      "title": "Participation Agreement",
+      "file": "legal/participation-agreement.md",
+      "version": "1.0",
+      "kind": "Waiver",
+      "acceptance": "RequiredAtSignup",
+      "separateCheckbox": true,
+      "reacceptOnChange": true,
+      "slug": "participation-agreement",
+      "footer": true
+    },
+    {
+      "key": "subscription-terms",
+      "title": "Subscription Terms",
+      "file": "legal/subscription-terms.md",
+      "version": "1.0",
+      "kind": "Subscription",
+      "acceptance": "ShownAtPurchase",
+      "separateCheckbox": false,
+      "reacceptOnChange": false,
+      "slug": "subscription-terms",
+      "footer": true
+    },
+    {
+      "key": "account-deletion",
+      "title": "Account Deletion",
+      "file": "legal/account-deletion.md",
+      "version": "1.0",
+      "kind": "AccountDeletion",
+      "acceptance": "InformationOnly",
+      "separateCheckbox": false,
+      "reacceptOnChange": false,
+      "slug": "delete-account",
+      "footer": true
+    }
+  ],
+  "terminology": {
+    "member": "member",
+    "members": "members",
+    "community": "community"
+  },
+  "access": {
+    "model": "PartiallyGated",
+    "anonymousBrowsing": true,
+    "gatedFeatures": [
+      "library",
+      "messaging"
+    ],
+    "defaultAudience": "SignedIn"
+  }
+}

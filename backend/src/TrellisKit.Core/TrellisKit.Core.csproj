@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>TrellisKit.Core</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.LocationService" Version="4.1.0" />
+    <PackageReference Include="AWSSDK.MediaConvert" Version="4.1.0" />
+    <PackageReference Include="AWSSDK.S3" Version="4.1.0" />
+    <PackageReference Include="DocumentAtom.Documents" Version="3.3.0" />
+    <PackageReference Include="MailKit" Version="5.0.0" />
+    <PackageReference Include="Npgsql" Version="10.0.3" />
+    <PackageReference Include="PolyPrompt" Version="5.0.1" />
+    <PackageReference Include="PrettyId" Version="2.0.2" />
+    <PackageReference Include="SendWithMailgun" Version="1.2.1" />
+    <PackageReference Include="RecallDb.Sdk" Version="0.2.3" />
+    <PackageReference Include="SkiaSharp" Version="4.156.0" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.156.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\palette-presets.json" LogicalName="TrellisKit.Core.Assets.palette-presets.json" />
+  </ItemGroup>
+
+</Project>

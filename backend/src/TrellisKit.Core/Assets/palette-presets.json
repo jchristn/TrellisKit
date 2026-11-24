@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "presets": [
+    {
+      "id": "classic-navy",
+      "name": "Classic Navy",
+      "description": "Deep navy with a warm amber accent. Traditional and trustworthy.",
+      "light": { "primary": "#1F3A8A", "primaryHover": "#172C6B", "onPrimary": "#FFFFFF", "accent": "#B45309", "onAccent": "#FFFFFF", "accentSoft": "#E6ECF8", "onAccentSoft": "#172C6B", "themeColor": "#1F3A8A" },
+      "dark": { "primary": "#93B4F5", "primaryHover": "#B4CBF8", "onPrimary": "#0B1330", "accent": "#F5A524", "onAccent": "#1F1300", "accentSoft": "#1C2A4A", "onAccentSoft": "#DCE6FB", "themeColor": "#0B1330" }
+    },
+    {
+      "id": "evergreen",
+      "name": "Evergreen",
+      "description": "Forest green with an ochre accent. Calm, natural, and grounded.",
+      "light": { "primary": "#1B5E3B", "primaryHover": "#144A2E", "onPrimary": "#FFFFFF", "accent": "#A16207", "onAccent": "#FFFFFF", "accentSoft": "#E3F1E8", "onAccentSoft": "#144A2E", "themeColor": "#1B5E3B" },
+      "dark": { "primary": "#7FD1A1", "primaryHover": "#A3E0BC", "onPrimary": "#0A2416", "accent": "#E8B04B", "onAccent": "#231700", "accentSoft": "#16301F", "onAccentSoft": "#CDEFD9", "themeColor": "#0A2416" }
+    },
+    {
+      "id": "slate-teal",
+      "name": "Slate and Teal",
+      "description": "Teal on cool slate. Clean, modern, and quietly technical.",
+      "light": { "primary": "#0F766E", "primaryHover": "#115E59", "onPrimary": "#FFFFFF", "accent": "#334155", "onAccent": "#FFFFFF", "accentSoft": "#E0F2F0", "onAccentSoft": "#134E4A", "themeColor": "#0F766E" },
+      "dark": { "primary": "#5EDBC8", "primaryHover": "#99F0E2", "onPrimary": "#062925", "accent": "#94A3B8", "onAccent": "#0F172A", "accentSoft": "#15302D", "onAccentSoft": "#CCFBF1", "themeColor": "#0F172A" }
+    },
+    {
+      "id": "terracotta",
+      "name": "Terracotta",
+      "description": "Fired clay with a deep olive accent. Warm and earthy.",
+      "light": { "primary": "#A63D1C", "primaryHover": "#862F14", "onPrimary": "#FFFFFF", "accent": "#5A5A2A", "onAccent": "#FFFFFF", "accentSoft": "#F8E9E2", "onAccentSoft": "#7A2C12", "themeColor": "#A63D1C" },
+      "dark": { "primary": "#F2A383", "primaryHover": "#F7C1AA", "onPrimary": "#2A0F05", "accent": "#C9C27A", "onAccent": "#1E1D08", "accentSoft": "#3A2119", "onAccentSoft": "#F9DCCF", "themeColor": "#2A0F05" }
+    },
+    {
+      "id": "aubergine",
+      "name": "Aubergine",
+      "description": "Rich plum with a raspberry accent. Elegant and confident.",
+      "light": { "primary": "#6B2D6B", "primaryHover": "#552055", "onPrimary": "#FFFFFF", "accent": "#A3245A", "onAccent": "#FFFFFF", "accentSoft": "#F3E6F3", "onAccentSoft": "#552055", "themeColor": "#6B2D6B" },
+      "dark": { "primary": "#E2A6E2", "primaryHover": "#ECC3EC", "onPrimary": "#2A0D2A", "accent": "#F28AB5", "onAccent": "#2E0716", "accentSoft": "#352135", "onAccentSoft": "#F5DDF5", "themeColor": "#2A0D2A" }
+    },
+    {
+      "id": "graphite",
+      "name": "Graphite",
+      "description": "Monochrome charcoal and gray. Minimal and content first.",
+      "light": { "primary": "#27272A", "primaryHover": "#3F3F46", "onPrimary": "#FFFFFF", "accent": "#52525B", "onAccent": "#FFFFFF", "accentSoft": "#EDEDEF", "onAccentSoft": "#27272A", "themeColor": "#27272A" },
+      "dark": { "primary": "#E4E4E7", "primaryHover": "#FAFAFA", "onPrimary": "#18181B", "accent": "#A1A1AA", "onAccent": "#18181B", "accentSoft": "#2A2A2E", "onAccentSoft": "#F4F4F5", "themeColor": "#18181B" }
+    },
+    {
+      "id": "ocean",
+      "name": "Ocean",
+      "description": "Clear ocean blue with a deep cyan accent. Fresh and open.",
+      "light": { "primary": "#0B5FC4", "primaryHover": "#094C9D", "onPrimary": "#FFFFFF", "accent": "#0E7490", "onAccent": "#FFFFFF", "accentSoft": "#E3EEFC", "onAccentSoft": "#094C9D", "themeColor": "#0B5FC4" },
+      "dark": { "primary": "#7DB6FF", "primaryHover": "#A6CCFF", "onPrimary": "#041A38", "accent": "#4FD1E8", "onAccent": "#03252C", "accentSoft": "#14283F", "onAccentSoft": "#D6E7FF", "themeColor": "#041A38" }
+    },
+    {
+      "id": "sunset-coral",
+      "name": "Sunset Coral",
+      "description": "Coral red with a golden amber accent. Bright and welcoming.",
+      "light": { "primary": "#B93A32", "primaryHover": "#962D27", "onPrimary": "#FFFFFF", "accent": "#B45309", "onAccent": "#FFFFFF", "accentSoft": "#FCE9E7", "onAccentSoft": "#962D27", "themeColor": "#B93A32" },
+      "dark": { "primary": "#FF9C8F", "primaryHover": "#FFBDB4", "onPrimary": "#330C08", "accent": "#FBBF4A", "onAccent": "#2B1A00", "accentSoft": "#3A1F1C", "onAccentSoft": "#FFE1DC", "themeColor": "#330C08" }
+    },
+    {
+      "id": "sage",
+      "name": "Sage and Olive",
+      "description": "Muted sage with an olive accent. Soft, botanical, and relaxed.",
+      "light": { "primary": "#4A6741", "primaryHover": "#3A5233", "onPrimary": "#FFFFFF", "accent": "#6B6B2E", "onAccent": "#FFFFFF", "accentSoft": "#EAF0E6", "onAccentSoft": "#3A5233", "themeColor": "#4A6741" },
+      "dark": { "primary": "#AFCBA4", "primaryHover": "#C8DCC0", "onPrimary": "#16220F", "accent": "#CFCB8A", "onAccent": "#1F1E08", "accentSoft": "#24301F", "onAccentSoft": "#DCEAD5", "themeColor": "#16220F" }
+    },
+    {
+      "id": "crimson-charcoal",
+      "name": "Crimson and Charcoal",
+      "description": "Bold crimson on charcoal. Energetic, athletic, and strong.",
+      "light": { "primary": "#B91C1C", "primaryHover": "#991B1B", "onPrimary": "#FFFFFF", "accent": "#374151", "onAccent": "#FFFFFF", "accentSoft": "#FBE7E7", "onAccentSoft": "#991B1B", "themeColor": "#B91C1C" },
+      "dark": { "primary": "#FF8A8A", "primaryHover": "#FFB0B0", "onPrimary": "#2D0606", "accent": "#9CA3AF", "onAccent": "#111827", "accentSoft": "#3A1D1F", "onAccentSoft": "#FFDADA", "themeColor": "#111827" }
+    },
+    {
+      "id": "gold-ink",
+      "name": "Gold and Ink",
+      "description": "Ink blue with a burnished gold accent. Classic and refined.",
+      "light": { "primary": "#1F2A44", "primaryHover": "#2D3B5E", "onPrimary": "#FFFFFF", "accent": "#8F6214", "onAccent": "#FFFFFF", "accentSoft": "#F6EEDC", "onAccentSoft": "#1F2A44", "themeColor": "#1F2A44" },
+      "dark": { "primary": "#E8BF62", "primaryHover": "#F1D38E", "onPrimary": "#1F1603", "accent": "#C9D3E8", "onAccent": "#141C30", "accentSoft": "#2B2618", "onAccentSoft": "#F6E7C3", "themeColor": "#141C30" }
+    },
+    {
+      "id": "lavender",
+      "name": "Lavender",
+      "description": "Gentle violet with a lavender glow. Light and friendly.",
+      "light": { "primary": "#5B45B0", "primaryHover": "#48358F", "onPrimary": "#FFFFFF", "accent": "#7C3AED", "onAccent": "#FFFFFF", "accentSoft": "#EFEAFB", "onAccentSoft": "#48358F", "themeColor": "#5B45B0" },
+      "dark": { "primary": "#C4B5FD", "primaryHover": "#DDD3FE", "onPrimary": "#1E1240", "accent": "#A78BFA", "onAccent": "#1E1240", "accentSoft": "#2A2342", "onAccentSoft": "#E9E3FF", "themeColor": "#1E1240" }
+    },
+    {
+      "id": "high-contrast",
+      "name": "High Contrast",
+      "description": "Black, white, and strong blue with maximum contrast for readability.",
+      "light": { "primary": "#000000", "primaryHover": "#262626", "onPrimary": "#FFFFFF", "accent": "#0038A8", "onAccent": "#FFFFFF", "accentSoft": "#FFF3B0", "onAccentSoft": "#000000", "themeColor": "#000000" },
+      "dark": { "primary": "#FFFFFF", "primaryHover": "#E5E5E5", "onPrimary": "#000000", "accent": "#FFD400", "onAccent": "#000000", "accentSoft": "#24324A", "onAccentSoft": "#FFFFFF", "themeColor": "#000000" }
+    },
+    {
+      "id": "midnight-indigo",
+      "name": "Midnight Indigo",
+      "description": "Deep indigo with a sky blue accent. Focused and contemporary.",
+      "light": { "primary": "#3730A3", "primaryHover": "#2E2884", "onPrimary": "#FFFFFF", "accent": "#0369A1", "onAccent": "#FFFFFF", "accentSoft": "#E8E7FA", "onAccentSoft": "#2E2884", "themeColor": "#3730A3" },
+      "dark": { "primary": "#A5B4FC", "primaryHover": "#C7D0FD", "onPrimary": "#13114A", "accent": "#7DD3FC", "onAccent": "#06283D", "accentSoft": "#232650", "onAccentSoft": "#E0E5FF", "themeColor": "#13114A" }
+    },
+    {
+      "id": "rosewood",
+      "name": "Rosewood",
+      "description": "Dusty rose with a warm taupe accent. Soft and sophisticated.",
+      "light": { "primary": "#9D3457", "primaryHover": "#7F2945", "onPrimary": "#FFFFFF", "accent": "#7A5C4F", "onAccent": "#FFFFFF", "accentSoft": "#F8E8EE", "onAccentSoft": "#7F2945", "themeColor": "#9D3457" },
+      "dark": { "primary": "#F0A3BD", "primaryHover": "#F6C2D3", "onPrimary": "#310D19", "accent": "#D6B8A8", "onAccent": "#2A1A12", "accentSoft": "#382129", "onAccentSoft": "#FBDDE7", "themeColor": "#310D19" }
+    },
+    {
+      "id": "harbor",
+      "name": "Harbor",
+      "description": "Steel blue with a signal orange accent. Practical and crisp.",
+      "light": { "primary": "#2F5675", "primaryHover": "#24445C", "onPrimary": "#FFFFFF", "accent": "#C2410C", "onAccent": "#FFFFFF", "accentSoft": "#E5EDF3", "onAccentSoft": "#24445C", "themeColor": "#2F5675" },
+      "dark": { "primary": "#9CC3E0", "primaryHover": "#BCD6EA", "onPrimary": "#0C1E2C", "accent": "#FB9A5B", "onAccent": "#2B1204", "accentSoft": "#1D2D3A", "onAccentSoft": "#D9E8F3", "themeColor": "#0C1E2C" }
+    }
+  ]
+}

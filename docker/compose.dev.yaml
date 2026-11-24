@@ -1,0 +1,32 @@
+# Development override: build the server image (with the website) from this engine's source for any property folder, and mount
+# the property read-only so edits to property.json, legal text, and settings apply without a rebuild.
+#
+#   ./dev.sh                                   # the neutral sample property (docker/.env)
+#   ./dev.sh <property>/deploy/local.env       # a property's env file (TK_PROPERTY_DIR relative to this folder)
+#
+# The property is selected only by TK_PROPERTY_DIR and is passed to both image builds as the "property" build
+# context.
+
+services:
+  server:
+    build:
+      context: ..
+      dockerfile: docker/server/Dockerfile
+      # The combined target: the server with ffmpeg (videos are transcoded to HLS) plus the website on port 8080.
+      target: combined
+      additional_contexts:
+        property: ${TK_PROPERTY_DIR:-../samples/example}
+    image: trelliskit/server:${TK_IMAGE_TAG:-local}
+    volumes:
+      # The property (identity, brand, legal text), read-only, over the copy baked into the image.
+      - ${TK_PROPERTY_DIR:-../samples/example}:/app/property:ro
+
+  server-2:
+    image: trelliskit/server:${TK_IMAGE_TAG:-local}
+    volumes:
+      - ${TK_PROPERTY_DIR:-../samples/example}:/app/property:ro
+
+
+  worker:
+    volumes:
+      - ${TK_PROPERTY_DIR:-../samples/example}:/app/property:ro

@@ -1,0 +1,42 @@
+/* Branding editor (docs/TRELLISKIT.md section 2.1). The preview uses its own --pv-* variables so it
+   shows the edited palette without touching the page's theme. */
+.branding-editor { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.brand-actions { flex-wrap: wrap; align-items: center; justify-content: flex-start; }
+.brand-actions-spacer { flex: 1; }
+.brand-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+@media (max-width: 1100px) { .brand-grid { grid-template-columns: minmax(0, 1fr); } }
+.brand-scheme { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.brand-colors { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--space-3); }
+.brand-color-field { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.brand-color-field.changed .label-text::after { content: ' *'; color: var(--color-warning); }
+.brand-color-inputs { display: flex; gap: var(--space-2); align-items: center; }
+.brand-color-inputs input[type='color'] { width: 40px; height: var(--control-height); padding: 2px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); cursor: pointer; flex-shrink: 0; }
+.brand-color-inputs input:not([type='color']) { width: 100%; min-width: 0; text-transform: uppercase; }
+
+.brand-preview { margin: 0; padding: var(--space-4); border-radius: var(--radius-lg); border: 1px solid var(--pv-border); background: var(--pv-bg); color: var(--pv-text); display: flex; flex-direction: column; gap: var(--space-3); font-size: var(--font-size-sm); }
+.brand-preview-caption { font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--pv-muted); }
+.brand-preview-nav { display: flex; gap: var(--space-1); padding: var(--space-1); border-radius: var(--radius-md); background: var(--pv-surface); border: 1px solid var(--pv-border); }
+.brand-preview-nav-item { padding: var(--space-1) var(--space-3); border-radius: var(--radius-sm); color: var(--pv-muted); }
+.brand-preview-nav-item.active { background: var(--pv-soft); color: var(--pv-on-soft); font-weight: var(--font-weight-semibold); }
+.brand-preview-row { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: center; }
+.brand-preview-button { display: inline-flex; align-items: center; height: var(--control-height-sm); padding: 0 var(--space-3); border-radius: var(--radius-md); background: var(--pv-primary); color: var(--pv-on-primary); font-weight: var(--font-weight-semibold); }
+.brand-preview-button.hover { background: var(--pv-primary-hover); }
+.brand-preview-button.secondary { background: transparent; color: var(--pv-text); border: 1px solid var(--pv-border); }
+.brand-preview-card { background: var(--pv-surface); border: 1px solid var(--pv-border); border-radius: var(--radius-md); padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
+.brand-preview-card p { margin: 0; }
+.brand-preview-card-head { display: flex; gap: var(--space-2); align-items: center; }
+.brand-preview-avatar { width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: var(--pv-soft); color: var(--pv-on-soft); font-weight: var(--font-weight-semibold); font-size: var(--font-size-xs); }
+.brand-preview-link { color: var(--pv-primary); text-decoration: underline; }
+.brand-preview-chip { padding: 2px var(--space-3); border-radius: var(--radius-pill); border: 1px solid var(--pv-border); }
+.brand-preview-chip.selected { background: var(--pv-soft); border-color: var(--pv-primary); color: var(--pv-on-soft); }
+.brand-preview-alert { display: flex; gap: var(--space-2); align-items: center; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--pv-soft); color: var(--pv-on-soft); border-left: 3px solid var(--pv-primary); }
+.brand-preview-accent { padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--pv-accent); color: var(--pv-on-accent); font-weight: var(--font-weight-semibold); }
+
+.brand-contrast-table td { white-space: nowrap; }
+.brand-contrast-table td:nth-child(3) { white-space: normal; min-width: 180px; }
+.brand-contrast-failing td { background: var(--color-danger-soft); }
+.brand-swatch-pair { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 22px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); font-weight: var(--font-weight-bold); }
+.brand-override { display: flex; flex-direction: column; gap: var(--space-1); min-width: 180px; }
+.brand-versions .data-table td, .brand-versions .data-table th { vertical-align: middle; }
+.brand-version-swatches { display: inline-flex; gap: 4px; }
+.brand-version-swatch { display: inline-block; width: 18px; height: 18px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); }
