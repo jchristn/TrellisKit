@@ -81,7 +81,7 @@ it('isolates external content and keeps redirects and popup navigation inside th
   expect(screen.getByTestId('web-content-error')).toBeTruthy();
   await fireEvent.press(screen.getByRole('button', { name: /Retry/ }));
   expect(screen.getByTestId('web-content')).toBeTruthy();
-  await fireEvent.press(screen.getByTestId('web-content-close'));
+  await fireEvent.press(screen.getByRole('button', { name: 'Close' }));
   expect(mockRouter.back).toHaveBeenCalled();
   expect(external).not.toHaveBeenCalled();
   expect(WebBrowser.openBrowserAsync).not.toHaveBeenCalled();

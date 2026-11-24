@@ -16,6 +16,7 @@ export const stringTemplates = Object.freeze({
 
   links: {
     title: 'Web content',
+    close: 'Close',
     downloadFailedTitle: 'Could not open this file',
     downloadFailedBody: 'Check your connection and try again.',
     unavailableTitle: 'This page is unavailable in the app',

@@ -58,7 +58,7 @@ function ExternalContentView({ params }) {
   return (
     <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1, backgroundColor: theme.colors.background }} testID="screen-external-content">
       <Stack.Screen options={{ title: t.title }} />
-      <Button label={strings.common.close} variant="ghost" onPress={() => router.canGoBack() ? router.back() : router.replace('/feed')} testID="web-content-close" />
+      <Button label={t.close} variant="ghost" onPress={() => router.canGoBack() ? router.back() : router.replace('/feed')} testID="web-content-close" />
       {!url ? <ErrorState title={t.unavailableTitle} message={t.unavailableBody} testID="link-unavailable" /> : <>
         <View style={{ padding: theme.spacing.sm, gap: theme.spacing.xs }}>
           <AppText variant="caption">{new URL(url).host}</AppText>
