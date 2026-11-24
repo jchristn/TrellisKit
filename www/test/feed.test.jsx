@@ -154,6 +154,50 @@ describe('reactions', () => {
     expect(screen.queryByRole('button', { name: /^Star, / })).toBeNull();
   });
 
+  it('loads a bounded preview on hover and opens the matching tab with paged people', async () => {
+    const rows = Array.from({ length: 5 }, (_, i) => ({ id: 'rx_' + i, user: user('usr_' + i, 'Person ' + i), key: 'clap' }));
+    const { fetchImpl, calls } = memberFetch((call) => {
+      if (call.path !== '/api/v1/feed/fpo_1/reactions') return undefined;
+      if (call.query.continuationToken) return json(enumPage([{ id: 'rx_5', user: user('usr_5', 'Last Person'), key: 'clap' }]));
+      return json(enumPage(rows, { continuationToken: 'next-people', totalRecords: 6 }));
+    });
+    await renderMember(<ReactionBar target={target} value={{ reactionCounts: { clap: 6 }, reactionTotal: 6, myReactions: [] }} />, { fetchImpl });
+    expect(calls.filter((c) => c.path.endsWith('/reactions'))).toHaveLength(0);
+    await userEvent.hover(screen.getByRole('button', { name: 'Clap, 6 reactions' }));
+    const preview = await screen.findByRole('dialog', { name: 'People who reacted with Clap' });
+    expect(await within(preview).findByText('Person 4')).toBeInTheDocument();
+    expect(within(preview).getByText('More people reacted.')).toBeInTheDocument();
+    expect(calls.find((c) => c.path.endsWith('/reactions')).query).toEqual({ maxResults: '5', key: 'clap' });
+    await userEvent.click(within(preview).getByRole('button', { name: 'See all people' }));
+    const modal = await screen.findByRole('dialog', { name: 'Reactions' });
+    expect(within(modal).getByRole('tab', { name: 'Clap, 6 reactions' })).toHaveAttribute('aria-selected', 'true');
+    await userEvent.click(await within(modal).findByRole('button', { name: 'Load more' }));
+    expect(await within(modal).findByRole('link', { name: 'Last Person' })).toBeInTheDocument();
+    expect(calls.filter((c) => c.method === 'PUT' || c.method === 'DELETE')).toHaveLength(0);
+    expect(calls.filter((c) => c.path.endsWith('/reactions')).at(-1).query).toEqual({ maxResults: '50', key: 'clap', continuationToken: 'next-people' });
+  });
+
+  it('allows keyboard inspection without reaction permission and retries failed previews', async () => {
+    let attempts = 0;
+    const { fetchImpl, calls } = memberFetch((call) => {
+      if (call.path !== '/api/v1/feed/fpo_1/reactions') return undefined;
+      attempts += 1;
+      return attempts === 1 ? json({ error: 'Unavailable' }, 503) : json(enumPage([{ id: 'rx_1', user: user('usr_9', 'Kim Park'), key: 'star' }]));
+    });
+    await renderMember(<ReactionBar canReact={false} target={target} value={{ reactionCounts: { star: 1 }, reactionTotal: 1, myReactions: [] }} />, { fetchImpl });
+    await userEvent.tab();
+    const preview = await screen.findByRole('dialog', { name: 'People who reacted with Star' });
+    const retry = await within(preview).findByRole('button', { name: 'Try again' });
+    await userEvent.keyboard('{ArrowDown}');
+    expect(retry).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    expect(await within(preview).findByText('Kim Park')).toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Star, 1 reaction' })).toHaveFocus();
+    expect(calls.filter((c) => c.method === 'PUT' || c.method === 'DELETE')).toHaveLength(0);
+  });
+
   it('lists who reacted from the reactions enumeration', async () => {
     const { fetchImpl, calls } = memberFetch((call) => {
       if (call.path === '/api/v1/feed/fpo_1/reactions') return json(enumPage([{ user: user('usr_9', 'Kim Park'), key: 'clap', createdUtc: '2026-11-10T00:00:00Z' }]));

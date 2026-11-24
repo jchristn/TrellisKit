@@ -7,6 +7,7 @@ import { errorText } from '../../utils/engagement.js';
 import Icon from '../Icon.jsx';
 import useReactionSet from './useReactionSet.js';
 import WhoReactedDialog from './WhoReactedDialog.jsx';
+import ReactionPeoplePreview from './ReactionPeoplePreview.jsx';
 import { useAccessPrompt } from '../AccessPrompt.jsx';
 
 const r = strings.reactions;
@@ -60,7 +61,7 @@ function ReactionBar({ target, value, onChange, canReact = true, client: clientP
   const set = useReactionSet();
   const [fields, setFields] = useState(() => reactionFields(value));
   const [pickerOpen, setPickerOpen] = useState(false);
-  const [whoOpen, setWhoOpen] = useState(false);
+  const [whoKey, setWhoKey] = useState(undefined);
   const seq = useRef(0);
   const [lastValue, setLastValue] = useState(value);
 
@@ -101,26 +102,28 @@ function ReactionBar({ target, value, onChange, canReact = true, client: clientP
   return (
     <div className="reaction-bar" role="group" aria-label={r.label}>
       {showLikeButton && (
-        <button type="button" className={'reaction-like' + (likeOn ? ' active' : '')} aria-pressed={likeOn} onClick={() => toggle(like.key)} aria-label={likeCount > 0 ? r.count(like.label, likeCount) : r.react(like.label)} title={likeOn ? r.remove(like.label) : r.react(like.label)}>
+        <ReactionPeoplePreview target={target} reaction={like} count={likeCount} client={client} onShowAll={setWhoKey}>
+        {(previewProps) => <button {...previewProps} type="button" className={'reaction-like' + (likeOn ? ' active' : '')} aria-pressed={likeOn} onClick={() => toggle(like.key)} aria-label={likeCount > 0 ? r.count(like.label, likeCount) : r.react(like.label)}>
           <span aria-hidden="true">{like.emoji}</span>
           <span className="reaction-like-label">{like.label}</span>
           {likeCount > 0 && <span className="reaction-count">{formatCount(likeCount)}</span>}
-        </button>
+        </button>}
+        </ReactionPeoplePreview>
       )}
       {shown.map((item) => (
-        <button
-          key={item.key}
+        <ReactionPeoplePreview key={item.key} target={target} reaction={item} count={item.count} client={client} onShowAll={setWhoKey}>
+        {(previewProps) => <button
+          {...previewProps}
           type="button"
           className={'reaction-chip' + (item.mine ? ' active' : '')}
           aria-pressed={item.mine}
           aria-label={r.count(item.label, item.count)}
-          title={item.label}
-          disabled={!canReact}
-          onClick={() => toggle(item.key)}
+          onClick={() => canReact ? toggle(item.key) : setWhoKey(item.key)}
         >
           <span aria-hidden="true">{item.emoji}</span>
           <span className="reaction-count">{formatCount(item.count)}</span>
-        </button>
+        </button>}
+        </ReactionPeoplePreview>
       ))}
       {canReact && set.items.length > 1 && (
         <span className="popover-anchor">
@@ -131,9 +134,9 @@ function ReactionBar({ target, value, onChange, canReact = true, client: clientP
         </span>
       )}
       {fields.reactionTotal > 0 && (
-        <button type="button" className="link-button small reaction-total" onClick={() => setWhoOpen(true)}>{r.total(fields.reactionTotal)}</button>
+        <button type="button" className="link-button small reaction-total" onClick={() => setWhoKey('')}>{r.total(fields.reactionTotal)}</button>
       )}
-      {whoOpen && <WhoReactedDialog target={target} counts={fields.reactionCounts} client={client} onClose={() => setWhoOpen(false)} />}
+      {whoKey !== undefined && <WhoReactedDialog target={target} counts={fields.reactionCounts} initialKey={whoKey} client={client} onClose={() => setWhoKey(undefined)} />}
     </div>
   );
 }

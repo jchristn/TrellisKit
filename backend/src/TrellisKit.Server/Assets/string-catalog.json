@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "722f19d46d217dbd064198454712d47ca1afd1df07821e9e888b72d829a6b1eb",
+ "sha256": "9667514c30ca562d2093fca90edf6d41f7b37106800f09e47252cb1da68a449c",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -8324,6 +8324,41 @@
    "maxLength": 200
   },
   {
+   "key": "mobile.navigation.accountSection",
+   "client": "mobile",
+   "default": "Your account",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.navigation.closeMenu",
+   "client": "mobile",
+   "default": "Close menu",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.navigation.menu",
+   "client": "mobile",
+   "default": "Menu",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.navigation.openMenu",
+   "client": "mobile",
+   "default": "Open menu",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.navigation.settings",
+   "client": "mobile",
+   "default": "Settings",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "mobile.notificationSettings.allDay",
    "client": "mobile",
    "default": "Pushes can arrive at any time.",
@@ -11713,6 +11748,34 @@
    "key": "mobile.reactions.pickerTitle",
    "client": "mobile",
    "default": "React",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.reactions.previewAll",
+   "client": "mobile",
+   "default": "See all people",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.reactions.previewLoading",
+   "client": "mobile",
+   "default": "Loading people…",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.reactions.previewMore",
+   "client": "mobile",
+   "default": "More people reacted.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.reactions.previewRetry",
+   "client": "mobile",
+   "default": "Try again",
    "tokens": [],
    "maxLength": 200
   },
@@ -55441,6 +55504,34 @@
    "key": "web.reactions.label",
    "client": "web",
    "default": "Reactions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.reactions.previewAll",
+   "client": "web",
+   "default": "See all people",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.reactions.previewLoading",
+   "client": "web",
+   "default": "Loading people…",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.reactions.previewMore",
+   "client": "web",
+   "default": "More people reacted.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.reactions.previewRetry",
+   "client": "web",
+   "default": "Try again",
    "tokens": [],
    "maxLength": 200
   },

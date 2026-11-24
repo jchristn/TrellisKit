@@ -174,3 +174,5 @@ docker run --rm -p 8080:8080 trelliskit/www:<property id>
 nginx (`docker/www/nginx.conf`) serves the SPA on port 8080 with history fallback, proxies `/api/` and `/openapi.json` to `http://server:8000`, and answers `GET /healthz` for health checks.
 
 Catalog retrievals use the same `EnumerationQuery` / `EnumerationResult` contract as persisted lists. Settings and preference editors collect continuation pages before reconstructing their local editable models; the SDK returns `objects`, not `fields` or `categories`. Domain and application catalogs have separate `/admin/property/domains/enumerate` and `/admin/property/apps/enumerate` routes. Email templates, staff events, and document lists render server pages; template category filters are sent as `filters.category`. Mutation responses retain their documented editable-object shapes.
+
+Reaction counts show a lazy people preview on hover or keyboard focus. Arrow Down moves focus into the preview; Escape dismisses it. **See all people** opens the paged people dialog with the selected reaction filter. The preview requests at most five names and supports retry; inspecting a reaction does not toggle it.

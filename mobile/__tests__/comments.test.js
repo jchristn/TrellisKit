@@ -267,9 +267,14 @@ describe('reactions', () => {
     await waitFor(() => expect(s.called('PUT /feed/fpo_1/reactions/' + secondKey)).toHaveLength(1));
 
     await fireEvent(screen.getByTestId('post-fpo_1-reactions-chip-' + likeKey), 'longPress');
+    const preview = await screen.findByTestId('reaction-people-preview');
+    expect(await within(preview).findByText('Alex Chen')).toBeOnTheScreen();
+    expect(s.called('POST /feed/fpo_1/reactions/enumerate')[0].body).toEqual({ maxResults: 5, filters: { key: likeKey } });
+    expect(s.called('PUT /feed/fpo_1/reactions/' + likeKey)).toHaveLength(0);
+    await fireEvent.press(within(preview).getByTestId('reaction-preview-all'));
     const who = await screen.findByTestId('who-reacted');
     expect(await within(who).findByText('Alex Chen')).toBeOnTheScreen();
-    expect(s.called('POST /feed/fpo_1/reactions/enumerate')[0].body).toEqual({ maxResults: 50, filters: { key: likeKey } });
+    expect(s.called('POST /feed/fpo_1/reactions/enumerate')[1].body).toEqual({ maxResults: 50, filters: { key: likeKey } });
 
     await fireEvent.press(within(who).getByTestId('who-reacted-filters-button'));
     const labelInput = within(who).getByTestId('who-reacted-filters-panel-label-input');
@@ -279,4 +284,33 @@ describe('reactions', () => {
     await waitFor(() => expect(s.called('POST /feed/fpo_1/reactions/enumerate').pop().body).toEqual({ maxResults: 50, labels: ['regular'], labelMatch: 'All', filters: { key: likeKey } }));
     expect(within(who).getByTestId('who-reacted-filters-chip-label-regular')).toBeOnTheScreen();
   });
+
+  test('pointer hover previews a read-only reaction, retries errors, and opens a paginated full list', async () => {
+    let attempts = 0;
+    const row = (id, displayName) => ({ id: 'rx_' + id, user: userSummary({ id, displayName }), key: likeKey });
+    const s = installFakeServer({
+      ...signedInAs(makeUser()),
+      'POST /feed/enumerate': enumerationResult([makePost('fpo_1', { reactionCounts: { [likeKey]: 2 }, reactionTotal: 2, viewer: { canReact: false } })]),
+      'POST /feed/fpo_1/reactions/enumerate': (call) => {
+        attempts += 1;
+        if (attempts === 1) return { status: 503, body: { error: 'Unavailable' } };
+        if (call.body.continuationToken) return enumerationResult([row('usr_8', 'Second Person')]);
+        return enumerationResult([row('usr_7', 'First Person')], 'next-people');
+      }
+    });
+    await renderRouter(APP_DIR, { initialUrl: '/feed' });
+    await fireEvent(await screen.findByTestId('post-fpo_1-reactions-chip-' + likeKey), 'hoverIn');
+    const preview = await screen.findByTestId('reaction-people-preview');
+    await fireEvent.press(await within(preview).findByLabelText(strings.reactions.previewRetry));
+    expect(await within(preview).findByText('First Person')).toBeOnTheScreen();
+    expect(s.called('POST /feed/fpo_1/reactions/enumerate')[1].body).toEqual({ maxResults: 5, filters: { key: likeKey } });
+    await fireEvent.press(within(preview).getByTestId('reaction-preview-all'));
+    const who = await screen.findByTestId('who-reacted');
+    await fireEvent.press(await within(who).findByLabelText(strings.feed.loadMore));
+    expect(await within(who).findByText('Second Person')).toBeOnTheScreen();
+    expect(s.called('POST /feed/fpo_1/reactions/enumerate').at(-1).body).toEqual({ maxResults: 50, continuationToken: 'next-people', filters: { key: likeKey } });
+    expect(s.called('PUT /feed/fpo_1/reactions/' + likeKey)).toHaveLength(0);
+    expect(s.called('DELETE /feed/fpo_1/reactions/' + likeKey)).toHaveLength(0);
+  });
+
 });

@@ -4,6 +4,11 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (reaction people previews)
+
+- Reaction counts show a bounded people summary on web hover or keyboard focus and mobile pointer hover or long press. The preview handles loading, retry, dismissal and viewport edges without changing a reaction.
+- See all people opens the existing paged people dialog or sheet filtered to that reaction. Read-only members can inspect reactions too.
+
 ### Added (mobile navigation)
 
 - A complete top-left side drawer with separate community and account destinations, plus up to four property-selected bottom shortcuts. Members is a first-class destination instead of a Settings item.

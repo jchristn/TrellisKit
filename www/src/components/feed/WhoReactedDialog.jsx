@@ -15,9 +15,9 @@ const r = strings.reactions;
  * "Who reacted" (contract section 6.3): tabs for all reactions and each key with a count,
  * newest first, cursor paged.
  */
-function WhoReactedDialog({ target, counts, client, onClose }) {
+function WhoReactedDialog({ target, counts, initialKey = '', client, onClose }) {
   const set = useReactionSet();
-  const [key, setKey] = useState('');
+  const [key, setKey] = useState(initialKey);
   const tabs = visibleReactions(set, counts);
   const fetchPage = useCallback((cursor, signal) => client.listReactions(target, { continuationToken: cursor, maxResults: 50, filters: { key } }, signal), [client, target, key]);
   const list = useCursorList(fetchPage);

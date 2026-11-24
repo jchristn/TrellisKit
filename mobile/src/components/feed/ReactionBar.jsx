@@ -1,5 +1,5 @@
 import { formatCount } from '@trelliskit/shared';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { useAuth } from '../../auth/AuthProvider';
 import { reactionSet, visibleReactions } from '../../content/reactions';
@@ -11,11 +11,13 @@ import IconButton from '../IconButton';
 import Sheet from '../Sheet';
 import { useReactionToggle } from './useReactionToggle';
 import WhoReactedSheet from './WhoReactedSheet';
+import ReactionPeoplePreview from './ReactionPeoplePreview';
 
 /**
  * Reactions under a post or comment: a chip per reaction with a count (in the property's order,
  * highlighted when it is yours), a picker with the property's full set, and the who-reacted
- * sheet (long press a chip, or tap the total). Toggling is optimistic with rollback.
+ * sheet. Hover or long press a chip for a people preview; tap its link or the total
+ * for the complete list. Toggling is optimistic with rollback.
  * @param {object} props
  * @param {{ type: string, id: string }} props.target
  * @param {object} props.fields Reaction fields from the payload.
@@ -30,10 +32,24 @@ export default function ReactionBar({ target, fields, onChange, canReact = true,
   const set = reactionSet(property);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [whoKey, setWhoKey] = useState(undefined);
+  const [preview, setPreview] = useState(null);
+  const chipRefs = useRef({});
+  const previewRequest = useRef(0);
+  useEffect(() => () => { previewRequest.current += 1; }, []);
   const { toggle, error } = useReactionToggle({ api, target, fields, onChange });
   const chips = visibleReactions(fields, set);
   const total = (fields && fields.reactionTotal) || 0;
   const prefix = testID || 'reactions';
+  const closePreview = () => { previewRequest.current += 1; setPreview(null); };
+  const showPreview = (chip, hover = false) => {
+    const request = ++previewRequest.current;
+    const show = (anchor) => {
+      if (request === previewRequest.current) setPreview({ chip, anchor, hover, targetId: target.id, targetType: target.type });
+    };
+    show(null);
+    const node = chipRefs.current[chip.key];
+    if (node?.measureInWindow) node.measureInWindow((x, y, width, height) => show({ x, y, width, height }));
+  };
 
   return (
     <View style={{ gap: theme.spacing.xs }}>
@@ -41,9 +57,13 @@ export default function ReactionBar({ target, fields, onChange, canReact = true,
         {chips.map((chip) => (
           <Pressable
             key={chip.key}
+            ref={(node) => { chipRefs.current[chip.key] = node; }}
             testID={prefix + '-chip-' + chip.key}
-            onPress={canReact ? () => toggle(chip.key) : () => setWhoKey(chip.key)}
-            onLongPress={() => setWhoKey(chip.key)}
+            onPress={canReact ? () => { closePreview(); toggle(chip.key); } : () => showPreview(chip)}
+            onLongPress={() => showPreview(chip)}
+            onHoverIn={() => showPreview(chip, true)}
+            accessibilityActions={[{ name: 'longpress', label: strings.reactions.whoOpen }]}
+            onAccessibilityAction={(event) => { if (event.nativeEvent.actionName === 'longpress') showPreview(chip); }}
             accessibilityRole="button"
             accessibilityLabel={strings.reactions.chip(chip.label, chip.count, chip.mine)}
             accessibilityHint={strings.reactions.chipHint}
@@ -125,6 +145,14 @@ export default function ReactionBar({ target, fields, onChange, canReact = true,
           })}
         </View>
       </Sheet>
+      {preview && preview.targetId === target.id && preview.targetType === target.type ? (
+        <ReactionPeoplePreview
+          key={target.type + ':' + target.id + ':' + preview.chip.key + ':' + ((fields?.reactionCounts || {})[preview.chip.key] || 0)}
+          target={target} reaction={preview.chip} anchor={preview.anchor} hover={preview.hover}
+          onClose={closePreview}
+          onShowAll={() => { setWhoKey(preview.chip.key); closePreview(); }}
+        />
+      ) : null}
       {whoKey !== undefined ? <WhoReactedSheet target={target} initialKey={whoKey} set={set} onClose={() => setWhoKey(undefined)} /> : null}
     </View>
   );
