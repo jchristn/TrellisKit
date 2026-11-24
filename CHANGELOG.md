@@ -4,6 +4,11 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Fixed (bounded comment trees)
+
+- Comment tree responses (feed, thread, idea, event, and lesson comments, a comment's children, and the permalink subtree) hold at most 1000 comments across every level (`CommentService.MaxTreeNodes`). Before, the per-level limits multiplied to about 8.4 million comments at the maximum page size, depth, and child limit. Replies fill the budget level by level in page order; every parent whose replies were left out carries `moreChildren`, so clients continue on the children route unchanged.
+- The runtime collection check names `/.well-known/assetlinks.json` as its only external-format exemption: the Android Digital Asset Links format requires a top-level array (one statement).
+
 ### Fixed (native notification destinations and links)
 
 - Metric alerts open native metrics screens using the signed-in session and paged metric observations. Other staff notifications retain their full text in a native detail screen instead of opening the administrative website.

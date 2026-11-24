@@ -26,6 +26,15 @@ namespace Test.Shared.Suites
         public const string Id = "EnumerationEnforcement";
 
         /// <summary>
+        /// GET routes whose body format is fixed by an external specification that requires a top-level JSON array, and
+        /// why. They are exempt from the runtime raw-array check and nothing else.
+        /// </summary>
+        public static readonly IReadOnlyDictionary<string, string> ExternalFormatExemptions = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            { "/api/v1/public/pages/well-known/assetlinks.json", "Android Digital Asset Links (/.well-known/assetlinks.json) must be a JSON array of statements; this one has exactly one" }
+        };
+
+        /// <summary>
         /// Reviewed fixed-bound GET routes (path as it appears in the OpenAPI document) and why each list is bounded.
         /// Every entry must be declared with .Bounded (a 200 schema description starting "Fixed-bound:").
         /// </summary>
@@ -93,6 +102,7 @@ namespace Test.Shared.Suites
                     foreach (JsonProperty path in doc.GetProperty("paths").EnumerateObject())
                     {
                         if (!path.Name.StartsWith("/api/v1/", StringComparison.Ordinal) || path.Name.Contains('{') || !path.Value.TryGetProperty("get", out JsonElement get)) continue;
+                        if (ExternalFormatExemptions.ContainsKey(path.Name)) continue;
                         bool collection = get.TryGetProperty("responses", out JsonElement responses)
                             && responses.TryGetProperty("200", out JsonElement ok) && ok.TryGetProperty("content", out JsonElement content)
                             && content.TryGetProperty("application/json", out JsonElement json) && json.TryGetProperty("schema", out JsonElement schema)

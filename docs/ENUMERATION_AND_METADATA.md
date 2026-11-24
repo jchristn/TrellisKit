@@ -132,7 +132,7 @@ Payloads never embed a list that grows with data. Detail payloads either embed a
 "recentSessions": { "objects": [ ... at most 5 ... ], "totalRecords": 12, "enumerate": "/api/v1/admin/members/usr_x/sessions/enumerate" }
 ```
 
-Single-object attribute exceptions have fixed, documented upper bounds: configuration inside `property.json` (reactions, ranks, goals), an object's own labels (max 50) and tags (max 50), and comment tree pages (bounded by the tree page limits in the Phase 2 contract). A collection endpoint never qualifies for this exception merely because its source is a finite catalog. Settings, reaction catalogs, notification categories, AI catalogs, job definitions, metric definitions and pages all use section 2. Aggregate collections enumerate actual observations or groups, not a one-element wrapper around the entire collection.
+Single-object attribute exceptions have fixed, documented upper bounds: configuration inside `property.json` (reactions, ranks, goals), an object's own labels (max 50) and tags (max 50), and comment tree pages (bounded by the tree page limits in the Phase 2 contract and by at most 1000 comments per response across every level, with `moreChildren` on every parent whose replies were left out). A collection endpoint never qualifies for this exception merely because its source is a finite catalog. Settings, reaction catalogs, notification categories, AI catalogs, job definitions, metric definitions and pages all use section 2. Aggregate collections enumerate actual observations or groups, not a one-element wrapper around the entire collection.
 
 ### 2.5 Enforcement
 

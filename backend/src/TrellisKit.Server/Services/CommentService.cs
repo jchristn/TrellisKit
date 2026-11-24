@@ -61,6 +61,27 @@ namespace TrellisKit.Server.Services
         public const int MaxPageSize = 50;
 
         /// <summary>
+        /// Most comments in one tree response, counting every level (top-level comments, replies, and the permalink
+        /// subtree). Without it the per-level limits multiply (50 x 20 per level to depth 5). Parents whose replies were
+        /// left out still carry moreChildren, so clients continue on the children route.
+        /// </summary>
+        public const int MaxTreeNodes = 1000;
+
+        /// <summary>
+        /// The comment budget of one tree response, 1 to <see cref="MaxTreeNodes"/>. Default <see cref="MaxTreeNodes"/>.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">The value is outside 1 to MaxTreeNodes.</exception>
+        public int TreeNodeLimit
+        {
+            get { return _TreeNodeLimit; }
+            set
+            {
+                if (value < 1 || value > MaxTreeNodes) throw new ArgumentOutOfRangeException(nameof(value), "Use 1 to " + MaxTreeNodes + ".");
+                _TreeNodeLimit = value;
+            }
+        }
+
+        /// <summary>
         /// Resolves a forum thread conversation for reads (forWrite false) or new comments (forWrite true), applying the
         /// thread rules (Phase 3 section 4.10). Set by the forum module; null means thread comments are unavailable.
         /// </summary>
@@ -90,6 +111,8 @@ namespace TrellisKit.Server.Services
         #endregion
 
         #region Private-Members
+
+        private int _TreeNodeLimit = MaxTreeNodes;
 
         private readonly ApplicationServices _Services;
 
@@ -848,15 +871,26 @@ namespace TrellisKit.Server.Services
             Dictionary<string, int> totals = new Dictionary<string, int>(StringComparer.Ordinal);
             List<Comment> all = new List<Comment>(roots);
             List<Comment> current = roots;
+            int limit = _TreeNodeLimit;
             for (int level = 1; level < depth && current.Count > 0; level++)
             {
-                CommentLevel next = await _Services.Database.Comments.ListChildrenAsync(current.Select(c => c.Id).ToList(), ordering, childLimit, viewer, token).ConfigureAwait(false);
-                foreach (KeyValuePair<string, int> pair in next.Totals) totals[pair.Key] = pair.Value;
-                List<Comment> taken = new List<Comment>();
-                foreach (IGrouping<string, Comment> group in next.Comments.GroupBy(c => c.ParentCommentId!))
+                int budget = limit - all.Count;
+                List<Comment> expand = current.Take(Math.Max(0, budget)).ToList();
+                foreach (Comment skipped in current.Skip(expand.Count))
                 {
-                    List<Comment> kids = group.Take(childLimit).ToList();
-                    childrenOf[group.Key] = kids;
+                    totals[skipped.Id] = skipped.ChildCount;
+                    childrenOf[skipped.Id] = new List<Comment>();
+                }
+                if (expand.Count == 0) break;
+                CommentLevel next = await _Services.Database.Comments.ListChildrenAsync(expand.Select(c => c.Id).ToList(), ordering, childLimit, viewer, token).ConfigureAwait(false);
+                foreach (KeyValuePair<string, int> pair in next.Totals) totals[pair.Key] = pair.Value;
+                Dictionary<string, List<Comment>> fetched = next.Comments.GroupBy(c => c.ParentCommentId!).ToDictionary(g => g.Key, g => g.ToList(), StringComparer.Ordinal);
+                List<Comment> taken = new List<Comment>();
+                foreach (Comment parent in expand)
+                {
+                    List<Comment> kids = fetched.TryGetValue(parent.Id, out List<Comment>? group)
+                        ? group.Take(Math.Min(childLimit, budget - taken.Count)).ToList() : new List<Comment>();
+                    if (kids.Count > 0 || fetched.ContainsKey(parent.Id)) childrenOf[parent.Id] = kids;
                     taken.AddRange(kids);
                 }
                 all.AddRange(taken);

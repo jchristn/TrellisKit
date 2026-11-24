@@ -11,6 +11,7 @@ namespace Test.Shared.Suites
     using Touchstone.Core;
     using TrellisKit.Core.Enums;
     using TrellisKit.Core.Models;
+    using TrellisKit.Server.Services;
 
     /// <summary>
     /// Phase 2 threaded comments (contract section 7): tree pages, children continuation through the moreChildren
@@ -39,6 +40,7 @@ namespace Test.Shared.Suites
             return new TestSuiteDescriptor(Id, "Threaded comments (" + TestEnvironment.Provider + ")", new[]
             {
                 Case("Comments.TreePage", "Tree pages nest replies to depth with childLimit, report moreChildren and commentCount, and carry labels and tags", TreeAsync),
+                Case("Comments.TreeNodeCap", "A tree response holds at most CommentService.TreeNodeLimit comments across every level; parents whose replies were left out carry moreChildren, and the children route returns the rest", TreeNodeCapAsync),
                 Case("Comments.Children", "The moreChildren cursor continues a comment's replies on the children route whatever depth and childLimit, also as cursor, and only with its ordering", ChildrenAsync),
                 Case("Comments.Ordering", "Top orders by score then age; CreatedDescending and CreatedAscending order by time; unknown orderings are 400", OrderingAsync),
                 Case("Comments.Flattening", "A reply at comments.maxDepth is stored as a sibling with replyToCommentId and notifies the replied-to author", FlatteningAsync),
@@ -120,6 +122,50 @@ namespace Test.Shared.Suites
             JsonElement next = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/feed/" + post + "/comments?maxResults=1&childLimit=9&continuationToken=" + Uri.EscapeDataString(Api.Str(paged, "continuationToken")), m.AccessToken, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
             Check.True(ContentTestKit.Ids(next).SequenceEqual(new[] { r2 }), "Top-level continuation");
             Check.True(c3.Length > 0, "c3 created");
+        }
+
+        private static async Task TreeNodeCapAsync(HttpFixture f, CancellationToken ct)
+        {
+            TestMember poster = await ContentTestKit.PosterAsync(f, ct).ConfigureAwait(false);
+            f.Settings.Comments.NewAccountPerMinute = 1000;
+            string post = await ContentTestKit.PostIdAsync(f, poster.AccessToken, "Busy thread", ct).ConfigureAwait(false);
+            string r1 = await ContentTestKit.CommentIdAsync(f, poster.AccessToken, post, "root one", null, ct).ConfigureAwait(false);
+            string r2 = await ContentTestKit.CommentIdAsync(f, poster.AccessToken, post, "root two", null, ct).ConfigureAwait(false);
+            List<string> c = new List<string>();
+            for (int i = 0; i < 3; i++) c.Add(await ContentTestKit.CommentIdAsync(f, poster.AccessToken, post, "child " + i, r1, ct).ConfigureAwait(false));
+            List<string> d = new List<string>();
+            for (int i = 0; i < 2; i++) d.Add(await ContentTestKit.CommentIdAsync(f, poster.AccessToken, post, "other " + i, r2, ct).ConfigureAwait(false));
+            for (int i = 0; i < 2; i++) await ContentTestKit.CommentIdAsync(f, poster.AccessToken, post, "grandchild " + i, c[0], ct).ConfigureAwait(false);
+            Check.Equal(CommentService.MaxTreeNodes, f.Services.Comments.TreeNodeLimit, "Default budget");
+            Check.Throws<ArgumentOutOfRangeException>(() => f.Services.Comments.TreeNodeLimit = 0, "Budget must be positive");
+            Check.Throws<ArgumentOutOfRangeException>(() => f.Services.Comments.TreeNodeLimit = CommentService.MaxTreeNodes + 1, "Budget has a maximum");
+            f.Services.Comments.TreeNodeLimit = 5;
+            try
+            {
+                JsonElement page = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/feed/" + post + "/comments?depth=3&childLimit=5&ordering=CreatedAscending", poster.AccessToken, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
+                int nodes = 0;
+                void Count(JsonElement node) { nodes++; foreach (JsonElement child in node.GetProperty("children").EnumerateArray()) Count(child); }
+                foreach (JsonElement root in page.GetProperty("objects").EnumerateArray()) Count(root);
+                Check.Equal(5, nodes, "Exactly the budget of comments across levels");
+                JsonElement first = page.GetProperty("objects")[0];
+                JsonElement second = page.GetProperty("objects")[1];
+                Check.True(first.GetProperty("children").EnumerateArray().Select(x => Api.Str(x, "id")).SequenceEqual(c), "The first parent's replies fill the budget in order");
+                Check.Equal(0, second.GetProperty("children").GetArrayLength(), "The second parent's replies are left out");
+                JsonElement more = second.GetProperty("moreChildren");
+                Check.Equal(2, more.GetProperty("remainingCount").GetInt32(), "moreChildren counts the left-out replies");
+                Check.Equal("/api/v1/comments/" + r2 + "/children/enumerate", Api.Str(more, "enumerate"), "enumerate path for the rest");
+                JsonElement grandParent = first.GetProperty("children")[0];
+                Check.Equal(0, grandParent.GetProperty("children").GetArrayLength(), "No budget left for the next level");
+                Check.Equal(2, grandParent.GetProperty("moreChildren").GetProperty("remainingCount").GetInt32(), "Grandchildren left out are counted");
+                JsonElement rest = await Api.ExpectAsync(f, HttpMethod.Post, "/api/v1/comments/" + r2 + "/children/enumerate", poster.AccessToken, new { ordering = "CreatedAscending" }, HttpStatusCode.OK, ct).ConfigureAwait(false);
+                Check.True(ContentTestKit.Ids(rest).SequenceEqual(d), "The children route returns the left-out replies");
+                JsonElement permalink = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/comments/" + r1 + "?depth=3&childLimit=5", poster.AccessToken, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
+                Check.True(permalink.ValueKind == JsonValueKind.Object, "Permalink still answers under a small budget");
+            }
+            finally
+            {
+                f.Services.Comments.TreeNodeLimit = CommentService.MaxTreeNodes;
+            }
         }
 
         private static async Task ChildrenAsync(HttpFixture f, CancellationToken ct)

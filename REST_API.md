@@ -1360,6 +1360,7 @@ A tree page is an `EnumerationResult` of top-level comments, each with `children
 |---|---|
 | Orderings | `Top` (default: `score` descending, then `createdUtc` ascending, then id; `score` is `reactionTotal + 2 * childCount`), `CreatedDescending`, `CreatedAscending`. The ordering applies at every level |
 | Filters | `depth` (1 to 5, default 3; levels returned, counting the top level), `childLimit` (1 to 20, default 5; replies under each returned comment) |
+| Tree size | At most 1000 comments per response across every level (`CommentService.MaxTreeNodes`), including a permalink's subtree. Replies are filled level by level in page order; a parent whose replies were left out carries `moreChildren` (`remainingCount`, `enumerate`, and a `cursor` when some replies were returned), so clients continue on the children route as they do when `depth` or `childLimit` runs out |
 | Search | body |
 | Labels and tags | `Comment` (applied to the top-level comments) |
 | Page size | `maxResults` default 20, at most 50 (top-level comments) |
