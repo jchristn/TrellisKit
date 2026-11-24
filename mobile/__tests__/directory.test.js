@@ -1,7 +1,7 @@
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import { renderRouter } from 'expo-router/testing-library';
 import path from 'path';
-import { Dimensions } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import { directoryChips, directoryCollectionFilters, emptyDirectoryFilters } from '../src/profile/directory';
 import strings from '../src/strings';
 import { enumerationResult } from '../test-utils/community';
@@ -54,13 +54,14 @@ describe('directory filter state', () => {
 });
 
 describe('member directory screen', () => {
-  beforeEach(() => resetEnvironment());
-  afterEach(() => delete global.fetch);
+  beforeEach(() => { Platform.OS = 'android'; resetEnvironment(); });
+  afterEach(() => { Platform.OS = 'ios'; delete global.fetch; });
 
-  test('is reachable from the Profile tab and lists members with card fields; pages load by continuation token', async () => {
+  test('is reachable from the main drawer and lists members with card fields; pages load by continuation token', async () => {
     const server = directoryServer();
     const router = await renderRouter(APP_DIR, { initialUrl: '/profile' });
-    await fireEvent.press(await screen.findByTestId('profile-members'));
+    await fireEvent.press(await screen.findByTestId('header-menu'));
+    await fireEvent.press(await screen.findByTestId('drawer-members'));
     await waitFor(() => expect(router.getPathname()).toBe('/members'));
     expect(await screen.findByTestId('directory-member-usr_1')).toBeOnTheScreen();
     expect(server.called('POST /members/directory/enumerate')[0].body).toEqual({ maxResults: 25 });

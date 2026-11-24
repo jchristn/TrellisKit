@@ -1,4 +1,4 @@
-import { aiAvailable, propertyFeatureEnabled, signedOutBrowsable } from '@trelliskit/shared';
+import { aiAvailable, signedOutBrowsable } from '@trelliskit/shared';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 import AppText from '../../../src/components/AppText';
@@ -17,8 +17,8 @@ import { AccessPromptCard } from '../../../src/components/AccessPrompt';
 
 /**
  * Profile tab: the member's own profile from `Me.profile` (header with card fields, then bio and
- * every field shown on the profile, in profile order), the member directory, account settings,
- * the ideas board, announcements, help and support, About this app, and sign-out. Signed-out guests (anonymous browsing) get the sign-in prompt.
+ * every field shown on the profile, in profile order), account settings, About this app, and sign-out.
+ * Community destinations live in the main drawer. Signed-out guests (anonymous browsing) get the sign-in prompt.
  */
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -57,12 +57,7 @@ export default function ProfileScreen() {
       ) : (
       <Section title={t.settingsTitle} testID="profile-settings">
         <View style={{ gap: theme.spacing.md }}>
-          <Button label={t.members} accessibilityHint={t.membersHint} variant="secondary" onPress={() => router.push('/members')} testID="profile-members" />
           <Button label={t.account} accessibilityHint={t.accountHint} onPress={() => router.push('/account')} testID="profile-account" />
-          {propertyFeatureEnabled(property, 'ideas') ? <Button label={strings.ideas.menu} accessibilityHint={strings.ideas.menuHint} variant="secondary" onPress={() => router.push('/ideas')} testID="profile-ideas" /> : null}
-          <Button label={strings.announcements.menu} accessibilityHint={strings.announcements.menuHint} variant="secondary" onPress={() => router.push('/announcements')} testID="profile-announcements" />
-          <Button label={strings.support.menu} accessibilityHint={strings.support.menuHint} variant="secondary" onPress={() => router.push('/support')} testID="profile-support" />
-          {aiAvailable(property) ? <Button label={strings.assistants.menu} accessibilityHint={strings.assistants.menuHint} variant="secondary" onPress={() => router.push('/assistants')} testID="profile-assistants" /> : null}
           <Button label={t.about} accessibilityHint={t.aboutHint} variant="secondary" onPress={() => router.push('/profile/about')} />
           <Button label={t.signOut} accessibilityHint={t.signOutHint} variant="ghost" onPress={() => signOut({ notice: 'signedOut' })} testID="profile-sign-out" />
         </View>

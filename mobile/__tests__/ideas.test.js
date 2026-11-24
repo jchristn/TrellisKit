@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import { createBroadcastsFake, createIdeasFake } from '@trelliskit/shared/testing';
 import { renderRouter } from 'expo-router/testing-library';
@@ -20,8 +21,8 @@ function lastEnumerate(fake) {
   return fake.calls.filter((c) => c.path === '/ideas/enumerate').at(-1).body;
 }
 
-beforeEach(() => resetEnvironment());
-afterEach(() => delete global.fetch);
+beforeEach(() => { Platform.OS = 'android'; resetEnvironment(); });
+afterEach(() => { Platform.OS = 'ios'; delete global.fetch; });
 
 describe('ideas board', () => {
   test('lists ideas with votes and statuses, filters by status chips, and orders through the filter panel', async () => {
@@ -158,13 +159,14 @@ describe('ideas access', () => {
     expect(await screen.findByTestId('ideas-locked-prompt')).toBeOnTheScreen();
   });
 
-  test('the Profile tab links to ideas, announcements, and support', async () => {
+  test('the drawer links to ideas, announcements, and support', async () => {
     const { fake } = board();
     serveFakes([fake]);
     const router = await renderRouter(APP_DIR, { initialUrl: '/profile' });
-    expect(await screen.findByTestId('profile-announcements')).toBeOnTheScreen();
-    expect(screen.getByTestId('profile-support')).toBeOnTheScreen();
-    await fireEvent.press(screen.getByTestId('profile-ideas'));
+    await fireEvent.press(await screen.findByTestId('header-menu'));
+    expect(await screen.findByTestId('drawer-announcements')).toBeOnTheScreen();
+    expect(screen.getByTestId('drawer-support')).toBeOnTheScreen();
+    await fireEvent.press(screen.getByTestId('drawer-ideas'));
     await waitFor(() => expect(router.getPathname()).toBe('/ideas'));
   });
 });

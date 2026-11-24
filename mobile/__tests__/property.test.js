@@ -2,6 +2,7 @@ import { editorFields, emptyHistoryEntry, formatRankValue, profileFieldsOf, prop
 import { act, render, screen, waitFor } from '@testing-library/react-native';
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { AppState, Text } from 'react-native';
 import { createFileCache, loadCachedProperty, PropertyCacheFile, saveCachedProperty } from '../src/property/cache';
 import { storeConfig } from '../src/billing/purchases';
@@ -352,5 +353,27 @@ describe('PropertyProvider', () => {
   test('ignores an invalid runtime property', () => {
     expect(resolveProperty(active, { schemaVersion: 99 })).toBe(active);
     expect(propertyTokens(resolveProperty(active, plain)).name).toBe('Plain Reading Circle');
+  });
+});
+
+
+describe('mobile navigation build declarations', () => {
+  test('the build loader retains valid navigation and rejects unknown destinations before bundling', () => {
+    const { readProperty, publicProperty } = require('../scripts/property');
+    const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'navigation-property-'));
+    try {
+      const document = { ...plain, mobile: { ...plain.mobile, navigation: { drawerItems: ['members', 'feed'], shortcuts: ['members', 'messages'] } } };
+      const file = path.join(temporary, 'property.json');
+      fs.writeFileSync(file, JSON.stringify(document));
+      expect(publicProperty(readProperty(temporary)).mobile.navigation).toEqual(document.mobile.navigation);
+      document.mobile.navigation.shortcuts = ['members', '/admin'];
+      fs.writeFileSync(file, JSON.stringify(document));
+      expect(() => readProperty(temporary)).toThrow(/mobile.navigation.shortcuts\[1\]/);
+      document.mobile.navigation.shortcuts = [];
+      fs.writeFileSync(file, JSON.stringify(document));
+      expect(readProperty(temporary).mobile.navigation.shortcuts).toEqual([]);
+    } finally {
+      fs.rmSync(temporary, { recursive: true, force: true });
+    }
   });
 });

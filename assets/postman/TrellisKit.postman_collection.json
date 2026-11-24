@@ -746,7 +746,7 @@
           "name": "Read property",
           "request": {
             "method": "GET",
-            "description": "Everything in property.json except web, with absolute brand image URLs (brand.logoUrl, brand.iconUrl, brand.iconIcoUrl). Anonymous. X-Forwarded-Host is ignored (the document is cacheable): absolute URLs use the Host header only when it is a configured property domain or a loopback host, otherwise https:// plus domains.api. features adds the engine-computed flags forums and search (false until Phase 3).",
+            "description": "Everything in property.json except web, with absolute brand image URLs (brand.logoUrl, brand.iconUrl, brand.iconIcoUrl). Anonymous. X-Forwarded-Host is ignored (the document is cacheable): absolute URLs use the Host header only when it is a configured property domain or a loopback host, otherwise https:// plus domains.api. features adds the engine-computed flags forums and search (false until Phase 3). mobile.navigation optionally declares drawerItems (up to 15 distinct known destination IDs) and shortcuts (up to four; empty disables the bottom bar). Missing/null declarations preserve the client bundled/default navigation. See docs/TRELLISKIT.md section 2.3.",
             "header": [
               {
                 "key": "Accept",

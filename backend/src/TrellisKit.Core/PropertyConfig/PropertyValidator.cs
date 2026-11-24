@@ -36,6 +36,11 @@ namespace TrellisKit.Core.PropertyConfig
         private static readonly Regex _Email = new Regex("^[^@\\s]+@[^@\\s]+$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         private static readonly Regex _PathWord = new Regex("^[a-z0-9]+(-[a-z0-9]+)*$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
         private static readonly Regex _Slug = new Regex("^[a-z0-9]([a-z0-9-]{0,62}[a-z0-9])?$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        private static readonly HashSet<string> _MobileDestinations = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "feed", "forums", "members", "library", "events", "directory", "messages", "assistants",
+            "announcements", "ideas", "profile", "notifications", "support", "settings", "about"
+        };
         private static readonly string[] _Intervals = new[] { "Year", "Month" };
 
         #endregion
@@ -80,6 +85,7 @@ namespace TrellisKit.Core.PropertyConfig
                 EmailAddress(property.Contact.EmailFromAddress, "contact.emailFromAddress", problems);
             }
 
+            ValidateMobileNavigation(property.Mobile?.Navigation, problems);
             ValidateBrand(property.Brand, problems);
             ValidateMembership(property.Membership, property.Access?.Model != Enums.AccessModelEnum.Open, problems);
             ValidateAccess(property.Access, problems);
@@ -112,6 +118,26 @@ namespace TrellisKit.Core.PropertyConfig
         #endregion
 
         #region Private-Methods
+
+        private static void ValidateMobileNavigation(PropertyMobileNavigation? navigation, List<string> problems)
+        {
+            if (navigation == null) return;
+            ValidateDestinations(navigation.DrawerItems, "mobile.navigation.drawerItems", _MobileDestinations.Count, problems);
+            ValidateDestinations(navigation.Shortcuts, "mobile.navigation.shortcuts", PropertyMobileNavigation.MaxShortcuts, problems);
+        }
+
+        private static void ValidateDestinations(List<string>? destinations, string field, int maximum, List<string> problems)
+        {
+            if (destinations == null) return;
+            if (destinations.Count > maximum) problems.Add(field + " must contain at most " + maximum + " destinations");
+            HashSet<string> seen = new HashSet<string>(StringComparer.Ordinal);
+            for (int i = 0; i < destinations.Count; i++)
+            {
+                string id = destinations[i];
+                if (id == null || !_MobileDestinations.Contains(id)) problems.Add(field + "[" + i + "] must be a known destination");
+                else if (!seen.Add(id)) problems.Add(field + "[" + i + "] duplicates " + id);
+            }
+        }
 
         private static void ValidateBrand(PropertyBrand? brand, List<string> problems)
         {

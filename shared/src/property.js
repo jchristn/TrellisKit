@@ -11,6 +11,7 @@
 export const PropertySchemaVersion = 1;
 
 import { minimumAgeOf } from './access.js';
+import { validateMobileNavigation } from './mobileNavigation.js';
 
 const HEX_COLOR = /^#[0-9A-Fa-f]{6}$/;
 
@@ -156,6 +157,7 @@ export function validateProperty(property) {
       if (!nonEmpty(entry.emoji)) problems.push(at + '.emoji is required');
     });
   }
+  problems.push(...validateMobileNavigation(property.mobile?.navigation));
   return problems;
 }
 
@@ -188,8 +190,24 @@ export function loadProperty(source) {
  * @returns {object}
  */
 export function mergeProperty(base, runtime) {
-  if (!isObject(runtime) || validateProperty({ ...base, ...runtime }).length) return base;
-  return { ...base, ...runtime };
+  if (!isObject(runtime)) return base;
+  const merged = { ...base, ...runtime };
+  // Older servers serialize only mobile identity. Preserve the bundled navigation until the
+  // server knows it, and allow later servers to override either array independently.
+  if (isObject(base?.mobile) && isObject(runtime.mobile)) {
+    merged.mobile = { ...base.mobile, ...runtime.mobile };
+    const bundledNavigation = base.mobile.navigation;
+    const runtimeNavigation = runtime.mobile.navigation;
+    if (isObject(bundledNavigation) && (runtimeNavigation === undefined || runtimeNavigation === null)) {
+      merged.mobile.navigation = bundledNavigation;
+    } else if (isObject(bundledNavigation) && isObject(runtimeNavigation)) {
+      merged.mobile.navigation = { ...bundledNavigation, ...runtimeNavigation };
+      for (const key of ['drawerItems', 'shortcuts']) {
+        if (runtimeNavigation[key] === null || runtimeNavigation[key] === undefined) merged.mobile.navigation[key] = bundledNavigation[key];
+      }
+    }
+  }
+  return validateProperty(merged).length ? base : merged;
 }
 
 // ---- Server capabilities ----

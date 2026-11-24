@@ -300,11 +300,11 @@ describe('forums and search before the server ships them', () => {
 
   const forumCalls = (server) => server.calls.filter((c) => /^\/(forums|threads|search)(\/|$)/.test(c.path));
 
-  test('without features.forums the tab stays and shows Coming soon with no forum calls', async () => {
+  test('without features.forums navigation hides the shortcut and a direct link shows Coming soon with no forum calls', async () => {
     const server = installFakeServer({ 'GET /property': propertyWithFeatures({ forums: false }), ...signedInAs(makeUser()) });
     await renderRouter(APP_DIR, { initialUrl: '/forums' });
     expect(await screen.findByTestId('screen-forums-coming-soon')).toBeOnTheScreen();
-    expect(screen.getByTestId('tab-forums')).toBeOnTheScreen();
+    expect(screen.queryByTestId('tab-forums')).toBeNull();
     expect(screen.getByText('Coming soon')).toBeOnTheScreen();
     expect(screen.queryByTestId('screen-forums')).toBeNull();
     await waitFor(() => expect(server.called('GET /property').length).toBeGreaterThan(0));

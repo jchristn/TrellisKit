@@ -1,6 +1,5 @@
 import { catalogAccess } from '@trelliskit/shared';
-import { Stack } from 'expo-router';
-import { useState } from 'react';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { View } from 'react-native';
 import { useAuth } from '../../../src/auth/AuthProvider';
 import { BannerSlot } from '../../../src/appConfig';
@@ -25,7 +24,9 @@ export default function MapScreen() {
   const t = useDirectoryStrings();
   const places = featureOn(property, 'directory') && catalogAccess(property, user, 'directory', 'read').allowed;
   const events = featureOn(property, 'events') && catalogAccess(property, user, 'events', 'read').allowed;
-  const [section, setSection] = useState('places');
+  const { section = 'places' } = useLocalSearchParams();
+  const router = useRouter();
+  const setSection = (next) => router.setParams({ section: next });
   const current = section === 'places' && places ? 'places' : events ? 'events' : 'places';
   if (!places && !events) return <CatalogGate feature={featureOn(property, 'directory') ? 'directory' : 'events'}>{null}</CatalogGate>;
   return (

@@ -51,6 +51,9 @@ function readProperty(dir) {
   if (property.slug !== undefined && property.slug !== null && !SlugPattern.test(property.slug)) {
     throw new Error('Property ' + file + ' has an invalid slug: lower case letters, digits, and hyphens (1 to 63 characters)');
   }
+  const { validateMobileNavigation } = require('../../shared/src/mobileNavigation.js');
+  const navigationProblems = validateMobileNavigation(property.mobile.navigation);
+  if (navigationProblems.length) throw new Error('Property ' + file + ' is invalid: ' + navigationProblems.join('; '));
   return property;
 }
 

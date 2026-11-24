@@ -4,12 +4,14 @@ namespace Test.Shared.Suites
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Text.Json;
     using System.Text.Json.Nodes;
     using System.Threading;
     using System.Threading.Tasks;
     using Touchstone.Core;
     using TrellisKit.Core.Exceptions;
     using TrellisKit.Core.PropertyConfig;
+    using TrellisKit.Core.Responses;
 
     /// <summary>
     /// Property loading and validation: the sample property loads, the directory resolves by path, every validation
@@ -47,6 +49,23 @@ namespace Test.Shared.Suites
                     Check.Equal(0, PropertyValidator.Validate(property).Count, "No problems");
                     Check.True(property.FindRank(property.Profile.Rank.Values[0].Key.ToUpperInvariant())?.Key == property.Profile.Rank.Values[0].Key, "Rank lookup is case-insensitive and canonical");
                     Check.True(property.FindRank("NoSuchRank") == null && property.FindGoal(null) == null, "Unknown keys");
+                    return Task.CompletedTask;
+                }),
+                SuiteCases.Unit(Id, "Mobile.NavigationRoundTrip", "Configured navigation survives property parsing and public response serialization; omitted configuration stays null", ct =>
+                {
+                    PropertyConfiguration property = TestProperty.LoadSample();
+                    Check.True(property.Mobile.Navigation != null, "Sample declares generic navigation");
+                    Check.Equal("members", property.Mobile.Navigation!.DrawerItems![2], "Members is a top-level destination");
+                    PublicPropertyResponse response = new PublicPropertyResponse { Mobile = property.Mobile };
+                    JsonElement serialized = JsonSerializer.SerializeToElement(response, new JsonSerializerOptions(JsonSerializerDefaults.Web));
+                    JsonElement navigation = serialized.GetProperty("mobile").GetProperty("navigation");
+                    Check.Equal(4, navigation.GetProperty("shortcuts").GetArrayLength(), "Four default shortcuts");
+                    JsonObject document = (JsonObject)JsonNode.Parse(File.ReadAllText(Path.Combine(TestProperty.SampleDirectory, PropertyLoader.PropertyFileName)))!;
+                    Obj(document, "mobile").Remove("navigation");
+                    PropertyConfiguration legacy = PropertyLoader.Parse(document.ToJsonString(), "test");
+                    Check.True(legacy.Mobile.Navigation == null, "Legacy property leaves client defaults intact");
+                    property.Mobile.Navigation.Shortcuts = new List<string>();
+                    Check.Equal(0, PropertyValidator.Validate(property).Count, "Drawer-only navigation is valid");
                     return Task.CompletedTask;
                 }),
                 SuiteCases.Unit(Id, "Loader.Resolve", "The directory resolves from an absolute path, a relative path searched upward, or the sample default", ct =>
@@ -131,6 +150,11 @@ namespace Test.Shared.Suites
         {
             return new Dictionary<string, Action<JsonObject>>
             {
+                ["mobile.navigation.drawerItems[1]"] = j => Obj(Obj(j, "mobile"), "navigation")["drawerItems"] = new JsonArray("members", "members"),
+                ["mobile.navigation.drawerItems[0]"] = j => Obj(Obj(j, "mobile"), "navigation")["drawerItems"] = new JsonArray("unknown"),
+                ["mobile.navigation.shortcuts[0]"] = j => Obj(Obj(j, "mobile"), "navigation")["shortcuts"] = new JsonArray("/admin"),
+                ["mobile.navigation.shortcuts[1]"] = j => Obj(Obj(j, "mobile"), "navigation")["shortcuts"] = new JsonArray("feed", "feed"),
+                ["mobile.navigation.shortcuts"] = j => Obj(Obj(j, "mobile"), "navigation")["shortcuts"] = new JsonArray("feed", "forums", "members", "messages", "profile"),
                 ["schemaVersion"] = j => j["schemaVersion"] = 2,
                 ["id"] = j => j["id"] = "Not A Valid Id",
                 ["name"] = j => j["name"] = " ",

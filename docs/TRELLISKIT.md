@@ -183,6 +183,28 @@ The optional `publicPages` section turns the server-rendered landing pages on or
 
 ---
 
+### 2.3 Mobile navigation (`mobile.navigation`)
+
+The mobile app has a complete side drawer, opened from the upper-left menu button, and up to four bottom shortcuts on top-level screens. Members is a community destination, not a Settings action. The engine owns routing and access rules; each property owns its ordering and shortcuts:
+
+```json
+"mobile": {
+  "navigation": {
+    "drawerItems": ["feed", "forums", "members", "library", "events", "directory", "messages", "notifications", "announcements", "ideas", "assistants", "profile", "support", "settings", "about"],
+    "shortcuts": ["feed", "forums", "messages", "profile"]
+  }
+}
+```
+
+- Supported identifiers are exactly those shown in `drawerItems`. Values are case-sensitive identifiers, not arbitrary routes. Arrays must have distinct known entries; `shortcuts` accepts at most four and `drawerItems` at most 15. The server and mobile build loader reject invalid declarations.
+- Missing/null navigation or arrays use engine defaults. An explicit empty `shortcuts` array hides the bottom bar. Drawer order is a preference: omitted known destinations are appended, so a configuration cannot make enabled screens unreachable. Community destinations and account/help destinations render in separate groups.
+- Both surfaces resolve from the same registry (`shared/src/mobileNavigation.js`). Feature switches hide disabled destinations. Assistants requires the server's `features.ai === true`. Guests see only anonymously browsable destinations plus Profile and About; account actions, Members and Messages require sign-in. Partially gated signed-in features stay visible with lock badges. Destination screens and the server enforce authorization; navigation never grants access.
+- Labels use the app string catalog. Members uses `terminology.members`, and the venue directory uses `directory.venueLabelPlural`. Events and the venue directory are separate destinations into the existing Map screen (`/map?section=events` and `/map?section=places`). Existing deep-link routes remain valid.
+- `GET /api/v1/property` returns the declaration under `mobile.navigation`. A runtime declaration overrides bundled values per array. An older server that omits navigation or sends null preserves the bundled declaration. Consequently a client-only release can adopt a property's new navigation before a server upgrade; offline startup uses the bundled configuration.
+- Detail screens retain their Back action. The drawer closes after selection, outside tap, accessibility escape, and Android Back. Onboarding and paywall flows retain their existing access gates. The UI supports safe areas, light/dark schemes, scrolling at large text sizes, and tablet widths.
+
+---
+
 ## 3. API changes (engine-neutral names)
 
 Phase 1 profile fields are renamed. A migration renames the columns (no data loss); the API uses only the new names.

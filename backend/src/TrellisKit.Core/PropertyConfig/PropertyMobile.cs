@@ -9,7 +9,23 @@ namespace TrellisKit.Core.PropertyConfig
     /// </summary>
     public class PropertyMobile
     {
+        #region Private-Members
+
+        private PropertyMobileNavigation? _Navigation = null;
+
+        #endregion
+
         #region Public-Members
+
+        /// <summary>
+        /// Optional mobile drawer order and bottom shortcuts. Null retains the bundled or engine defaults.
+        /// </summary>
+        public PropertyMobileNavigation? Navigation
+        {
+            get => _Navigation;
+            set => _Navigation = value;
+        }
+
 
         /// <summary>
         /// iOS bundle identifier.

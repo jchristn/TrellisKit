@@ -63,7 +63,11 @@ describe('conversation list', () => {
     const router = await renderRouter(APP_DIR, { initialUrl: '/feed' });
     const badge = await screen.findByTestId('header-messages-badge', { includeHiddenElements: true });
     expect(badge).toHaveTextContent('2');
-    expect(screen.getByLabelText(strings.header.messagesUnread('2'))).toBeOnTheScreen();
+    expect(screen.getByTestId('header-messages')).toHaveProp('accessibilityLabel', strings.header.messagesUnread('2'));
+    if (screen.queryByTestId('tab-messages')) {
+      expect(screen.getByTestId('tab-messages')).toHaveProp('accessibilityLabel', strings.navigation.unread(strings.messaging.title, '2'));
+      expect(screen.getByTestId('tab-messages-badge', { includeHiddenElements: true })).toHaveTextContent('2');
+    }
     await fireEvent.press(screen.getByTestId('header-messages'));
     await waitFor(() => expect(router.getPathname()).toBe('/messages'));
   });

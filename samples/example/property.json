@@ -52,7 +52,32 @@
     "bundleId": "test.example.trelliskit",
     "androidPackage": "test.example.trelliskit",
     "scheme": "trelliskitexample",
-    "easProjectId": ""
+    "easProjectId": "",
+    "navigation": {
+      "drawerItems": [
+        "feed",
+        "forums",
+        "members",
+        "library",
+        "events",
+        "directory",
+        "messages",
+        "notifications",
+        "announcements",
+        "ideas",
+        "assistants",
+        "profile",
+        "support",
+        "settings",
+        "about"
+      ],
+      "shortcuts": [
+        "feed",
+        "forums",
+        "messages",
+        "profile"
+      ]
+    }
   },
   "membership": {
     "productName": "Example Membership",

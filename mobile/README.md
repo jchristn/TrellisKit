@@ -2,6 +2,12 @@
 
 The TrellisKit engine's iOS and Android app (phone and tablet), built with React Native, Expo (SDK 58), and Expo Router. The app is engine code only: the property it runs as (name, brand, colors, icons, splash, domains, minimum age, store product id, profile taxonomy) comes from a property folder (see `docs/TRELLISKIT.md`).
 
+## Navigation
+
+The upper-left menu opens the complete side drawer. Members is a community destination; Settings contains account preferences. A property chooses up to four bottom shortcuts through `mobile.navigation.shortcuts`, while `mobile.navigation.drawerItems` sets the drawer order. The neutral sample uses Feed, Forums, Messages and Profile shortcuts. An empty shortcuts array selects drawer-only navigation.
+
+The [navigation contract](../docs/TRELLISKIT.md#23-mobile-navigation-mobilenavigation) lists identifiers, defaults, validation and access behavior. Both surfaces share `resolveMobileNavigation` from `@trelliskit/shared`, including feature visibility, guest restrictions, lock badges and property terminology. The drawer preserves existing deep links and detail Back behavior. The app keeps its bundled navigation when an older server's public property response lacks the new field.
+
 ## Property
 
 The active property is selected only by directory path, `TK_PROPERTY_DIR`: absolute, or relative to the engine root (the folder that contains `mobile/`). When it is unset the neutral sample property, `samples/example` (Example Community), is used. Nothing in `mobile/` names a specific property.

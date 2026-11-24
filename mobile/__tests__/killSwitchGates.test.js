@@ -7,7 +7,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { renderRouter } from 'expo-router/testing-library';
 import path from 'path';
-import { Text } from 'react-native';
+import { Text, Platform } from 'react-native';
 import bundled from '../assets/app-manifest.json';
 import { AppContentProvider, createMemoryStorage, createMobileAppContentStore, killSwitchKeyFor, useKillSwitch } from '../src/appConfig';
 import strings from '../src/strings';
@@ -43,10 +43,10 @@ describe('kill switch keys', () => {
 });
 
 describe('kill switch gates on a phone', () => {
-  beforeEach(() => resetEnvironment());
-  afterEach(() => delete global.fetch);
+  beforeEach(() => { Platform.OS = 'android'; resetEnvironment(); });
+  afterEach(() => { Platform.OS = 'ios'; delete global.fetch; });
 
-  test('a killed forums feature shows the operator message and never lists forums; Try again rechecks', async () => {
+  test('opening a killed forums feature from the drawer shows the operator message and never lists forums; Try again rechecks', async () => {
     let killed = true;
     const server = installFakeServer({
       'GET /property': propertyWithFeatures({ forums: true, search: true }),
@@ -54,7 +54,9 @@ describe('kill switch gates on a phone', () => {
       'GET /app/manifest': () => manifest(killed ? { forums: { killed: true, message: 'Forums are paused for maintenance.' } } : {}),
       'POST /forums/enumerate': enumerationResult([])
     });
-    await renderRouter(APP_DIR, { initialUrl: '/forums' });
+    await renderRouter(APP_DIR, { initialUrl: '/profile' });
+    await fireEvent.press(await screen.findByTestId('header-menu'));
+    await fireEvent.press(screen.getByTestId('drawer-forums'));
     expect(await screen.findByTestId('feature-off-forums')).toBeOnTheScreen();
     expect(screen.getByText('Forums are paused for maintenance.')).toBeOnTheScreen();
     const listed = server.called('POST /forums/enumerate').length;

@@ -41,7 +41,8 @@ describe('directory helpers', () => {
     expect(t.title).toBe('Studios');
     expect(t.addVenue).toBe('Add a Studio');
     expect(t.instructorCount(2)).toBe('2 Teachers');
-    expect(directoryStrings(property).title).toBe('Venues');
+    expect(directoryStrings({ ...property, directory: {} }).title).toBe('Venues');
+    expect(directoryStrings(property).title).toBe(property.directory?.venueLabelPlural || 'Venues');
   });
 
   test('venue filters carry programs, visitors, verified, and a near position', () => {

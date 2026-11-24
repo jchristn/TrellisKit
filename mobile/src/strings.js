@@ -14,6 +14,15 @@ import { fillDeep, fillFromProperty, getBundledProperty } from './property/prope
 export const stringTemplates = Object.freeze({
   appName: '{name}',
 
+  navigation: {
+    menu: 'Menu',
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
+    settings: 'Settings',
+    accountSection: 'Your account',
+    unread: (label, count) => label + ', ' + count + ' unread'
+  },
+
   metadataBadges: {
     label: (label) => 'Label ' + label,
     tag: (tag) => 'Tag ' + tag,

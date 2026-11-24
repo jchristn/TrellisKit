@@ -2,6 +2,7 @@ import { createElement } from 'react';
 import { Platform } from 'react-native';
 import IconButton from '../components/IconButton';
 import strings from '../strings';
+import { drawerHeaderOptions, useAppNavigation } from '../navigation/AppNavigation';
 import { useTheme } from '../theme';
 import { useReducedMotion } from './useReducedMotion';
 
@@ -61,7 +62,11 @@ export function needsParentBackButton(navigation, route) {
  */
 export function useNestedStackOptions(extra = {}, os = Platform.OS) {
   const base = useStackOptions(extra);
+  const appNavigation = useAppNavigation();
   return ({ navigation, route }) => {
+    if (appNavigation?.enabled && appNavigation.isMainDestination && (route?.name === 'index' || route?.name === 'about')) {
+      return { ...base, ...drawerHeaderOptions(appNavigation, os) };
+    }
     const goBack = () => navigation.goBack();
     if (os === 'ios') {
       return {
@@ -99,5 +104,7 @@ export function useNestedStackOptions(extra = {}, os = Platform.OS) {
 export function useTabStackOptions(extra = {}, os = Platform.OS) {
   const base = useStackOptions(extra);
   const nested = useNestedStackOptions(extra, os);
-  return (props) => (props && props.route && props.route.name === 'index' ? base : nested(props));
+  const appNavigation = useAppNavigation();
+  const home = appNavigation?.enabled ? { ...base, ...drawerHeaderOptions(appNavigation, os) } : base;
+  return (props) => (props && props.route && props.route.name === 'index' ? home : nested(props));
 }

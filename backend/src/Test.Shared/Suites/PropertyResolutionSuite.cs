@@ -42,7 +42,10 @@ namespace Test.Shared.Suites
             {
                 SuiteCases.Http(Id, "Single.HeadersValidated", "SingleProperty: no header resolves the one property; its id and app ids work; another id is 404 PropertyNotFound; an unknown app is 403 AppNotRegistered; platform routes are 404 NotAvailable", async (f, ct) =>
                 {
-                    await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/property", null, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
+                    JsonElement publicProperty = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/property", null, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
+                    JsonElement navigation = publicProperty.GetProperty("mobile").GetProperty("navigation");
+                    Check.Equal("members", navigation.GetProperty("drawerItems")[2].GetString(), "Public property exposes the navigation declaration");
+                    Check.Equal(4, navigation.GetProperty("shortcuts").GetArrayLength(), "Public property keeps all configured shortcuts");
                     await SendAsync(f, "/api/v1/property", TestProperty.SampleId, "test.example.trelliskit", HttpStatusCode.OK, null).ConfigureAwait(false);
                     await SendAsync(f, "/api/v1/property", "app_mwczw7zz_Unknown0Property00", null, HttpStatusCode.NotFound, "PropertyNotFound").ConfigureAwait(false);
                     await SendAsync(f, "/api/v1/property", null, "com.unknown.app", HttpStatusCode.Forbidden, "AppNotRegistered").ConfigureAwait(false);

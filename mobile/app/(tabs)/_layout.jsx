@@ -5,6 +5,7 @@ import { Tabs } from 'expo-router/js-tabs';
 import { GlobalBannerFrame } from '../../src/appConfig';
 import HeaderActions from '../../src/components/HeaderActions';
 import Loading from '../../src/components/Loading';
+import { DrawerMenuButton } from '../../src/navigation/AppNavigation';
 import { useAuth } from '../../src/auth/AuthProvider';
 import { canEnterTabs, isGuest, nextRoute } from '../../src/auth/routing';
 import { featureOn } from '../../src/content/phase4';
@@ -48,10 +49,12 @@ export default function TabsLayout() {
   return (
     <GlobalBannerFrame>
     <Tabs
+      tabBar={() => null}
       screenOptions={{
         headerStyle: { backgroundColor: theme.colors.tabBar },
         headerTintColor: theme.colors.text,
         headerRight: () => <HeaderActions />,
+        headerLeft: () => <DrawerMenuButton />,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.tabInactive,
         tabBarStyle: { backgroundColor: theme.colors.tabBar, borderTopColor: theme.colors.border },

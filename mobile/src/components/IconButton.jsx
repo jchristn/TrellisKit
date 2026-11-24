@@ -7,11 +7,12 @@ import AppText from './AppText';
  * Icon-only (or icon and short text) button with a 44 point target. `label` is the accessible
  * name; `text` is optional visible text next to the icon.
  */
-export default function IconButton({ icon, label, text, onPress, onLongPress, color = 'text', disabled = false, selected, accessibilityHint, badge, testID, style }) {
+export default function IconButton({ icon, label, text, onPress, onLongPress, color = 'text', disabled = false, selected, accessibilityHint, badge, testID, style, buttonRef }) {
   const theme = useTheme();
   const tint = theme.colors[color] || color;
   return (
     <Pressable
+      ref={buttonRef}
       testID={testID}
       onPress={disabled ? undefined : onPress}
       onLongPress={disabled ? undefined : onLongPress}

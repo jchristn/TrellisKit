@@ -16,6 +16,7 @@ import { MessagingProvider } from '../src/messaging/MessagingProvider';
 import { NotificationsProvider } from '../src/notifications/NotificationsProvider';
 import PushRegistration from '../src/notifications/PushRegistration';
 import LibrarySync from '../src/library/LibrarySync';
+import { AppNavigationProvider, drawerHeaderOptions, useAppNavigation } from '../src/navigation/AppNavigation';
 import { PropertyProvider } from '../src/property';
 import strings from '../src/strings';
 import { toNavigationTheme, useTheme } from '../src/theme';
@@ -42,6 +43,38 @@ function AppFrame({ children }) {
   );
 }
 
+/** Native stack headers read the drawer context supplied outside AppFrame's inset adjustment. */
+function AppStack() {
+  const screenOptions = useStackOptions();
+  const menuOptions = drawerHeaderOptions(useAppNavigation());
+  return (
+    <Stack screenOptions={screenOptions}>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="(onboarding)" options={{ title: strings.common.back, headerShown: false }} />
+      <Stack.Screen name="(setup)" options={{ title: strings.common.back, headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name="(tabs)" options={{ title: strings.common.back, headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name="account" options={{ headerShown: false }} />
+      <Stack.Screen name="documents" options={{ title: strings.common.back, headerShown: false }} />
+      <Stack.Screen name="messages" options={{ title: strings.common.back, headerShown: false }} />
+      <Stack.Screen name="support" options={{ title: strings.common.back, headerShown: false }} />
+      <Stack.Screen name="ideas" options={{ title: strings.common.back, headerShown: false }} />
+      <Stack.Screen name="announcements" options={{ title: strings.common.back, headerShown: false }} />
+      <Stack.Screen name="notifications" options={{ title: strings.notifications.title, ...menuOptions }} />
+      <Stack.Screen name="compose" options={{ title: strings.composer.newTitle, presentation: 'modal' }} />
+      <Stack.Screen name="members" options={{ headerShown: false }} />
+      <Stack.Screen name="threads" options={{ headerShown: false }} />
+      <Stack.Screen name="assistants" options={{ headerShown: false }} />
+      <Stack.Screen name="venues" options={{ headerShown: false }} />
+      <Stack.Screen name="instructors" options={{ headerShown: false }} />
+      <Stack.Screen name="directory" options={{ headerShown: false }} />
+      <Stack.Screen name="events" options={{ headerShown: false }} />
+      <Stack.Screen name="series" options={{ headerShown: false }} />
+      <Stack.Screen name="lessons" options={{ headerShown: false }} />
+      <Stack.Screen name="compose-thread" options={{ title: strings.forums.composer.newTitle, presentation: 'modal' }} />
+    </Stack>
+  );
+}
+
 /**
  * Root navigator: property, session, purchases, push, media grant, and notification providers;
  * onboarding, setup, tabs, account, header screens, the post composer, member profiles, messages, support, ideas, and announcements. MessagingProvider owns the realtime client of a signed-in session. PropertyProvider fetches GET /api/v1/property at launch and falls
@@ -52,7 +85,6 @@ function AppFrame({ children }) {
  */
 export default function RootLayout() {
   const theme = useTheme();
-  const screenOptions = useStackOptions();
   return (
     <SafeAreaProvider>
       <PropertyProvider>
@@ -69,32 +101,11 @@ export default function RootLayout() {
           <NotificationsProvider>
           <MessagingProvider>
           <ThemeProvider value={toNavigationTheme(theme)}>
-            <AppFrame>
-              <Stack screenOptions={screenOptions}>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen name="(onboarding)" options={{ title: strings.common.back, headerShown: false }} />
-                <Stack.Screen name="(setup)" options={{ title: strings.common.back, headerShown: false, gestureEnabled: false }} />
-                <Stack.Screen name="(tabs)" options={{ title: strings.common.back, headerShown: false, gestureEnabled: false }} />
-                <Stack.Screen name="account" options={{ headerShown: false }} />
-                <Stack.Screen name="documents" options={{ title: strings.common.back, headerShown: false }} />
-                <Stack.Screen name="messages" options={{ title: strings.common.back, headerShown: false }} />
-                <Stack.Screen name="support" options={{ title: strings.common.back, headerShown: false }} />
-                <Stack.Screen name="ideas" options={{ title: strings.common.back, headerShown: false }} />
-                <Stack.Screen name="announcements" options={{ title: strings.common.back, headerShown: false }} />
-                <Stack.Screen name="notifications" options={{ title: strings.notifications.title }} />
-                <Stack.Screen name="compose" options={{ title: strings.composer.newTitle, presentation: 'modal' }} />
-                <Stack.Screen name="members" options={{ headerShown: false }} />
-                <Stack.Screen name="threads" options={{ headerShown: false }} />
-                <Stack.Screen name="assistants" options={{ headerShown: false }} />
-                <Stack.Screen name="venues" options={{ headerShown: false }} />
-                <Stack.Screen name="instructors" options={{ headerShown: false }} />
-                <Stack.Screen name="directory" options={{ headerShown: false }} />
-                <Stack.Screen name="events" options={{ headerShown: false }} />
-                <Stack.Screen name="series" options={{ headerShown: false }} />
-                <Stack.Screen name="lessons" options={{ headerShown: false }} />
-                <Stack.Screen name="compose-thread" options={{ title: strings.forums.composer.newTitle, presentation: 'modal' }} />
-              </Stack>
-            </AppFrame>
+            <AppNavigationProvider>
+              <AppFrame>
+                <AppStack />
+              </AppFrame>
+            </AppNavigationProvider>
           </ThemeProvider>
           </MessagingProvider>
           </NotificationsProvider>

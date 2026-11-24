@@ -4,6 +4,12 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (mobile navigation)
+
+- A complete top-left side drawer with separate community and account destinations, plus up to four property-selected bottom shortcuts. Members is a first-class destination instead of a Settings item.
+- Property-owned drawer ordering and shortcuts under `mobile.navigation`, validated by the backend and mobile build tooling. Both navigation surfaces use the same feature, access, terminology and unread-count rules.
+- Existing deep links and detail-screen Back behavior remain intact. Events and venue directories have separate menu entries, and older servers preserve the navigation bundled with the app.
+
 ### Changed (collection contracts)
 
 - Collection retrievals, including fixed catalogs, metrics, maps, update adoption and autocomplete, use `EnumerationQuery` and `EnumerationResult<T>`. Raw arrays and custom list wrappers are replaced by `objects` with bounded pages, scoped cursors, filtering and counts. Clients and SDK consumers must use the updated contracts.
