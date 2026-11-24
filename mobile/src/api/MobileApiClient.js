@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { aiMethods, ApiError, appearanceMethods, broadcastsMethods, directMessagesApi, directoryMethods, eventMethods, forumMethods, ideasMethods, libraryMethods, messagingMethods, parseRetryAfter, publicPageMethods, supportMethods } from '@trelliskit/shared';
+import { aiMethods, ApiError, appearanceMethods, broadcastsMethods, directMessagesApi, directoryMethods, eventMethods, forumMethods, ideasMethods, libraryMethods, messagingMethods, metricsMethods, parseRetryAfter, publicPageMethods, supportMethods } from '@trelliskit/shared';
 
 /** Value of the X-Client header for every request from the app. */
 export const ClientName = 'mobile';
@@ -450,4 +450,4 @@ Object.assign(MobileApiClient.prototype, forumMethods, aiMethods, libraryMethods
 Object.assign(MobileApiClient.prototype, messagingMethods, supportMethods, ideasMethods, broadcastsMethods, appearanceMethods);
 
 // Public landing pages: the member's opt-in profile page and slug checks (docs/PHASE4_CONTRACT.md section 18).
-Object.assign(MobileApiClient.prototype, publicPageMethods);
+Object.assign(MobileApiClient.prototype, publicPageMethods, metricsMethods);

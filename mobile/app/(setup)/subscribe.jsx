@@ -13,7 +13,7 @@ import { hasMemberAccess, needsPaywall, nextRoute } from '../../src/auth/routing
 import { usePurchases } from '../../src/billing/PurchaseProvider';
 import { usePaywall } from '../../src/billing/usePaywall';
 import { paywallDocuments } from '../../src/documents/documents';
-import { openInAppBrowser, PrivacyUrl, TermsUrl } from '../../src/links';
+import { openAppLink, PrivacyUrl, TermsUrl } from '../../src/links';
 import strings from '../../src/strings';
 import { useTheme } from '../../src/theme';
 import { useProperty } from '../../src/property';
@@ -107,8 +107,8 @@ export default function SubscribeScreen() {
         <DocumentLinks documents={legalDocuments} testID="paywall-document" />
       ) : (
         <View style={{ flexDirection: 'row', gap: theme.spacing.lg, flexWrap: 'wrap' }}>
-          <LinkButton label={t.terms} role="link" onPress={() => openInAppBrowser(TermsUrl)} testID="paywall-terms-link" />
-          <LinkButton label={t.privacy} role="link" onPress={() => openInAppBrowser(PrivacyUrl)} testID="paywall-privacy-link" />
+          <LinkButton label={t.terms} role="link" onPress={() => openAppLink(TermsUrl)} testID="paywall-terms-link" />
+          <LinkButton label={t.privacy} role="link" onPress={() => openAppLink(PrivacyUrl)} testID="paywall-privacy-link" />
         </View>
       )}
 

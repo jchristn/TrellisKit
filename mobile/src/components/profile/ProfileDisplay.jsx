@@ -1,8 +1,9 @@
 import { cardFields, formatProfileValue, formatRankValue, hasProfileValue, historyEntryParts, optionColor, profilePageFields, urlHost } from '@trelliskit/shared';
 import { useRouter } from 'expo-router';
-import { Linking, Pressable, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useProfileFields } from '../../profile/fields';
 import strings from '../../strings';
+import { openAppLink } from '../../links';
 import { useTheme } from '../../theme';
 import AppText from '../AppText';
 
@@ -47,7 +48,7 @@ export function RankBadge({ field, value, variant = 'swatch', textVariant = 'bod
 
 function LinkText({ text, url, hint, testID }) {
   return (
-    <Pressable onPress={() => Linking.openURL(url).catch(() => {})} accessibilityRole="link" accessibilityHint={hint} hitSlop={6} testID={testID}>
+    <Pressable onPress={() => openAppLink(url).catch(() => {})} accessibilityRole="link" accessibilityHint={hint} hitSlop={6} testID={testID}>
       <AppText color="primary" style={{ textDecorationLine: 'underline' }}>
         {text}
       </AppText>

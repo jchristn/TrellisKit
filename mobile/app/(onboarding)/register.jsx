@@ -15,7 +15,7 @@ import { useAuth } from '../../src/auth/AuthProvider';
 import { describeError, fieldErrorsOf } from '../../src/auth/errors';
 import { acceptedDocumentsBody, documentPath, joinTitles, separateDocuments, termsDocuments } from '../../src/documents/documents';
 import { validateRegistration } from '../../src/forms';
-import { openInAppBrowser, PrivacyUrl, TermsUrl } from '../../src/links';
+import { openAppLink, PrivacyUrl, TermsUrl } from '../../src/links';
 import { useProperty } from '../../src/property';
 import { offerToSavePassword } from '../../src/native/sharedCredentials';
 import strings from '../../src/strings';
@@ -119,8 +119,8 @@ export default function RegisterScreen() {
           <DocumentLinks documents={covered} testID="register-terms-link" />
         ) : (
           <View style={{ flexDirection: 'row', gap: theme.spacing.lg, flexWrap: 'wrap' }}>
-            <LinkButton label={strings.paywall.terms} role="link" onPress={() => openInAppBrowser(TermsUrl)} />
-            <LinkButton label={strings.paywall.privacy} role="link" onPress={() => openInAppBrowser(PrivacyUrl)} />
+            <LinkButton label={strings.paywall.terms} role="link" onPress={() => openAppLink(TermsUrl)} />
+            <LinkButton label={strings.paywall.privacy} role="link" onPress={() => openAppLink(PrivacyUrl)} />
           </View>
         )}
       </CheckRow>

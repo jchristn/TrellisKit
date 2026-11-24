@@ -1,14 +1,14 @@
 import { formatDuration, isLockedItem, levelLabels, libraryConfig, lockedRequirement, progressPercent } from '@trelliskit/shared';
-import { File, Paths } from 'expo-file-system';
 import { useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { useAuth } from '../../auth/AuthProvider';
 import { describeFeatureError, documentUrl, featureOn } from '../../content/phase4';
 import { useIsOffline } from '../../hooks/useNetworkStatus';
 import { useResource } from '../../hooks/useResource';
 import { downloadLesson, findDownload, onDownloadsChange, removeDownload } from '../../library/downloads';
-import { openInAppBrowser } from '../../links';
+import { openAppLink } from '../../links';
+import { shareDownloadedFile } from '../../downloads';
 import { useMedia } from '../../media/MediaProvider';
 import { useProperty } from '../../property';
 import strings from '../../strings';
@@ -44,11 +44,9 @@ async function openDocument(mediaContext, media, title) {
   if (!resolved) return;
   try {
     const name = (media.id || 'document') + (media.contentType === 'text/vtt' ? '.vtt' : '.pdf');
-    const file = await File.downloadFileAsync(resolved.uri, new File(Paths.cache, name), { headers: resolved.headers, idempotent: true });
-    if (file && typeof file.preview === 'function') await file.preview({ title });
-    else await openInAppBrowser(resolved.uri);
+    await shareDownloadedFile(resolved.uri, { name, headers: resolved.headers, mimeType: media.contentType });
   } catch {
-    await openInAppBrowser(resolved.uri);
+    Alert.alert(strings.links.downloadFailedTitle, strings.links.downloadFailedBody);
   }
 }
 
@@ -191,7 +189,7 @@ export function LessonInfo({ lesson, onChange, onSeek, testID = 'lesson' }) {
                 {r.text ? <AppText color="textMuted">{r.text}</AppText> : null}
               </View>
             ) : (
-              <Button key={r.id} label={r.title + ' (' + (t.resourceKinds[r.kind] || r.kind) + ')'} accessibilityLabel={t.openResource(r.title)} variant="ghost" onPress={() => (r.kind === 'Link' && r.url ? openInAppBrowser(r.url) : openDocument(mediaContext, r.media, r.title))} style={{ alignSelf: 'auto' }} testID={'resource-' + r.id} />
+              <Button key={r.id} label={r.title + ' (' + (t.resourceKinds[r.kind] || r.kind) + ')'} accessibilityLabel={t.openResource(r.title)} variant="ghost" onPress={() => (r.kind === 'Link' && r.url ? openAppLink(r.url) : openDocument(mediaContext, r.media, r.title))} style={{ alignSelf: 'auto' }} testID={'resource-' + r.id} />
             )
           )}
         </Block>

@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { findDocumentBySlug, isInternalHref, isSafeHref, parseMarkdown } from '@trelliskit/shared';
-import { Linking, Platform, ScrollView, Text, View } from 'react-native';
+import { parseMarkdown } from '@trelliskit/shared';
+import { Platform, ScrollView, Text, View } from 'react-native';
 import { useProperty } from '../../property';
+import { openAppLink } from '../../links';
 import strings from '../../strings';
 import { useTheme } from '../../theme';
 
@@ -10,7 +11,7 @@ import { useTheme } from '../../theme';
  * Renders a post or comment body from the shared Markdown subset (@trelliskit/shared markdown.js,
  * the same parser the website uses) as native Text and View elements: headings, emphasis, inline
  * and fenced code, lists, quotes, rules, tables, links, and mentions. Never HTML and never a
- * WebView. Links open in the system browser (http and https only); mentions that the server
+ * WebView. Links stay in native routes or an embedded external page; mentions that the server
  * resolved link to the member's profile.
  * @param {object} props
  * @param {string} props.body
@@ -26,21 +27,7 @@ export default function MarkdownBody({ body, mentions, headings = true, code = f
   const mono = Platform.select({ ios: 'Menlo', default: 'monospace' });
   if (!blocks.length) return null;
 
-  const openLink = (href) => {
-    if (isInternalHref(href)) {
-      // A site path: a property document (for example /terms) opens in the app; any other path opens on the
-      // property's website.
-      const doc = findDocumentBySlug(property, href.split(/[?#]/)[0]);
-      if (doc) {
-        router.push('/documents/' + encodeURIComponent(doc.key));
-        return;
-      }
-      const web = property && property.domains && property.domains.web;
-      if (web) Linking.openURL('https://' + web + href).catch(() => {});
-      return;
-    }
-    if (isSafeHref(href)) Linking.openURL(href).catch(() => {});
-  };
+  const openLink = (href) => openAppLink(href, { property, router }).catch(() => {});
 
   const inline = (nodes, keyPrefix) =>
     nodes.map((node, i) => {

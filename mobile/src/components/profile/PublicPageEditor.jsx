@@ -1,10 +1,11 @@
 import { normalizeSlugInput, PublicPageKind, publicPagesConfig, publicPageUrl, slugProblem } from '@trelliskit/shared';
 import { useCallback, useEffect, useState } from 'react';
-import { Linking, Share, View } from 'react-native';
+import { Share, View } from 'react-native';
 import { describeError, fieldErrorsOf } from '../../auth/errors';
 import { useSlugAvailability } from '../../hooks/useSlugAvailability';
 import { useProperty } from '../../property/PropertyProvider';
 import strings from '../../strings';
+import { openAppLink } from '../../links';
 import { useTheme } from '../../theme';
 import AppText from '../AppText';
 import Button from '../Button';
@@ -182,7 +183,7 @@ export default function PublicPageEditor({ api, onSaved }) {
         {liveUrl ? (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
             <Button label={t.share} accessibilityHint={t.shareHint} variant="secondary" onPress={() => shareLink(liveUrl)} style={{ alignSelf: 'auto' }} testID="public-page-share" />
-            <Button label={t.open} accessibilityHint={t.openHint} variant="ghost" onPress={() => Linking.openURL(liveUrl).catch(() => {})} style={{ alignSelf: 'auto' }} testID="public-page-open" />
+            <Button label={t.open} accessibilityHint={t.openHint} variant="ghost" onPress={() => openAppLink('/profile').catch(() => {})} style={{ alignSelf: 'auto' }} testID="public-page-open" />
           </View>
         ) : null}
         <Notice tone="error" testID="public-page-error">

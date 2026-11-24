@@ -8,9 +8,7 @@ import { useAuth } from '../auth/AuthProvider';
 import { canEnterTabs } from '../auth/routing';
 import { emitContentEvent } from '../content/events';
 import { getNotifications } from '../native/notifications';
-import { pushTarget, staffWebPath } from './deepLinks';
-import { openInAppBrowser } from '../links';
-import { useProperty, webUrl } from '../property';
+import { pushTarget } from './deepLinks';
 import { deviceTimeZone } from './preferences';
 import { reconcilePushPermission } from './push';
 
@@ -32,7 +30,6 @@ const NotificationsContext = createContext(null);
  */
 export function NotificationsProvider({ children }) {
   const router = useRouter();
-  const property = useProperty();
   const { api, session } = useAuth();
   const member = canEnterTabs(session);
   const userId = member ? session.user.id : null;
@@ -51,7 +48,7 @@ export function NotificationsProvider({ children }) {
   }, [api]);
 
   const open = useCallback(
-    async ({ notificationId, path, webPath }) => {
+    async ({ notificationId, path }) => {
       if (notificationId) {
         try {
           const result = await notificationsApi.markRead(api, [notificationId]);
@@ -60,11 +57,9 @@ export function NotificationsProvider({ children }) {
           // Opening still works; the next count refresh catches up.
         }
       }
-      const staffUrl = staffWebPath(webPath) ? webUrl(property, webPath) : null;
-      if (staffUrl) await openInAppBrowser(staffUrl);
-      else router.push(path);
+      router.push(path);
     },
-    [api, router, property]
+    [api, router]
   );
 
   // Unread count: launch, foreground, and every minute while active.

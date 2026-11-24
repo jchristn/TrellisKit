@@ -4,6 +4,13 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Fixed (native notification destinations and links)
+
+- Metric alerts open native metrics screens using the signed-in session and paged metric observations. Other staff notifications retain their full text in a native detail screen instead of opening the administrative website.
+- Notification rows and foreground or cold-start push taps share the same native destination policy.
+- Property content and legal links resolve to native screens. External web pages stay in an embedded view with controlled navigation and no system-browser fallback; file downloads use native sharing.
+- Added URL classification, notification, metrics, embedded-content and download regressions. The added WebView and sharing modules require new native builds.
+
 ### Added (reaction people previews)
 
 - Reaction counts show a bounded people summary on web hover or keyboard focus and mobile pointer hover or long press. The preview handles loading, retry, dismissal and viewport edges without changing a reaction.

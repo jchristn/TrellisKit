@@ -2,6 +2,14 @@
 
 The TrellisKit engine's iOS and Android app (phone and tablet), built with React Native, Expo (SDK 58), and Expo Router. The app is engine code only: the property it runs as (name, brand, colors, icons, splash, domains, minimum age, store product id, profile taxonomy) comes from a property folder (see `docs/TRELLISKIT.md`).
 
+## Native links and notifications
+
+Notification rows and tapped pushes use the same native route resolver. Metric alerts open `/admin/metrics/{pageId}`, a React Native screen using the existing authenticated metrics APIs and bounded enumeration pages. The screen checks administrative access, handles denied or unavailable data, and provides native Back navigation. Staff notices without a native administrative workflow show their original title and body in `/notification-detail`.
+
+`src/linkTargets.js` classifies links from property configuration. Known property URLs, including `/app/...` and legal document slugs, resolve to native routes. Unknown property paths show an in-app unavailable state. External HTTP(S) pages use `/external-content`, an embedded WebView with controlled redirects and popups; they never receive API credentials and never fall back to a system browser. Phone, email, calendar and explicit store actions remain operating-system integrations. File resources use native download and sharing.
+
+`react-native-webview` and `expo-sharing` are native dependencies. Ship new iOS and Android binaries before publishing updates with their runtime fingerprints. Do not send this bundle to older binaries by overriding runtime compatibility.
+
 ## Navigation
 
 The upper-left menu opens the complete side drawer. Members is a community destination; Settings contains account preferences. A property chooses up to four bottom shortcuts through `mobile.navigation.shortcuts`, while `mobile.navigation.drawerItems` sets the drawer order. The neutral sample uses Feed, Forums, Messages and Profile shortcuts. An empty shortcuts array selects drawer-only navigation.
@@ -81,7 +89,7 @@ Phase 1 (identity and membership, coded against `docs/PHASE1_CONTRACT.md`) adds 
 - The app never shows, accepts, or mentions sign-up codes, web pricing, or web purchase. Members who joined on the website sign in and are let in because their membership is active. Non-store memberships show as "Annual subscription" or "Complimentary membership" with status and expiry only. `__tests__/policy.test.js` renders every screen and scans the strings module for code, redeem, promo, coupon, website, and Stripe wording.
 - On iOS, Google and Facebook buttons appear only when Sign in with Apple is also shown (Guideline 4.8).
 - In-app account deletion with a typed `DELETE` confirmation and the server's `storeSubscriptionNote` (Guideline 5.1.1(v)).
-- The paywall shows the store's localized price, Restore purchases, auto-renewal terms, and Terms of Use and Privacy Policy links (opened in the in-app browser).
+- The paywall shows the store's localized price, Restore purchases, auto-renewal terms, and Terms of Use and Privacy Policy links (opened in native document screens).
 
 ### Purchases (app-wide)
 
@@ -353,7 +361,7 @@ The Google web, iOS, and Android client ids used at runtime come from `GET /api/
 | Facebook sign-in | Hidden | Yes, with `EXPO_PUBLIC_FACEBOOK_APP_ID` |
 | In-app purchase and Restore purchases (`expo-iap`) | "Purchases are not available in this build" | Yes. iOS simulator needs a StoreKit configuration file in the Xcode scheme or a sandbox account on a device; Android needs a Play internal testing track |
 | Push permission and token | iOS: permission only (no token for the Expo Go project); Android: hidden | Yes, on a physical device with `EAS_PROJECT_ID` (Android also needs `GOOGLE_SERVICES_JSON` and FCM V1 credentials in EAS) |
-| Profile photo, secure storage, in-app browser, account settings | Yes | Yes |
+| Profile photo, secure storage, embedded external content, account settings | Yes | Yes |
 
 Native modules are loaded defensively (`src/native/`): when one is missing the matching button or purchase option is not shown, and the app keeps running.
 

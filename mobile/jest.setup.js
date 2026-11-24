@@ -31,6 +31,22 @@ jest.mock('expo-secure-store', () => {
   };
 });
 
+jest.mock('react-native-webview', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  const WebView = React.forwardRef((props, ref) => {
+    React.useImperativeHandle(ref, () => ({ goBack: jest.fn(), reload: jest.fn() }));
+    return <View {...props} />;
+  });
+  WebView.displayName = 'MockWebView';
+  return { WebView };
+});
+
+jest.mock('expo-sharing', () => ({
+  isAvailableAsync: jest.fn(async () => true),
+  shareAsync: jest.fn(async () => {})
+}));
+
 jest.mock('expo-web-browser', () => ({
   openBrowserAsync: jest.fn(async () => ({ type: 'opened' }))
 }));
@@ -182,6 +198,7 @@ jest.mock('expo-file-system', () => {
     delete() {
       files.delete(this.uri);
     }
+    create() { files.set(this.uri, 0); }
     async preview() {}
     static async downloadFileAsync(url, destination, options = {}) {
       const file = destination instanceof File ? destination : new File(destination.uri, 'download');
@@ -194,6 +211,7 @@ jest.mock('expo-file-system', () => {
       const uri = this.uri;
       return {
         offset: 0,
+        async writeBytes(bytes) { files.set(uri, (files.get(uri) || 0) + bytes.byteLength); },
         async readBytes(length) {
           const size = files.get(uri) || 0;
           const n = Math.max(0, Math.min(length, size - this.offset));

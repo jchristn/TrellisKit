@@ -70,7 +70,8 @@ describe('public profile page', () => {
     await fireEvent.press(screen.getByTestId('public-page-share'));
     expect(share).toHaveBeenCalledWith({ message: urlOf('test-member'), url: urlOf('test-member') });
     await fireEvent.press(screen.getByTestId('public-page-open'));
-    expect(open).toHaveBeenCalledWith(urlOf('test-member'));
+    await waitFor(() => expect(screen).toHavePathname('/profile'));
+    expect(open).not.toHaveBeenCalled();
   });
 
   test('typed addresses are normalized and the shared rules explain what is wrong', async () => {

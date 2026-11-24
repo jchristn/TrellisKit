@@ -5,7 +5,7 @@ import { ScrollView, View } from 'react-native';
 import { useAuth } from '../../auth/AuthProvider';
 import { describeFeatureError, imageUrl, instructorRankText, useDirectoryStrings } from '../../content/phase4';
 import { useResource } from '../../hooks/useResource';
-import { openInAppBrowser } from '../../links';
+import { openAppLink } from '../../links';
 import { useProperty } from '../../property';
 import { useTheme } from '../../theme';
 import { AccessPromptCard } from '../AccessPrompt';
@@ -89,7 +89,7 @@ export default function InstructorDetail({ instructorId, testID = 'instructor' }
       </View>
       {instructor.bio ? <MarkdownBody body={instructor.bio} headings={false} /> : null}
       {instructor.linkedUser ? <Button label={t.openProfile} accessibilityLabel={t.openProfile + ', ' + instructor.linkedUser.displayName} variant="secondary" onPress={() => router.push('/members/' + instructor.linkedUser.id)} style={{ alignSelf: 'auto' }} testID={testID + '-profile'} /> : null}
-      {instructor.websiteUrl ? <Button label={t.website} variant="ghost" onPress={() => openInAppBrowser(instructor.websiteUrl)} style={{ alignSelf: 'auto' }} /> : null}
+      {instructor.websiteUrl ? <Button label={t.website} variant="ghost" onPress={() => openAppLink(instructor.websiteUrl)} style={{ alignSelf: 'auto' }} /> : null}
       <View style={{ gap: theme.spacing.sm }}>
         <AppText variant="label">{t.venues}</AppText>
         {shown.length ? shown.map((venue) => <VenueCard key={venue.id} venue={venue} terms={t} onPress={() => router.push('/venues/' + venue.id)} />) : <AppText color="textMuted">{t.noVenues}</AppText>}

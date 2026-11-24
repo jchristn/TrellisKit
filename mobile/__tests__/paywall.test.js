@@ -90,9 +90,8 @@ describe('paywall', () => {
       expect(screen.queryByTestId('paywall-terms-link')).toBeNull();
     } else {
       await fireEvent.press(screen.getByTestId('paywall-terms-link'));
-      await fireEvent.press(screen.getByTestId('paywall-privacy-link'));
-      expect(WebBrowser.openBrowserAsync).toHaveBeenCalledWith('https://' + property.domains.web + '/terms');
-      expect(WebBrowser.openBrowserAsync).toHaveBeenCalledWith('https://' + property.domains.web + '/privacy');
+      await waitFor(() => expect(screen).toHavePathname('/documents/terms'));
+      expect(WebBrowser.openBrowserAsync).not.toHaveBeenCalled();
     }
   });
 

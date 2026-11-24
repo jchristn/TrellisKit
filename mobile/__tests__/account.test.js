@@ -4,6 +4,8 @@ import * as SecureStore from 'expo-secure-store';
 import { renderRouter } from 'expo-router/testing-library';
 import path from 'path';
 import * as WebBrowser from 'expo-web-browser';
+import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 import { Linking } from 'react-native';
 import { getApiClient } from '../src/api/client';
 import { ExportPolling, runAccountExport } from '../src/api/endpoints';
@@ -90,7 +92,7 @@ describe('account', () => {
     expect(server.called('POST /auth/email/resend')).toHaveLength(1);
   });
 
-  test('export data queues an export job and opens the download link', async () => {
+  test('export data queues a job then shares a local download without a browser', async () => {
     const server = installFakeServer({
       ...signedInAs(makeUser()),
       'GET /me/export': { status: 410, body: { error: 'ExportMoved', message: 'Use the export job.' } },
@@ -99,7 +101,9 @@ describe('account', () => {
     });
     await renderRouter(APP_DIR, { initialUrl: '/account' });
     await fireEvent.press(await screen.findByTestId('account-export'));
-    await waitFor(() => expect(WebBrowser.openBrowserAsync).toHaveBeenCalledWith(expect.stringMatching(/\/api\/v1\/me\/export\/aex_1\/download\?exp=1&sig=s$/)));
+    await waitFor(() => expect(Sharing.shareAsync).toHaveBeenCalledWith(expect.stringMatching(/account-export\.zip$/), { mimeType: 'application/zip' }));
+    expect(FileSystem.__downloads.at(-1).url).toMatch(/\/api\/v1\/me\/export\/aex_1\/download\?exp=1&sig=s$/);
+    expect(WebBrowser.openBrowserAsync).not.toHaveBeenCalled();
     expect(server.called('GET /me/export')).toHaveLength(0);
     expect(server.called('POST /me/export')).toHaveLength(1);
     expect(screen.getByTestId('account-message')).toHaveTextContent(strings.account.exportReady);

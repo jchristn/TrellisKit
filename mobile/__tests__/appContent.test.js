@@ -201,7 +201,7 @@ describe('BannerSlot', () => {
     await waitFor(() => expect(screen.getByTestId('banner-ban_1')).toBeTruthy());
   });
 
-  test('a link path navigates in the app; a url opens the browser; an image comes from the asset', async () => {
+  test('a link path navigates in the app; a url opens embedded content; an image comes from the asset', async () => {
     const open = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
     const asset = { id: 'ras_1', key: 'banner.art', contentType: 'image/webp', sha256: H1, url: 'https://cdn.test/' + H1, width: 200, height: 100, altText: 'Art', darkVariant: null };
     const { store } = staticStore(
@@ -220,7 +220,8 @@ describe('BannerSlot', () => {
     await fireEvent.press(screen.getByTestId('banner-ban_1-link'));
     expect(mockRouter.push).toHaveBeenCalledWith('/support');
     await fireEvent.press(screen.getByTestId('banner-ban_2-link'));
-    expect(open).toHaveBeenCalledWith('https://status.test/');
+    expect(mockRouter.push).toHaveBeenCalledWith({ pathname: '/external-content', params: { url: 'https://status.test/' } });
+    expect(open).not.toHaveBeenCalled();
     expect(screen.getByTestId('banner-ban_1-image').props.accessibilityLabel).toBe('Art');
     open.mockRestore();
   });

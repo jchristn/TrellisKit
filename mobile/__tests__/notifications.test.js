@@ -33,7 +33,9 @@ describe('deep links', () => {
     expect(resolveNotificationPath('/account/membership')).toBe('/account/membership');
     expect(resolveNotificationPath('/threads/thr_1')).toBe('/threads/thr_1');
     expect(resolveNotificationPath('/lessons/les_1')).toBe('/lessons/les_1');
-    expect(resolveNotificationPath('/directory')).toBe('/map');
+    expect(resolveNotificationPath('/directory')).toBe('/map?section=places');
+    expect(resolveNotificationPath('/events')).toBe('/map?section=events');
+    expect(resolveNotificationPath('/admin/metrics/health')).toBe('/admin/metrics/health');
     expect(resolveNotificationPath('/me/directory/submissions')).toBe('/directory/submissions');
     expect(resolveNotificationPath('/courses/crs_1')).toBeNull();
     expect(resolveNotificationPath('//evil.test/feed')).toBeNull();
@@ -151,15 +153,17 @@ describe('notification center and badge', () => {
     expect(server.called('POST /notifications/read')[0].body).toEqual({ ids: ['ntf_9'] });
   });
 
-  test.each(['ContentFlagged', 'MetricAlert'])('opens a %s staff push on the property website', async (type) => {
+  test.each(['ContentFlagged', 'MetricAlert'])('opens a %s staff push as native content without a browser', async (type) => {
     let onResponse;
     Notifications.addNotificationResponseReceivedListener.mockImplementation((fn) => { onResponse = fn; return { remove: jest.fn() }; });
     const server = installFakeServer({ ...signedInAs(makeUser()), 'POST /feed/enumerate': enumerationResult([]), 'POST /notifications/read': { unreadCount: 0 } });
-    await renderRouter(APP_DIR, { initialUrl: '/feed' });
+    const router = await renderRouter(APP_DIR, { initialUrl: '/feed' });
     await screen.findByTestId('feed-empty');
     const path = type === 'ContentFlagged' ? '/admin/content-review' : '/admin/metrics/health';
     await act(async () => onResponse(pushResponse({ notificationId: 'ntf_staff', type, path })));
-    await waitFor(() => expect(WebBrowser.openBrowserAsync).toHaveBeenCalledWith(expect.stringMatching(new RegExp(path + '$'))));
+    await waitFor(() => expect(router.getPathname()).toBe(type === 'MetricAlert' ? '/admin/metrics/health' : '/notification-detail'));
+    expect(WebBrowser.openBrowserAsync).not.toHaveBeenCalled();
+    expect(Linking.openURL).not.toHaveBeenCalled();
     expect(server.called('POST /notifications/read')[0].body).toEqual({ ids: ['ntf_staff'] });
   });
 

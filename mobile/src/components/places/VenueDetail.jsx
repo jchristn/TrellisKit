@@ -5,7 +5,7 @@ import { Linking, Platform, ScrollView, View } from 'react-native';
 import { useAuth } from '../../auth/AuthProvider';
 import { describeFeatureError, imageUrl, useDirectoryStrings } from '../../content/phase4';
 import { useResource } from '../../hooks/useResource';
-import { openInAppBrowser } from '../../links';
+import { openAppLink } from '../../links';
 import { useProperty } from '../../property';
 import { useTheme } from '../../theme';
 import { AccessPromptCard } from '../AccessPrompt';
@@ -129,14 +129,14 @@ export default function VenueDetail({ venueId, focusReviewId = null, testID = 'v
           <AppText testID={testID + '-address'}>{address}</AppText>
           {venue.addressVisibility === 'Approximate' ? <AppText color="textMuted">{t.approximate}</AppText> : null}
           {venue.addressVisibility === 'LocalityOnly' ? <AppText color="textMuted">{t.localityOnly}</AppText> : null}
-          {directions ? <Button label={t.directions} accessibilityHint={t.directionsHint} variant="secondary" onPress={() => Linking.openURL(directions).catch(() => {})} style={{ alignSelf: 'auto' }} testID={testID + '-directions'} /> : null}
+          {directions ? <Button label={t.directions} accessibilityHint={t.directionsHint} variant="secondary" onPress={() => openAppLink(directions).catch(() => {})} style={{ alignSelf: 'auto' }} testID={testID + '-directions'} /> : null}
         </Row>
       ) : null}
       {venue.phone || venue.email || venue.websiteUrl ? (
         <Row label={t.contact}>
           {venue.phone ? <Button label={venue.phone} variant="ghost" onPress={() => Linking.openURL('tel:' + venue.phone.replace(/[^+\d]/g, '')).catch(() => {})} style={{ alignSelf: 'auto' }} testID={testID + '-phone'} /> : null}
           {venue.email ? <Button label={venue.email} variant="ghost" onPress={() => Linking.openURL('mailto:' + venue.email).catch(() => {})} style={{ alignSelf: 'auto' }} testID={testID + '-email'} /> : null}
-          {venue.websiteUrl ? <Button label={t.website} variant="ghost" onPress={() => openInAppBrowser(venue.websiteUrl)} style={{ alignSelf: 'auto' }} testID={testID + '-website'} /> : null}
+          {venue.websiteUrl ? <Button label={t.website} variant="ghost" onPress={() => openAppLink(venue.websiteUrl)} style={{ alignSelf: 'auto' }} testID={testID + '-website'} /> : null}
         </Row>
       ) : null}
       {venue.scheduleText ? <VenueSchedule text={venue.scheduleText} t={t} testID={testID + '-schedule'} /> : null}
@@ -155,7 +155,7 @@ export default function VenueDetail({ venueId, focusReviewId = null, testID = 'v
       {venue.socialLinks && venue.socialLinks.length ? (
         <Row label={t.links}>
           {venue.socialLinks.map((link) => (
-            <Button key={link.url} label={link.kind} variant="ghost" onPress={() => openInAppBrowser(link.url)} style={{ alignSelf: 'auto' }} />
+            <Button key={link.url} label={link.kind} variant="ghost" onPress={() => openAppLink(link.url)} style={{ alignSelf: 'auto' }} />
           ))}
         </Row>
       ) : null}

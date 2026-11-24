@@ -14,6 +14,17 @@ import { fillDeep, fillFromProperty, getBundledProperty } from './property/prope
 export const stringTemplates = Object.freeze({
   appName: '{name}',
 
+  links: {
+    title: 'Web content',
+    downloadFailedTitle: 'Could not open this file',
+    downloadFailedBody: 'Check your connection and try again.',
+    unavailableTitle: 'This page is unavailable in the app',
+    unavailableBody: 'Use Back to return to your previous screen.',
+    blocked: 'This link cannot be opened here.',
+    loadFailedTitle: 'Could not load this page',
+    loadFailedBody: 'Check your connection and try again.'
+  },
+
   navigation: {
     menu: 'Menu',
     openMenu: 'Open menu',
@@ -49,7 +60,7 @@ export const stringTemplates = Object.freeze({
     styles: { Info: 'Announcement', Success: 'Good news', Warning: 'Warning', Critical: 'Important' },
     dismiss: 'Dismiss',
     dismissHint: 'Hides this announcement on this device until it changes',
-    linkExternalHint: 'Opens in your browser',
+    linkExternalHint: 'Opens inside the app',
     featureUnavailable: 'This part of {name} is temporarily unavailable. Please try again later.',
     featureOffTitle: 'Not available right now',
     featureOffRetryHint: 'Checks again whether this is back',
@@ -292,7 +303,7 @@ export const stringTemplates = Object.freeze({
     share: 'Share link',
     shareHint: 'Opens the share sheet so you can copy or send the link',
     open: 'Open page',
-    openHint: 'Opens your public page in the browser',
+    openHint: 'Opens your profile inside the app',
     save: 'Save public page',
     saved: 'Public page saved.',
     loadError: 'Could not load your public page settings.'
@@ -1248,7 +1259,7 @@ export const stringTemplates = Object.freeze({
     attendees: 'Who is going',
     seeAllAttendees: (n) => 'See all ' + n,
     details: 'More details',
-    detailsHint: 'Opens the event page in the browser',
+    detailsHint: 'Opens the event page inside the app',
     rsvp: {
       title: 'Are you going?',
       going: 'Going',
@@ -1750,6 +1761,34 @@ export const stringTemplates = Object.freeze({
     reserved: 'Names starting with staff: are reserved.',
     saveMedia: 'Save labels and tags',
     saved: 'Saved.'
+  },
+
+  nativeMetrics: {
+    title: 'Metrics',
+    deniedTitle: 'Administrator access required',
+    deniedBody: 'Your account does not have access to these metrics.',
+    loadFailed: 'Could not load metrics',
+    unknownPage: 'This metrics page is no longer available.',
+    empty: 'No observations for this time range.',
+    unavailable: 'Not available',
+    partial: 'Incomplete',
+    suppressed: 'Hidden for privacy',
+    current: 'Current period',
+    previous: 'Previous period',
+    rangeLabel: 'Time range',
+    week: 'Last 7 days',
+    month: 'Last 30 days',
+    refresh: 'Refresh',
+    loadMore: 'Load more observations',
+    showData: 'Show observations',
+    hideData: 'Hide observations',
+    pageLabel: 'Metrics page',
+    timeZone: (zone) => 'Time zone: ' + zone,
+    completeThrough: (date) => 'Complete through ' + date,
+    detailTitle: 'Notification details',
+    detailEmpty: 'Open Notifications to find the complete message.',
+    staffDetail: 'This staff notification is shown inside the app. Related administrative actions are not available on this screen.',
+    viewNotifications: 'All notifications'
   },
 
   notifications: {

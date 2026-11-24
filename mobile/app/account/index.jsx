@@ -10,7 +10,7 @@ import Section, { InfoRow } from '../../src/components/Section';
 import { auth as authApi, runAccountExport } from '../../src/api/endpoints';
 import { useAuth } from '../../src/auth/AuthProvider';
 import { describeError } from '../../src/auth/errors';
-import { openInAppBrowser } from '../../src/links';
+import { shareDownloadedFile } from '../../src/downloads';
 import strings from '../../src/strings';
 import { useTheme } from '../../src/theme';
 import { useProperty } from '../../src/property';
@@ -63,7 +63,7 @@ export default function AccountScreen() {
       if (result && result.status === 'Ready' && result.downloadUrl) {
         pendingExportId = null;
         setMessage({ tone: 'success', text: t.exportReady });
-        await openInAppBrowser(api.url(result.downloadUrl));
+        await shareDownloadedFile(api.url(result.downloadUrl), { name: 'account-export.zip', mimeType: 'application/zip' });
       } else if (result && (result.status === 'Failed' || result.status === 'Expired')) {
         pendingExportId = null;
         setMessage({ tone: 'error', text: t.exportFailed });

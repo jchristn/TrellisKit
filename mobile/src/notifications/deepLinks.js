@@ -8,6 +8,7 @@
 const ID = '[A-Za-z0-9_-]{1,64}';
 
 const KNOWN = [
+  new RegExp('^/admin/metrics/[A-Za-z0-9_-]{1,64}$'),
   new RegExp('^/feed$'),
   new RegExp('^/feed/fpo_' + ID + '$'),
   new RegExp('^/feed/fpo_' + ID + '\\?comment=cmt_' + ID + '$'),
@@ -55,17 +56,18 @@ const KNOWN = [
 
 /** Server paths that map to a different app route (the server's path, then the app's). */
 const ALIASES = [
-  ['/directory', '/map'],
+  ['/directory', '/map?section=places'],
+  ['/events', '/map?section=events'],
   ['/me/directory/submissions', '/directory/submissions'],
   ['/me/events/proposals', '/events/proposals']
 ];
 
-/** Staff paths (support tickets, the moderation and directory queues) live in the website's admin console. */
+/** Staff paths without a native destination still open the notification's native detail. */
 const STAFF = /^\/admin(\/[A-Za-z0-9_\/-]*)?(\?[A-Za-z0-9_=&%-]*)?$/;
 
 /**
- * The website path of a staff notification (`/admin/...`), which the app opens in the in-app
- * browser on the property's web domain, or null for any other path.
+ * Recognize a staff path without treating it as permission to launch a browser.
+ * Kept as a path classifier for callers migrating from older versions.
  * @param {unknown} path
  * @returns {string|null}
  */
@@ -92,19 +94,29 @@ export function resolveNotificationPath(path) {
   return alias ? alias[1] : trimmed;
 }
 
-/**
- * Data of a push the member tapped (`data.notificationId`, `data.path`).
- * @param {any} response expo-notifications NotificationResponse.
- * @returns {{ notificationId: string|null, path: string }|null}
- */
+/** Bound notification text passed through navigation, rendered as native text only. */
+function detailParams(item) {
+  const text = (value, max) => typeof value === 'string' ? value.slice(0, max) : '';
+  return { notificationId: text(item.id || item.notificationId, 128), notificationTitle: text(item.title, 1000), notificationBody: text(item.body, 8000) };
+}
+
+/** One policy for notification rows and pushes: recognized native route, native staff detail, or center. */
+export function notificationDestination(item = {}) {
+  const path = resolveNotificationPath(item.path);
+  if (path) return path.startsWith('/admin/metrics/') ? { pathname: path, params: detailParams(item) } : path;
+  if (staffWebPath(item.path)) return { pathname: '/notification-detail', params: detailParams(item) };
+  return FallbackPath;
+}
+
+/** Data of a tapped push, including its displayed text for native staff details after a cold start. */
 export function pushTarget(response) {
-  const content = response && response.notification && response.notification.request && response.notification.request.content;
-  const data = (content && content.data) || null;
-  if (!data) return null;
+  const content = response?.notification?.request?.content;
+  const data = content?.data;
+  if (!data || typeof data !== 'object') return null;
+  const item = { ...data, title: content.title || data.title, body: content.body || data.body };
   return {
     notificationId: typeof data.notificationId === 'string' ? data.notificationId : null,
-    path: resolveNotificationPath(data.path) || FallbackPath,
-    ...(staffWebPath(data.path) ? { webPath: staffWebPath(data.path) } : {})
+    path: notificationDestination(item)
   };
 }
 

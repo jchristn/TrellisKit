@@ -3,6 +3,9 @@ import { render, screen, fireEvent } from '@testing-library/react-native';
 import MarkdownBody from '../src/components/feed/MarkdownBody';
 import { PropertyProvider } from '../src/property';
 
+const mockRouter = { push: jest.fn() };
+jest.mock('expo-router', () => ({ ...jest.requireActual('expo-router'), useRouter: () => mockRouter }));
+
 const body = [
   '# Title',
   '',
@@ -36,19 +39,21 @@ describe('MarkdownBody (shared parser)', () => {
     expect(screen.queryByRole('header')).toBeNull();
     expect(screen.getByText(/# not a heading \[bad\]\(javascript:alert\(1\)\)/)).toBeTruthy();
     fireEvent.press(screen.getByRole('link'));
-    expect(open).toHaveBeenCalledWith('https://ok.test');
+    expect(mockRouter.push).toHaveBeenCalledWith({ pathname: '/external-content', params: { url: 'https://ok.test/' } });
+    expect(open).not.toHaveBeenCalled();
     open.mockRestore();
   });
 });
 
 describe('MarkdownBody site links', () => {
-  test('site paths render as links; a non-document path opens the property website', async () => {
+  test('site paths render as links and open native routes', async () => {
     const open = jest.spyOn(Linking, 'openURL').mockResolvedValue(true);
     await render(<PropertyProvider><MarkdownBody body={'Read the [Terms](/terms) and the [forums](/app/forums)'} /></PropertyProvider>);
     const links = screen.getAllByRole('link');
     expect(links).toHaveLength(2);
     fireEvent.press(links[1]);
-    expect(open).toHaveBeenCalledWith(expect.stringMatching(/^https:\/\/[^/]+\/app\/forums$/));
+    expect(mockRouter.push).toHaveBeenCalledWith('/forums');
+    expect(open).not.toHaveBeenCalled();
     open.mockRestore();
   });
 });

@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { Linking, View, useColorScheme } from 'react-native';
+import { View, useColorScheme } from 'react-native';
 import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import { activeBanners, isBannerDismissible } from '@trelliskit/shared';
 import AppText from '../components/AppText';
@@ -9,6 +9,7 @@ import IconButton from '../components/IconButton';
 import LinkButton from '../components/LinkButton';
 import MarkdownBody from '../components/feed/MarkdownBody';
 import strings from '../strings';
+import { openAppLink } from '../links';
 import { useTheme } from '../theme';
 import { useAppContent } from './AppContentProvider';
 
@@ -38,8 +39,7 @@ function Banner({ banner, content, testID }) {
   const imageUri = image ? content.assetUri(image, { dark: scheme === 'dark' }) : null;
   const openLink = () => {
     if (!link) return;
-    if (link.path && String(link.path).startsWith('/')) router.push(link.path);
-    else if (link.url && /^https:\/\//i.test(link.url)) Linking.openURL(link.url).catch(() => {});
+    openAppLink(link.path || link.url, { router }).catch(() => {});
   };
   return (
     <View

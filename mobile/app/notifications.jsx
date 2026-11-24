@@ -21,9 +21,7 @@ import { describeContentError } from '../src/content/errors';
 import { useCursorList } from '../src/hooks/useCursorList';
 import { useLayout } from '../src/hooks/useLayout';
 import { useListFilters } from '../src/hooks/useListFilters';
-import { openInAppBrowser } from '../src/links';
-import { resolveNotificationPath, staffWebPath } from '../src/notifications/deepLinks';
-import { useProperty, webUrl } from '../src/property';
+import { notificationDestination, resolveNotificationPath, staffWebPath } from '../src/notifications/deepLinks';
 import { useNotificationsState } from '../src/notifications/NotificationsProvider';
 import strings from '../src/strings';
 import { useTheme } from '../src/theme';
@@ -71,7 +69,6 @@ function NotificationRow({ item, onOpen, onToggleRead }) {
 export default function NotificationsScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const property = useProperty();
   const { api } = useAuth();
   const { isWide } = useLayout();
   const { setUnreadCount, refreshCount } = useNotificationsState();
@@ -110,17 +107,10 @@ export default function NotificationsScreen() {
     async (item) => {
       setMessage(null);
       if (!item.isRead) await setRead(item, true);
-      const path = resolveNotificationPath(item.path);
-      if (path) {
-        router.push(path);
-        return;
-      }
-      // Staff notifications (tickets, queues) open the website's admin console in the in-app browser.
-      const staff = staffWebPath(item.path);
-      const url = staff ? webUrl(property, staff) : null;
-      if (url) await openInAppBrowser(url);
+      const destination = notificationDestination(item);
+      if (destination !== '/notifications') router.push(destination);
     },
-    [router, setRead, property]
+    [router, setRead]
   );
 
   async function markAll() {

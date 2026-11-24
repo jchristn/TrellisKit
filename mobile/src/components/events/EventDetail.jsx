@@ -1,11 +1,11 @@
 import { categoryOf, formatAddress, formatEventShort, formatEventTime, isLockedItem, isRecurring, joinUrlOf, lockedRequirement } from '@trelliskit/shared';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Linking, View } from 'react-native';
+import { View } from 'react-native';
 import { useAuth } from '../../auth/AuthProvider';
 import { describeFeatureError, deviceTimeZone, imageUrl } from '../../content/phase4';
 import { useResource } from '../../hooks/useResource';
-import { openInAppBrowser } from '../../links';
+import { openAppLink } from '../../links';
 import { hasAddOnlyAccess, openInDeviceCalendar, saveToDeviceCalendar, storedCalendarEventId } from '../../native/calendar';
 import { useProperty } from '../../property';
 import { webUrl } from '../../property/property';
@@ -154,7 +154,7 @@ export function EventHeader({ event, onChange, testID = 'event' }) {
               variant="ghost"
               onPress={() => {
                 const url = directionsUrl({ name: location.venue ? location.venue.name : location.name, geo: location.geo || (location.venue && location.venue.geo), address: location.address, addressVisibility: location.addressVisibility });
-                if (url) Linking.openURL(url).catch(() => {});
+                if (url) openAppLink(url).catch(() => {});
               }}
               style={{ alignSelf: 'auto' }}
             />
@@ -165,7 +165,7 @@ export function EventHeader({ event, onChange, testID = 'event' }) {
         <Block label={t.online} testID={testID + '-online'}>
           {event.online.platformLabel ? <AppText>{event.online.platformLabel}</AppText> : null}
           {join ? (
-            <Button label={t.joinLink} accessibilityHint={t.joinHint} onPress={() => Linking.openURL(join).catch(() => {})} style={{ alignSelf: 'auto' }} testID={testID + '-join'} />
+            <Button label={t.joinLink} accessibilityHint={t.joinHint} onPress={() => openAppLink(join).catch(() => {})} style={{ alignSelf: 'auto' }} testID={testID + '-join'} />
           ) : event.myRsvp && event.myRsvp.status === 'Going' && event.online.joinUrlAvailableUtc ? (
             <AppText color="textMuted">{t.joinLater(formatEventShort({ startUtc: event.online.joinUrlAvailableUtc, timeZone: event.timeZone }))}</AppText>
           ) : (
@@ -211,7 +211,7 @@ export function EventHeader({ event, onChange, testID = 'event' }) {
         </Block>
       ) : null}
       {event.description ? <MarkdownBody body={event.description} /> : null}
-      {event.externalUrl ? <Button label={t.details} accessibilityHint={t.detailsHint} variant="ghost" onPress={() => openInAppBrowser(event.externalUrl)} style={{ alignSelf: 'auto' }} /> : null}
+      {event.externalUrl ? <Button label={t.details} accessibilityHint={t.detailsHint} variant="ghost" onPress={() => openAppLink(event.externalUrl)} style={{ alignSelf: 'auto' }} /> : null}
       <ReactionBar target={event.commentTarget || { type: 'Event', id: event.id }} fields={event} onChange={(fields) => onChange({ ...event, ...fields })} canReact={viewer.canReact !== false} trailing={viewer.canReport ? <Button label={strings.places.report} variant="ghost" onPress={() => setReporting(true)} style={{ alignSelf: 'auto' }} testID={testID + '-report'} /> : null} testID={testID + '-reactions'} />
       {attendeesOpen ? <AttendeesSheet eventId={event.id} onClose={() => setAttendeesOpen(false)} /> : null}
       {reporting ? <ReportSheet target={{ targetType: 'Event', targetId: event.id }} author={null} reasons={Phase4ReportReasons} onClose={() => setReporting(false)} /> : null}

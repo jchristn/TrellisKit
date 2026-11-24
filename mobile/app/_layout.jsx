@@ -53,6 +53,9 @@ function AppStack() {
       <Stack.Screen name="(onboarding)" options={{ title: strings.common.back, headerShown: false }} />
       <Stack.Screen name="(setup)" options={{ title: strings.common.back, headerShown: false, gestureEnabled: false }} />
       <Stack.Screen name="(tabs)" options={{ title: strings.common.back, headerShown: false, gestureEnabled: false }} />
+      <Stack.Screen name="admin" options={{ headerShown: false }} />
+      <Stack.Screen name="notification-detail" options={{ title: strings.nativeMetrics.detailTitle }} />
+      <Stack.Screen name="external-content" options={{ title: strings.links.title }} />
       <Stack.Screen name="account" options={{ headerShown: false }} />
       <Stack.Screen name="documents" options={{ title: strings.common.back, headerShown: false }} />
       <Stack.Screen name="messages" options={{ title: strings.common.back, headerShown: false }} />

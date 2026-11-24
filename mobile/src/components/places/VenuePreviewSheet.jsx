@@ -3,7 +3,7 @@ import { Linking, View } from 'react-native';
 import { useAuth } from '../../auth/AuthProvider';
 import { describeFeatureError } from '../../content/phase4';
 import { useResource } from '../../hooks/useResource';
-import { openInAppBrowser } from '../../links';
+import { openAppLink } from '../../links';
 import { useProperty } from '../../property';
 import { useTheme } from '../../theme';
 import AppText from '../AppText';
@@ -62,7 +62,7 @@ function PreviewBody({ venueId, t, onOpen, testID }) {
       {!locked && (venue.phone || venue.websiteUrl) ? (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
           {venue.phone ? <Button label={venue.phone} variant="secondary" onPress={() => Linking.openURL('tel:' + venue.phone.replace(/[^+\d]/g, '')).catch(() => {})} style={{ alignSelf: 'auto' }} testID={testID + '-phone'} /> : null}
-          {venue.websiteUrl ? <Button label={t.website} variant="secondary" onPress={() => openInAppBrowser(venue.websiteUrl)} style={{ alignSelf: 'auto' }} testID={testID + '-website'} /> : null}
+          {venue.websiteUrl ? <Button label={t.website} variant="secondary" onPress={() => openAppLink(venue.websiteUrl)} style={{ alignSelf: 'auto' }} testID={testID + '-website'} /> : null}
         </View>
       ) : null}
       <Button label={t.previewOpen} onPress={() => onOpen(venue)} testID={testID + '-open'} />
