@@ -66,7 +66,12 @@ test('drawer closes with close button, backdrop, accessibility escape and Androi
   serve(); await renderRouter(APP_DIR, { initialUrl: '/profile' });
   await openMenu(); await fireEvent.press(screen.getByTestId('drawer-close'));
   expect(screen.queryByTestId('navigation-drawer')).toBeNull();
-  await openMenu(); await fireEvent.press(screen.getByTestId('drawer-backdrop'));
+  await openMenu();
+  // The backdrop must physically cover the viewport. A direct fireEvent would still pass
+  // for a zero-sized Pressable, which cannot receive a real tap outside the drawer.
+  expect(screen.getByTestId('drawer-backdrop')).toHaveStyle({ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.45)' });
+  expect(screen.getByTestId('navigation-drawer')).toHaveStyle({ flex: 1 });
+  await fireEvent.press(screen.getByTestId('drawer-backdrop'));
   expect(screen.queryByTestId('navigation-drawer')).toBeNull();
   await openMenu(); await fireEvent(screen.getByTestId('navigation-drawer'), 'accessibilityEscape');
   expect(screen.queryByTestId('navigation-drawer')).toBeNull();

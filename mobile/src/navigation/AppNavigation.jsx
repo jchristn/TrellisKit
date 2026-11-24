@@ -175,7 +175,7 @@ export function AppNavigationProvider({ children }) {
         <Modal testID="navigation-drawer-modal" visible={visible && enabled} transparent animationType="none" statusBarTranslucent navigationBarTranslucent onRequestClose={close}
           onShow={() => { const node = findNodeHandle(closeRef.current); if (node) AccessibilityInfo.setAccessibilityFocus(node); }}>
           <View testID="navigation-drawer" style={styles.overlay} accessibilityViewIsModal onAccessibilityEscape={close} {...(Platform.OS === 'web' ? { onKeyDown: (event) => { if (event.key === 'Escape') close(); } } : {})}>
-            <Pressable testID="drawer-backdrop" accessibilityRole="button" accessibilityLabel={strings.navigation.closeMenu} onPress={close} style={[StyleSheet.absoluteFillObject, styles.scrim]} importantForAccessibility="no" accessible={false} />
+            <Pressable testID="drawer-backdrop" accessibilityRole="button" accessibilityLabel={strings.navigation.closeMenu} onPress={close} style={styles.scrim} importantForAccessibility="no" accessible={false} />
             <Animated.View testID="navigation-drawer-panel" style={[styles.drawer, { width: drawerWidth, paddingTop: insets.top, paddingBottom: insets.bottom, paddingLeft: insets.left, backgroundColor: theme.colors.background, transform: [{ translateX: progress.interpolate({ inputRange: [0, 1], outputRange: [-drawerWidth, 0] }) }] }]}>
               <View style={[styles.drawerHeading, { padding: theme.spacing.md, borderBottomColor: theme.colors.border }]}>
                 <AppText variant="heading" accessibilityRole="header" style={{ flex: 1 }}>{property.shortName || property.name || strings.navigation.menu}</AppText>
@@ -198,7 +198,7 @@ export function AppNavigationProvider({ children }) {
 }
 
 const styles = StyleSheet.create({
-  frame: { flex: 1 }, overlay: { flex: 1 }, scrim: { backgroundColor: 'rgba(0,0,0,0.45)' },
+  frame: { flex: 1 }, overlay: { flex: 1 }, scrim: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'rgba(0,0,0,0.45)' },
   drawer: { height: '100%', alignSelf: 'flex-start' }, drawerHeading: { flexDirection: 'row', alignItems: 'center', borderBottomWidth: StyleSheet.hairlineWidth },
   close: { alignItems: 'center', justifyContent: 'center' }, drawerRow: { flexDirection: 'row', alignItems: 'center' },
   shortcuts: { flexDirection: 'row', borderTopWidth: StyleSheet.hairlineWidth }, shortcut: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4, gap: 3 },
