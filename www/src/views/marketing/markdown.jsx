@@ -251,14 +251,15 @@ export function renderBlocks(blocks) {
 }
 
 /**
- * Split a legal document into its title (the first level 1 heading), its draft notice (the first
- * blockquote), and the remaining blocks.
+ * Split a legal document into its title (the first level 1 heading), its explicit draft notice (a
+ * blockquote beginning with "Draft"), and the remaining blocks.
  * @param {string} source
  */
 export function splitLegalDocument(source) {
   const blocks = parseMarkdown(source);
   const titleIndex = blocks.findIndex((b) => b.type === 'heading' && b.level === 1);
-  const noticeIndex = blocks.findIndex((b) => b.type === 'blockquote');
+  const noticeIndex = blocks.findIndex((b) => b.type === 'blockquote'
+    && b.blocks[0]?.type === 'paragraph' && /^draft\b/i.test(plainText(b.blocks[0].text).trim()));
   const title = titleIndex >= 0 ? plainText(blocks[titleIndex].text) : '';
   const notice = noticeIndex >= 0 ? blocks[noticeIndex] : null;
   const body = blocks.filter((_, i) => i !== titleIndex && i !== noticeIndex);

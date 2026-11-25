@@ -50,13 +50,13 @@ function LegalPage({ path }) {
   const updated = live && live.updatedUtc ? formatDate(live.updatedUtc) : '';
   return (
     <article className="site-container page legal" aria-labelledby="legal-title" data-document={route.documentKey || undefined}>
-      <div className="draft-banner" role="note">
+      {doc.notice && <div className="draft-banner" role="note">
         <Icon name="alert" size={18} />
         <div>
           <strong className="draft-banner-title">{mk.draftNotice}</strong>
           <span>{mk.draftBanner}</span>
         </div>
-      </div>
+      </div>}
       <h1 id="legal-title">{heading}</h1>
       {route.documentKey && (version || updated) && (
         <p className="muted small legal-meta">

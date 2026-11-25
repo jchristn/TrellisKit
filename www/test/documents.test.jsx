@@ -115,6 +115,7 @@ describe('the public document page', () => {
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(SEPARATE.title);
     expect(screen.getByText('Version ' + SEPARATE.version)).toBeInTheDocument();
     expect(await screen.findByText('The live revision of this agreement.')).toBeInTheDocument();
+    expect(document.querySelector('.draft-banner')).toBeNull();
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(SEPARATE.title + ' (revised)');
     expect(screen.getByText('Version 1.4')).toBeInTheDocument();
     expect(screen.getByText(/^Last updated /)).toBeInTheDocument();

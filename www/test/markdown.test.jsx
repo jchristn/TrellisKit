@@ -52,6 +52,12 @@ describe('markdown parser', () => {
     ]);
   });
 
+  it('preserves substantive blockquotes in published legal documents', () => {
+    const doc = splitLegalDocument('# Terms\n\n> A quoted statutory provision.\n\nPublished terms.');
+    expect(doc.notice).toBeNull();
+    expect(doc.blocks[0]).toMatchObject({ type: 'blockquote' });
+  });
+
   it('splits a legal document into title, draft notice, and body', () => {
     const doc = splitLegalDocument('> **DRAFT** notice\n\n# Privacy Policy\n\n## Intro\n\nText.\n');
     expect(doc.title).toBe('Privacy Policy');

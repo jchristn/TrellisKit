@@ -6,6 +6,8 @@ All notable changes to TrellisKit are documented in this file.
 
 ### Fixed
 
+- Legal pages show the draft banner only when the source contains an explicit draft notice; substantive blockquotes remain visible.
+
 - Added opt-in ticket deletion on account closure, including private notes and media, with explicit staff-only legal/billing retention holds. Neutral defaults preserve existing behavior.
 - Added opt-in cancellation of queued free membership benefits when purchase processing receives a refund, preserving already active independent grants.
 
