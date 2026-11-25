@@ -191,16 +191,21 @@ The mobile app has a complete side drawer, opened from the upper-left menu butto
 "mobile": {
   "navigation": {
     "drawerItems": ["feed", "forums", "members", "library", "events", "directory", "messages", "notifications", "announcements", "ideas", "assistants", "profile", "support", "settings", "about"],
-    "shortcuts": ["feed", "forums", "messages", "profile"]
+    "shortcuts": ["feed", "forums", "messages", "profile"],
+    "accountMenu": ["profile", "settings", "support", "about"],
+    "labels": { "directory": "Explore" }
   }
 }
 ```
 
-- Supported identifiers are exactly those shown in `drawerItems`. Values are case-sensitive identifiers, not arbitrary routes. Arrays must have distinct known entries; `shortcuts` accepts at most four and `drawerItems` at most 15. The server and mobile build loader reject invalid declarations.
-- Missing/null navigation or arrays use engine defaults. An explicit empty `shortcuts` array hides the bottom bar. Drawer order is a preference: omitted known destinations are appended, so a configuration cannot make enabled screens unreachable. Community destinations and account/help destinations render in separate groups.
+- Supported identifiers are exactly those shown in `drawerItems`. Values are case-sensitive identifiers, not arbitrary routes. Arrays must have distinct known entries; `shortcuts` accepts at most four, and `drawerItems` and `accountMenu` at most 15. The server and mobile build loader reject invalid declarations.
+- `accountMenu` lists the destinations shown, in order, in the menu opened from the member's avatar in the header (followed by Sign out). Missing or empty hides the avatar button. Guests never see the button.
+- `labels` overrides the label of a known destination, 1 to 24 characters each after trimming. Overrides win over property terminology and the app string catalog. Unknown keys and empty or longer values are rejected.
+- Missing/null navigation or arrays use engine defaults. An explicit empty `shortcuts` array hides the bottom bar. Placement is a preference: a known destination placed on no surface is appended to the drawer, so a configuration cannot make enabled screens unreachable. A destination counts as placed when it is in `drawerItems`, `shortcuts`, or `accountMenu`; when the header always offers it (Notifications, which has the header bell); or when the destination that embeds it is placed (`coveredBy` in the registry). Community destinations and account/help destinations render in separate groups, and an empty account group is omitted.
+- The header does not repeat Messages when Messages is a bottom shortcut. The Map screen drops its Places and Events switch when both `directory` and `events` are bottom shortcuts.
 - Both surfaces resolve from the same registry (`shared/src/mobileNavigation.js`). Feature switches hide disabled destinations. Assistants requires the server's `features.ai === true`. Guests see only anonymously browsable destinations plus Profile and About; account actions, Members and Messages require sign-in. Partially gated signed-in features stay visible with lock badges. Destination screens and the server enforce authorization; navigation never grants access.
 - Labels use the app string catalog. Members uses `terminology.members`, and the venue directory uses `directory.venueLabelPlural`. Events and the venue directory are separate destinations into the existing Map screen (`/map?section=events` and `/map?section=places`). Existing deep-link routes remain valid.
-- `GET /api/v1/property` returns the declaration under `mobile.navigation`. A runtime declaration overrides bundled values per array. An older server that omits navigation or sends null preserves the bundled declaration. Consequently a client-only release can adopt a property's new navigation before a server upgrade; offline startup uses the bundled configuration.
+- `GET /api/v1/property` returns the declaration under `mobile.navigation`. A runtime declaration overrides bundled values per key (`drawerItems`, `shortcuts`, `accountMenu`, `labels`). An older server that omits navigation or sends null preserves the bundled declaration. Consequently a client-only release can adopt a property's new navigation before a server upgrade; offline startup uses the bundled configuration.
 - Detail screens retain their Back action. The drawer closes after selection, outside tap, accessibility escape, and Android Back. Onboarding and paywall flows retain their existing access gates. The UI supports safe areas, light/dark schemes, scrolling at large text sizes, and tablet widths.
 
 ---

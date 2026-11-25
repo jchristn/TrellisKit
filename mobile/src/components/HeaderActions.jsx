@@ -11,14 +11,16 @@ import { useOptionalAuth } from '../auth/AuthProvider';
 import { messagesBadgeCount } from '../messaging/format';
 import { useMessaging } from '../messaging/MessagingProvider';
 import { useProperty } from '../property';
+import { AccountMenuButton, useAppNavigation } from '../navigation/AppNavigation';
 
 /**
- * Header buttons for Messages and Notifications, shown on every tab. The Notifications button
+ * Header buttons for Messages, Notifications, and the account menu, shown on every tab. The Notifications button
  * carries the unread count badge (polled by NotificationsProvider; "99+" above 99), and Messages
  * the unread conversations plus pending requests (MessagingProvider, from the socket or polling).
  * Messages is hidden when `features.messaging` is off and shows a lock where messaging needs a
- * membership the caller does not have. Signed-out guests (anonymous browsing) get a Sign in
- * button instead.
+ * membership the caller does not have, and when the property already places Messages in the
+ * bottom shortcuts. The account button (the member's avatar) appears when the property configures
+ * an account menu. Signed-out guests (anonymous browsing) get a Sign in button instead.
  */
 export default function HeaderActions() {
   const theme = useTheme();
@@ -30,7 +32,9 @@ export default function HeaderActions() {
   const guest = Boolean(auth && auth.session && auth.session.status === 'signedOut');
   const property = useProperty();
   const { unread } = useMessaging();
-  const messagingOn = propertyFeatureEnabled(property, 'messaging');
+  const appNavigation = useAppNavigation();
+  const messagesShortcut = Boolean(appNavigation && appNavigation.enabled && appNavigation.shortcutIds && appNavigation.shortcutIds.includes('messages'));
+  const messagingOn = propertyFeatureEnabled(property, 'messaging') && !messagesShortcut;
   const messagingLocked = messagingOn && !canUseMessaging(property, auth ? auth.user : null, 'read').allowed;
   const messagesBadge = messagingLocked ? null : badgeText(messagesBadgeCount(unread));
 
@@ -75,6 +79,7 @@ export default function HeaderActions() {
           )
         : null}
       {button('notifications', badge ? 'notifications' : 'notifications-outline', badge ? strings.header.notificationsUnread(badge) : strings.header.notifications, '/notifications', badge)}
+      <AccountMenuButton />
     </View>
   );
 }

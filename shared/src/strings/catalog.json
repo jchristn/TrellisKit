@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "2534da6a827226157793f7115efbbeffc32574a11aa6968d37677ceaa270f6df",
+ "sha256": "38ecbf128940acd9f088f3a056ca51823ad24fb35bbf7253d0de0ddf3bafd69b",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -8583,6 +8583,13 @@
    "maxLength": 200
   },
   {
+   "key": "mobile.navigation.openAccountMenu",
+   "client": "mobile",
+   "default": "Open account menu",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "mobile.navigation.openMenu",
    "client": "mobile",
    "default": "Open menu",
@@ -8593,6 +8600,13 @@
    "key": "mobile.navigation.settings",
    "client": "mobile",
    "default": "Settings",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.navigation.signOut",
+   "client": "mobile",
+   "default": "Sign out",
    "tokens": [],
    "maxLength": 200
   },

@@ -39,6 +39,17 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
+/** The Messages entry that carries the badge: the bottom shortcut when configured, else the header button. */
+async function messagesEntry() {
+  let entry = null;
+  await waitFor(() => {
+    entry = screen.queryByTestId('tab-messages-badge', { includeHiddenElements: true }) ? 'tab-messages'
+      : screen.queryByTestId('header-messages-badge', { includeHiddenElements: true }) ? 'header-messages' : null;
+    expect(entry).not.toBeNull();
+  });
+  return entry;
+}
+
 describe('conversation list', () => {
   test('shows the inbox with previews and unread badges, the requests folder, and the header badge', async () => {
     const { fake, inbox, request } = seeded();
@@ -61,14 +72,15 @@ describe('conversation list', () => {
     const { fake } = seeded();
     serveFakes([fake], { routes: { 'POST /feed/enumerate': { objects: [], continuationToken: null, endOfResults: true } } });
     const router = await renderRouter(APP_DIR, { initialUrl: '/feed' });
-    const badge = await screen.findByTestId('header-messages-badge', { includeHiddenElements: true });
-    expect(badge).toHaveTextContent('2');
-    expect(screen.getByTestId('header-messages')).toHaveProp('accessibilityLabel', strings.header.messagesUnread('2'));
-    if (screen.queryByTestId('tab-messages')) {
+    // Messages lives in the header unless the property makes it a bottom shortcut, which then
+    // carries the badge alone (the header does not repeat it).
+    const entry = await messagesEntry();
+    expect(screen.getByTestId(entry + '-badge', { includeHiddenElements: true })).toHaveTextContent('2');
+    if (entry === 'tab-messages') {
       expect(screen.getByTestId('tab-messages')).toHaveProp('accessibilityLabel', strings.navigation.unread(strings.messaging.title, '2'));
-      expect(screen.getByTestId('tab-messages-badge', { includeHiddenElements: true })).toHaveTextContent('2');
-    }
-    await fireEvent.press(screen.getByTestId('header-messages'));
+      expect(screen.queryByTestId('header-messages')).toBeNull();
+    } else expect(screen.getByTestId('header-messages')).toHaveProp('accessibilityLabel', strings.header.messagesUnread('2'));
+    await fireEvent.press(screen.getByTestId(entry));
     await waitFor(() => expect(router.getPathname()).toBe('/messages'));
   });
 
@@ -457,7 +469,8 @@ describe('realtime', () => {
       socket.serverSend('unread.counts', { notifications: 7, conversations: 4, messages: 9, requests: 1 });
     });
     expect(await screen.findByTestId('header-notifications-badge', { includeHiddenElements: true })).toHaveTextContent('7');
-    expect(await screen.findByTestId('header-messages-badge', { includeHiddenElements: true })).toHaveTextContent('5');
+    const entry = await messagesEntry();
+    await waitFor(() => expect(screen.getByTestId(entry + '-badge', { includeHiddenElements: true })).toHaveTextContent('5'));
   });
 
   test('closes 30 seconds after the app goes to the background and reconnects in the foreground', async () => {

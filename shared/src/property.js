@@ -202,8 +202,8 @@ export function mergeProperty(base, runtime) {
       merged.mobile.navigation = bundledNavigation;
     } else if (isObject(bundledNavigation) && isObject(runtimeNavigation)) {
       merged.mobile.navigation = { ...bundledNavigation, ...runtimeNavigation };
-      for (const key of ['drawerItems', 'shortcuts']) {
-        if (runtimeNavigation[key] === null || runtimeNavigation[key] === undefined) merged.mobile.navigation[key] = bundledNavigation[key];
+      for (const key of ['drawerItems', 'shortcuts', 'accountMenu', 'labels']) {
+        if ((runtimeNavigation[key] === null || runtimeNavigation[key] === undefined) && bundledNavigation[key] !== undefined) merged.mobile.navigation[key] = bundledNavigation[key];
       }
     }
   }

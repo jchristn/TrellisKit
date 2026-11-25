@@ -11,6 +11,7 @@ import { venueMapFilters } from '../src/components/places/PlacesMapSearch';
 import { resetMapModules } from '../src/native/maps';
 import { installFakeServer, makeUser, resetEnvironment, signedInAs } from '../test-utils/fakeServer';
 import { propertyWithFeatures } from '../test-utils/property';
+import { showMapSection } from '../test-utils/navigation';
 
 const mockCamera = { fitBounds: jest.fn(), flyTo: jest.fn(), easeTo: jest.fn(), jumpTo: jest.fn() };
 
@@ -150,7 +151,7 @@ describe('map-first search', () => {
   test('events: map points for the area, a point tap highlights its row, and Include online adds online events to the list only', async () => {
     const server = serve(withMap());
     const router = await renderRouter(APP_DIR, { initialUrl: '/map' });
-    await fireEvent.press(await screen.findByTestId('map-section-events'));
+    await showMapSection('events');
     const map = await screen.findByTestId('screen-events-map-maplibre');
     await fireEvent(map, 'regionDidChange', region(-122.6, 37.6, -122.2, 37.9));
     await waitFor(() => expect(server.called('POST /events/enumerate').length).toBeGreaterThan(0));
@@ -184,7 +185,7 @@ describe('map-first search', () => {
     expect(screen.queryByTestId('places-sheet')).toBeNull();
     expect((lastBody(server, 'POST /venues/enumerate').filters || {}).bbox).toBeUndefined();
     expect(screen.getByTestId('places-near-me')).toBeOnTheScreen();
-    await fireEvent.press(screen.getByTestId('map-section-events'));
+    await showMapSection('events');
     expect(await screen.findByTestId('events-mode')).toBeOnTheScreen();
     expect(screen.queryByTestId('screen-events-map-maplibre')).toBeNull();
     expect(lastBody(server, 'POST /events/enumerate').filters.bbox).toBeUndefined();

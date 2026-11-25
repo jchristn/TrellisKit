@@ -3,8 +3,9 @@ namespace TrellisKit.Core.PropertyConfig
     using System.Collections.Generic;
 
     /// <summary>
-    /// Mobile destination ordering and bottom shortcuts. Missing values retain the engine defaults.
-    /// The complete drawer always appends omitted destinations, filtered by features and caller access.
+    /// Mobile destination placement: drawer order, bottom shortcuts, the header account menu, and
+    /// destination label overrides. Missing values retain the engine defaults. The client appends to the
+    /// drawer any destination placed on no surface, filtered by features and caller access.
     /// </summary>
     public class PropertyMobileNavigation
     {
@@ -12,6 +13,8 @@ namespace TrellisKit.Core.PropertyConfig
 
         private List<string>? _DrawerItems = null;
         private List<string>? _Shortcuts = null;
+        private List<string>? _AccountMenu = null;
+        private Dictionary<string, string>? _Labels = null;
 
         #endregion
 
@@ -23,8 +26,13 @@ namespace TrellisKit.Core.PropertyConfig
         public const int MaxShortcuts = 4;
 
         /// <summary>
+        /// Maximum length of a destination label override, after trimming.
+        /// </summary>
+        public const int MaxLabelLength = 24;
+
+        /// <summary>
         /// Preferred drawer destination identifiers, in display order. Null uses engine order. At most 15
-        /// distinct known identifiers are accepted. Omitted identifiers are appended by the client.
+        /// distinct known identifiers are accepted. Identifiers placed on no surface are appended by the client.
         /// </summary>
         public List<string>? DrawerItems
         {
@@ -40,6 +48,27 @@ namespace TrellisKit.Core.PropertyConfig
         {
             get => _Shortcuts;
             set => _Shortcuts = value;
+        }
+
+        /// <summary>
+        /// Destination identifiers shown, in order, in the menu opened from the header account button.
+        /// Null or empty hides the button. At most 15 distinct known identifiers are accepted; destinations
+        /// listed here are not appended to the drawer.
+        /// </summary>
+        public List<string>? AccountMenu
+        {
+            get => _AccountMenu;
+            set => _AccountMenu = value;
+        }
+
+        /// <summary>
+        /// Label overrides keyed by known destination identifier, 1 to 24 characters each. Null keeps the
+        /// engine labels (property terminology, then the app string catalog).
+        /// </summary>
+        public Dictionary<string, string>? Labels
+        {
+            get => _Labels;
+            set => _Labels = value;
         }
 
         #endregion

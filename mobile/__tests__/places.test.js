@@ -10,6 +10,7 @@ import { directoryStrings } from '../src/content/phase4';
 import { resetMapModules } from '../src/native/maps';
 import { installFakeServer, makeUser, resetEnvironment, signedInAs } from '../test-utils/fakeServer';
 import { property, propertyWithFeatures } from '../test-utils/property';
+import { mapSectionControl } from '../test-utils/navigation';
 
 const APP_DIR = path.resolve(__dirname, '../app');
 
@@ -72,7 +73,8 @@ describe('Map tab', () => {
     const router = await renderRouter(APP_DIR, { initialUrl: '/map' });
     expect(await screen.findByTestId('venue-ven_1')).toBeOnTheScreen();
     expect(screen.getByTestId('venue-ven_1-verified')).toHaveTextContent('Verified');
-    expect(screen.getByTestId('map-section')).toBeOnTheScreen();
+    // Places and events switch in the screen, or with the bottom shortcuts when the property places both there.
+    expect(await mapSectionControl('events')).toMatch(/^(map-section-events|tab-events)$/);
     const body = server.called('POST /venues/enumerate')[0].body;
     expect(body).toMatchObject({ maxResults: 25, ordering: 'NameAscending' });
     await fireEvent.press(screen.getByTestId('venue-ven_1'));

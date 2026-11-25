@@ -100,6 +100,7 @@ describe('root-level nested stacks', () => {
 
   test('the Map tab header follows the selected segment', () => {
     const source = fs.readFileSync(path.join(appDir, '(tabs)', 'map', 'index.jsx'), 'utf8');
-    expect(source).toMatch(/<Stack\.Screen options=\{\{ title: current === 'events' \? strings\.events\.title : t\.title \}\} \/>/);
+    expect(source).toMatch(/<Stack\.Screen options=\{\{ title: current === 'events' \? appNavigation\?\.labels\?\.events \|\| strings\.events\.title : placesTitle \}\} \/>/);
+    expect(source).toMatch(/const placesTitle = appNavigation\?\.labels\?\.directory \|\| t\.title;/);
   });
 });

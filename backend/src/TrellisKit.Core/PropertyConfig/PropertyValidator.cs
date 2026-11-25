@@ -124,6 +124,14 @@ namespace TrellisKit.Core.PropertyConfig
             if (navigation == null) return;
             ValidateDestinations(navigation.DrawerItems, "mobile.navigation.drawerItems", _MobileDestinations.Count, problems);
             ValidateDestinations(navigation.Shortcuts, "mobile.navigation.shortcuts", PropertyMobileNavigation.MaxShortcuts, problems);
+            ValidateDestinations(navigation.AccountMenu, "mobile.navigation.accountMenu", _MobileDestinations.Count, problems);
+            if (navigation.Labels == null) return;
+            foreach (KeyValuePair<string, string> label in navigation.Labels)
+            {
+                string field = "mobile.navigation.labels." + label.Key;
+                if (!_MobileDestinations.Contains(label.Key)) problems.Add(field + " must name a known destination");
+                else if (String.IsNullOrWhiteSpace(label.Value) || label.Value.Trim().Length > PropertyMobileNavigation.MaxLabelLength) problems.Add(field + " must be 1 to " + PropertyMobileNavigation.MaxLabelLength + " characters");
+            }
         }
 
         private static void ValidateDestinations(List<string>? destinations, string field, int maximum, List<string> problems)

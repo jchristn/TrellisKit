@@ -1,4 +1,4 @@
-import { resolveMobileNavigation } from '@trelliskit/shared';
+import { MobileDestinationIds, resolveMobileNavigation } from '@trelliskit/shared';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react-native';
 import { router as appRouter } from 'expo-router';
 import { renderRouter } from 'expo-router/testing-library';
@@ -10,6 +10,8 @@ import { installFakeServer, makeUser, resetEnvironment, signedInAs } from '../te
 import { property } from '../test-utils/property';
 
 const APP_DIR = path.resolve(__dirname, '../app');
+// Drawer mechanics tests place every destination in the drawer, whatever the active property chooses.
+const full = { ...property, mobile: { ...property.mobile, navigation: { drawerItems: [...MobileDestinationIds], shortcuts: [], accountMenu: [] } } };
 const member = { id: 'usr_other', displayName: 'Another member', handle: 'another', profile: {}, labels: [], tags: {} };
 function serve(propertyDoc = property, user = makeUser()) {
   return installFakeServer({
@@ -81,7 +83,7 @@ test('drawer closes with close button, backdrop, accessibility escape and Androi
 });
 
 test('Settings opens account preferences; nested pages keep Back and no shortcut bar', async () => {
-  serve(); const router = await renderRouter(APP_DIR, { initialUrl: '/profile' });
+  serve(full); const router = await renderRouter(APP_DIR, { initialUrl: '/profile' });
   await openMenu(); await fireEvent.press(screen.getByTestId('drawer-settings'));
   await waitFor(() => expect(router.getPathname()).toBe('/account'));
   expect(await screen.findByTestId('screen-account')).toBeOnTheScreen();
@@ -117,7 +119,7 @@ test('disabled destinations hide from both surfaces and empty shortcuts allows d
 });
 
 test('phone/tablet drawer exposes scrollable full-size labels', async () => {
-  serve(); const original = Dimensions.get('window');
+  serve(full); const original = Dimensions.get('window');
   const router = await renderRouter(APP_DIR, { initialUrl: '/profile' });
   for (const width of [320, 1180]) {
     await act(async () => Dimensions.set({ window: { ...original, width, fontScale: 1.8 } }));
@@ -139,7 +141,7 @@ test('map sections select separately and detail URLs do not select top-level sho
 
 
 test('the drawer switches the shared map between Events and the venue directory', async () => {
-  serve({ ...property, features: { ...property.features, directory: true, events: true } });
+  serve({ ...full, features: { ...property.features, directory: true, events: true } });
   const router = await renderRouter(APP_DIR, { initialUrl: '/profile' });
   await openMenu(); await fireEvent.press(screen.getByTestId('drawer-events'));
   await waitFor(() => expect(router.getPathname()).toBe('/map'));
@@ -153,7 +155,7 @@ test('the drawer switches the shared map between Events and the venue directory'
 });
 
 test('Notifications and About are drawer destinations with a menu to navigate onward', async () => {
-  serve(); const router = await renderRouter(APP_DIR, { initialUrl: '/profile' });
+  serve(full); const router = await renderRouter(APP_DIR, { initialUrl: '/profile' });
   for (const [id, pathname] of [['notifications', '/notifications'], ['about', '/profile/about']]) {
     await openMenu(); await fireEvent.press(screen.getByTestId('drawer-' + id));
     await waitFor(() => expect(router.getPathname()).toBe(pathname));
@@ -182,4 +184,56 @@ test('opening the drawer dismisses the keyboard and permits both app orientation
   await openMenu();
   expect(dismiss).toHaveBeenCalledTimes(1);
   expect(screen.getByTestId('navigation-drawer-modal')).toHaveProp('supportedOrientations', ['portrait', 'landscape']);
+});
+
+const explore = (propertyDoc = property) => ({ ...propertyDoc, features: { ...propertyDoc.features, directory: true, events: true, messaging: true }, mobile: { ...propertyDoc.mobile, navigation: {
+  drawerItems: ['forums', 'members'], shortcuts: ['feed', 'directory', 'events', 'messages'],
+  accountMenu: ['profile', 'settings', 'about'], labels: { directory: 'Explore' }
+} } });
+
+test('the header avatar opens the account menu, which navigates and signs out', async () => {
+  serve(explore());
+  const router = await renderRouter(APP_DIR, { initialUrl: '/feed' });
+  await fireEvent.press(await screen.findByTestId('header-account'));
+  const menu = await screen.findByTestId('account-menu');
+  for (const id of ['profile', 'settings', 'about']) expect(within(menu).getByTestId('drawer-' + id)).toBeOnTheScreen();
+  expect(within(menu).getByTestId('account-menu-sign-out')).toBeOnTheScreen();
+  await fireEvent.press(within(menu).getByTestId('drawer-profile'));
+  await waitFor(() => expect(router.getPathname()).toBe('/profile'));
+  expect(screen.queryByTestId('account-menu')).toBeNull();
+  // The account menu closes from its backdrop like the drawer.
+  await act(async () => appRouter.navigate('/feed'));
+  await fireEvent.press(await screen.findByTestId('header-account'));
+  await fireEvent.press(await screen.findByTestId('account-menu-backdrop'));
+  expect(screen.queryByTestId('account-menu')).toBeNull();
+});
+
+test('account-menu destinations leave the drawer, which omits an empty account section', async () => {
+  serve(explore());
+  await renderRouter(APP_DIR, { initialUrl: '/feed' });
+  const drawer = await openMenu();
+  expect(within(drawer).getByTestId('drawer-forums')).toBeOnTheScreen();
+  for (const id of ['profile', 'settings', 'about', 'notifications', 'feed', 'directory', 'events', 'messages']) expect(within(drawer).queryByTestId('drawer-' + id)).toBeNull();
+});
+
+test('a Messages shortcut removes the duplicate header button; places and events shortcuts drop the map switch', async () => {
+  serve(explore());
+  const router = await renderRouter(APP_DIR, { initialUrl: '/feed' });
+  expect(await screen.findByTestId('tab-messages')).toBeOnTheScreen();
+  expect(screen.queryByTestId('header-messages')).toBeNull();
+  expect(screen.getByTestId('header-notifications')).toBeOnTheScreen();
+  expect(within(screen.getByTestId('navigation-shortcuts')).getByText('Explore')).toBeOnTheScreen();
+  await fireEvent.press(screen.getByTestId('tab-directory'));
+  await waitFor(() => expect(router.getPathname()).toBe('/map'));
+  expect(await screen.findByTestId('screen-map')).toBeOnTheScreen();
+  expect(screen.queryByTestId('map-section')).toBeNull();
+  expect(screen.getByTestId('tab-directory')).toHaveProp('accessibilityState', { selected: true });
+});
+
+test('without an account menu the header has no avatar and Messages stays in the header', async () => {
+  serve({ ...property, features: { ...property.features, messaging: true }, mobile: { ...property.mobile, navigation: { shortcuts: [], accountMenu: [] } } });
+  await renderRouter(APP_DIR, { initialUrl: '/feed' });
+  expect(await screen.findByTestId('header-notifications')).toBeOnTheScreen();
+  expect(screen.queryByTestId('header-account')).toBeNull();
+  expect(screen.getByTestId('header-messages')).toBeOnTheScreen();
 });

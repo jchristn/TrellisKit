@@ -4,6 +4,12 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (navigation contract port)
+
+- Ported the engine parts of the forked engine's navigation contract (Trainerdate commits `c7135f7` and `cefa704`): `mobile.navigation.accountMenu` (distinct known destinations) opened from a header avatar button with Sign out, and `mobile.navigation.labels` (known destination ids, 1 to 24 characters). Both are validated by the server model (`PropertyMobileNavigation.AccountMenu`, `Labels`, `MaxLabelLength`) and the shared client (`validateMobileNavigation`, `MaxMobileLabelLength`) and merged per key from the server (`mergeProperty`).
+- Destination registry fields `coveredBy` (a destination counts as placed when the destination that embeds it is placed) and `header` (always offered by the header; Notifications). A destination placed on any surface (drawer, shortcuts, account menu) is no longer appended to the drawer. Missing configuration keeps today's behavior: every destination in the drawer, no account menu, engine labels.
+- The header no longer repeats Messages when Messages is a bottom shortcut, and the Map screen drops its Places and Events switch when both are bottom shortcuts. Test helpers `mobile/test-utils/navigation.js` find whichever control the active property shows.
+
 ### Added (profile and public multimedia)
 
 - Owner-managed profile photo/video galleries on web and mobile, with bounded metadata filters, uploads, deletion, per-item reports and Feed moderation. Schema 125 adds property-scoped `profilemedia`; attachment claims an upload atomically. Account export/deletion includes gallery items.

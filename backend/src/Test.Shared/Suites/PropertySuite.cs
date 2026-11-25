@@ -64,6 +64,19 @@ namespace Test.Shared.Suites
                     Obj(document, "mobile").Remove("navigation");
                     PropertyConfiguration legacy = PropertyLoader.Parse(document.ToJsonString(), "test");
                     Check.True(legacy.Mobile.Navigation == null, "Legacy property leaves client defaults intact");
+                    Check.True(new PropertyMobileNavigation().AccountMenu == null && new PropertyMobileNavigation().Labels == null, "Missing account menu and labels are not empty values");
+                    Obj(document, "mobile")["navigation"] = new JsonObject
+                    {
+                        ["drawerItems"] = new JsonArray("forums", "members"),
+                        ["shortcuts"] = new JsonArray("feed", "directory", "events", "messages"),
+                        ["accountMenu"] = new JsonArray("profile", "settings", "about"),
+                        ["labels"] = new JsonObject { ["directory"] = "Explore" }
+                    };
+                    PropertyConfiguration placed = PropertyLoader.Parse(document.ToJsonString(), "test");
+                    Check.Equal(0, PropertyValidator.Validate(placed).Count, "Account menu and labels accepted");
+                    JsonElement placedNavigation = JsonSerializer.SerializeToElement(new PublicPropertyResponse { Mobile = placed.Mobile }, new JsonSerializerOptions(JsonSerializerDefaults.Web)).GetProperty("mobile").GetProperty("navigation");
+                    Check.Equal("settings", placedNavigation.GetProperty("accountMenu")[1].GetString(), "Account menu order survives serialization");
+                    Check.Equal("Explore", placedNavigation.GetProperty("labels").GetProperty("directory").GetString(), "Label overrides keep their destination keys");
                     property.Mobile.Navigation.Shortcuts = new List<string>();
                     Check.Equal(0, PropertyValidator.Validate(property).Count, "Drawer-only navigation is valid");
                     return Task.CompletedTask;
@@ -155,6 +168,11 @@ namespace Test.Shared.Suites
                 ["mobile.navigation.shortcuts[0]"] = j => Obj(Obj(j, "mobile"), "navigation")["shortcuts"] = new JsonArray("/admin"),
                 ["mobile.navigation.shortcuts[1]"] = j => Obj(Obj(j, "mobile"), "navigation")["shortcuts"] = new JsonArray("feed", "feed"),
                 ["mobile.navigation.shortcuts"] = j => Obj(Obj(j, "mobile"), "navigation")["shortcuts"] = new JsonArray("feed", "forums", "members", "messages", "profile"),
+                ["mobile.navigation.accountMenu[1]"] = j => Obj(Obj(j, "mobile"), "navigation")["accountMenu"] = new JsonArray("profile", "profile"),
+                ["mobile.navigation.accountMenu[0]"] = j => Obj(Obj(j, "mobile"), "navigation")["accountMenu"] = new JsonArray("/admin"),
+                ["mobile.navigation.labels.nowhere"] = j => Obj(Obj(j, "mobile"), "navigation")["labels"] = new JsonObject { ["nowhere"] = "Explore" },
+                ["mobile.navigation.labels.directory"] = j => Obj(Obj(j, "mobile"), "navigation")["labels"] = new JsonObject { ["directory"] = new string('x', 25) },
+                ["mobile.navigation.labels.feed"] = j => Obj(Obj(j, "mobile"), "navigation")["labels"] = new JsonObject { ["feed"] = " " },
                 ["schemaVersion"] = j => j["schemaVersion"] = 2,
                 ["id"] = j => j["id"] = "Not A Valid Id",
                 ["name"] = j => j["name"] = " ",

@@ -12,7 +12,7 @@ Notification rows and tapped pushes use the same native route resolver. Metric a
 
 ## Navigation
 
-The upper-left menu opens the complete side drawer. Members is a community destination; Settings contains account preferences. A property chooses up to four bottom shortcuts through `mobile.navigation.shortcuts`, while `mobile.navigation.drawerItems` sets the drawer order. The neutral sample uses Feed, Forums, Messages and Profile shortcuts. An empty shortcuts array selects drawer-only navigation.
+The upper-left menu opens the complete side drawer. Members is a community destination; Settings contains account preferences. A property chooses up to four bottom shortcuts through `mobile.navigation.shortcuts`, while `mobile.navigation.drawerItems` sets the drawer order. The neutral sample uses Feed, Forums, Messages and Profile shortcuts. An empty shortcuts array selects drawer-only navigation. `mobile.navigation.accountMenu` adds a header avatar button that opens an account menu with those destinations and Sign out, and `mobile.navigation.labels` overrides destination labels. A destination placed on any surface is not repeated in the drawer.
 
 The [navigation contract](../docs/TRELLISKIT.md#23-mobile-navigation-mobilenavigation) lists identifiers, defaults, validation and access behavior. Both surfaces share `resolveMobileNavigation` from `@trelliskit/shared`, including feature visibility, guest restrictions, lock badges and property terminology. The drawer preserves existing deep links and detail Back behavior. The app keeps its bundled navigation when an older server's public property response lacks the new field.
 

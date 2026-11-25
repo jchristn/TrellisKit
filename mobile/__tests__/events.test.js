@@ -11,6 +11,7 @@ import { proposalBody, toLocalInput } from '../src/components/events/ProposalFor
 import { calendarDetails } from '../src/native/calendar';
 import { installFakeServer, makeUser, resetEnvironment, signedInAs } from '../test-utils/fakeServer';
 import { propertyWithFeatures } from '../test-utils/property';
+import { showMapSection } from '../test-utils/navigation';
 
 const APP_DIR = path.resolve(__dirname, '../app');
 const START = '2099-12-05T18:00:00Z';
@@ -57,7 +58,7 @@ describe('events on a phone', () => {
 
   async function openEvents() {
     const router = await renderRouter(APP_DIR, { initialUrl: '/map' });
-    await fireEvent.press(await screen.findByTestId('map-section-events'));
+    await showMapSection('events');
     return router;
   }
 
@@ -243,7 +244,7 @@ describe('events on a tablet', () => {
   test('the list and the selected event sit side by side', async () => {
     serve();
     const router = await renderRouter(APP_DIR, { initialUrl: '/map' });
-    await fireEvent.press(await screen.findByTestId('map-section-events'));
+    await showMapSection('events');
     expect(await screen.findByTestId('events-select')).toBeOnTheScreen();
     await fireEvent.press(await screen.findByTestId('event-evt_1'));
     expect(await screen.findByTestId('event-title')).toHaveTextContent('Autumn meetup');

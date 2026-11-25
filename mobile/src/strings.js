@@ -32,6 +32,8 @@ export const stringTemplates = Object.freeze({
     closeMenu: 'Close menu',
     settings: 'Settings',
     accountSection: 'Your account',
+    openAccountMenu: 'Open account menu',
+    signOut: 'Sign out',
     unread: (label, count) => label + ', ' + count + ' unread'
   },
 
