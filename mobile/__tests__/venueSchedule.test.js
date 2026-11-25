@@ -5,7 +5,9 @@ import { getBundledProperty } from '../src/property/property';
 import VenueScheduleEditor from '../src/components/places/VenueScheduleEditor';
 import { VenueSchedule } from '../src/components/places/VenueSchedule';
 import { initialValues, submissionFieldsFor } from '../src/components/places/SubmissionForm';
-const t = directoryStrings(getBundledProperty());
+// Fixed default terms, so the assertions hold for any property selected by TK_PROPERTY_DIR.
+const bundled = getBundledProperty();
+const t = directoryStrings({ ...bundled, directory: { ...(bundled.directory || {}), sessionLabel: 'Session', sessionLabelPlural: 'Sessions', instructorLabel: 'Instructor', instructorLabelPlural: 'Instructors' } });
 const schedule = { timeZone: 'Pacific/Honolulu', openingHours: [{ dayOfWeek: 0, startTime: '22:00', endTime: '02:00', endsNextDay: true }], sessions: [{ dayOfWeek: 1, startTime: '18:00', endTime: '19:00', endsNextDay: false, name: 'Fundamentals', instructor: 'Alex' }], notes: 'Holiday hours vary.' };
 test('native display shows structured hours and sessions', async () => {
   await render(<VenueSchedule schedule={schedule} text="Old hours" t={t} />);
