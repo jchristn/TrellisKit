@@ -76,4 +76,5 @@ export { ranksMethods } from './ranksApi.js';
 export * from './ranks.js';
 export * from './qrCode.js';
 export { favoritesMethods } from './favoritesApi.js';
+export { trainingMethods } from './trainingApi.js';
 export * from './favorites.js';

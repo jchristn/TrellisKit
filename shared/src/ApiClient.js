@@ -10,6 +10,7 @@ import { libraryMethods } from './libraryApi.js';
 import { eventMethods } from './eventsApi.js';
 import { profileMediaMethods } from './profileMediaApi.js';
 import { favoritesMethods } from './favoritesApi.js';
+import { trainingMethods } from './trainingApi.js';
 import { directoryMethods } from './directoryApi.js';
 import { directMessagesApi, messagingMethods } from './messagingApi.js';
 import { supportMethods } from './supportApi.js';
@@ -260,6 +261,8 @@ Object.assign(ApiClient.prototype, eventMethods);
 Object.assign(ApiClient.prototype, directoryMethods);
 Object.assign(ApiClient.prototype, profileMediaMethods);
 Object.assign(ApiClient.prototype, favoritesMethods);
+// Training hub overview, unified Library search, and lesson techniques (docs/TRELLISKIT.md section 15).
+Object.assign(ApiClient.prototype, trainingMethods);
 // Phase 5: direct messages, support tickets, ideas board, broadcasts and announcements (docs/PHASE5_CONTRACT.md).
 Object.assign(ApiClient.prototype, messagingMethods);
 Object.assign(ApiClient.prototype, supportMethods);
