@@ -9,6 +9,8 @@ import { resetApiClient } from '../src/api/client';
 import { resetMapSearchSessions } from '../src/components/maps/mapSearchSessions';
 import { resetSessionFilters } from '../src/hooks/useListFilters';
 import { resetPushRegistrationState } from '../src/notifications/push';
+import { resetSaveState } from '../src/training/saves';
+import { resetTrainingOverviewMemory } from '../src/training/useTrainingOverview';
 import { defaultProfile, property } from './property';
 
 /** The active property's store product id (membership.storeProductId). */
@@ -122,6 +124,8 @@ export function resetEnvironment() {
   resetPushRegistrationState();
   resetSessionFilters();
   resetMapSearchSessions();
+  resetTrainingOverviewMemory();
+  resetSaveState();
   SecureStore.__store.clear();
   Network.__reset();
 }

@@ -24,6 +24,7 @@ import VenueMedia from './VenueMedia';
 import VenueReviews from './VenueReviews';
 import { VenueAbout, VenueSchedule } from './VenueSchedule';
 import { venueSessionCheckIn } from '../ranks/CheckIn';
+import { SaveRow } from '../SaveButton';
 
 /** A maps app URL for a venue (the maps app URL scheme on iOS, a geo URI elsewhere). */
 export function directionsUrl(venue) {
@@ -114,9 +115,11 @@ export default function VenueDetail({ venueId, focusReviewId = null, reportMedia
       <ThemeToggle />
       {venue.photos && venue.photos.length && imageUrl(venue.photos[0]) ? <MediaImage url={imageUrl(venue.photos[0])} blurhash={venue.photos[0].blurhash} alt={venue.photos[0].altText || null} style={{ width: '100%', aspectRatio: 16 / 9, borderRadius: theme.radii.lg }} /> : null}
       <View style={{ gap: theme.spacing.xs }}>
-        <AppText variant="title" accessibilityRole="header" testID={testID + '-name'}>
-          {venue.name}
-        </AppText>
+        <SaveRow targetType="Venue" targetId={venue.id} title={venue.name} testID={testID + '-save'}>
+          <AppText variant="title" accessibilityRole="header" testID={testID + '-name'}>
+            {venue.name}
+          </AppText>
+        </SaveRow>
         {venue.isVerified ? (
           <AppText color="success" style={{ fontWeight: '700' }} testID={testID + '-verified'}>
             {t.verified}

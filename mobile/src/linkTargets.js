@@ -1,4 +1,5 @@
 import { resolveNotificationPath } from './notifications/deepLinks.js';
+import { trainingWebPath } from './training/hub.js';
 
 const IDENTIFIER = '[A-Za-z0-9_-]{1,128}';
 const STATIC_PATHS = new Set([
@@ -52,6 +53,10 @@ export function resolveAppLink(value, property) {
   const path = pathname + url.search;
   const notificationPath = resolveNotificationPath(path);
   if (notificationPath) return { kind: 'native', path: notificationPath };
+  // The website's Training hub (`/app/training/...`): sections, Library segments, curricula, and
+  // the series, lessons, and catalog entries shown under it open their native screens.
+  const trainingPath = trainingWebPath(pathname, url.search);
+  if (trainingPath) return { kind: 'native', path: trainingPath };
   if (STATIC_PATHS.has(pathname) || DETAIL_PATH.test(pathname)) return { kind: 'native', path };
   return { kind: 'unsupported' };
 }

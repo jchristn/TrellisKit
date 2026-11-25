@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import { aiMethods, ApiError, appearanceMethods, broadcastsMethods, directMessagesApi, directoryMethods, eventMethods, forumMethods, ideasMethods, libraryMethods, messagingMethods, metricsMethods, parseRetryAfter, publicPageMethods, supportMethods } from '@trelliskit/shared';
+import { aiMethods, ApiError, appearanceMethods, broadcastsMethods, directMessagesApi, directoryMethods, eventMethods, exerciseCatalogMethods, favoritesMethods, forumMethods, ideasMethods, libraryMethods, messagingMethods, metricsMethods, parseRetryAfter, publicPageMethods, ranksMethods, supportMethods, trainingMethods } from '@trelliskit/shared';
 
 /** Value of the X-Client header for every request from the app. */
 export const ClientName = 'mobile';
@@ -451,3 +451,8 @@ Object.assign(MobileApiClient.prototype, messagingMethods, supportMethods, ideas
 
 // Public landing pages: the member's opt-in profile page and slug checks (docs/PHASE4_CONTRACT.md section 18).
 Object.assign(MobileApiClient.prototype, publicPageMethods, metricsMethods);
+
+// Training hub: the overview, unified Library search, lesson and technique links, saves and
+// collections, the technique catalog, and ranks, curricula, and check-in (docs/TRELLISKIT.md
+// sections 15 and 16). They use only get, post, put, and delete.
+Object.assign(MobileApiClient.prototype, exerciseCatalogMethods, ranksMethods, favoritesMethods, trainingMethods);

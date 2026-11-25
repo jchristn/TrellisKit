@@ -18,6 +18,7 @@ import MarkdownBody from '../feed/MarkdownBody';
 import MediaImage from '../feed/MediaImage';
 import ReportSheet, { DirectoryReportReasons } from '../feed/ReportSheet';
 import VenueCard from './VenueCard';
+import { SaveRow } from '../SaveButton';
 
 /**
  * An instructor (docs/PHASE4_CONTRACT.md sections 2.3 and 3.8): photo, name, rank from the
@@ -80,9 +81,11 @@ export default function InstructorDetail({ instructorId, testID = 'instructor' }
       <View style={{ flexDirection: 'row', gap: theme.spacing.md, alignItems: 'center' }}>
         {imageUrl(instructor.photo, 'thumb') ? <MediaImage url={imageUrl(instructor.photo, 'thumb')} blurhash={instructor.photo.blurhash} alt={null} style={{ width: 72, height: 72, borderRadius: 36 }} /> : null}
         <View style={{ flex: 1, gap: 2 }}>
-          <AppText variant="title" accessibilityRole="header" testID={testID + '-name'}>
-            {instructor.displayName}
-          </AppText>
+          <SaveRow targetType="Instructor" targetId={instructor.id} title={instructor.displayName} testID={testID + '-save'}>
+            <AppText variant="title" accessibilityRole="header" testID={testID + '-name'}>
+              {instructor.displayName}
+            </AppText>
+          </SaveRow>
           {rank ? <AppText testID={testID + '-rank'}>{rank}</AppText> : null}
           {instructor.affiliation ? <AppText color="textMuted">{instructor.affiliation}</AppText> : null}
         </View>

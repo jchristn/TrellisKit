@@ -14,8 +14,9 @@ const APP_DIR = path.resolve(__dirname, '../app');
 // Drawer mechanics tests place every destination in the drawer, whatever the active property chooses.
 const full = { ...property, mobile: { ...property.mobile, navigation: { drawerItems: [...MobileDestinationIds], shortcuts: [], accountMenu: [] } } };
 const member = { id: 'usr_other', displayName: 'Another member', handle: 'another', profile: {}, labels: [], tags: {} };
-function serve(propertyDoc = property, user = makeUser()) {
+function serve(propertyDoc = property, user = makeUser(), extra = {}) {
   return installFakeServer({
+    ...extra,
     ...signedInAs(user), 'GET /property': propertyDoc,
     'POST /members/directory/enumerate': enumerationResult([member]),
     'POST /feed/enumerate': enumerationResult([]), 'POST /labels/enumerate': enumerationResult([]), 'POST /tags/keys/enumerate': enumerationResult([]),
@@ -239,15 +240,15 @@ test('without an account menu the header has no avatar and Messages stays in the
   expect(screen.getByTestId('header-messages')).toBeOnTheScreen();
 });
 
-test('five shortcuts fit the bar and Training opens its stack with the library home', async () => {
-  serve(fiveShortcutsProperty);
+test('five shortcuts fit the bar and Training opens its stack with the Overview', async () => {
+  serve(fiveShortcutsProperty, makeUser(), { 'GET /me/training': { sections: [{ key: 'Overview', available: true }, { key: 'Library', available: true, segments: ['Courses', 'Saved'] }], firstRun: true }, 'POST /series/enumerate': enumerationResult([]) });
   const router = await renderRouter(APP_DIR, { initialUrl: '/feed' });
   const bar = await screen.findByTestId('navigation-shortcuts');
   expect(within(bar).getAllByRole('tab').map((item) => item.props.testID)).toEqual(['tab-feed', 'tab-training', 'tab-members', 'tab-messages', 'tab-profile']);
   expect(within(bar).getByText('Training')).toBeOnTheScreen();
   await fireEvent.press(screen.getByTestId('tab-training'));
   await waitFor(() => expect(router.getPathname()).toBe('/training'));
-  expect(await screen.findByTestId('screen-library')).toBeOnTheScreen();
+  expect(await screen.findByTestId('training-overview')).toBeOnTheScreen();
   expect(screen.getByTestId('tab-training')).toHaveProp('accessibilityState', { selected: true });
   expect(screen.getByTestId('header-menu')).toBeOnTheScreen();
   // Training in the bar covers the library, so the drawer does not append it.

@@ -16,6 +16,7 @@ import { MessagingProvider } from '../src/messaging/MessagingProvider';
 import { NotificationsProvider } from '../src/notifications/NotificationsProvider';
 import PushRegistration from '../src/notifications/PushRegistration';
 import LibrarySync from '../src/library/LibrarySync';
+import TrainingSync from '../src/training/TrainingSync';
 import { AppNavigationProvider, drawerHeaderOptions, useAppNavigation } from '../src/navigation/AppNavigation';
 import { PropertyProvider } from '../src/property';
 import strings from '../src/strings';
@@ -105,6 +106,7 @@ export default function RootLayout() {
           <PushRegistration />
           <DocumentsGate />
           <LibrarySync />
+          <TrainingSync />
           <MediaProvider>
           <NotificationsProvider>
           <MessagingProvider>

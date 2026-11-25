@@ -25,6 +25,7 @@ import PostCard, { LockedPostCard } from './PostCard';
 import { accessDenial, featureAccess, isLockedItem } from '@trelliskit/shared';
 import { useProperty } from '../../property';
 import { AccessPromptCard } from '../AccessPrompt';
+import { SaveRow } from '../SaveButton';
 
 /** Tree page parameters (contract 7.3 defaults). */
 export const TreePage = Object.freeze({ limit: 20, depth: 3, childLimit: 5 });
@@ -292,7 +293,7 @@ export default function PostDetail({ postId, initialPost = null, commentId = nul
 
   const header = (
     <View style={{ gap: theme.spacing.lg, paddingHorizontal: pad, paddingTop: pad }}>
-      {renderCard ? renderCard({ item: post, onChange: updatePost, onDeleted, onAuthorBlocked: authorBlocked }) : <PostCard post={post} onChange={updatePost} onDeleted={onDeleted} onAuthorBlocked={authorBlocked} detail />}
+      {renderCard ? renderCard({ item: post, onChange: updatePost, onDeleted, onAuthorBlocked: authorBlocked }) : <View><SaveRow targetType="Post" targetId={post.id} testID={testID + '-save'} /><PostCard post={post} onChange={updatePost} onDeleted={onDeleted} onAuthorBlocked={authorBlocked} detail /></View>}
       <View style={{ gap: theme.spacing.sm }}>
         <AppText variant="heading" accessibilityRole="header">
           {strings.comments.title}

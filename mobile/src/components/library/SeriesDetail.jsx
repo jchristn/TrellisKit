@@ -19,6 +19,7 @@ import Loading from '../Loading';
 import MarkdownBody from '../feed/MarkdownBody';
 import MediaImage from '../feed/MediaImage';
 import { LessonRow, ProgressBar } from './LibraryCards';
+import { SaveRow } from '../SaveButton';
 
 const t = strings.library;
 
@@ -62,9 +63,11 @@ export default function SeriesDetail({ seriesId, onOpenLesson, testID = 'series'
   const header = (
     <View style={{ gap: theme.spacing.md, paddingBottom: theme.spacing.md }}>
       {imageUrl(series.cover) ? <MediaImage url={imageUrl(series.cover)} blurhash={series.cover.blurhash} alt={series.cover.altText || null} style={{ width: '100%', aspectRatio: 16 / 9, borderRadius: theme.radii.lg }} /> : null}
-      <AppText variant="title" accessibilityRole="header" testID={testID + '-title'}>
-        {series.title}
-      </AppText>
+      <SaveRow targetType="Series" targetId={series.id} title={series.title} testID={testID + '-save'}>
+        <AppText variant="title" accessibilityRole="header" testID={testID + '-title'}>
+          {series.title}
+        </AppText>
+      </SaveRow>
       <AppText color="textMuted">{[t.lessonCount(series.lessonCount || 0), series.totalDurationSeconds ? formatTotalDuration(series.totalDurationSeconds) : null, levels || null].filter(Boolean).join(' · ')}</AppText>
       {series.summary ? <AppText>{series.summary}</AppText> : null}
       {progress && !locked ? (

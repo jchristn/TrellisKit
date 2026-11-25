@@ -290,8 +290,12 @@ describe('Library tab on a tablet', () => {
     serve();
     const router = await renderRouter(APP_DIR, { initialUrl: '/library' });
     expect(await screen.findByTestId('library-select')).toBeOnTheScreen();
+    // With Training placed, /library opens Training's Courses segment; either way selecting a
+    // series keeps the library home on screen instead of pushing the series.
+    const home = router.getPathname();
+    expect(['/library', '/training/library/courses']).toContain(home);
     await fireEvent.press(await screen.findByTestId('series-ser_1'));
     expect(await screen.findByTestId('lesson-les_1')).toBeOnTheScreen();
-    expect(router.getPathname()).toBe('/library');
+    expect(router.getPathname()).toBe(home);
   });
 });

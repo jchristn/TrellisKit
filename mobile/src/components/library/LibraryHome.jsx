@@ -46,17 +46,23 @@ export function continueItems(page) {
   return objects.filter((item) => item && item.lesson && !(item.progress && item.progress.completed));
 }
 
-/** "Continue watching": in-progress lessons the caller can still open (bounded, newest first). */
-function ContinueRail({ onOpenLesson }) {
+/**
+ * "Continue watching": in-progress lessons the caller can still open (bounded, newest first).
+ * Loads them itself unless `items` (ContinueWatchingItem[], for example from the Training
+ * overview) are given; `title` and `testID` replace the Library's heading and test id.
+ */
+export function ContinueRail({ onOpenLesson, items: provided = null, title = t.continueWatching, testID = 'library-continue' }) {
   const theme = useTheme();
   const { api, user } = useAuth();
-  const [items, setItems] = useState(null);
+  const [loaded, setItems] = useState(null);
   const [version, setVersion] = useState(0);
+  const own = provided === null;
+  const items = own ? loaded : continueItems({ objects: provided });
   // The Library tab stays mounted: refetch whenever it regains focus, so a lesson finished on its
   // own screen leaves the rail when the member comes back.
   useFocusEffect(useCallback(() => setVersion((v) => v + 1), []));
   useEffect(() => {
-    if (!user) return undefined;
+    if (!user || !own) return undefined;
     let active = true;
     api
       .enumerateContinueWatching({ maxResults: 10 })
@@ -65,12 +71,12 @@ function ContinueRail({ onOpenLesson }) {
     return () => {
       active = false;
     };
-  }, [api, user, version]);
+  }, [api, user, version, own]);
   if (!items || !items.length) return null;
   return (
-    <View style={{ gap: theme.spacing.sm }} testID="library-continue">
+    <View style={{ gap: theme.spacing.sm }} testID={testID}>
       <AppText variant="heading" accessibilityRole="header">
-        {t.continueWatching}
+        {title}
       </AppText>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: theme.spacing.sm }}>
         {items.map((item) => (

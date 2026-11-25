@@ -384,3 +384,32 @@ describe('mobile navigation build declarations', () => {
     }
   });
 });
+
+describe('Training hub declarations', () => {
+  test('the Training strings are engine text in the shared strings module', () => {
+    expect(stringTemplates.training.title).toBe('Training');
+    expect(strings.training.saved.noteHint).toBe('Visible to you and moderators.');
+    for (const text of collect(stringTemplates.training)) expect({ text, hit: PROPERTY_WORDS.test(text) }).toEqual({ text, hit: false });
+  });
+
+  test('the five-shortcut fixture places Training in the bar and the build loader accepts it', () => {
+    const { readProperty, publicProperty } = require('../scripts/property');
+    const { fiveShortcutsProperty } = require('../test-utils/fiveShortcuts');
+    const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'training-property-'));
+    try {
+      const document = { ...plain, mobile: { ...plain.mobile, navigation: fiveShortcutsProperty.mobile.navigation } };
+      fs.writeFileSync(path.join(temporary, 'property.json'), JSON.stringify(document));
+      expect(publicProperty(readProperty(temporary)).mobile.navigation.shortcuts).toEqual(['feed', 'training', 'members', 'messages', 'profile']);
+    } finally {
+      fs.rmSync(temporary, { recursive: true, force: true });
+    }
+  });
+
+  test('the Training stack is registered on the root stack', () => {
+    const root = fs.readFileSync(path.resolve(__dirname, '../app/_layout.jsx'), 'utf8');
+    expect(root).toMatch(/<Stack\.Screen name="training" options=\{\{ headerShown: false \}\} \/>/);
+    for (const file of ['index', 'library/index', 'library/courses', 'library/techniques', 'library/saved', 'saved', 'schedule', 'progress', 'curricula/[id]']) {
+      expect(fs.existsSync(path.resolve(__dirname, '../app/training', file + '.jsx'))).toBe(true);
+    }
+  });
+});

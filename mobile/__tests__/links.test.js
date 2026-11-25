@@ -33,7 +33,12 @@ it.each([
   ['/terms', '/documents/agreement'],
   ['/privacy', '/documents/privacy'],
   ['/directory', '/map?section=places'],
-  ['/events', '/map?section=events']
+  ['/events', '/map?section=events'],
+  ['https://community.test/app/check-in?t=Event&id=evt_1', '/check-in?t=Event&id=evt_1'],
+  ['https://community.test/app/training', '/training'],
+  ['https://community.test/app/training/library/techniques', '/training/library/techniques'],
+  ['https://community.test/app/training/lessons/les_1', '/lessons/les_1'],
+  ['https://community.test/app/training/curricula/cur_1', '/training/curricula/cur_1']
 ])('maps %s to native %s', (href, path) => expect(resolveAppLink(href, fixture)).toEqual({ kind: 'native', path }));
 
 it('does not trust lookalike hosts, unsafe protocols, credentials, or ambiguous paths', () => {
