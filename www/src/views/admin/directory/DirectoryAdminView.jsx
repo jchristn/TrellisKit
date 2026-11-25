@@ -87,7 +87,7 @@ function VenueEditor({ venue, onClose, onSaved }) {
       setError(v.problems.tooShort);
       return;
     }
-    if (Object.keys(validateVenueSchedule(form.schedule)).length) { setError(v.scheduleEditor.invalid); return; }
+    if (Object.keys(validateVenueSchedule(form.schedule)).length) { setError(d(v.scheduleEditor.invalid)); return; }
     if (slugBlocks(slugStatus)) {
       setError(strings.publicPages.fixSlug);
       return;
@@ -364,7 +364,7 @@ function SubmissionReview({ id, onClose, onDone }) {
           <table className="p4-diff">
             <caption className="visually-hidden">{s.changes}</caption>
             <thead><tr><th scope="col">{s.field}</th><th scope="col">{s.current}</th><th scope="col">{s.proposed}</th></tr></thead>
-            <tbody>{(sub.changes || []).map((x) => <tr key={x.field}><th scope="row">{v.fields[x.field.split('.').pop()] || x.field}</th><td className="before">{formatChangeValue(x.current) || '-'}</td><td className="after">{formatChangeValue(x.proposed) || '-'}</td></tr>)}</tbody>
+            <tbody>{(sub.changes || []).map((x) => <tr key={x.field}><th scope="row">{d(v.fields[x.field.split('.').pop()] || x.field)}</th><td className="before">{formatChangeValue(x.current) || '-'}</td><td className="after">{formatChangeValue(x.proposed) || '-'}</td></tr>)}</tbody>
           </table>
           {(sub.possibleDuplicates && sub.possibleDuplicates.objects || []).length > 0 && (
             <Banner tone="warning">{s.duplicates(sub.possibleDuplicates.objects.map((x) => x.name || x.displayName).join(', '))}</Banner>
@@ -549,6 +549,8 @@ function SettingsTab() {
         {text('venueLabelPlural', s.fields.venueLabelPlural)}
         {text('instructorLabel', s.fields.instructorLabel)}
         {text('instructorLabelPlural', s.fields.instructorLabelPlural)}
+        {text('sessionLabel', s.fields.sessionLabel)}
+        {text('sessionLabelPlural', s.fields.sessionLabelPlural)}
         {text('instructorRankFieldKey', s.fields.instructorRankFieldKey)}
       </div>
       <Toggle checked={value.submissions !== false} onChange={(x) => set({ submissions: x })} label={s.fields.submissions} />

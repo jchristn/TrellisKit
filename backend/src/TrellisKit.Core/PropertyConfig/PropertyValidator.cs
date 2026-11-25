@@ -315,6 +315,8 @@ namespace TrellisKit.Core.PropertyConfig
             Label(directory.VenueLabelPlural, "directory.venueLabelPlural", 40, problems);
             Label(directory.InstructorLabel, "directory.instructorLabel", 40, problems);
             Label(directory.InstructorLabelPlural, "directory.instructorLabelPlural", 40, problems);
+            Label(directory.SessionLabel, "directory.sessionLabel", 40, problems);
+            Label(directory.SessionLabelPlural, "directory.sessionLabelPlural", 40, problems);
             if (directory.InstructorRankFieldKey != null && !_Key.IsMatch(directory.InstructorRankFieldKey))
                 problems.Add("directory.instructorRankFieldKey must be 1 to 64 letters, digits, underscores, or hyphens");
             Options(directory.Programs, "directory.programs", 50, false, problems);

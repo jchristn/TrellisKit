@@ -189,7 +189,7 @@ namespace Test.Shared.Suites
             {
                 affiliation = "Example Network",
                 summary = "A friendly club.",
-                description = "Open mats every weekend.",
+                description = "Open to visitors every weekend.",
                 address = new { line1 = "100 Example Street", locality = "Exampleville", region = "EX", postalCode = "00000", countryCode = "US" },
                 email = "hidden-venue-email@example.test",
                 websiteUrl = "https://example.test",

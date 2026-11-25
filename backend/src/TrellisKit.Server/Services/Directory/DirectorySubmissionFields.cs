@@ -48,9 +48,9 @@ namespace TrellisKit.Server.Services
         public static readonly IReadOnlyCollection<string> MultiValue = new HashSet<string>(StringComparer.Ordinal) { "socialLinks", "programs", "photoMediaIds", "venueIds" };
 
         /// <summary>Structured schedule row keys; entry fields use matching positions.</summary>
-        public static readonly IReadOnlyList<string> ScheduleParts = new[] { "set", "timeZone", "notes", "openingHours.dayOfWeek", "openingHours.startTime", "openingHours.endTime", "openingHours.endsNextDay", "classes.dayOfWeek", "classes.startTime", "classes.endTime", "classes.endsNextDay", "classes.name", "classes.instructor" };
+        public static readonly IReadOnlyList<string> ScheduleParts = new[] { "set", "timeZone", "notes", "openingHours.dayOfWeek", "openingHours.startTime", "openingHours.endTime", "openingHours.endsNextDay", "sessions.dayOfWeek", "sessions.startTime", "sessions.endTime", "sessions.endsNextDay", "sessions.name", "sessions.instructor" };
 
-        private static bool IsMulti(string field) => MultiValue.Contains(field) || field.StartsWith("schedule.openingHours.", StringComparison.Ordinal) || field.StartsWith("schedule.classes.", StringComparison.Ordinal);
+        private static bool IsMulti(string field) => MultiValue.Contains(field) || field.StartsWith("schedule.openingHours.", StringComparison.Ordinal) || field.StartsWith("schedule.sessions.", StringComparison.Ordinal);
 
         #endregion
 
@@ -166,14 +166,14 @@ namespace TrellisKit.Server.Services
                 result["schedule." + kind + ".startTime"] = entries.Select(e => (string?)e.StartTime).ToList();
                 result["schedule." + kind + ".endTime"] = entries.Select(e => (string?)e.EndTime).ToList();
                 result["schedule." + kind + ".endsNextDay"] = entries.Select(e => (string?)(e.EndsNextDay ? "true" : "false")).ToList();
-                if (kind == "classes")
+                if (kind == "sessions")
                 {
-                    result["schedule.classes.name"] = entries.Select(e => e.Name).ToList();
-                    result["schedule.classes.instructor"] = entries.Select(e => e.Instructor).ToList();
+                    result["schedule.sessions.name"] = entries.Select(e => e.Name).ToList();
+                    result["schedule.sessions.instructor"] = entries.Select(e => e.Instructor).ToList();
                 }
             }
             Entries("openingHours", venue.Schedule?.OpeningHours ?? new List<VenueScheduleEntry>());
-            Entries("classes", venue.Schedule?.Classes ?? new List<VenueScheduleEntry>());
+            Entries("sessions", venue.Schedule?.Sessions ?? new List<VenueScheduleEntry>());
             return result;
         }
 
@@ -429,7 +429,7 @@ namespace TrellisKit.Server.Services
                 string? At(string key, int index) => values.TryGetValue(prefix + key, out List<string?>? rows) && index < rows.Count ? rows[index] : null;
                 return days.Select((day, i) => day == null ? null : new VenueScheduleEntry { DayOfWeek = Int32.Parse(day, CultureInfo.InvariantCulture), StartTime = At("startTime", i) ?? "", EndTime = At("endTime", i) ?? "", EndsNextDay = At("endsNextDay", i) == "true", Name = At("name", i), Instructor = At("instructor", i) }).Where(e => e != null).Cast<VenueScheduleEntry>().ToList();
             }
-            return new VenueSchedule { TimeZone = First(values, "schedule.timeZone"), Notes = First(values, "schedule.notes"), OpeningHours = Entries("openingHours"), Classes = Entries("classes") };
+            return new VenueSchedule { TimeZone = First(values, "schedule.timeZone"), Notes = First(values, "schedule.notes"), OpeningHours = Entries("openingHours"), Sessions = Entries("sessions") };
         }
 
         private static List<string> NonNull(List<string?> values)

@@ -129,7 +129,7 @@ export function createDirectoryFake(seed = {}) {
     submissionsEnabled: seed.submissionsEnabled !== false,
     claimsEnabled: seed.claimsEnabled !== false,
     maxPending: seed.maxPending || 5,
-    settings: { venueLabel: 'Venue', venueLabelPlural: 'Venues', instructorLabel: 'Instructor', instructorLabelPlural: 'Instructors', submissions: true, claims: true, geocoder: { provider: 'None' }, map: { provider: 'None' }, ...(seed.settings || {}) },
+    settings: { venueLabel: 'Venue', venueLabelPlural: 'Venues', instructorLabel: 'Instructor', instructorLabelPlural: 'Instructors', sessionLabel: 'Session', sessionLabelPlural: 'Sessions', submissions: true, claims: true, geocoder: { provider: 'None' }, map: { provider: 'None' }, ...(seed.settings || {}) },
     killed: Boolean(seed.killed),
     regeocodeQueued: 0,
     reviews: (seed.reviews || []).map(clone),
@@ -597,7 +597,7 @@ export function createDirectoryFake(seed = {}) {
       }
     }
     if (parts[2] === 'settings') {
-      const configKeys = ['venueLabel', 'venueLabelPlural', 'instructorLabel', 'instructorLabelPlural', 'instructorRankFieldKey', 'submissions', 'claims'];
+      const configKeys = ['venueLabel', 'venueLabelPlural', 'instructorLabel', 'instructorLabelPlural', 'sessionLabel', 'sessionLabelPlural', 'instructorRankFieldKey', 'submissions', 'claims'];
       if (method === 'PUT') {
         for (const key of configKeys) if (body[key] !== undefined) state.settings[key] = body[key];
         for (const [key, value] of Object.entries(body.values || {})) {

@@ -66,6 +66,8 @@ namespace Test.Shared.Suites
                 VenueLabelPlural = "Clubs",
                 InstructorLabel = "Coach",
                 InstructorLabelPlural = "Coaches",
+                SessionLabel = "Gathering",
+                SessionLabelPlural = "Gatherings",
                 InstructorRankFieldKey = "rank",
                 Programs = new List<PropertyOptionSeed> { new PropertyOptionSeed { Key = "beginners", Label = "Beginners" }, new PropertyOptionSeed { Key = "advanced", Label = "Advanced" } }
             };
@@ -88,7 +90,7 @@ namespace Test.Shared.Suites
             {
                 TimeZone = "Pacific/Honolulu", Notes = "Check holiday hours.",
                 OpeningHours = new List<VenueScheduleEntry> { new VenueScheduleEntry { DayOfWeek = 0, StartTime = "22:00", EndTime = "02:00", EndsNextDay = true } },
-                Classes = new List<VenueScheduleEntry> {
+                Sessions = new List<VenueScheduleEntry> {
                     new VenueScheduleEntry { DayOfWeek = 1, StartTime = "17:00", EndTime = "18:00", Name = "Fundamentals" },
                     new VenueScheduleEntry { DayOfWeek = 1, StartTime = "18:00", EndTime = "19:00", Name = "Advanced", Instructor = "Alex" } }
             };
@@ -97,27 +99,28 @@ namespace Test.Shared.Suites
             JsonElement read = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/venues" + "/" + id, member.AccessToken, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
             Check.Equal("Pacific/Honolulu", Api.Str(read.GetProperty("schedule"), "timeZone"), "Schedule zone persisted");
             Check.True(read.GetProperty("schedule").GetProperty("openingHours")[0].GetProperty("endsNextDay").GetBoolean(), "Overnight hours persisted");
-            Check.Equal(2, read.GetProperty("schedule").GetProperty("classes").GetArrayLength(), "Multiple classes persisted");
+            Check.Equal(2, read.GetProperty("schedule").GetProperty("sessions").GetArrayLength(), "Multiple sessions persisted");
+            Check.Equal(2L, await DirectoryTestKit.CountAsync(f, "SELECT COUNT(*) AS cnt FROM venuescheduleentries WHERE kind = 'Session';", ct).ConfigureAwait(false), "Sessions are stored with the Session kind");
             JsonElement renamed = await Api.ExpectAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { summary = "Updated summary" }, HttpStatusCode.OK, ct).ConfigureAwait(false);
-            Check.Equal(2, renamed.GetProperty("schedule").GetProperty("classes").GetArrayLength(), "Omitted schedule stays unchanged");
+            Check.Equal(2, renamed.GetProperty("schedule").GetProperty("sessions").GetArrayLength(), "Omitted schedule stays unchanged");
             VenueSchedule invalid = schedule.Clone();
-            invalid.Classes[0].EndTime = "16:00";
+            invalid.Sessions[0].EndTime = "16:00";
             await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { schedule = invalid }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
             invalid = schedule.Clone(); invalid.TimeZone = "Not/AZone";
             await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { schedule = invalid }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
-            invalid = schedule.Clone(); invalid.Classes[0].DayOfWeek = 7;
+            invalid = schedule.Clone(); invalid.Sessions[0].DayOfWeek = 7;
             await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { schedule = invalid }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
             invalid = schedule.Clone(); invalid.OpeningHours = null!;
             await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { schedule = invalid }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
             await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken,
-                new { schedule = new { timeZone = "Pacific/Honolulu", openingHours = new[] { new { startTime = "09:00", endTime = "17:00" } }, classes = new object[0] } },
+                new { schedule = new { timeZone = "Pacific/Honolulu", openingHours = new[] { new { startTime = "09:00", endTime = "17:00" } }, sessions = new object[0] } },
                 HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
             schedule.Notes = "Updated through review.";
             JsonElement submission = await Api.ExpectAsync(f, HttpMethod.Post, DirectoryTestKit.Submissions, member.AccessToken, new { type = "EditVenue", targetId = id, fields = new { schedule } }, HttpStatusCode.Created, ct).ConfigureAwait(false);
             await Api.ExpectAsync(f, HttpMethod.Post, DirectoryTestKit.Review + "/" + Api.Str(submission, "id") + "/approve", HttpFixture.AdminToken, new { reviewNote = "Checked schedule" }, HttpStatusCode.OK, ct).ConfigureAwait(false);
             read = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/venues" + "/" + id, member.AccessToken, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
             Check.Equal("Updated through review.", Api.Str(read.GetProperty("schedule"), "notes"), "Approval saves structured schedule");
-            Check.Equal("Alex", Api.Str(read.GetProperty("schedule").GetProperty("classes")[1], "instructor"), "Null instructor on earlier entry does not shift later values");
+            Check.Equal("Alex", Api.Str(read.GetProperty("schedule").GetProperty("sessions")[1], "instructor"), "Null instructor on earlier entry does not shift later values");
             Check.Equal("Original notes", Api.Str(read, "scheduleText"), "Legacy schedule retained");
             JsonElement cleared = await Api.ExpectAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { schedule = (object?)null }, HttpStatusCode.OK, ct).ConfigureAwait(false);
             Check.True(!cleared.TryGetProperty("schedule", out JsonElement empty) || empty.ValueKind == JsonValueKind.Null, "Explicit null clears the schedule");
@@ -133,6 +136,8 @@ namespace Test.Shared.Suites
             Check.Equal("Find clubs nearby.", Api.Str(directory, "introduction"), "Property introduction reaches clients");
             Check.Equal("Listings are informational.", Api.Str(directory, "listingNotice"), "Property notice reaches clients");
             Check.Equal("Club", Api.Str(directory, "venueLabel"), "Venue label from the section");
+            Check.Equal("Gathering", Api.Str(directory, "sessionLabel"), "Session label from the section");
+            Check.Equal("Gatherings", Api.Str(directory, "sessionLabelPlural"), "Plural session label from the section");
             Check.Equal(2, directory.GetProperty("programs").GetArrayLength(), "Seeded programs");
             Check.True(!directory.GetProperty("geocoderConfigured").GetBoolean(), "No geocoder by default");
             Check.Equal("None", Api.Str(directory.GetProperty("map"), "provider"), "Map provider None by default");
@@ -167,12 +172,15 @@ namespace Test.Shared.Suites
             JsonElement deleted = await Api.ExpectAsync(f, HttpMethod.Delete, "/api/v1/admin/directory/programs/" + unused, HttpFixture.AdminToken, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
             Check.True(!deleted.GetProperty("retired").GetBoolean(), "An unused program is deleted");
 
-            JsonElement settings = await DirectoryTestKit.SettingsAsync(f, new { venueLabel = "Studio", submissions = false, values = new Dictionary<string, object> { { "directory.map.provider", "MapLibre" }, { "directory.map.styleUrl", "https://tiles.example.test/style.json" }, { "directory.map.defaultCenterLat", 37.5 } } }, ct).ConfigureAwait(false);
+            JsonElement settings = await DirectoryTestKit.SettingsAsync(f, new { venueLabel = "Studio", sessionLabel = "Meeting", submissions = false, values = new Dictionary<string, object> { { "directory.map.provider", "MapLibre" }, { "directory.map.styleUrl", "https://tiles.example.test/style.json" }, { "directory.map.defaultCenterLat", 37.5 } } }, ct).ConfigureAwait(false);
             Check.Equal("Studio", Api.Str(settings.GetProperty("config"), "venueLabel"), "Label stored");
+            Check.Equal("Meeting", Api.Str(settings.GetProperty("config"), "sessionLabel"), "Session label stored");
+            await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.Settings, HttpFixture.AdminToken, new { sessionLabelPlural = new string('x', 41) }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
             await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.Settings, HttpFixture.AdminToken, new { values = new Dictionary<string, object> { { "email.provider", "Auto" } } }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
             await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.Settings, HttpFixture.AdminToken, new { instructorRankFieldKey = "city" }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
             JsonElement after = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/property", null, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
             Check.Equal("Studio", Api.Str(after.GetProperty("directory"), "venueLabel"), "Decorator reads the stored label");
+            Check.Equal("Meeting", Api.Str(after.GetProperty("directory"), "sessionLabel"), "Decorator reads the stored session label");
             Check.True(!after.GetProperty("directory").GetProperty("submissions").GetBoolean(), "Submissions switch");
             Check.Equal("MapLibre", Api.Str(after.GetProperty("directory").GetProperty("map"), "provider"), "Map provider");
             Check.Equal(37.5, after.GetProperty("directory").GetProperty("map").GetProperty("defaultCenter").GetProperty("lat").GetDouble(), "Map center");

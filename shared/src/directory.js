@@ -9,7 +9,7 @@ import { formatTemplate } from './property.js';
 import { validateVenueSchedule } from './venueSchedule.js';
 
 /** Engine default labels (section 0.2). */
-export const DEFAULT_DIRECTORY_TERMS = Object.freeze({ venue: 'Venue', venues: 'Venues', instructor: 'Instructor', instructors: 'Instructors' });
+export const DEFAULT_DIRECTORY_TERMS = Object.freeze({ venue: 'Venue', venues: 'Venues', instructor: 'Instructor', instructors: 'Instructors', session: 'Session', sessions: 'Sessions' });
 
 /** Address visibility values (section 2.1). */
 export const AddressVisibility = Object.freeze({ Exact: 'Exact', Approximate: 'Approximate', LocalityOnly: 'LocalityOnly' });
@@ -64,6 +64,8 @@ export function directoryConfig(property) {
     venueLabelPlural: text(d.venueLabelPlural, DEFAULT_DIRECTORY_TERMS.venues),
     instructorLabel: text(d.instructorLabel, DEFAULT_DIRECTORY_TERMS.instructor),
     instructorLabelPlural: text(d.instructorLabelPlural, DEFAULT_DIRECTORY_TERMS.instructors),
+    sessionLabel: text(d.sessionLabel, DEFAULT_DIRECTORY_TERMS.session),
+    sessionLabelPlural: text(d.sessionLabelPlural, DEFAULT_DIRECTORY_TERMS.sessions),
     programs: Array.isArray(d.programs) ? d.programs.filter((p) => p && p.key) : [],
     instructorRankFieldKey: d.instructorRankFieldKey || null,
     submissions: d.submissions !== false,
@@ -84,18 +86,22 @@ export function directoryConfig(property) {
 }
 
 /**
- * The configured directory terms (section 0.2), for `{venue}`, `{venues}`, `{instructor}`, and
- * `{instructors}` placeholders, plus lowercase variants (`venueLower`, ...) for mid-sentence use.
+ * The configured directory terms (section 0.2), for `{venue}`, `{venues}`, `{instructor}`,
+ * `{instructors}`, `{session}`, and `{sessions}` placeholders, plus lowercase variants (`venueLower`, ...)
+ * for mid-sentence use.
  * @param {object} property
  */
 export function directoryTerms(property) {
   const c = directoryConfig(property);
-  const terms = { venue: c.venueLabel, venues: c.venueLabelPlural, instructor: c.instructorLabel, instructors: c.instructorLabelPlural };
-  return { ...terms, venueLower: terms.venue.toLowerCase(), venuesLower: terms.venues.toLowerCase(), instructorLower: terms.instructor.toLowerCase(), instructorsLower: terms.instructors.toLowerCase() };
+  const terms = { venue: c.venueLabel, venues: c.venueLabelPlural, instructor: c.instructorLabel, instructors: c.instructorLabelPlural, session: c.sessionLabel, sessions: c.sessionLabelPlural };
+  return {
+    ...terms, venueLower: terms.venue.toLowerCase(), venuesLower: terms.venues.toLowerCase(), instructorLower: terms.instructor.toLowerCase(), instructorsLower: terms.instructors.toLowerCase(),
+    sessionLower: terms.session.toLowerCase(), sessionsLower: terms.sessions.toLowerCase()
+  };
 }
 
 /**
- * Fill `{venue}`, `{venues}`, `{instructor}`, `{instructors}` (and the `...Lower` variants) plus any
+ * Fill `{venue}`, `{venues}`, `{instructor}`, `{instructors}`, `{session}`, `{sessions}` (and the `...Lower` variants) plus any
  * extra values in a template. Unknown placeholders stay as written.
  * @param {string} template
  * @param {object} propertyOrTerms a property, or the result of `directoryTerms`

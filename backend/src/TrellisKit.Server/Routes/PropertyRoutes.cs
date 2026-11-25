@@ -171,6 +171,8 @@ namespace TrellisKit.Server.Routes
                 VenueLabelPlural = s.VenueLabelPlural,
                 InstructorLabel = s.InstructorLabel,
                 InstructorLabelPlural = s.InstructorLabelPlural,
+                SessionLabel = s.SessionLabel,
+                SessionLabelPlural = s.SessionLabelPlural,
                 Programs = (s.Programs ?? new List<PropertyOptionSeed>()).Where(o => o != null).Select(o => new PublicOption { Key = o.Key, Label = o.Label }).ToList(),
                 InstructorRankFieldKey = s.InstructorRankFieldKey,
                 Submissions = s.Submissions,

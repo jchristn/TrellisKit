@@ -29,6 +29,8 @@ namespace TrellisKit.Core.Database.Shared
                 VenueLabelPlural = RowReader.GetString(row, "venuelabelplural"),
                 InstructorLabel = RowReader.GetString(row, "instructorlabel"),
                 InstructorLabelPlural = RowReader.GetString(row, "instructorlabelplural"),
+                SessionLabel = RowReader.GetString(row, "sessionlabel"),
+                SessionLabelPlural = RowReader.GetString(row, "sessionlabelplural"),
                 InstructorRankFieldKey = RowReader.GetNullableString(row, "instructorrankfieldkey"),
                 SubmissionsEnabled = RowReader.GetBool(row, "submissionsenabled"),
                 ClaimsEnabled = RowReader.GetBool(row, "claimsenabled"),
@@ -40,10 +42,10 @@ namespace TrellisKit.Core.Database.Shared
         public async Task WriteAsync(DirectoryConfig config, CancellationToken token = default)
         {
             ArgumentNullException.ThrowIfNull(config);
-            await QueryAsync("INSERT INTO directoryconfig (propertyid, venuelabel, venuelabelplural, instructorlabel, instructorlabelplural, instructorrankfieldkey, submissionsenabled, claimsenabled, sourcehash, updatedutc) VALUES (" +
-                Pid + ", " + D.Str(config.VenueLabel) + ", " + D.Str(config.VenueLabelPlural) + ", " + D.Str(config.InstructorLabel) + ", " + D.Str(config.InstructorLabelPlural) + ", " + D.Str(config.InstructorRankFieldKey) + ", " +
+            await QueryAsync("INSERT INTO directoryconfig (propertyid, venuelabel, venuelabelplural, instructorlabel, instructorlabelplural, sessionlabel, sessionlabelplural, instructorrankfieldkey, submissionsenabled, claimsenabled, sourcehash, updatedutc) VALUES (" +
+                Pid + ", " + D.Str(config.VenueLabel) + ", " + D.Str(config.VenueLabelPlural) + ", " + D.Str(config.InstructorLabel) + ", " + D.Str(config.InstructorLabelPlural) + ", " + D.Str(config.SessionLabel) + ", " + D.Str(config.SessionLabelPlural) + ", " + D.Str(config.InstructorRankFieldKey) + ", " +
                 D.Bool(config.SubmissionsEnabled) + ", " + D.Bool(config.ClaimsEnabled) + ", " + D.Str(config.SourceHash) + ", " + D.Ts(config.UpdatedUtc) + ") ON CONFLICT (propertyid) DO UPDATE SET venuelabel = EXCLUDED.venuelabel, " +
-                "venuelabelplural = EXCLUDED.venuelabelplural, instructorlabel = EXCLUDED.instructorlabel, instructorlabelplural = EXCLUDED.instructorlabelplural, instructorrankfieldkey = EXCLUDED.instructorrankfieldkey, " +
+                "venuelabelplural = EXCLUDED.venuelabelplural, instructorlabel = EXCLUDED.instructorlabel, instructorlabelplural = EXCLUDED.instructorlabelplural, sessionlabel = EXCLUDED.sessionlabel, sessionlabelplural = EXCLUDED.sessionlabelplural, instructorrankfieldkey = EXCLUDED.instructorrankfieldkey, " +
                 "submissionsenabled = EXCLUDED.submissionsenabled, claimsenabled = EXCLUDED.claimsenabled, sourcehash = EXCLUDED.sourcehash, updatedutc = EXCLUDED.updatedutc;", token).ConfigureAwait(false);
         }
 

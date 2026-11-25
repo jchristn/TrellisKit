@@ -27,7 +27,7 @@ function Section({ label, children }) {
 
 /**
  * A venue's schedule: opening hours as a small table (days on the left, hours on the right, with
- * days that share hours on one row), then the class schedule notes as short paragraphs. Schedule
+ * days that share hours on one row), then the weekly sessions and the schedule notes as short paragraphs. Schedule
  * text in any other shape is shown as paragraphs.
  * @param {object} props
  * @param {string} props.text The venue's `scheduleText`.
@@ -39,7 +39,7 @@ export function VenueSchedule({ text, schedule, t, hoursOnly = false, testID }) 
   const parsed = venueScheduleDisplay(schedule, text);
   const hours = parsed.hours;
   const notes = hoursOnly ? [] : parsed.notes;
-  if (!hours.length && !notes.length && (hoursOnly || !parsed.classes.length)) return null;
+  if (!hours.length && !notes.length && (hoursOnly || !parsed.sessions.length)) return null;
   return (
     <View style={{ gap: theme.spacing.md }} testID={testID}>
       {parsed.timeZone ? <AppText color="textMuted">{parsed.timeZone}</AppText> : null}
@@ -60,8 +60,8 @@ export function VenueSchedule({ text, schedule, t, hoursOnly = false, testID }) 
           </View>
         </Section>
       ) : null}
-      {!hoursOnly && parsed.classes.length ? <Section label={t.scheduleEditor.classes}>
-        {parsed.classes.map((entry, i) => <AppText key={i}>
+      {!hoursOnly && parsed.sessions.length ? <Section label={t.scheduleEditor.sessions}>
+        {parsed.sessions.map((entry, i) => <AppText key={i}>
           {entry.name}{' · '}{t.scheduleDays[entry.dayOfWeek]}{' · '}
           {scheduleTimeLabel(t, { open: entry.startTime, close: entry.endTime, endsNextDay: entry.endsNextDay })}
           {entry.instructor ? ' · ' + entry.instructor : ''}

@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "61705d67a84eef4ab71d6e9776c3386116e3b35e12d7ec6c57a9fa83b64294c0",
+ "sha256": "0d6b023b7c4b2f7b98c00d747f26f5ff4ff6fa9df30c2e4bc18502948256bed0",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -10471,13 +10471,6 @@
    "maxLength": 200
   },
   {
-   "key": "mobile.places.scheduleEditor.addClass",
-   "client": "mobile",
-   "default": "Add class",
-   "tokens": [],
-   "maxLength": 200
-  },
-  {
    "key": "mobile.places.scheduleEditor.addHours",
    "client": "mobile",
    "default": "Add opening hours",
@@ -10485,10 +10478,12 @@
    "maxLength": 200
   },
   {
-   "key": "mobile.places.scheduleEditor.classes",
+   "key": "mobile.places.scheduleEditor.addSession",
    "client": "mobile",
-   "default": "Class sessions",
-   "tokens": [],
+   "default": "Add a {sessionLower}",
+   "tokens": [
+    "sessionLower"
+   ],
    "maxLength": 200
   },
   {
@@ -10515,9 +10510,11 @@
   {
    "key": "mobile.places.scheduleEditor.hint",
    "client": "mobile",
-   "default": "Times use the schedule time zone. Days without opening hours are unspecified. Confirm current times with the venue.",
-   "tokens": [],
-   "maxLength": 230
+   "default": "Times use the schedule time zone. Days without opening hours are unspecified. Confirm current times with the {venueLower}.",
+   "tokens": [
+    "venueLower"
+   ],
+   "maxLength": 244
   },
   {
    "key": "mobile.places.scheduleEditor.hours",
@@ -10529,16 +10526,20 @@
   {
    "key": "mobile.places.scheduleEditor.instructor",
    "client": "mobile",
-   "default": "Instructor (optional)",
-   "tokens": [],
+   "default": "{instructor} (optional)",
+   "tokens": [
+    "instructor"
+   ],
    "maxLength": 200
   },
   {
    "key": "mobile.places.scheduleEditor.invalid",
    "client": "mobile",
-   "default": "Check the schedule: choose a valid time zone, day and HH:mm times, and give each class a name. Intervals must be longer than zero and at most 24 hours.",
-   "tokens": [],
-   "maxLength": 302
+   "default": "Check the schedule: choose a valid time zone, day and HH:mm times, and give each {sessionLower} a name. Intervals must be longer than zero and at most 24 hours.",
+   "tokens": [
+    "sessionLower"
+   ],
+   "maxLength": 320
   },
   {
    "key": "mobile.places.scheduleEditor.legacy",
@@ -10550,8 +10551,10 @@
   {
    "key": "mobile.places.scheduleEditor.name",
    "client": "mobile",
-   "default": "Class name",
-   "tokens": [],
+   "default": "{session} name",
+   "tokens": [
+    "session"
+   ],
    "maxLength": 200
   },
   {
@@ -10587,6 +10590,15 @@
    "client": "mobile",
    "default": "Remove entry",
    "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.sessions",
+   "client": "mobile",
+   "default": "{sessions}",
+   "tokens": [
+    "sessions"
+   ],
    "maxLength": 200
   },
   {
@@ -17036,6 +17048,20 @@
    "key": "web.admin.directoryAdmin.fields.mapProvider",
    "client": "web",
    "default": "Map",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.admin.directoryAdmin.fields.sessionLabel",
+   "client": "web",
+   "default": "Schedule session label",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.admin.directoryAdmin.fields.sessionLabelPlural",
+   "client": "web",
+   "default": "Schedule session label (plural)",
    "tokens": [],
    "maxLength": 200
   },
@@ -59119,8 +59145,10 @@
   {
    "key": "web.venues.fields.instructor",
    "client": "web",
-   "default": "Instructor",
-   "tokens": [],
+   "default": "{instructor}",
+   "tokens": [
+    "instructor"
+   ],
    "maxLength": 200
   },
   {
@@ -60284,13 +60312,6 @@
    "maxLength": 200
   },
   {
-   "key": "web.venues.scheduleEditor.addClass",
-   "client": "web",
-   "default": "Add class",
-   "tokens": [],
-   "maxLength": 200
-  },
-  {
    "key": "web.venues.scheduleEditor.addHours",
    "client": "web",
    "default": "Add opening hours",
@@ -60298,10 +60319,12 @@
    "maxLength": 200
   },
   {
-   "key": "web.venues.scheduleEditor.classes",
+   "key": "web.venues.scheduleEditor.addSession",
    "client": "web",
-   "default": "Class sessions",
-   "tokens": [],
+   "default": "Add a {sessionLower}",
+   "tokens": [
+    "sessionLower"
+   ],
    "maxLength": 200
   },
   {
@@ -60328,9 +60351,11 @@
   {
    "key": "web.venues.scheduleEditor.hint",
    "client": "web",
-   "default": "Times use the schedule time zone. Days without opening hours are unspecified. Confirm current times with the venue.",
-   "tokens": [],
-   "maxLength": 230
+   "default": "Times use the schedule time zone. Days without opening hours are unspecified. Confirm current times with the {venueLower}.",
+   "tokens": [
+    "venueLower"
+   ],
+   "maxLength": 244
   },
   {
    "key": "web.venues.scheduleEditor.hours",
@@ -60342,16 +60367,20 @@
   {
    "key": "web.venues.scheduleEditor.instructor",
    "client": "web",
-   "default": "Instructor (optional)",
-   "tokens": [],
+   "default": "{instructor} (optional)",
+   "tokens": [
+    "instructor"
+   ],
    "maxLength": 200
   },
   {
    "key": "web.venues.scheduleEditor.invalid",
    "client": "web",
-   "default": "Check the schedule: choose a valid time zone, day and HH:mm times, and give each class a name. Intervals must be longer than zero and at most 24 hours.",
-   "tokens": [],
-   "maxLength": 302
+   "default": "Check the schedule: choose a valid time zone, day and HH:mm times, and give each {sessionLower} a name. Intervals must be longer than zero and at most 24 hours.",
+   "tokens": [
+    "sessionLower"
+   ],
+   "maxLength": 320
   },
   {
    "key": "web.venues.scheduleEditor.legacy",
@@ -60363,8 +60392,10 @@
   {
    "key": "web.venues.scheduleEditor.name",
    "client": "web",
-   "default": "Class name",
-   "tokens": [],
+   "default": "{session} name",
+   "tokens": [
+    "session"
+   ],
    "maxLength": 200
   },
   {
@@ -60400,6 +60431,15 @@
    "client": "web",
    "default": "Remove entry",
    "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.sessions",
+   "client": "web",
+   "default": "{sessions}",
+   "tokens": [
+    "sessions"
+   ],
    "maxLength": 200
   },
   {

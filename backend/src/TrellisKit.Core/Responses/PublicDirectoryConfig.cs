@@ -37,6 +37,16 @@ namespace TrellisKit.Core.Responses
         public string InstructorLabelPlural { get; set; } = "Instructors";
 
         /// <summary>
+        /// Session label (the {session} placeholder).
+        /// </summary>
+        public string SessionLabel { get; set; } = "Session";
+
+        /// <summary>
+        /// Plural session label (the {sessions} placeholder).
+        /// </summary>
+        public string SessionLabelPlural { get; set; } = "Sessions";
+
+        /// <summary>
         /// Active (not retired) programs in admin order.
         /// </summary>
         public List<PublicOption> Programs { get; set; } = new List<PublicOption>();

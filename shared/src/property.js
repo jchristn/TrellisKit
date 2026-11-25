@@ -210,7 +210,7 @@ export function mergeProperty(base, runtime) {
   // Preserve property-owned directory copy while connected to an older server.
   if (isObject(base?.directory) && isObject(runtime.directory)) {
     merged.directory = { ...runtime.directory };
-    for (const key of ['introduction', 'listingNotice']) {
+    for (const key of ['introduction', 'listingNotice', 'sessionLabel', 'sessionLabelPlural']) {
       if (runtime.directory[key] === undefined) merged.directory[key] = base.directory[key];
     }
   }

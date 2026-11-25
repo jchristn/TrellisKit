@@ -19,7 +19,7 @@ namespace TrellisKit.Server.Services
                 TimeZone = DirectoryText.TimeZone(schedule.TimeZone, "schedule.timeZone", errors),
                 Notes = DirectoryText.Text(schedule.Notes, 1000, "schedule.notes", errors)
             };
-            List<VenueScheduleEntry> Entries(List<VenueScheduleEntry>? source, string field, int max, bool classes)
+            List<VenueScheduleEntry> Entries(List<VenueScheduleEntry>? source, string field, int max, bool sessions)
             {
                 if (source == null) { errors[field] = "Use an array."; return new List<VenueScheduleEntry>(); }
                 if (source.Count > max) errors[field] = "At most " + max + " entries.";
@@ -40,15 +40,15 @@ namespace TrellisKit.Server.Services
                         double duration = (end.ToTimeSpan() - start.ToTimeSpan()).TotalMinutes + (entry.EndsNextDay ? 1440 : 0);
                         if (duration <= 0 || duration > 1440) errors[key + ".endTime"] = "The interval must be longer than zero and at most 24 hours; mark overnight intervals as ending the next day.";
                     }
-                    if (classes && entry.Name == null) errors[key + ".name"] = "A class name is required.";
-                    if (!classes && (entry.Name != null || entry.Instructor != null)) errors[key] = "Opening hours cannot have a class name or instructor.";
+                    if (sessions && entry.Name == null) errors[key + ".name"] = "A session name is required.";
+                    if (!sessions && (entry.Name != null || entry.Instructor != null)) errors[key] = "Opening hours cannot have a session name or instructor.";
                     entries.Add(entry);
                 }
                 return entries;
             }
             result.OpeningHours = Entries(schedule.OpeningHours, "schedule.openingHours", 28, false);
-            result.Classes = Entries(schedule.Classes, "schedule.classes", 100, true);
-            if ((result.OpeningHours.Count > 0 || result.Classes.Count > 0) && result.TimeZone == null) errors["schedule.timeZone"] = "A time zone is required when hours or classes are supplied.";
+            result.Sessions = Entries(schedule.Sessions, "schedule.sessions", 100, true);
+            if ((result.OpeningHours.Count > 0 || result.Sessions.Count > 0) && result.TimeZone == null) errors["schedule.timeZone"] = "A time zone is required when hours or sessions are supplied.";
             return result;
         }
 
@@ -59,7 +59,7 @@ namespace TrellisKit.Server.Services
             string[] days = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
             List<string> lines = new List<string>();
             if (schedule.TimeZone != null) lines.Add(schedule.TimeZone);
-            foreach (VenueScheduleEntry row in schedule.OpeningHours.Concat(schedule.Classes).OrderBy(e => e.DayOfWeek).ThenBy(e => e.StartTime))
+            foreach (VenueScheduleEntry row in schedule.OpeningHours.Concat(schedule.Sessions).OrderBy(e => e.DayOfWeek).ThenBy(e => e.StartTime))
                 lines.Add(days[Math.Clamp(row.DayOfWeek, 0, 6)] + " " + row.StartTime + "–" + row.EndTime + (row.EndsNextDay ? " (next day)" : "") + (row.Name == null ? "" : " " + row.Name) + (row.Instructor == null ? "" : " - " + row.Instructor));
             if (schedule.Notes != null) lines.Add(schedule.Notes);
             return String.Join("\n", lines);

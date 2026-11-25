@@ -9,6 +9,12 @@ All notable changes to TrellisKit are documented in this file.
 - Structured weekly opening hours and class sessions on venue records, with local times, an IANA time zone, overnight intervals, optional instructors and notes. Web/mobile editors, detail views, previews, member proposals, moderation, public pages and search use the schedule; existing free-text data remains available.
 - Property-owned directory introduction and listing notice, shared by web and mobile.
 
+### Changed (neutral schedule sessions)
+
+- The venue schedule collection `schedule.classes` is now `schedule.sessions` in the API, submissions (`schedule.sessions.*` proposal fields), shared helpers, web and mobile editors, displays, seed data, and documentation. Migration 124 converts stored `venuescheduleentries` rows from kind `Class` to `Session` (the check constraint now allows `Hours` and `Session`) and renames pending `schedule.classes.*` submission fields. Clients sending `classes` must send `sessions`.
+- New `directory.sessionLabel` and `sessionLabelPlural` property labels (1 to 40 characters, default "Session" and "Sessions"), seeded from `property.json`, editable in the admin directory settings, returned by `GET /api/v1/property`, and used by web and mobile through `{session}`, `{sessions}`, `{sessionLower}`, and `{sessionsLower}`. Schedule editor and display strings use these terms and the property's `{instructor}` term instead of fixed words.
+- Neutral wording in a user model backing field and two test fixtures.
+
 
 ### Fixed
 

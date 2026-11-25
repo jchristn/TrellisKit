@@ -37,6 +37,16 @@ namespace TrellisKit.Core.PropertyConfig
         public string InstructorLabelPlural { get; set; } = "Instructors";
 
         /// <summary>
+        /// What the property calls one weekly scheduled session of a venue (1 to 40 characters). Default "Session".
+        /// </summary>
+        public string SessionLabel { get; set; } = "Session";
+
+        /// <summary>
+        /// Plural of the session label (1 to 40 characters). Default "Sessions".
+        /// </summary>
+        public string SessionLabelPlural { get; set; } = "Sessions";
+
+        /// <summary>
         /// Program options a venue may offer (0 to 50; keys stable, labels free). Default empty.
         /// </summary>
         public List<PropertyOptionSeed> Programs { get; set; } = new List<PropertyOptionSeed>();

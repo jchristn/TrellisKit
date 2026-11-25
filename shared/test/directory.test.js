@@ -69,7 +69,8 @@ test('terms, configuration, and programs come from the property', () => {
   assert.deepEqual([terms.venue, terms.venues, terms.instructor, terms.instructors, terms.venueLower], ['Club', 'Clubs', 'Coach', 'Coaches', 'club']);
   assert.equal(fillDirectory('Add a {venueLower} with its {instructors} near {place}', property, { place: 'Exampleville' }), 'Add a club with its Coaches near Exampleville');
   assert.equal(fillDirectory('Find {venues}', terms), 'Find Clubs');
-  assert.deepEqual(directoryTerms({}), { venue: 'Venue', venues: 'Venues', instructor: 'Instructor', instructors: 'Instructors', venueLower: 'venue', venuesLower: 'venues', instructorLower: 'instructor', instructorsLower: 'instructors' });
+  assert.deepEqual(directoryTerms({}), { venue: 'Venue', venues: 'Venues', instructor: 'Instructor', instructors: 'Instructors', session: 'Session', sessions: 'Sessions', venueLower: 'venue', venuesLower: 'venues', instructorLower: 'instructor', instructorsLower: 'instructors', sessionLower: 'session', sessionsLower: 'sessions' });
+  assert.equal(fillDirectory('{sessions} with a {sessionLower} name', { directory: { sessionLabel: 'Meeting', sessionLabelPlural: 'Meetings' } }), 'Meetings with a meeting name');
   const config = directoryConfig(property);
   assert.equal(config.map.defaultZoom, 5);
   assert.equal(config.map.maxZoom, 18);

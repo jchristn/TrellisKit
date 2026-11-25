@@ -1695,11 +1695,11 @@ const strings = {
     scheduleEditor: {
       title: 'Weekly schedule', enable: 'Add a structured schedule', remove: 'Remove structured schedule',
       timeZone: 'Time zone', timeZoneHint: 'Use an IANA time zone, for example Pacific/Honolulu.',
-      hours: 'Opening hours', classes: 'Class sessions', day: 'Day', start: 'Start time', end: 'End time',
-      nextDay: 'Ends the next day', name: 'Class name', instructor: 'Instructor (optional)',
-      addHours: 'Add opening hours', addClass: 'Add class', removeEntry: 'Remove entry', notes: 'Schedule notes',
-      hint: 'Times use the schedule time zone. Days without opening hours are unspecified. Confirm current times with the venue.',
-      invalid: 'Check the schedule: choose a valid time zone, day and HH:mm times, and give each class a name. Intervals must be longer than zero and at most 24 hours.',
+      hours: 'Opening hours', sessions: '{sessions}', day: 'Day', start: 'Start time', end: 'End time',
+      nextDay: 'Ends the next day', name: '{session} name', instructor: '{instructor} (optional)',
+      addHours: 'Add opening hours', addSession: 'Add a {sessionLower}', removeEntry: 'Remove entry', notes: 'Schedule notes',
+      hint: 'Times use the schedule time zone. Days without opening hours are unspecified. Confirm current times with the {venueLower}.',
+      invalid: 'Check the schedule: choose a valid time zone, day and HH:mm times, and give each {sessionLower} a name. Intervals must be longer than zero and at most 24 hours.',
       nextDaySuffix: ' (next day)', legacy: 'Existing schedule notes'
     },
     searchLabel: 'Search {venuesLower}',
@@ -1936,7 +1936,7 @@ const strings = {
     fields: {
       name: 'Name', displayName: 'Name', affiliation: 'Affiliation', summary: 'Short description', description: 'Description', line1: 'Address', line2: 'Address line 2',
       locality: 'City or town', region: 'Region', postalCode: 'Postal code', countryCode: 'Country', addressVisibility: 'Show the address as', phone: 'Phone', email: 'Email',
-      websiteUrl: 'Website (https)', scheduleText: 'Schedule', schedule: 'Weekly schedule', timeZone: 'Time zone', notes: 'Schedule notes', dayOfWeek: 'Day (Monday = 0)', startTime: 'Start time', endTime: 'End time', endsNextDay: 'Ends the next day', instructor: 'Instructor', set: 'Structured schedule enabled', programs: 'Programs', visitorPolicy: 'Visitors', visitorPolicyNote: 'Visitor note', bio: 'Bio',
+      websiteUrl: 'Website (https)', scheduleText: 'Schedule', schedule: 'Weekly schedule', timeZone: 'Time zone', notes: 'Schedule notes', dayOfWeek: 'Day (Monday = 0)', startTime: 'Start time', endTime: 'End time', endsNextDay: 'Ends the next day', instructor: '{instructor}', set: 'Structured schedule enabled', programs: 'Programs', visitorPolicy: 'Visitors', visitorPolicyNote: 'Visitor note', bio: 'Bio',
       rank: 'Rank', socialLinks: 'Links', venueIds: '{venues}', addLink: 'Add a link', removeLink: 'Remove link', linkKind: 'Kind', linkUrl: 'Link (https)'
     },
     visibilities: { Exact: 'Exact address and pin', Approximate: 'Approximate area only', LocalityOnly: 'Town only, not on the map' },
@@ -2207,6 +2207,7 @@ const strings = {
       columns: { name: 'Name', status: 'Status', pin: 'Pin', visibility: 'Address shown as', instructors: '{instructors}', venues: '{venues}', pending: 'Pending', reports: 'Reports', id: 'ID', actions: 'Actions', type: 'Type', target: 'Entry', submitter: 'Submitted by', created: 'Submitted' },
       fields: {
         venueLabel: 'Venue label', venueLabelPlural: 'Venue label (plural)', instructorLabel: 'Instructor label', instructorLabelPlural: 'Instructor label (plural)',
+        sessionLabel: 'Schedule session label', sessionLabelPlural: 'Schedule session label (plural)',
         instructorRankFieldKey: 'Rank profile field key', submissions: 'Members can suggest entries and edits', claims: 'Members can claim instructor entries',
         geocoderProvider: 'Geocoder', mapProvider: 'Map', styleUrl: 'Style URL', darkStyleUrl: 'Dark style URL', attribution: 'Attribution'
       },

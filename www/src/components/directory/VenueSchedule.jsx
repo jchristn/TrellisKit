@@ -1,5 +1,6 @@
 import { formatClockTime, venueScheduleDisplay, parseVenueDescription } from '@trelliskit/shared';
 import strings from '../../strings.js';
+import { useDirectoryTerms } from '../../utils/phase4.js';
 import MarkdownBody from '../feed/MarkdownBody.jsx';
 
 const v = strings.venues;
@@ -15,14 +16,15 @@ function timeLabel(row) {
 
 /**
  * A venue's schedule panel: opening hours as a two-column table (days that share hours on one
- * row), then the class schedule notes as paragraphs. Schedule text in any other shape is shown
+ * row), then the weekly sessions and the schedule notes as paragraphs. Schedule text in any other shape is shown
  * as paragraphs. `hoursOnly` shows just the hours table, without the panel (the map preview).
  */
 export function VenueSchedule({ text, schedule, hoursOnly = false }) {
+  const { d } = useDirectoryTerms();
   const parsed = venueScheduleDisplay(schedule, text);
   const hours = parsed.hours;
   const notes = hoursOnly ? [] : parsed.notes;
-  if (!hours.length && !notes.length && (hoursOnly || !parsed.classes.length)) return null;
+  if (!hours.length && !notes.length && (hoursOnly || !parsed.sessions.length)) return null;
   return (
     <section className={hoursOnly ? 'venue-preview-hours' : 'panel'}>
       {parsed.timeZone && <p className="muted small">{parsed.timeZone}</p>}
@@ -41,9 +43,9 @@ export function VenueSchedule({ text, schedule, hoursOnly = false }) {
           </table>
         </>
       )}
-      {!hoursOnly && parsed.classes.length > 0 && <>
-        <h2 className="section-title">{v.scheduleEditor.classes}</h2>
-        {parsed.classes.map((entry, i) => <p key={i}>
+      {!hoursOnly && parsed.sessions.length > 0 && <>
+        <h2 className="section-title">{d(v.scheduleEditor.sessions)}</h2>
+        {parsed.sessions.map((entry, i) => <p key={i}>
           <strong>{entry.name}</strong>{' · '}{v.scheduleDays[entry.dayOfWeek]}{' · '}
           {timeLabel({ open: entry.startTime, close: entry.endTime, endsNextDay: entry.endsNextDay })}
           {entry.instructor ? ' · ' + entry.instructor : ''}

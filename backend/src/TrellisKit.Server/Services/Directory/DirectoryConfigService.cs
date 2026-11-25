@@ -271,6 +271,8 @@ namespace TrellisKit.Server.Services
                 VenueLabelPlural = config.VenueLabelPlural,
                 InstructorLabel = config.InstructorLabel,
                 InstructorLabelPlural = config.InstructorLabelPlural,
+                SessionLabel = config.SessionLabel,
+                SessionLabelPlural = config.SessionLabelPlural,
                 Programs = programs.Where(p => !p.IsRetired).Select(p => new PublicOption { Key = p.Key, Label = p.Label }).ToList(),
                 InstructorRankFieldKey = config.InstructorRankFieldKey,
                 Submissions = config.SubmissionsEnabled,
@@ -525,6 +527,8 @@ namespace TrellisKit.Server.Services
                 VenueLabelPlural = Label(request.VenueLabelPlural, config.VenueLabelPlural, "venueLabelPlural", errors),
                 InstructorLabel = Label(request.InstructorLabel, config.InstructorLabel, "instructorLabel", errors),
                 InstructorLabelPlural = Label(request.InstructorLabelPlural, config.InstructorLabelPlural, "instructorLabelPlural", errors),
+                SessionLabel = Label(request.SessionLabel, config.SessionLabel, "sessionLabel", errors),
+                SessionLabelPlural = Label(request.SessionLabelPlural, config.SessionLabelPlural, "sessionLabelPlural", errors),
                 InstructorRankFieldKey = request.InstructorRankFieldKey == null ? config.InstructorRankFieldKey : (request.InstructorRankFieldKey.Trim().Length == 0 ? null : request.InstructorRankFieldKey.Trim()),
                 SubmissionsEnabled = request.Submissions ?? config.SubmissionsEnabled,
                 ClaimsEnabled = request.Claims ?? config.ClaimsEnabled,
@@ -557,7 +561,7 @@ namespace TrellisKit.Server.Services
             _Services.Directory.Geocoding.Invalidate();
             _Services.Directory.Tiles.Invalidate();
             List<string> keys = new List<string>();
-            if (request.VenueLabel != null || request.VenueLabelPlural != null || request.InstructorLabel != null || request.InstructorLabelPlural != null) keys.Add("labels");
+            if (request.VenueLabel != null || request.VenueLabelPlural != null || request.InstructorLabel != null || request.InstructorLabelPlural != null || request.SessionLabel != null || request.SessionLabelPlural != null) keys.Add("labels");
             if (request.Submissions != null) keys.Add("submissions");
             if (request.Claims != null) keys.Add("claims");
             if (request.InstructorRankFieldKey != null) keys.Add("instructorRankFieldKey");
@@ -595,6 +599,8 @@ namespace TrellisKit.Server.Services
                 VenueLabelPlural = config.VenueLabelPlural,
                 InstructorLabel = config.InstructorLabel,
                 InstructorLabelPlural = config.InstructorLabelPlural,
+                SessionLabel = config.SessionLabel,
+                SessionLabelPlural = config.SessionLabelPlural,
                 InstructorRankFieldKey = config.InstructorRankFieldKey,
                 Submissions = config.SubmissionsEnabled,
                 Claims = config.ClaimsEnabled,
@@ -619,6 +625,8 @@ namespace TrellisKit.Server.Services
                 VenueLabelPlural = Bounded(section.VenueLabelPlural, "Venues"),
                 InstructorLabel = Bounded(section.InstructorLabel, "Instructor"),
                 InstructorLabelPlural = Bounded(section.InstructorLabelPlural, "Instructors"),
+                SessionLabel = Bounded(section.SessionLabel, "Session"),
+                SessionLabelPlural = Bounded(section.SessionLabelPlural, "Sessions"),
                 InstructorRankFieldKey = String.IsNullOrWhiteSpace(section.InstructorRankFieldKey) ? null : section.InstructorRankFieldKey.Trim(),
                 SubmissionsEnabled = section.Submissions,
                 ClaimsEnabled = section.Claims,

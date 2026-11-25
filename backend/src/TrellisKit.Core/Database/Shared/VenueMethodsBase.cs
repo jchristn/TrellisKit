@@ -412,7 +412,7 @@ namespace TrellisKit.Core.Database.Shared
                     }
                 }
                 Entries("Hours", venue.Schedule.OpeningHours);
-                Entries("Class", venue.Schedule.Classes);
+                Entries("Session", venue.Schedule.Sessions);
             }
             List<string> photos = DirectorySql.Distinct(venue.PhotoMediaIds);
             if (photos.Count > 0)
@@ -497,7 +497,7 @@ namespace TrellisKit.Core.Database.Shared
             {
                 if (!byId.TryGetValue(RowReader.GetString(row, "venueid"), out Venue? v) || v.Schedule == null) continue;
                 VenueScheduleEntry entry = new VenueScheduleEntry { DayOfWeek = RowReader.GetInt(row, "dayofweek"), StartTime = RowReader.GetString(row, "starttime"), EndTime = RowReader.GetString(row, "endtime"), EndsNextDay = RowReader.GetBool(row, "endsnextday"), Name = RowReader.GetNullableString(row, "name"), Instructor = RowReader.GetNullableString(row, "instructor") };
-                (RowReader.GetString(row, "kind") == "Class" ? v.Schedule.Classes : v.Schedule.OpeningHours).Add(entry);
+                (RowReader.GetString(row, "kind") == "Session" ? v.Schedule.Sessions : v.Schedule.OpeningHours).Add(entry);
             }
             DataTable photos = await QueryAsync("SELECT venueid, mediaid FROM venuephotos WHERE " + Scope() + " AND venueid IN " + ids + " ORDER BY venueid, position;", token).ConfigureAwait(false);
             foreach (DataRow row in photos.Rows)

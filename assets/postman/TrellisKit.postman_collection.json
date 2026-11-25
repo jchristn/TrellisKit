@@ -44159,7 +44159,7 @@
                 },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Example Club Downtown\",\n  \"address\": {\n    \"line1\": \"100 Example Street\",\n    \"locality\": \"Exampleville\",\n    \"region\": \"EX\",\n    \"postalCode\": \"00000\",\n    \"countryCode\": \"US\"\n  },\n  \"geo\": {\n    \"lat\": 37.7749,\n    \"lng\": -122.4194\n  },\n  \"programs\": [\n    \"beginners\"\n  ],\n  \"visitorPolicy\": \"Welcome\",\n  \"labels\": [\n    \"downtown\"\n  ],\n  \"schedule\": {\n    \"timeZone\": \"America/Los_Angeles\",\n    \"openingHours\": [\n      {\n        \"dayOfWeek\": 0,\n        \"startTime\": \"06:00\",\n        \"endTime\": \"21:00\",\n        \"endsNextDay\": false\n      }\n    ],\n    \"classes\": [\n      {\n        \"dayOfWeek\": 0,\n        \"startTime\": \"18:00\",\n        \"endTime\": \"19:00\",\n        \"endsNextDay\": false,\n        \"name\": \"Fundamentals\",\n        \"instructor\": null\n      }\n    ],\n    \"notes\": \"Confirm holiday hours with the venue.\"\n  }\n}"
+                  "raw": "{\n  \"name\": \"Example Club Downtown\",\n  \"address\": {\n    \"line1\": \"100 Example Street\",\n    \"locality\": \"Exampleville\",\n    \"region\": \"EX\",\n    \"postalCode\": \"00000\",\n    \"countryCode\": \"US\"\n  },\n  \"geo\": {\n    \"lat\": 37.7749,\n    \"lng\": -122.4194\n  },\n  \"programs\": [\n    \"beginners\"\n  ],\n  \"visitorPolicy\": \"Welcome\",\n  \"labels\": [\n    \"downtown\"\n  ],\n  \"schedule\": {\n    \"timeZone\": \"America/Los_Angeles\",\n    \"openingHours\": [\n      {\n        \"dayOfWeek\": 0,\n        \"startTime\": \"06:00\",\n        \"endTime\": \"21:00\",\n        \"endsNextDay\": false\n      }\n    ],\n    \"sessions\": [\n      {\n        \"dayOfWeek\": 0,\n        \"startTime\": \"18:00\",\n        \"endTime\": \"19:00\",\n        \"endsNextDay\": false,\n        \"name\": \"Fundamentals\",\n        \"instructor\": null\n      }\n    ],\n    \"notes\": \"Confirm holiday hours with the venue.\"\n  }\n}"
                 }
               }
             },
@@ -45693,7 +45693,7 @@
                 },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"venueLabel\": \"Club\",\n  \"venueLabelPlural\": \"Clubs\",\n  \"submissions\": true,\n  \"values\": {\n    \"directory.geocoder.provider\": \"Nominatim\",\n    \"directory.geocoder.baseUrl\": \"https://geocoder.example.test\",\n    \"directory.map.provider\": \"MapLibre\",\n    \"directory.map.styleUrl\": \"https://tiles.example.test/style.json\"\n  }\n}"
+                  "raw": "{\n  \"venueLabel\": \"Club\",\n  \"venueLabelPlural\": \"Clubs\",\n  \"sessionLabel\": \"Session\",\n  \"sessionLabelPlural\": \"Sessions\",\n  \"submissions\": true,\n  \"values\": {\n    \"directory.geocoder.provider\": \"Nominatim\",\n    \"directory.geocoder.baseUrl\": \"https://geocoder.example.test\",\n    \"directory.map.provider\": \"MapLibre\",\n    \"directory.map.styleUrl\": \"https://tiles.example.test/style.json\"\n  }\n}"
                 }
               }
             }

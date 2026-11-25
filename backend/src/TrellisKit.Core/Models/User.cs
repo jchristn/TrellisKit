@@ -60,8 +60,8 @@ namespace TrellisKit.Core.Models
         /// </summary>
         public int RankLevel
         {
-            get { return _Stripes; }
-            set { _Stripes = Math.Clamp(value, 0, 6); }
+            get { return _RankLevel; }
+            set { _RankLevel = Math.Clamp(value, 0, 6); }
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace TrellisKit.Core.Models
 
         #region Private-Members
 
-        private int _Stripes = 0;
+        private int _RankLevel = 0;
         private int _FailedLoginCount = 0;
 
         #endregion

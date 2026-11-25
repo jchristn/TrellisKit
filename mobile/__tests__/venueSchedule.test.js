@@ -6,23 +6,35 @@ import VenueScheduleEditor from '../src/components/places/VenueScheduleEditor';
 import { VenueSchedule } from '../src/components/places/VenueSchedule';
 import { initialValues, submissionFieldsFor } from '../src/components/places/SubmissionForm';
 const t = directoryStrings(getBundledProperty());
-const schedule = { timeZone: 'Pacific/Honolulu', openingHours: [{ dayOfWeek: 0, startTime: '22:00', endTime: '02:00', endsNextDay: true }], classes: [{ dayOfWeek: 1, startTime: '18:00', endTime: '19:00', endsNextDay: false, name: 'Fundamentals', instructor: 'Alex' }], notes: 'Holiday hours vary.' };
-test('native display shows structured hours and classes', async () => {
+const schedule = { timeZone: 'Pacific/Honolulu', openingHours: [{ dayOfWeek: 0, startTime: '22:00', endTime: '02:00', endsNextDay: true }], sessions: [{ dayOfWeek: 1, startTime: '18:00', endTime: '19:00', endsNextDay: false, name: 'Fundamentals', instructor: 'Alex' }], notes: 'Holiday hours vary.' };
+test('native display shows structured hours and sessions', async () => {
   await render(<VenueSchedule schedule={schedule} text="Old hours" t={t} />);
   expect(screen.getByText('Pacific/Honolulu')).toBeTruthy();
   expect(screen.getByText('10 PM to 2 AM (next day)')).toBeTruthy();
   expect(screen.getByText(/Fundamentals/)).toBeTruthy();
   expect(screen.queryByText('Old hours')).toBeNull();
 });
-test('native editor adds opening hours and class sessions', async () => {
+test('native editor adds opening hours and sessions', async () => {
   function Harness() { const [value, set] = useState(null); return <VenueScheduleEditor value={value} onChange={set} t={t} />; }
   await render(<Harness />);
   await fireEvent.press(screen.getByText('Add a structured schedule'));
   await fireEvent.press(screen.getByText('Add opening hours'));
-  await fireEvent.press(screen.getByText('Add class'));
+  await fireEvent.press(screen.getByText('Add a session'));
   expect(screen.getAllByLabelText('Start time')).toHaveLength(2);
-  await fireEvent.changeText(screen.getByLabelText('Class name'), 'Fundamentals');
+  await fireEvent.changeText(screen.getByLabelText('Session name'), 'Fundamentals');
   expect(screen.getByDisplayValue('Fundamentals')).toBeTruthy();
+  expect(screen.getByLabelText('Instructor (optional)')).toBeTruthy();
+});
+test('schedule labels use the property session and instructor terms', async () => {
+  const property = getBundledProperty();
+  const terms = directoryStrings({ ...property, directory: { ...(property.directory || {}), sessionLabel: 'Meeting', sessionLabelPlural: 'Meetings', instructorLabel: 'Host', instructorLabelPlural: 'Hosts' } });
+  function Harness() { const [value, set] = useState(null); return <VenueScheduleEditor value={value} onChange={set} t={terms} />; }
+  await render(<Harness />);
+  await fireEvent.press(screen.getByText('Add a structured schedule'));
+  expect(screen.getByText('Meetings')).toBeTruthy();
+  await fireEvent.press(screen.getByText('Add a meeting'));
+  expect(screen.getByLabelText('Meeting name')).toBeTruthy();
+  expect(screen.getByLabelText('Host (optional)')).toBeTruthy();
 });
 test('submissions preserve schedule objects and send only changed fields, including clearing', async () => {
   const target = { name: 'Example Club', schedule };

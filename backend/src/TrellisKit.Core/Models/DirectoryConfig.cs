@@ -30,6 +30,16 @@ namespace TrellisKit.Core.Models
         public string InstructorLabelPlural { get; set; } = "Instructors";
 
         /// <summary>
+        /// What a weekly scheduled session is called.
+        /// </summary>
+        public string SessionLabel { get; set; } = "Session";
+
+        /// <summary>
+        /// Plural of the session label.
+        /// </summary>
+        public string SessionLabelPlural { get; set; } = "Sessions";
+
+        /// <summary>
         /// Key of the Rank profile field instructors carry, or null.
         /// </summary>
         public string? InstructorRankFieldKey { get; set; } = null;

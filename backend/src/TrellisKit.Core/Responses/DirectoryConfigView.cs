@@ -30,6 +30,16 @@ namespace TrellisKit.Core.Responses
         public string InstructorLabelPlural { get; set; } = "Instructors";
 
         /// <summary>
+        /// Session label.
+        /// </summary>
+        public string SessionLabel { get; set; } = "Session";
+
+        /// <summary>
+        /// Session label plural.
+        /// </summary>
+        public string SessionLabelPlural { get; set; } = "Sessions";
+
+        /// <summary>
         /// Rank profile field key.
         /// </summary>
         public string? InstructorRankFieldKey { get; set; } = null;

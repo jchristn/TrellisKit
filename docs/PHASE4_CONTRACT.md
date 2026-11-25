@@ -55,6 +55,7 @@ The engine never hard-codes what a property calls its directory entries, program
 "directory": {
   "venueLabel": "Club", "venueLabelPlural": "Clubs",
   "instructorLabel": "Coach", "instructorLabelPlural": "Coaches",
+  "sessionLabel": "Session", "sessionLabelPlural": "Sessions",
   "programs": [ { "key": "beginners", "label": "Beginners" }, { "key": "advanced", "label": "Advanced" }, { "key": "youth", "label": "Youth" } ],
   "instructorRankFieldKey": "rank",
   "submissions": true,
@@ -73,6 +74,7 @@ The engine never hard-codes what a property calls its directory entries, program
 | Key | Rule | Engine default |
 |---|---|---|
 | `directory.venueLabel`, `...Plural`, `instructorLabel`, `...Plural` | 1 to 40 characters; used by clients in every directory string through `{venue}`, `{venues}`, `{instructor}`, `{instructors}` placeholders | "Venue", "Venues", "Instructor", "Instructors" |
+| `directory.sessionLabel`, `sessionLabelPlural` | 1 to 40 characters; what the property calls one entry of a venue's weekly schedule (`schedule.sessions`); used by clients through `{session}`, `{sessions}` (and `{sessionLower}`, `{sessionsLower}`) placeholders | "Session", "Sessions" |
 | `directory.programs` | 0 to `directory.maxPrograms` (50) options `{ key, label }`; keys stable, labels free | `[]` |
 | `directory.instructorRankFieldKey` | Key of a profile field of type `Rank` (`docs/TRELLISKIT.md` section 11); instructors then carry `rank` and `rankLevel` rendered with that field's options and colors. Null hides rank on instructors | null |
 | `directory.submissions`, `directory.claims` | Member submission queue and instructor claims on or off | true, true |
@@ -257,7 +259,7 @@ Every detail and list payload carries `viewer`, computed for the caller; clients
         "endsNextDay": false
       }
     ],
-    "classes": [
+    "sessions": [
       {
         "dayOfWeek": 0,
         "startTime": "18:00",
@@ -1455,6 +1457,6 @@ These answers override the recommendations in the open questions section whereve
 
 ### Structured venue schedules (2026-11-24)
 
-The optional `schedule` object carries `timeZone`, `openingHours`, `classes`, and `notes`; see the weekly schedule contract in `REST_API.md`. The server stores its scalar fields on `venues` and bounded entries in the property-scoped `venuescheduleentries` table (migration 123). Existing free-text schedules remain intact. Submission proposals store individual scalar fields and entry positions so review and approval preserve the same structure. Web and mobile provide matching schedule editors, displays with explicit time zones, and legacy text fallback. The seeder and JSON import accept `schedule` unchanged.
+The optional `schedule` object carries `timeZone`, `openingHours`, `sessions`, and `notes`; see the weekly schedule contract in `REST_API.md`. The server stores its scalar fields on `venues` and bounded entries in the property-scoped `venuescheduleentries` table (migration 123; `kind` is `Hours` or `Session`). Migration 124 renamed the earlier `classes` collection to the neutral `sessions` (stored kind `Class` became `Session`, pending submission fields `schedule.classes.*` became `schedule.sessions.*`) and added the `directory.sessionLabel` and `sessionLabelPlural` labels (default "Session", "Sessions"), seeded and admin-edited like the venue and instructor labels. Clients label sessions and their optional instructor with the property's `{session}`, `{sessions}`, and `{instructor}` terms. Existing free-text schedules remain intact. Submission proposals store individual scalar fields and entry positions so review and approval preserve the same structure. Web and mobile provide matching schedule editors, displays with explicit time zones, and legacy text fallback. The seeder and JSON import accept `schedule` unchanged.
 
 Properties may supply `directory.introduction` and `directory.listingNotice`. They are read from the property configuration and returned on the public property response, independently of admin-editable directory labels.

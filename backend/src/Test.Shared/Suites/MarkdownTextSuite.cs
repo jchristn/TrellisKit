@@ -41,7 +41,7 @@ namespace Test.Shared.Suites
                     Check.Equal("Title Some bold and code with *stars* here.", MarkdownNormalizer.ToPlainText("# Title\n\nSome **bold** and `code with *stars*` here."), "Heading and inline code");
                     Check.Equal("Before const a = 1; After", MarkdownNormalizer.ToPlainText("Before\n\n```js\nconst a = 1;\n```\n\nAfter"), "Fenced code");
                     Check.Equal("a b", MarkdownNormalizer.ToPlainText("a\n\n---\n\nb"), "Rule");
-                    Check.Equal("Belt Years Blue 2", MarkdownNormalizer.ToPlainText("| Belt | Years |\n|:---|---:|\n| Blue | 2 |"), "Table");
+                    Check.Equal("Level Years Advanced 2", MarkdownNormalizer.ToPlainText("| Level | Years |\n|:---|---:|\n| Advanced | 2 |"), "Table");
                     Check.Equal("a | b and `tick`", MarkdownNormalizer.ToPlainText("a \\| b and \\`tick\\`"), "Escaped pipe and backticks");
                     Check.Equal("Unclosed fence code", MarkdownNormalizer.ToPlainText("Unclosed fence\n\n~~~\ncode"), "Unclosed fence runs to the end");
                     Check.True(MarkdownNormalizer.Excerpt("```\n" + new string('x', 400) + "\n```").EndsWith("...", StringComparison.Ordinal), "Excerpt of a code block");

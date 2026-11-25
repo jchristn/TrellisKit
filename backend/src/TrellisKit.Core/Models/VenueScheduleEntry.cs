@@ -1,6 +1,6 @@
 namespace TrellisKit.Core.Models
 {
-    /// <summary>One weekly opening interval or class session.</summary>
+    /// <summary>One weekly opening interval or session.</summary>
     public class VenueScheduleEntry
     {
         /// <summary>Day index, Monday = 0 through Sunday = 6.</summary>
@@ -11,7 +11,7 @@ namespace TrellisKit.Core.Models
         public string EndTime { get; set; } = "";
         /// <summary>True when the interval ends the following day, including a full 24-hour interval.</summary>
         public bool EndsNextDay { get; set; }
-        /// <summary>Required class name (up to 120); null for opening hours.</summary>
+        /// <summary>Required session name (up to 120); null for opening hours.</summary>
         public string? Name { get; set; }
         /// <summary>Optional instructor name (up to 120); null for opening hours.</summary>
         public string? Instructor { get; set; }

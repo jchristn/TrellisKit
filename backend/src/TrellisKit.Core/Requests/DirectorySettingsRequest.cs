@@ -32,6 +32,16 @@ namespace TrellisKit.Core.Requests
         public string? InstructorLabelPlural { get; set; } = null;
 
         /// <summary>
+        /// Session label (1 to 40).
+        /// </summary>
+        public string? SessionLabel { get; set; } = null;
+
+        /// <summary>
+        /// Session label plural (1 to 40).
+        /// </summary>
+        public string? SessionLabelPlural { get; set; } = null;
+
+        /// <summary>
         /// Rank profile field key (empty clears it).
         /// </summary>
         public string? InstructorRankFieldKey { get; set; } = null;
