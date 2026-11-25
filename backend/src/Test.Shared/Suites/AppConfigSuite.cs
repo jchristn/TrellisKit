@@ -223,7 +223,7 @@ namespace Test.Shared.Suites
                     Check.Equal(HttpStatusCode.NotFound, (await Api.SendAsync(f, HttpMethod.Get, "/api/v1/public/pages/well-known/apple-app-site-association", null, null, ct).ConfigureAwait(false)).Status, "No Apple association");
                     Check.Equal(HttpStatusCode.NotFound, (await Api.SendAsync(f, HttpMethod.Get, "/api/v1/public/pages/well-known/assetlinks.json", null, null, ct).ConfigureAwait(false)).Status, "No asset links");
                 }),
-                SuiteCases.Http(Id, "WellKnown.Configured", "The association files name the app from property.json so iOS and Android offer to save its passwords for the website", p =>
+                SuiteCases.Http(Id, "WellKnown.Configured", "The association files name the app from property.json so iOS and Android offer to save its passwords for the website and open only check-in links in the app", p =>
                 {
                     p.Mobile.AppleTeamId = "ABCDE12345";
                     p.Mobile.AndroidCertFingerprints = new List<string> { "aa:bb:cc", "AA:BB:CC", " " };
@@ -231,9 +231,20 @@ namespace Test.Shared.Suites
                 {
                     JsonElement apple = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/public/pages/well-known/apple-app-site-association", null, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
                     Check.Equal("ABCDE12345." + f.Property.Mobile.BundleId, apple.GetProperty("webcredentials").GetProperty("apps")[0].GetString()!, "Team and bundle id");
+                    JsonElement details = apple.GetProperty("applinks").GetProperty("details");
+                    Check.Equal(1, details.GetArrayLength(), "One app link entry");
+                    Check.Equal(0, apple.GetProperty("applinks").GetProperty("apps").GetArrayLength(), "Legacy apps list is empty");
+                    Check.Equal("ABCDE12345." + f.Property.Mobile.BundleId, Api.Str(details[0], "appID"), "Legacy app id");
+                    Check.Equal("ABCDE12345." + f.Property.Mobile.BundleId, details[0].GetProperty("appIDs")[0].GetString()!, "App ids");
+                    Check.Equal(1, details[0].GetProperty("paths").GetArrayLength(), "Only one legacy path");
+                    Check.Equal("/app/check-in", details[0].GetProperty("paths")[0].GetString()!, "Legacy path is check-in only");
+                    Check.Equal(1, details[0].GetProperty("components").GetArrayLength(), "Only one component");
+                    Check.Equal("/app/check-in", Api.Str(details[0].GetProperty("components")[0], "/"), "Component is check-in only");
                     JsonElement links = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/public/pages/well-known/assetlinks.json", null, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
                     JsonElement target = links[0].GetProperty("target");
                     Check.Equal("delegate_permission/common.get_login_creds", links[0].GetProperty("relation")[0].GetString()!, "Login credentials relation");
+                    Check.Equal("delegate_permission/common.handle_all_urls", links[0].GetProperty("relation")[1].GetString()!, "App link relation");
+                    Check.Equal(2, links[0].GetProperty("relation").GetArrayLength(), "Two relations");
                     Check.Equal(f.Property.Mobile.AndroidPackage, Api.Str(target, "package_name"), "Package");
                     Check.Equal("android_app", Api.Str(target, "namespace"), "Namespace");
                     Check.Equal(1, target.GetProperty("sha256_cert_fingerprints").GetArrayLength(), "Fingerprints normalized and deduplicated");

@@ -17,6 +17,7 @@ import { useNotificationsState } from '../notifications/NotificationsProvider';
 import { useProperty } from '../property';
 import strings from '../strings';
 import { useTheme } from '../theme';
+import { TrainingSectionPaths } from '../training/hub';
 
 const NavigationContext = createContext(null);
 
@@ -35,10 +36,16 @@ export function showsBarLabel(label, fontScale) {
   return !(typeof label === 'string' && label.length > MaxMobileBarLabelLength && fontScale >= BarLabelFontScale);
 }
 
-/** Whether a destination matches the current top-level route, including the two map sections. */
+/**
+ * Routes that count as a destination besides its own href: the Training hub's sections and
+ * Library segments keep the bar visible and Training selected.
+ */
+const DestinationSectionPaths = Object.freeze({ '/training': TrainingSectionPaths });
+
+/** Whether a destination matches the current top-level route, including the two map sections and the Training sections. */
 export function destinationMatches(item, pathname, section) {
   const [path, query] = item.href.split('?');
-  if (path !== pathname) return false;
+  if (path !== pathname) return Boolean(!query && DestinationSectionPaths[path] && DestinationSectionPaths[path].includes(pathname));
   if (!query) return true;
   const expected = new URLSearchParams(query).get('section');
   return !expected || expected === (section || 'places');

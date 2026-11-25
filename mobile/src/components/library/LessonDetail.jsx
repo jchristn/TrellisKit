@@ -22,6 +22,8 @@ import MarkdownBody from '../feed/MarkdownBody';
 import PostDetail from '../feed/PostDetail';
 import ReactionBar from '../feed/ReactionBar';
 import ReportSheet, { Phase4ReportReasons } from '../feed/ReportSheet';
+import { SaveRow } from '../SaveButton';
+import LessonTechniques from '../training/LessonTechniques';
 import { ProgressBar } from './LibraryCards';
 import LessonPlayer from './LessonPlayer';
 
@@ -140,9 +142,11 @@ export function LessonInfo({ lesson, onChange, onSeek, testID = 'lesson' }) {
   return (
     <View style={{ gap: theme.spacing.lg }} testID={testID + '-info'}>
       <View style={{ gap: theme.spacing.xs }}>
-        <AppText variant="title" accessibilityRole="header" testID={testID + '-title'}>
-          {lesson.title}
-        </AppText>
+        <SaveRow targetType="Lesson" targetId={lesson.id} title={lesson.title} testID={testID + '-save'}>
+          <AppText variant="title" accessibilityRole="header" testID={testID + '-title'}>
+            {lesson.title}
+          </AppText>
+        </SaveRow>
         {lesson.series ? <Button label={lesson.series.title} variant="ghost" onPress={() => router.push('/series/' + lesson.series.id)} style={{ alignSelf: 'auto' }} testID={testID + '-series'} /> : null}
         <AppText color="textMuted">{[lesson.durationSeconds ? formatDuration(lesson.durationSeconds) : null, levels || null].filter(Boolean).join(' · ')}</AppText>
         {lesson.summary ? <AppText>{lesson.summary}</AppText> : null}
@@ -180,6 +184,7 @@ export function LessonInfo({ lesson, onChange, onSeek, testID = 'lesson' }) {
           ))}
         </Block>
       ) : null}
+      <LessonTechniques lessonId={lesson.id} onSeek={onSeek} testID={testID + '-techniques'} />
       {lesson.resources && lesson.resources.length ? (
         <Block label={t.resources} testID={testID + '-resources'}>
           {lesson.resources.map((r) =>

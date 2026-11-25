@@ -384,3 +384,62 @@ describe('mobile navigation build declarations', () => {
     }
   });
 });
+
+describe('Training hub declarations', () => {
+  test('the Training strings are engine text in the shared strings module', () => {
+    expect(stringTemplates.training.title).toBe('Training');
+    expect(strings.training.saved.noteHint).toBe('Visible to you and moderators.');
+    for (const text of collect(stringTemplates.training)) expect({ text, hit: PROPERTY_WORDS.test(text) }).toEqual({ text, hit: false });
+  });
+
+  test('the five-shortcut fixture places Training in the bar and the build loader accepts it', () => {
+    const { readProperty, publicProperty } = require('../scripts/property');
+    const { fiveShortcutsProperty } = require('../test-utils/fiveShortcuts');
+    const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'training-property-'));
+    try {
+      const document = { ...plain, mobile: { ...plain.mobile, navigation: fiveShortcutsProperty.mobile.navigation } };
+      fs.writeFileSync(path.join(temporary, 'property.json'), JSON.stringify(document));
+      expect(publicProperty(readProperty(temporary)).mobile.navigation.shortcuts).toEqual(['feed', 'training', 'members', 'messages', 'profile']);
+    } finally {
+      fs.rmSync(temporary, { recursive: true, force: true });
+    }
+  });
+
+  test('the Training stack is registered on the root stack', () => {
+    const root = fs.readFileSync(path.resolve(__dirname, '../app/_layout.jsx'), 'utf8');
+    expect(root).toMatch(/<Stack\.Screen name="training" options=\{\{ headerShown: false \}\} \/>/);
+    for (const file of ['index', 'library/index', 'library/courses', 'library/techniques', 'library/saved', 'saved', 'schedule', 'progress', 'curricula/[id]']) {
+      expect(fs.existsSync(path.resolve(__dirname, '../app/training', file + '.jsx'))).toBe(true);
+    }
+  });
+});
+
+describe('check-in app links (native configuration)', () => {
+  function withMobile(extra) {
+    const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'applinks-property-'));
+    fs.cpSync(path.join(FIXTURES, 'custom'), temporary, { recursive: true });
+    const file = path.join(temporary, 'property.json');
+    const document = JSON.parse(fs.readFileSync(file, 'utf8'));
+    document.mobile = { ...document.mobile, ...extra };
+    fs.writeFileSync(file, JSON.stringify(document));
+    return temporary;
+  }
+
+  test('without a team id or fingerprints the build declares no associated domains or app links', () => {
+    const config = loadAppConfig(path.join(FIXTURES, 'custom'));
+    expect(config.ios.associatedDomains).toBeUndefined();
+    expect(config.android.intentFilters).toBeUndefined();
+  });
+
+  test('iOS keeps password autofill and adds applinks; Android verifies only the check-in path', () => {
+    const dir = withMobile({ appleTeamId: 'ABCDE12345', androidCertFingerprints: ['AA:BB:CC'] });
+    try {
+      const config = loadAppConfig(dir);
+      const web = JSON.parse(fs.readFileSync(path.join(dir, 'property.json'), 'utf8')).domains.web;
+      expect(config.ios.associatedDomains).toEqual(['webcredentials:' + web, 'applinks:' + web]);
+      expect(config.android.intentFilters).toEqual([{ action: 'VIEW', autoVerify: true, data: [{ scheme: 'https', host: web, path: '/app/check-in' }], category: ['BROWSABLE', 'DEFAULT'] }]);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+});

@@ -26,6 +26,7 @@ import EventCard from './EventCard';
 import AttendeesSheet from './AttendeesSheet';
 import RsvpControl from './RsvpControl';
 import { CheckInControls } from '../ranks/CheckIn';
+import { SaveRow } from '../SaveButton';
 
 const t = strings.events;
 
@@ -122,9 +123,11 @@ export function EventHeader({ event, onChange, testID = 'event' }) {
       {imageUrl(event.cover) ? <MediaImage url={imageUrl(event.cover)} blurhash={event.cover.blurhash} alt={event.cover.altText || null} style={{ width: '100%', aspectRatio: 16 / 9, borderRadius: theme.radii.lg }} /> : null}
       <View style={{ gap: theme.spacing.xs }}>
         {category ? <AppText color="textMuted">{category.label}</AppText> : null}
-        <AppText variant="title" accessibilityRole="header" testID={testID + '-title'}>
-          {event.title}
-        </AppText>
+        <SaveRow targetType="Event" targetId={event.id} title={event.title} testID={testID + '-save'}>
+          <AppText variant="title" accessibilityRole="header" testID={testID + '-title'}>
+            {event.title}
+          </AppText>
+        </SaveRow>
         {canceled ? (
           <AppText color="danger" style={{ fontWeight: '700' }} testID={testID + '-canceled'}>
             {event.cancelReason ? t.canceledReason(event.cancelReason) : t.canceled}

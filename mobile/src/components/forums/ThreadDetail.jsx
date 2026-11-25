@@ -1,10 +1,12 @@
 import { threadCanComment } from '@trelliskit/shared';
 import { useCallback, useState } from 'react';
+import { View } from 'react-native';
 import { useAuth } from '../../auth/AuthProvider';
 import strings from '../../strings';
 import AppText from '../AppText';
 import PostDetail from '../feed/PostDetail';
 import ThreadHeader from './ThreadHeader';
+import { SaveRow } from '../SaveButton';
 
 const t = strings.forums;
 const loadThread = (api, id) => api.getThread(id);
@@ -60,7 +62,7 @@ export default function ThreadDetail({ threadId, commentId = null, initialThread
       onPostChange={change}
       onDeleted={onDeleted}
       loadItem={loadThread}
-      renderCard={({ item, onChange, onAuthorBlocked }) => <ThreadHeader thread={item} onChange={onChange} onDeleted={onDeleted} onAuthorBlocked={onAuthorBlocked} />}
+      renderCard={({ item, onChange, onAuthorBlocked }) => <View><SaveRow targetType="Thread" targetId={item.id} title={item.title} testID={testID + '-save'} /><ThreadHeader thread={item} onChange={onChange} onDeleted={onDeleted} onAuthorBlocked={onAuthorBlocked} /></View>}
       canComment={(item) => threadCanComment(item)}
       commentExtras={commentExtras}
       treeKey={treeKey}

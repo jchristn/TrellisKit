@@ -37,6 +37,8 @@ const KNOWN = [
   new RegExp('^/me/events/proposals$'),
   new RegExp('^/events/proposals$'),
   new RegExp('^/library$'),
+  // Training hub sections and Library segments (docs/TRELLISKIT.md section 15).
+  new RegExp('^/training(/(library(/(courses|techniques|saved))?|saved|schedule|progress))?$'),
   new RegExp('^/series/ser_' + ID + '$'),
   new RegExp('^/series/ser_' + ID + '\\?comment=cmt_' + ID + '$'),
   new RegExp('^/lessons/les_' + ID + '$'),

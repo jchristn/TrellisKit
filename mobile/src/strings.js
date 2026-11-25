@@ -2,6 +2,7 @@ import { directoryTerms, formatTemplate, propertyTokens, remoteStringOverlay, re
 import { fillDeep, fillFromProperty, getBundledProperty } from './property/property';
 import { catalogTemplates } from './catalogStrings';
 import { ranksTemplates } from './ranksStrings';
+import { trainingTemplates } from './trainingStrings';
 
 /**
  * All user-facing strings for the mobile app. English only; no i18n library.
@@ -19,6 +20,8 @@ export const stringTemplates = Object.freeze({
   exerciseCatalog: catalogTemplates,
 
   ranks: ranksTemplates,
+
+  training: trainingTemplates,
 
   links: {
     title: 'Web content',

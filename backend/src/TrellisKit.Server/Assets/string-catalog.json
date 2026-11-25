@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "abef9954c1f53d6bdc7c5c4ea25ed5b621cb00a074849d0b91fa23b9bcf2f88d",
+ "sha256": "3ce5c6c0585092912fd2751fdfd3d2e95a3e7f8f208d959e965fc6d2a4d666eb",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -14716,6 +14716,846 @@
    "key": "mobile.tabs.training",
    "client": "mobile",
    "default": "Training",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.downloads",
+   "client": "mobile",
+   "default": "Downloads",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.downloadsHint",
+   "client": "mobile",
+   "default": "Opens the lessons saved on this device",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.guestBody",
+   "client": "mobile",
+   "default": "Members see their progress, saves, and schedule here.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.guestTitle",
+   "client": "mobile",
+   "default": "Sign in to track your training",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.clearSearch",
+   "client": "mobile",
+   "default": "Clear search",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.moreResults",
+   "client": "mobile",
+   "default": "More results",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.noResults",
+   "client": "mobile",
+   "default": "Nothing matches your search.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.resultsLessons",
+   "client": "mobile",
+   "default": "Lessons",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.resultsSeries",
+   "client": "mobile",
+   "default": "Courses",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.resultsTechniques",
+   "client": "mobile",
+   "default": "Techniques",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.searchFailed",
+   "client": "mobile",
+   "default": "Search failed. Try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.searchHint",
+   "client": "mobile",
+   "default": "Searches courses, lessons, and techniques",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.searchLabel",
+   "client": "mobile",
+   "default": "Search the library",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.searchTooShort",
+   "client": "mobile",
+   "default": "Type at least 2 characters.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.library.searching",
+   "client": "mobile",
+   "default": "Searching",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.links.lessonsTeaching",
+   "client": "mobile",
+   "default": "Lessons that teach this",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.links.loadFailed",
+   "client": "mobile",
+   "default": "These links could not be loaded.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.links.more",
+   "client": "mobile",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.links.noLessons",
+   "client": "mobile",
+   "default": "No lessons teach this yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.links.techniquesInLesson",
+   "client": "mobile",
+   "default": "Techniques in this lesson",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.loadFailed",
+   "client": "mobile",
+   "default": "Your training could not be loaded.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.loading",
+   "client": "mobile",
+   "default": "Loading training",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.offlineCached",
+   "client": "mobile",
+   "default": "You are offline. Showing your training from your last visit.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.coachBody",
+   "client": "mobile",
+   "default": "Get answers about technique, training plans, and the library.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.coachOpen",
+   "client": "mobile",
+   "default": "Open the assistant",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.coachTitle",
+   "client": "mobile",
+   "default": "Ask your coach",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.continueTraining",
+   "client": "mobile",
+   "default": "Continue training",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.curriculum",
+   "client": "mobile",
+   "default": "Curriculum",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.downloadsOffline",
+   "client": "mobile",
+   "default": "Downloaded lessons",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.downloadsOfflineBody",
+   "client": "mobile",
+   "default": "Lessons on this device play without a connection.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.featured",
+   "client": "mobile",
+   "default": "Featured courses",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.findEvents",
+   "client": "mobile",
+   "default": "Find an event",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.findPlaces",
+   "client": "mobile",
+   "default": "Find a place to train",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.firstRunBody",
+   "client": "mobile",
+   "default": "Pick a course to begin. Your progress, saves, and upcoming sessions will show here.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.firstRunTitle",
+   "client": "mobile",
+   "default": "Start training",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.newForYou",
+   "client": "mobile",
+   "default": "New for you",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.openRank",
+   "client": "mobile",
+   "default": "Open my rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.recentlySaved",
+   "client": "mobile",
+   "default": "Recently saved",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.seeAllSaved",
+   "client": "mobile",
+   "default": "See all saved",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.startCourse",
+   "client": "mobile",
+   "default": "Browse courses",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.upNext",
+   "client": "mobile",
+   "default": "Up next",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.overview.yourRank",
+   "client": "mobile",
+   "default": "Your rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.progress.completedEmpty",
+   "client": "mobile",
+   "default": "No completed lessons yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.progress.completedLessons",
+   "client": "mobile",
+   "default": "Completed lessons",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.progress.loadFailed",
+   "client": "mobile",
+   "default": "Your progress could not be loaded.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.progress.loadMore",
+   "client": "mobile",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.progress.title",
+   "client": "mobile",
+   "default": "Progress",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.save.failed",
+   "client": "mobile",
+   "default": "The change could not be saved. Try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.save.queued",
+   "client": "mobile",
+   "default": "Saved on this device. It will sync when you are back online.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.save.removeHint",
+   "client": "mobile",
+   "default": "Removes it from saved",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.save.removeLabel",
+   "client": "mobile",
+   "default": "Saved",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.save.saveLabel",
+   "client": "mobile",
+   "default": "Save",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.addToCollections",
+   "client": "mobile",
+   "default": "Collections",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.all",
+   "client": "mobile",
+   "default": "All",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.allCollections",
+   "client": "mobile",
+   "default": "All saved",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.cancel",
+   "client": "mobile",
+   "default": "Cancel",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.collectionFailed",
+   "client": "mobile",
+   "default": "The collection could not be changed. Try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.collectionName",
+   "client": "mobile",
+   "default": "Collection name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.collections",
+   "client": "mobile",
+   "default": "Collections",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.collectionsLabel",
+   "client": "mobile",
+   "default": "Collection",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.createCollection",
+   "client": "mobile",
+   "default": "Create",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.delete",
+   "client": "mobile",
+   "default": "Delete",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.deleteConfirmBody",
+   "client": "mobile",
+   "default": "Saved items stay saved. Only the collection is removed.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.deleteConfirmTitle",
+   "client": "mobile",
+   "default": "Delete this collection?",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.done",
+   "client": "mobile",
+   "default": "Done",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.duplicateName",
+   "client": "mobile",
+   "default": "You already have a collection with this name.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.empty",
+   "client": "mobile",
+   "default": "Nothing saved yet. Use the bookmark on a lesson, course, event, or post to keep it here.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.emptyFiltered",
+   "client": "mobile",
+   "default": "Nothing saved of this type.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.filterLabel",
+   "client": "mobile",
+   "default": "Show",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.loadFailed",
+   "client": "mobile",
+   "default": "Saved items could not be loaded.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.loadMore",
+   "client": "mobile",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.loading",
+   "client": "mobile",
+   "default": "Loading saved items",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.manageCollections",
+   "client": "mobile",
+   "default": "Manage collections",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.nameRequired",
+   "client": "mobile",
+   "default": "Enter a name of 1 to 60 characters.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.newCollection",
+   "client": "mobile",
+   "default": "New collection",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.noCollections",
+   "client": "mobile",
+   "default": "No collections yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.noteFailed",
+   "client": "mobile",
+   "default": "The note could not be saved.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.noteHint",
+   "client": "mobile",
+   "default": "Visible to you and moderators.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.noteLabel",
+   "client": "mobile",
+   "default": "Note",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.noteSave",
+   "client": "mobile",
+   "default": "Save note",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.noteSaved",
+   "client": "mobile",
+   "default": "Note saved.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.rename",
+   "client": "mobile",
+   "default": "Rename",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.title",
+   "client": "mobile",
+   "default": "Saved",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.type.CatalogEntry",
+   "client": "mobile",
+   "default": "Technique",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.type.Event",
+   "client": "mobile",
+   "default": "Event",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.type.Instructor",
+   "client": "mobile",
+   "default": "Instructor",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.type.Lesson",
+   "client": "mobile",
+   "default": "Lesson",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.type.Post",
+   "client": "mobile",
+   "default": "Post",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.type.Series",
+   "client": "mobile",
+   "default": "Course",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.type.Thread",
+   "client": "mobile",
+   "default": "Thread",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.type.Venue",
+   "client": "mobile",
+   "default": "Place",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.types.CatalogEntry",
+   "client": "mobile",
+   "default": "Techniques",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.types.Event",
+   "client": "mobile",
+   "default": "Events",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.types.Instructor",
+   "client": "mobile",
+   "default": "Instructors",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.types.Lesson",
+   "client": "mobile",
+   "default": "Lessons",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.types.Post",
+   "client": "mobile",
+   "default": "Posts",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.types.Series",
+   "client": "mobile",
+   "default": "Courses",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.types.Thread",
+   "client": "mobile",
+   "default": "Threads",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.types.Venue",
+   "client": "mobile",
+   "default": "Places",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.saved.unavailable",
+   "client": "mobile",
+   "default": "No longer available",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.schedule.browseEvents",
+   "client": "mobile",
+   "default": "Browse events",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.schedule.checkIns",
+   "client": "mobile",
+   "default": "Recent check-ins",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.schedule.checkInsEmpty",
+   "client": "mobile",
+   "default": "No check-ins yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.schedule.empty",
+   "client": "mobile",
+   "default": "Nothing on your schedule. Events you are going to show here.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.schedule.loadFailed",
+   "client": "mobile",
+   "default": "Your schedule could not be loaded.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.schedule.loadMore",
+   "client": "mobile",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.schedule.title",
+   "client": "mobile",
+   "default": "Schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.schedule.upcoming",
+   "client": "mobile",
+   "default": "Upcoming",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.sections.Library",
+   "client": "mobile",
+   "default": "Library",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.sections.Overview",
+   "client": "mobile",
+   "default": "Overview",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.sections.Programs",
+   "client": "mobile",
+   "default": "Programs",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.sections.Progress",
+   "client": "mobile",
+   "default": "Progress",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.sections.Schedule",
+   "client": "mobile",
+   "default": "Schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.sectionsLabel",
+   "client": "mobile",
+   "default": "Training sections",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.segments.courses",
+   "client": "mobile",
+   "default": "Courses",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.segments.saved",
+   "client": "mobile",
+   "default": "Saved",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.segments.techniques",
+   "client": "mobile",
+   "default": "Techniques",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.segmentsLabel",
+   "client": "mobile",
+   "default": "Library sections",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.title",
+   "client": "mobile",
+   "default": "Training",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.training.unavailable",
+   "client": "mobile",
+   "default": "Training is not available right now.",
    "tokens": [],
    "maxLength": 200
   },
