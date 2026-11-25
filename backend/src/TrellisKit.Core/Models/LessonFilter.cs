@@ -96,6 +96,21 @@ namespace TrellisKit.Core.Models
         /// </summary>
         public bool PublicOnly { get; set; } = false;
 
+        /// <summary>
+        /// Only lessons in series this member follows without opting out, or null.
+        /// </summary>
+        public string? FollowedByUserId { get; set; } = null;
+
+        /// <summary>
+        /// Only lessons published at or after this UTC time, or null.
+        /// </summary>
+        public DateTime? PublishedAfterUtc { get; set; } = null;
+
+        /// <summary>
+        /// Only lessons linked to this catalog entry (lessoncatalogentries), or null.
+        /// </summary>
+        public string? CatalogEntryId { get; set; } = null;
+
         #endregion
     }
 }

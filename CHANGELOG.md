@@ -4,6 +4,12 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (one Library: lesson techniques and library search)
+
+- Lesson techniques (migration 135, `lessoncatalogentries`, ids `lce_`, labels and tags in the shared metadata tables): `PUT /api/v1/admin/lessons/{id}/catalog-entries` (library staff, at most 50, published entries only, `409 CatalogEntryNotPublished`), "Techniques in this lesson" (`/api/v1/lessons/{id}/catalog-entries[/enumerate]`), "Lessons that teach this" under the member's lesson access (`/api/v1/catalog/entries/{id}/lessons[/enumerate]`), and the public variant (`/api/v1/public/catalog/entries/{id}/lessons`). All `404 NotAvailable` while `features.catalog` is off; deleting a lesson or an entry deletes its links.
+- `POST /api/v1/library/search`: one search across series, lessons, and published catalog entries with bounded per-kind pages continuable through each kind's own route, the kind's access rules, and the shared search limiter. Migration 135 adds trigram GIN indexes on the series and lesson search columns when `pg_trgm` is installed (now installed by the Docker init script, the infrastructure bootstrap, and the test harness) and the covering index `idx_lessons_series_published`.
+- Postman folders "Library search" and "Lesson techniques"; Touchstone suites `LessonCatalog` and `LibrarySearch`.
+
 ### Added (Training destination and navigation contract)
 
 - `training` navigation destination (label "Training", icon `barbell`, `/training`, `features.training`, default on), placed after `library`. `library` and the new `catalog` destination (technique catalog, `/training/library/techniques`, `features.catalog`) are `coveredBy: "training"`: placing Training keeps them out of the drawer, and they return when Training is off or hidden. Seventeen destination ids; the default drawer (`DefaultMobileDrawerItems`) lists every destination that is not embedded. The mobile `/training` stack and the website `/app/training` route are placeholders that show the Library home until the hub screens land.

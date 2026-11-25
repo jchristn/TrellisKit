@@ -86,7 +86,9 @@ namespace TrellisKit.Server.Services
                 case "lessons":
                     return Lessons(m, s, read);
                 case "library":
-                    // /library/levels/enumerate
+                    // /library/levels/enumerate, and POST /library/search (a read that carries its query in the body; each kind
+                    // applies its own object access, docs/TRELLISKIT.md section 15).
+                    if (s.Length == 4 && s[3] == "search" && m == "POST") return Stub(Declare(FeatureKeyEnum.Library, AccessActionEnum.List, true, m, s));
                     return read ? Stub(Declare(FeatureKeyEnum.Library, AccessActionEnum.List, true, m, s)) : null;
                 case "catalog":
                     // /catalog/entries[/enumerate|/{idOrSlug}|/{id}/relationships]: each published entry decides.
@@ -325,6 +327,9 @@ namespace TrellisKit.Server.Services
             if (s.Length == 4) return Stub(Declare(FeatureKeyEnum.Library, AccessActionEnum.Read, true, m, s));
             switch (s[4])
             {
+                case "catalog-entries":
+                    // /lessons/{id}/catalog-entries[/enumerate]: techniques in a lesson the caller can see (each lesson decides).
+                    return read ? Stub(Declare(FeatureKeyEnum.Library, AccessActionEnum.List, true, m, s)) : Stub(Declare(FeatureKeyEnum.Library, AccessActionEnum.Participate, false, m, s));
                 case "downloads":
                     // Downloads need a membership in gated models (sample lessons are streamed, not downloaded).
                     return Declare(FeatureKeyEnum.Library, AccessActionEnum.Participate, false, m, s);

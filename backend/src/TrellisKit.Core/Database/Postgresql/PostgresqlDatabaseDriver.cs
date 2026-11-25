@@ -222,6 +222,7 @@ namespace TrellisKit.Core.Database.Postgresql
             target.Curricula = new CurriculumMethods(target, propertyId);
             target.Attendance = new AttendanceMethods(target, propertyId);
             target.Favorites = new FavoriteMethods(target, propertyId);
+            target.LessonCatalogLinks = new LessonCatalogLinkMethods(target, propertyId);
             target.Blocks = new BlockMethods(target, propertyId);
             target.WordFilter = new WordFilterMethods(target, propertyId);
             target.LinkPreviews = new LinkPreviewMethods(target, propertyId);

@@ -56,6 +56,8 @@ namespace TrellisKit.Core.Database
         private static readonly List<string> _Owned = new List<string>
         {
             "favoritecollectionitems", "favoritecollections", "favorites",
+            // Lesson and catalog links (migration 135): before lessons and catalogentries (no foreign keys).
+            "lessoncatalogentries",
             "profileslugs", "profilepages",
             // Reviewed exercise and technique catalog (docs/CATALOG_IMPORTS.md): children before entries.
             "catalogimportitems", "catalogimportsources", "cataloglocalizednames", "catalogrelationships", "catalogsources", "catalogentryvalues", "catalogentries",

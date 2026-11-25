@@ -78,7 +78,9 @@ namespace Test.Shared.Suites
             { "/api/v1/members/{id}/rank", "Member rank: ranks at most 10 Rank fields, lineage at most 100" },
             { "/api/v1/curricula/{id}", "Curriculum: items at most 500 (CurriculumService.MaxItems), labels and tags 50 each" },
             { "/api/v1/admin/curricula/{id}", "Curriculum (staff): items at most 500, labels and tags 50 each" },
-            { "/api/v1/admin/curricula/{id}/progress/{userId}", "Curriculum with one member's progress: items at most 500, labels and tags 50 each" }
+            { "/api/v1/admin/curricula/{id}/progress/{userId}", "Curriculum with one member's progress: items at most 500, labels and tags 50 each" },
+            { "/api/v1/library/search", "POST: three EnumerationResult pages, each at most maxResultsPerKind (25)" },
+            { "/api/v1/admin/lessons/{id}/catalog-entries", "PUT: one EnumerationResult page of the stored links, at most 50 per lesson" }
         };
 
         #endregion

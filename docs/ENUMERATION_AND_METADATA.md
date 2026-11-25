@@ -181,6 +181,15 @@ On tablets, filters sit in a side panel next to results; on phones, in a bottom 
 
 Fixed-bound GET exceptions (section 2.4, on the enforcement allow-list): `GET /api/v1/me/rank` (at most 10 Rank fields, a 20-row history preview with `historyTotal`, at most 100 lineage entries), `GET /api/v1/members/{id}/rank` (at most 10 Rank fields and 100 lineage entries), and the curriculum details `GET /api/v1/curricula/{id}`, `GET /api/v1/admin/curricula/{id}`, and `GET /api/v1/admin/curricula/{id}/progress/{userId}` (at most 500 items per curriculum). Every rank, promotion, requirement, lineage entry, curriculum, item, progress row, and check-in carries labels and tags.
 
+### 2.6 Training hub, library search, and lesson technique collections
+
+| Collection | Routes | Maximum page | Orderings | Filters | Metadata target type |
+|---|---|---|---|---|---|
+| `lesson-catalog-entries` | `GET /api/v1/lessons/{id}/catalog-entries`, `POST .../enumerate` | 50 | `PositionAscending` (default), `NameAscending`, `CreatedDescending`, `CreatedAscending` | search covers entry name and summary; labels and tags filter the links | `LessonCatalogEntry` |
+| `catalog-entry-lessons` | `GET /api/v1/catalog/entries/{id}/lessons`, `POST .../enumerate`; `GET /api/v1/public/catalog/entries/{id}/lessons`, `POST .../enumerate` | 50 | `PublishedDescending` (default), `TitleAscending`, `CreatedDescending`, `CreatedAscending` | search covers lesson title and summary; labels and tags filter the lessons | `Lesson` |
+
+Fixed-bound exceptions (on the enforcement allow-list): `GET /api/v1/me/training` (sections exactly 5 with at most 3 segments; every card an `EnumerationResult` bounded by its `training.*` setting, maxima 10, 25, 20, and 20; the rank card's curriculum at most 500 items), `POST /api/v1/library/search` (three `EnumerationResult` pages of at most `maxResultsPerKind`, 25, each continuable through the kind's own enumeration route with the same `search`), and `PUT /api/v1/admin/lessons/{id}/catalog-entries` (one `EnumerationResult` page of the stored links, at most 50 per lesson). Link labels and tags are written with the links and are not discoverable by members.
+
 ---
 
 ## 4. Migration of existing routes
