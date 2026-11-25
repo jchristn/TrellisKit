@@ -72,3 +72,5 @@ export { metricsMethods, metricSeriesFromEnumeration, legacyMetricSeriesFromEnum
 export { exerciseCatalogMethods } from './exerciseCatalogApi.js';
 export * from './exerciseCatalog.js';
 export * from './catalogFeature.js';
+export { ranksMethods } from './ranksApi.js';
+export * from './ranks.js';

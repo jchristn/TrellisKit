@@ -59,6 +59,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// The member Training hub. Its access is the union of its sections' access.
         /// </summary>
-        Training
+        Training,
+
+        /// <summary>
+        /// Verified ranks, curricula, and attendance (also needs the ranks.enabled setting).
+        /// </summary>
+        Ranks
     }
 }

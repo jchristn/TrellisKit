@@ -488,5 +488,44 @@ namespace TrellisKit.Core.Enums
         /// <summary>A photo or video in a member profile gallery (pmd_).</summary>
         ProfileMedia,
 
+        /// <summary>
+        /// A member's current verified rank in one Rank profile field.
+        /// </summary>
+        MemberRank,
+
+        /// <summary>
+        /// One rank award or revoke.
+        /// </summary>
+        RankPromotion,
+
+        /// <summary>
+        /// Requirements to be awarded a rank.
+        /// </summary>
+        RankRequirement,
+
+        /// <summary>
+        /// A member's self-reported rank lineage entry.
+        /// </summary>
+        LineageEntry,
+
+        /// <summary>
+        /// A curriculum (rank-grouped list of lessons, series, catalog entries, and custom items).
+        /// </summary>
+        Curriculum,
+
+        /// <summary>
+        /// One item of a curriculum.
+        /// </summary>
+        CurriculumItem,
+
+        /// <summary>
+        /// A member's self-completion or verification of a curriculum item.
+        /// </summary>
+        CurriculumProgress,
+
+        /// <summary>
+        /// A member's check-in to an event or venue session occurrence.
+        /// </summary>
+        Attendance
     }
 }

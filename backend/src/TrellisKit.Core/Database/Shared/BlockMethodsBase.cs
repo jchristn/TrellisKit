@@ -20,7 +20,7 @@ namespace TrellisKit.Core.Database.Shared
         private static readonly string[] _StaffRoles = new[]
         {
             RoleEnum.SystemAdmin.ToString(), RoleEnum.Moderator.ToString(), RoleEnum.FeedModerator.ToString(), RoleEnum.DirectoryModerator.ToString(), RoleEnum.EventManager.ToString(),
-            RoleEnum.LibraryEditor.ToString(), RoleEnum.SupportAgent.ToString(), RoleEnum.Communicator.ToString()
+            RoleEnum.LibraryEditor.ToString(), RoleEnum.SupportAgent.ToString(), RoleEnum.Communicator.ToString(), RoleEnum.RankAwarder.ToString()
         };
 
         protected BlockMethodsBase(DatabaseDriverBase driver, SqlDialect dialect, string? propertyId) : base(driver, dialect, propertyId)

@@ -93,6 +93,12 @@ namespace TrellisKit.Server.Services
                     return Messaging(m, s, read);
                 case "ideas":
                     return Ideas(m, s, read);
+                case "curricula":
+                    // /curricula, /curricula/enumerate, /curricula/{id}: verified ranks feature (ranks.enabled), never signed-out.
+                    return Declare(FeatureKeyEnum.Ranks, read ? (s.Length == 4 && s[3] != "enumerate" ? AccessActionEnum.Read : AccessActionEnum.List) : AccessActionEnum.Write, false, m, s);
+                case "attendance":
+                    // /attendance/check-in (Participate), /attendance/check-in-code (Read).
+                    return Declare(FeatureKeyEnum.Ranks, read ? AccessActionEnum.Read : AccessActionEnum.Participate, false, m, s);
                 case "notifications":
                 case "reports":
                 case "link-previews":

@@ -60,6 +60,13 @@ namespace TrellisKit.Server.Services
         /// </summary>
         public AppSettings? Settings { get; set; } = null;
 
+        /// <summary>
+        /// Verified rank lock (docs/TRELLISKIT.md, Ranks, curricula, and attendance): called with the member and their
+        /// profile writes before a member's own edit is stored; throws 409 RankVerified for a changed verified Rank field.
+        /// Null (default) applies no lock.
+        /// </summary>
+        public Func<string, List<ProfileFieldWrite>, CancellationToken, Task>? RankLock { get; set; } = null;
+
         #endregion
 
         #region Private-Members
@@ -188,6 +195,7 @@ namespace TrellisKit.Server.Services
                 TrellisKitTelemetry.Increment(TrellisKitTelemetry.ProfileUpdates, "source", "member", "outcome", "invalid");
                 throw ApiErrorException.Validation(errors);
             }
+            if (RankLock != null && writes.Count > 0) await RankLock(user.Id, writes, token).ConfigureAwait(false);
             bool nameChanged = !String.Equals(previousName, user.DisplayName, StringComparison.Ordinal);
             bool bioChanged = !String.Equals(previousBio, user.Bio, StringComparison.Ordinal);
             bool self = String.Equals(actor.UserId, user.Id, StringComparison.Ordinal);

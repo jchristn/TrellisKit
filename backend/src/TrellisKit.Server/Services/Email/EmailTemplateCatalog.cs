@@ -66,6 +66,7 @@ namespace TrellisKit.Server.Services.Email
             new DirectorySubmissionDecisionEmail(),
             new LibraryDigestEmail(),
             new IdeaShippedEmail(),
+            new RankPromotedEmail(),
             new BroadcastEmail(),
             new MessagesUnreadEmail(),
             new StaffNewMemberEmail(),

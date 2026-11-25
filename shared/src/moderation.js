@@ -54,7 +54,7 @@ export function defaultNotifyAuthor(action) {
 }
 
 /** Staff roles that cannot be blocked (section 9.2). */
-export const StaffRoles = Object.freeze(['SystemAdmin', 'Moderator', 'FeedModerator', 'DirectoryModerator', 'EventManager', 'LibraryEditor', 'SupportAgent', 'Communicator']);
+export const StaffRoles = Object.freeze(['SystemAdmin', 'Moderator', 'FeedModerator', 'DirectoryModerator', 'EventManager', 'LibraryEditor', 'SupportAgent', 'Communicator', 'RankAwarder']);
 
 /**
  * Whether a `Me` or member with `roles` is staff.

@@ -315,6 +315,24 @@ namespace TrellisKit.Core.Settings
         }
 
         /// <summary>
+        /// Verified ranks, curricula, and attendance switches.
+        /// </summary>
+        public RankSettings Ranks
+        {
+            get { return _Ranks; }
+            set { _Ranks = value ?? throw new ArgumentNullException(nameof(Ranks)); }
+        }
+
+        /// <summary>
+        /// Attendance check-in settings.
+        /// </summary>
+        public AttendanceSettings Attendance
+        {
+            get { return _Attendance; }
+            set { _Attendance = value ?? throw new ArgumentNullException(nameof(Attendance)); }
+        }
+
+        /// <summary>
         /// Events settings (Phase 4 section 12).
         /// </summary>
         public EventSettings Events
@@ -596,6 +614,8 @@ namespace TrellisKit.Core.Settings
         private IdeaSettings _Ideas = new IdeaSettings();
         private BroadcastSettings _Broadcasts = new BroadcastSettings();
         private AdminSummarySettings _AdminSummary = new AdminSummarySettings();
+        private RankSettings _Ranks = new RankSettings();
+        private AttendanceSettings _Attendance = new AttendanceSettings();
 
         #endregion
     }

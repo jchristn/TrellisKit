@@ -186,6 +186,16 @@ namespace TrellisKit.Core.Enums
         ContentFlagged,
 
         /// <summary>An administrator metric threshold was crossed.</summary>
-        MetricAlert
+        MetricAlert,
+
+        /// <summary>
+        /// A rank awarder promoted you (verified rank award).
+        /// </summary>
+        RankPromoted,
+
+        /// <summary>
+        /// A member named you as the promoter in their rank lineage and asks you to verify it.
+        /// </summary>
+        LineageVerificationRequested
     }
 }

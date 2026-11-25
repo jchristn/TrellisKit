@@ -96,6 +96,8 @@ namespace TrellisKit.Core.Database
             "accountexports", "auditrecords", "signupcoderedemptions", "signupcodetags", "signupcodes", "signupcodebatches",
             "entitlements", "subscriptionevents", "subscriptions", "usergoals", "rankhistoryentries", "roleassignments",
             "onetimetokens", "refreshtokens", "authsessions", "externalidentities", "credentials", "users", "requesthistory",
+            // Verified ranks, curricula, and attendance (migrations 132 to 134).
+            "attendance", "curriculumprogress", "curriculumitems", "curricula", "lineageentries", "rankrequirements", "rankpromotions", "memberranks",
             // Last on purpose: deleting the content tables above fires the content changelog triggers, so the changelog
             // is purged after them (docs/INTEGRATION.md content review contract).
             "contentchanges"

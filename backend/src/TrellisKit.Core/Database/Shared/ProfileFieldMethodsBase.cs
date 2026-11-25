@@ -5,6 +5,7 @@ namespace TrellisKit.Core.Database.Shared
     using System.Data;
     using System.Globalization;
     using System.Linq;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
     using TrellisKit.Core.Database.Interfaces;
@@ -80,7 +81,7 @@ namespace TrellisKit.Core.Database.Shared
                 ", editableby = " + D.Enum(field.EditableBy) + ", visibility = " + D.Enum(field.Visibility) + ", showonprofile = " + D.Bool(field.ShowOnProfile) +
                 ", profileorder = " + D.Num(field.ProfileOrder) + ", showoncard = " + D.Bool(field.ShowOnCard) + ", searchable = " + D.Bool(field.Searchable) +
                 ", filterable = " + D.Bool(field.Filterable) + ", enabled = " + D.Bool(field.Enabled) + ", " + ValidationAssignments(v) +
-                ", levellabel = " + D.Str(field.Rank?.LevelLabel) + ", maxlevel = " + Num(field.Rank == null ? null : field.Rank.MaxLevel) +
+                ", levellabel = " + D.Str(field.Rank?.LevelLabel) + ", maxlevel = " + Num(field.Rank == null ? null : field.Rank.MaxLevel) + ", rankawarding = " + D.Str(AwardingJson(field.Rank?.Awarding)) +
                 ", revision = revision + 1, updatedbyuserid = " + D.Str(userId) + ", updatedutc = " + D.Ts(field.UpdatedUtc) +
                 " WHERE " + Scope() + " AND id = " + D.Str(field.Id) + ";",
                 "DELETE FROM profilefieldoptions WHERE " + Scope() + " AND fieldid = " + D.Str(field.Id) + ";",
@@ -180,13 +181,13 @@ namespace TrellisKit.Core.Database.Shared
         {
             ProfileFieldValidation v = f.Validation ?? new ProfileFieldValidation();
             return "INSERT INTO profilefields (propertyid, id, key, builtin, label, helptext, placeholder, type, collectat, editableby, visibility, showonprofile, profileorder, showoncard, searchable, filterable, enabled, " +
-                "required, minlength, maxlength, minvalue, maxvalue, integeronly, pattern, patternmessage, minentries, maxentries, mindate, maxdate, notinfuture, levellabel, maxlevel, valuecount, revision, createdbyuserid, updatedbyuserid, createdutc, updatedutc) VALUES (" +
+                "required, minlength, maxlength, minvalue, maxvalue, integeronly, pattern, patternmessage, minentries, maxentries, mindate, maxdate, notinfuture, levellabel, maxlevel, rankawarding, valuecount, revision, createdbyuserid, updatedbyuserid, createdutc, updatedutc) VALUES (" +
                 Pid + ", " + D.Str(f.Id) + ", " + D.Str(f.Key) + ", " + D.Bool(f.BuiltIn) + ", " + D.Str(f.Label) + ", " + D.Str(f.HelpText ?? String.Empty) + ", " + D.Str(f.Placeholder ?? String.Empty) + ", " +
                 D.Enum(f.Type) + ", " + D.Enum(f.CollectAt) + ", " + D.Enum(f.EditableBy) + ", " + D.Enum(f.Visibility) + ", " + D.Bool(f.ShowOnProfile) + ", " + D.Num(f.ProfileOrder) + ", " +
                 D.Bool(f.ShowOnCard) + ", " + D.Bool(f.Searchable) + ", " + D.Bool(f.Filterable) + ", " + D.Bool(f.Enabled) + ", " +
                 D.Bool(v.Required) + ", " + D.Num(v.MinLength) + ", " + D.Num(v.MaxLength) + ", " + Num(v.MinValue) + ", " + Num(v.MaxValue) + ", " + D.Bool(v.IntegerOnly) + ", " +
                 D.Str(v.Pattern) + ", " + D.Str(v.PatternMessage) + ", " + D.Num(v.MinEntries) + ", " + D.Num(v.MaxEntries) + ", " + D.Str(v.MinDate) + ", " + D.Str(v.MaxDate) + ", " + D.Bool(v.NotInFuture) + ", " +
-                D.Str(f.Rank?.LevelLabel) + ", " + Num(f.Rank == null ? null : f.Rank.MaxLevel) + ", 0, 1, " + D.Str(userId) + ", " + D.Str(userId) + ", " + D.Ts(f.CreatedUtc) + ", " + D.Ts(f.UpdatedUtc) + ");";
+                D.Str(f.Rank?.LevelLabel) + ", " + Num(f.Rank == null ? null : f.Rank.MaxLevel) + ", " + D.Str(AwardingJson(f.Rank?.Awarding)) + ", 0, 1, " + D.Str(userId) + ", " + D.Str(userId) + ", " + D.Ts(f.CreatedUtc) + ", " + D.Ts(f.UpdatedUtc) + ");";
         }
 
         private string ValidationAssignments(ProfileFieldValidation v)
@@ -223,6 +224,38 @@ namespace TrellisKit.Core.Database.Shared
                 D.Bool(o.FreeText) + ", " + D.Bool(o.Retired) + ", " + D.Num(position) + ", " + D.Ts(f.UpdatedUtc) + ", " + D.Ts(f.UpdatedUtc) + ");";
         }
 
+        private static string? AwardingJson(ProfileRankAwarding? awarding)
+        {
+            if (awarding == null) return null;
+            return JsonSerializer.Serialize(new Dictionary<string, object?>
+            {
+                { "optionAwarderMinimum", String.IsNullOrWhiteSpace(awarding.OptionAwarderMinimum) ? null : awarding.OptionAwarderMinimum.Trim() },
+                { "allowEqualOption", awarding.AllowEqualOption },
+                { "allowEqualOptionLevels", awarding.AllowEqualOptionLevels }
+            });
+        }
+
+        private static ProfileRankAwarding? ParseAwarding(string? json)
+        {
+            if (String.IsNullOrWhiteSpace(json)) return null;
+            try
+            {
+                using (JsonDocument doc = JsonDocument.Parse(json))
+                {
+                    JsonElement root = doc.RootElement;
+                    ProfileRankAwarding awarding = new ProfileRankAwarding();
+                    if (root.TryGetProperty("optionAwarderMinimum", out JsonElement min) && min.ValueKind == JsonValueKind.String) awarding.OptionAwarderMinimum = min.GetString();
+                    if (root.TryGetProperty("allowEqualOption", out JsonElement equal) && (equal.ValueKind == JsonValueKind.True || equal.ValueKind == JsonValueKind.False)) awarding.AllowEqualOption = equal.GetBoolean();
+                    if (root.TryGetProperty("allowEqualOptionLevels", out JsonElement levels) && (levels.ValueKind == JsonValueKind.True || levels.ValueKind == JsonValueKind.False)) awarding.AllowEqualOptionLevels = levels.GetBoolean();
+                    return awarding;
+                }
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
+        }
+
         private string Num(double? value)
         {
             return value == null ? "NULL" : D.Num(value.Value);
@@ -253,7 +286,7 @@ namespace TrellisKit.Core.Database.Shared
                 HelpText = RowReader.GetNullableString(row, "helptext") ?? String.Empty,
                 Placeholder = RowReader.GetNullableString(row, "placeholder") ?? String.Empty,
                 Type = type,
-                Rank = type == ProfileFieldTypeEnum.Rank ? new ProfileRankSettings { LevelLabel = levelLabel ?? String.Empty, MaxLevel = maxLevel ?? 0 } : null,
+                Rank = type == ProfileFieldTypeEnum.Rank ? new ProfileRankSettings { LevelLabel = levelLabel ?? String.Empty, MaxLevel = maxLevel ?? 0, Awarding = ParseAwarding(RowReader.GetNullableString(row, "rankawarding")) } : null,
                 Validation = new ProfileFieldValidation
                 {
                     Required = RowReader.GetBool(row, "required"),

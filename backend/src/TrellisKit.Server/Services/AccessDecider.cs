@@ -137,6 +137,8 @@ namespace TrellisKit.Server.Services
             if (route.Feature == FeatureKeyEnum.Messaging && policy.IsGated(FeatureKeyEnum.Messaging)) return AccessTierEnum.Member;
             // Ideas gated: reading the board needs a membership too (section 0.3).
             if (route.Feature == FeatureKeyEnum.Ideas && policy.IsGated(FeatureKeyEnum.Ideas)) return AccessTierEnum.Member;
+            // Ranks gated: curricula and check-in need a membership.
+            if (route.Feature == FeatureKeyEnum.Ranks && policy.IsGated(FeatureKeyEnum.Ranks)) return AccessTierEnum.Member;
             if (route.AnonymousEligible && policy.AllowsAnonymous) return AccessTierEnum.Anonymous;
             return AccessTierEnum.SignedIn;
         }

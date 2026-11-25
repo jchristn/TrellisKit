@@ -218,6 +218,9 @@ namespace TrellisKit.Core.Database.Postgresql
             target.AccountExports = new AccountExportMethods(target, propertyId);
             target.Media = new MediaMethods(target, propertyId);
             target.ProfileMedia = new ProfileMediaMethods(target, propertyId);
+            target.Ranks = new RankMethods(target, propertyId);
+            target.Curricula = new CurriculumMethods(target, propertyId);
+            target.Attendance = new AttendanceMethods(target, propertyId);
             target.Blocks = new BlockMethods(target, propertyId);
             target.WordFilter = new WordFilterMethods(target, propertyId);
             target.LinkPreviews = new LinkPreviewMethods(target, propertyId);

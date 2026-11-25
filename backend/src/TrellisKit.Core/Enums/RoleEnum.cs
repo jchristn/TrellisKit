@@ -54,6 +54,11 @@ namespace TrellisKit.Core.Enums
         /// Manages live update releases, channels, rollouts, feature flags, kill switches, and app content without full
         /// administrative rights (global; signing and deploy keys stay SystemAdmin only).
         /// </summary>
-        ReleaseManager
+        ReleaseManager,
+
+        /// <summary>
+        /// Awards and revokes verified ranks, verifies curriculum items, and checks members in (resource type Ranks, resource id *).
+        /// </summary>
+        RankAwarder
     }
 }

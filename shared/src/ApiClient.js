@@ -20,6 +20,7 @@ import { metricsMethods } from './metricsApi.js';
 import { contentReviewMethods } from './contentReviewApi.js';
 import { exerciseCatalogMethods } from './exerciseCatalogApi.js';
 import { publicPageMethods } from './publicPages.js';
+import { ranksMethods } from './ranksApi.js';
 
 /**
  * Minimal fetch-based client for the TrellisKit REST API.
@@ -274,6 +275,7 @@ Object.assign(ApiClient.prototype, documentsMethods);
 Object.assign(ApiClient.prototype, publicPageMethods);
 // Reviewed exercise and technique catalog (docs/CATALOG_PUBLIC_PAGES.md, docs/CATALOG_IMPORTS.md).
 Object.assign(ApiClient.prototype, exerciseCatalogMethods);
+Object.assign(ApiClient.prototype, ranksMethods);
 // `client.messaging`: the direct message methods under their contract names (assistant chats keep
 // `enumerateConversations` and friends on the client itself).
 Object.defineProperty(ApiClient.prototype, 'messaging', {

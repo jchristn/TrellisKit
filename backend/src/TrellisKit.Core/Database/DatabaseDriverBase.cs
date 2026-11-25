@@ -270,6 +270,15 @@ namespace TrellisKit.Core.Database
         /// <summary>Profile gallery storage, bound to the current property.</summary>
         public IProfileMediaMethods ProfileMedia { get; protected internal set; } = null!;
 
+        /// <summary>Verified ranks, promotions, requirements, and lineage, bound to the property.</summary>
+        public IRankMethods Ranks { get; protected internal set; } = null!;
+
+        /// <summary>Curricula, items, and member progress, bound to the property.</summary>
+        public ICurriculumMethods Curricula { get; protected internal set; } = null!;
+
+        /// <summary>Attendance check-ins, bound to the property.</summary>
+        public IAttendanceMethods Attendance { get; protected internal set; } = null!;
+
         /// <summary>Directory listing storage, bound to the property.</summary>
         public IDirectoryMethods DirectoryListings { get; protected internal set; } = null!;
 
