@@ -137,6 +137,11 @@ describe('admin Usage page', () => {
 
     // uPlot got bars for counts, a line for gauges, and a stacked area for storage.
     const byLabel = (label) => plots.find((p) => p.opts.series[1].label === label && !p.destroyed);
+    await waitFor(() => {
+      expect(byLabel('Posts created')).toBeDefined();
+      expect(byLabel('Total members')).toBeDefined();
+      expect(plots.find((p) => p.opts.series.length === 3 && p.opts.series[1].label === 'Image variants' && !p.destroyed)).toBeDefined();
+    });
     expect(byLabel('Posts created').opts.series[1].paths).toBe('bars-path');
     expect(byLabel('Posts created').data[1]).toEqual([3, 9, 5]);
     expect(byLabel('Total members').opts.series[1].paths).toBeUndefined();

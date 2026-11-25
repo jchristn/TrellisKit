@@ -195,7 +195,8 @@ describe('router', () => {
   it('redirects admin routes to the login page with email sign-in and a token option', async () => {
     const { fetchImpl, calls } = createFetch(() => undefined);
     renderAt('/admin/requests', fetchImpl);
-    expect(await screen.findByLabelText('Email')).toBeInTheDocument();
+    // The admin route is lazy-loaded; allow its first transform to finish on a busy test runner.
+    expect(await screen.findByLabelText('Email', {}, { timeout: 5000 })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Fixture Dojo Admin' })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: 'Use admin token' }));
     expect(screen.getByLabelText('Admin token')).toBeInTheDocument();
