@@ -16,7 +16,7 @@ All notable changes to TrellisKit are documented in this file.
 
 ### Changed (neutral schedule sessions)
 
-- The venue schedule collection `schedule.classes` is now `schedule.sessions` in the API, submissions (`schedule.sessions.*` proposal fields), shared helpers, web and mobile editors, displays, seed data, and documentation. Migration 124 converts stored `venuescheduleentries` rows from kind `Class` to `Session` (the check constraint now allows `Hours` and `Session`) and renames pending `schedule.classes.*` submission fields. Clients sending `classes` must send `sessions`.
+- The venue schedule collection `schedule.classes` is now `schedule.sessions` in the API, submissions (`schedule.sessions.*` proposal fields), shared helpers, web and mobile editors, displays, seed data, and documentation. Migration 124 converts stored `venuescheduleentries` rows from kind `Class` to `Session` (the check constraint now allows `Hours` and `Session`) and renames `schedule.classes.*` submission fields. Requests may still send the deprecated input name `classes` (used when `sessions` is empty) so app builds released before the rename keep saving schedules; responses return only `sessions`.
 - New `directory.sessionLabel` and `sessionLabelPlural` property labels (1 to 40 characters, default "Session" and "Sessions"), seeded from `property.json`, editable in the admin directory settings, returned by `GET /api/v1/property`, and used by web and mobile through `{session}`, `{sessions}`, `{sessionLower}`, and `{sessionsLower}`. Schedule editor and display strings use these terms and the property's `{instructor}` term instead of fixed words.
 - Neutral wording in a user model backing field and two test fixtures.
 

@@ -115,6 +115,11 @@ namespace Test.Shared.Suites
             await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken,
                 new { schedule = new { timeZone = "Pacific/Honolulu", openingHours = new[] { new { startTime = "09:00", endTime = "17:00" } }, sessions = new object[0] } },
                 HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
+            JsonElement legacy = await Api.ExpectAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken,
+                new { schedule = new { timeZone = "Pacific/Honolulu", openingHours = new object[0], classes = new[] { new { dayOfWeek = 2, startTime = "07:00", endTime = "08:00", endsNextDay = false, name = "Morning" } } } },
+                HttpStatusCode.OK, ct).ConfigureAwait(false);
+            Check.Equal(1, legacy.GetProperty("schedule").GetProperty("sessions").GetArrayLength(), "Clients built before the rename may still send classes");
+            Check.True(!legacy.GetProperty("schedule").TryGetProperty("classes", out JsonElement _), "The legacy name is never returned");
             schedule.Notes = "Updated through review.";
             JsonElement submission = await Api.ExpectAsync(f, HttpMethod.Post, DirectoryTestKit.Submissions, member.AccessToken, new { type = "EditVenue", targetId = id, fields = new { schedule } }, HttpStatusCode.Created, ct).ConfigureAwait(false);
             await Api.ExpectAsync(f, HttpMethod.Post, DirectoryTestKit.Review + "/" + Api.Str(submission, "id") + "/approve", HttpFixture.AdminToken, new { reviewNote = "Checked schedule" }, HttpStatusCode.OK, ct).ConfigureAwait(false);
