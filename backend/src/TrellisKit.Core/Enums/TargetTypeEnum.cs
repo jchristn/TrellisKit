@@ -541,6 +541,9 @@ namespace TrellisKit.Core.Enums
         CatalogRelationship,
 
         /// <summary>An administrator-reviewed catalog import source (cis_), administrators only.</summary>
-        CatalogImportSource
+        CatalogImportSource,
+
+        /// <summary>A link from a lesson to a catalog entry it teaches (lce_).</summary>
+        LessonCatalogEntry
     }
 }

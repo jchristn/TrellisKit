@@ -471,6 +471,11 @@ namespace TrellisKit.Core.Database.Shared
             if (filter.MinDurationSeconds != null) conditions.Add("l.durationseconds >= " + D.Num(filter.MinDurationSeconds.Value));
             if (filter.MaxDurationSeconds != null) conditions.Add("l.durationseconds <= " + D.Num(filter.MaxDurationSeconds.Value));
             if (filter.Ids != null) conditions.Add(filter.Ids.Count == 0 ? "1 = 0" : "l.id IN " + D.InList(filter.Ids));
+            if (!String.IsNullOrEmpty(filter.FollowedByUserId))
+                conditions.Add("EXISTS (SELECT 1 FROM seriesfollows lsf WHERE " + Scope("lsf") + " AND lsf.seriesid = l.seriesid AND lsf.userid = " + D.Str(filter.FollowedByUserId) + " AND lsf.isoptedout = " + D.Bool(false) + ")");
+            if (filter.PublishedAfterUtc != null) conditions.Add("l.publishedutc IS NOT NULL AND l.publishedutc >= " + D.Ts(filter.PublishedAfterUtc.Value));
+            if (!String.IsNullOrEmpty(filter.CatalogEntryId))
+                conditions.Add("EXISTS (SELECT 1 FROM lessoncatalogentries lce WHERE " + Scope("lce") + " AND lce.lessonid = l.id AND lce.catalogentryid = " + D.Str(filter.CatalogEntryId) + ")");
             if (filter.Progress != null && !String.IsNullOrEmpty(filter.ProgressUserId))
             {
                 string mine = "SELECT 1 FROM lessonprogress lp WHERE " + Scope("lp") + " AND lp.lessonid = l.id AND lp.userid = " + D.Str(filter.ProgressUserId);

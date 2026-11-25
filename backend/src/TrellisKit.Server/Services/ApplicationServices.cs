@@ -408,6 +408,12 @@ namespace TrellisKit.Server.Services
         public FavoriteService Favorites { get; }
 
         /// <summary>
+        /// Training hub: the overview and its section providers, lesson and catalog links, and unified library search
+        /// (docs/TRELLISKIT.md section 15).
+        /// </summary>
+        public Training.TrainingModule Training { get; }
+
+        /// <summary>
         /// Decorators applied to GET /api/v1/property after the property.json defaults (the Phase 4 modules replace the
         /// directory, events, and library sections with the database copy). Modules add to it during construction.
         /// </summary>
@@ -600,6 +606,7 @@ namespace TrellisKit.Server.Services
             Ranks.Attach();
             Favorites = new FavoriteService(this);
             Favorites.Attach();
+            Training = new Training.TrainingModule(this);
             CatalogImports = new CatalogImport.CatalogImportService(this);
             Jobs.Registry.Register(new CatalogImport.CatalogImportJobHandler());
             Jobs.Registry.Register(new CatalogGeneration.CatalogDraftJobHandler());

@@ -144,6 +144,8 @@ namespace Test.Shared
                     {
                         // pgvector lives in public so dropping a test schema never drops the extension.
                         await driver.ExecuteQueryAsync("CREATE EXTENSION IF NOT EXISTS vector SCHEMA public;", false, token).ConfigureAwait(false);
+                        // pg_trgm backs the library search trigram indexes (migration 135); the migration skips them without it.
+                        await driver.ExecuteQueryAsync("CREATE EXTENSION IF NOT EXISTS pg_trgm SCHEMA public;", false, token).ConfigureAwait(false);
                     }
                     catch (Exception e) when (e is not OperationCanceledException)
                     {

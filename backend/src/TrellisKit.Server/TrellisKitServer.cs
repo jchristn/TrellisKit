@@ -427,6 +427,7 @@ namespace TrellisKit.Server
             new AdminAppConfigRoutes(Directory).Register(Server);
             new AdminAppContentRoutes(Directory).Register(Server);
             new ExerciseCatalogRoutes(Directory).Register(Server);
+            new TrainingRoutes(Directory).Register(Server);
             new CatalogImportRoutes(Directory).Register(Server);
         }
 

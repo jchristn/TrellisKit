@@ -332,7 +332,8 @@ namespace TrellisKit.Core.Database.Postgresql.Queries
             new SchemaMigration(CatalogApparatusSchema.Version, CatalogApparatusSchema.Description, CatalogApparatusSchema.Statements()),
             new SchemaMigration(RankSchema.Version, RankSchema.Description, RankSchema.Statements()),
             new SchemaMigration(CurriculumSchema.Version, CurriculumSchema.Description, CurriculumSchema.Statements()),
-            new SchemaMigration(AttendanceSchema.Version, AttendanceSchema.Description, AttendanceSchema.Statements())
+            new SchemaMigration(AttendanceSchema.Version, AttendanceSchema.Description, AttendanceSchema.Statements()),
+            new SchemaMigration(LessonCatalogSchema.Version, LessonCatalogSchema.Description, LessonCatalogSchema.Statements())
         };
 
         private static List<string> ForumsMigration()

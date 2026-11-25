@@ -665,6 +665,39 @@ The server reports the hub's sections in order, each with whether it is availabl
 - Mobile: the `training` destination (section 2.3) routes to `/training`. Properties may place it in the bar, the drawer, the account menu, or several; placing it keeps `library` and `catalog` out of the drawer.
 - Website: the `training` member section (`/app/training`) follows `web.navigation` (section 2.3); the library is covered by it in the navigation and keeps its own routes.
 
+### 15.4 Overview and section providers
+
+`GET /api/v1/me/training` (session only; `REST_API.md`, "Training hub") is composed by `TrainingHubService` (`backend/src/TrellisKit.Server/Services/Training/`) from `ITrainingSectionProvider` implementations registered by `TrainingModule`. Providers run concurrently; each decides the sections it owns and may fill cards. A section several providers own is available when any of them reports it available (otherwise the most specific reason wins: `NoData` over `NoAccess` over `SignedOut` over `FeatureOff`). A provider that throws is logged, counted (`trelliskit.training.provider.errors`, label `provider`), and every section it owns is reported `available: false`, `reason: NoData`; the request still succeeds, and `firstRun` stays false. The overview is `404 NotAvailable` only when no section is available and no provider failed.
+
+| Provider (`Name`) | Owns | Cards and rules |
+|---|---|---|
+| `LibraryTrainingProvider` (`library`) | Library, Progress | Segments `Courses` (`features.library`), `Techniques` (`features.catalog` and at least one published entry, so a property can turn the catalog on before its content exists), `Saved` (`features.saves`). `continue` from the continue-watching query (`LessonProgressService.ContinueAsync`); `newForYou`: lessons published within `training.newForYouDays` in series the member follows (not opted out) and has not started, readable by the member (a `LessonFilter` with `FollowedByUserId`, `PublishedAfterUtc`, and `Progress = NotStarted`; covering index `idx_lessons_series_published`). Progress when the member has any lesson progress. |
+| `SavesTrainingProvider` (`saves`) | none | `recentSaves` (newest first) while `features.saves` is on. |
+| `EventsTrainingProvider` (`events`) | Schedule | `upNext`: upcoming published events the member RSVPed Going to, by start. Schedule when the member has an upcoming RSVP (Going, Interested, or Waitlisted); `FeatureOff` while `features.events` is off. |
+| `RankTrainingProvider` (`rank`) | Schedule, Programs, Progress | Active only while `ranks.enabled` is on (otherwise `FeatureOff` and no card). `rank` card `{ rank, next, curriculum, showVerificationLabels }` for the first Rank profile field, from the same rules as `GET /api/v1/me/rank`; `curriculum` is the next requirement's curriculum or the first published curriculum visible to the member for the field. Schedule with a check-in; Programs with a visible published curriculum; Progress with a held rank, a recorded promotion, or a check-in. |
+| `AssistantTrainingProvider` (`coach`) | none | `coach { available, placement }`: available with the `features.ai` rule (property AI switch and `ai.enabled`) and at least one assistant serving the member; `placement` is `features.aiPlacement`. |
+
+`firstRun` is true when no provider reports lesson progress, saves, or RSVPs. The overview never carries sample content; clients build a first-run card from real featured series and the events or directory entry. Engines and properties with more data (bookings, programs) add their own providers to `TrainingModule.Hub.Providers` at startup.
+
+Telemetry: span `training.overview`; histogram `trelliskit.training.overview.duration` and counter `trelliskit.training.overview.requests` (label `outcome`: `success`, `partial`, `not_available`, `error`). Product events `training_opened`, `training_section_viewed`, and `training_card_opened` are client events declared by the property in `metrics.events`.
+
+### 15.5 Settings
+
+| Key | Default | Range | Meaning |
+|---|---|---|---|
+| `training.upNextLimit` | 3 | 1 to 10 | Most Up next items. |
+| `training.continueLimit` | 10 | 1 to 25 | Most Continue training items. |
+| `training.recentSavesLimit` | 6 | 1 to 20 | Most Recently saved items. |
+| `training.newForYouLimit` | 6 | 1 to 20 | Most New for you lessons. |
+| `training.newForYouDays` | 14 | 1 to 90 | How far back New for you looks. |
+
+All are live (`TrainingSettings`, registered in `SettingsRegistry` through `TrainingSettingFields`). Every card is an `EnumerationResult` whose page size is its setting.
+
+### 15.6 One Library: lesson techniques and search
+
+- **Lesson techniques** (`REST_API.md`, "Lesson techniques"; `lessoncatalogentries`, ids `lce_`, migration 135): library staff link up to 50 published catalog entries to a lesson, each with an optional start offset in seconds and an order. Members read "Techniques in this lesson" for a lesson they can see and "Lessons that teach this" under their own lesson access (locked stubs for PartiallyGated free accounts); signed-out visitors read the Public lessons that teach an entry. Archived or unpublished lessons and unpublished entries drop out for members (staff see `warning: "EntryNotPublished"`); deleting either side deletes its links. Every link route is `404 NotAvailable` while `features.catalog` or `features.library` is off. The link data sets stay separate: a link never changes the lesson or the entry.
+- **Library search** (`REST_API.md`, "Library search"): `POST /api/v1/library/search` runs one search over series, lessons, and (while `features.catalog` is on) published catalog entries, each through the kind's own enumeration and access rules, bounded per kind and continuable through the kind's own route. It uses the shared search limiter. Migration 135 adds trigram GIN indexes on the series and lesson search columns when the `pg_trgm` extension is installed in the database (the Docker init script, the infrastructure bootstrap, and the test harness install it; deployments without it keep working with sequential scans).
+
 ## 16. Ranks, curricula, and attendance
 
 A property's `Rank` profile field (section 11) is its rank system: the member's own value is the **self-reported** rank, and rank awarders record **verified** promotions on top of it. No engine table duplicates the field's options. Everything here is off until the server setting `ranks.enabled` is on (every route answers `404 NotAvailable` while it is off); the feature key `ranks` can additionally be gated in `PartiallyGated` (`access.gatedFeatures`). Routes are listed in `REST_API.md`, section "Ranks, curricula, and attendance".

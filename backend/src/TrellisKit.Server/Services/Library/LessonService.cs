@@ -471,6 +471,7 @@ namespace TrellisKit.Server.Services
             await _Services.Media.UnpublishTargetAsync(TargetTypeEnum.Lesson, lesson.Id, token).ConfigureAwait(false);
             await _Services.Database.Library.Downloads.RevokeAllAsync(null, lesson.Id, "lesson_deleted", DateTime.UtcNow, token).ConfigureAwait(false);
             await _Services.Favorites.TargetDeletedAsync(FavoriteTargetTypeEnum.Lesson, lesson.Id, token).ConfigureAwait(false);
+            await _Services.Database.LessonCatalogLinks.DeleteForLessonAsync(lesson.Id, token).ConfigureAwait(false);
             await _Services.Audit.WriteAsync(info, "lesson.delete", TargetTypeEnum.Lesson.ToString(), lesson.Id, lesson.Title, token).ConfigureAwait(false);
             await _Services.Forums.Search.EnqueueAsync(TargetTypeEnum.Lesson, lesson.Id, token).ConfigureAwait(false);
         }

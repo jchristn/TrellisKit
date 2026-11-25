@@ -117,6 +117,8 @@ namespace TrellisKit.Server.Services
             if (info != null) await _Services.Audit.WriteAsync(info,"catalog." + action,TargetTypeEnum.CatalogEntry.ToString(),entry.Id,entry.Name,token).ConfigureAwait(false);
             // A deleted entry leaves every member's saves (docs/TRELLISKIT.md section 17); archived entries stay saved and show as unavailable.
             if (action == "delete") await _Services.Favorites.TargetsDeletedAsync(FavoriteTargetTypeEnum.CatalogEntry, new[] { entry.Id }, token).ConfigureAwait(false);
+            // A deleted entry also leaves every lesson's "Techniques in this lesson" (REST_API.md, Lesson techniques).
+            if (action == "delete") await _Services.Database.LessonCatalogLinks.DeleteForEntryAsync(entry.Id, token).ConfigureAwait(false);
             return await ViewAsync(entry, actor, true, token).ConfigureAwait(false);
         }
 

@@ -53,7 +53,7 @@ namespace TrellisKit.Infra.Stacks
         /// <summary>
         /// SQL the bootstrap container runs as the master user (idempotent; psql variables app_user, app_password, db,
         /// and search_schema). It creates the non-superuser application role when missing, sets its password from the
-        /// application secret, enables pgvector, and grants least-privilege rights (docs/TRELLISKIT.md section 13):
+        /// application secret, enables pgvector and pg_trgm (library search indexes), and grants least-privilege rights (docs/TRELLISKIT.md section 13):
         /// CONNECT and TEMPORARY on the database, USAGE and CREATE on schema public, the Verbex search schema
         /// (DatabaseSettings.SearchSchema) owned by the role, and CREATE on the database. CREATE on the database is
         /// needed only because the server runs CREATE SCHEMA IF NOT EXISTS for the search schema on start and PostgreSQL
@@ -68,6 +68,7 @@ namespace TrellisKit.Infra.Stacks
             "REVOKE ALL ON DATABASE :\"db\" FROM PUBLIC;",
             "GRANT CONNECT, TEMPORARY, CREATE ON DATABASE :\"db\" TO :\"app_user\";",
             "CREATE EXTENSION IF NOT EXISTS vector SCHEMA public;",
+            "CREATE EXTENSION IF NOT EXISTS pg_trgm SCHEMA public;",
             "REVOKE CREATE ON SCHEMA public FROM PUBLIC;",
             "GRANT USAGE, CREATE ON SCHEMA public TO :\"app_user\";",
             "CREATE SCHEMA IF NOT EXISTS :\"search_schema\" AUTHORIZATION :\"app_user\";",

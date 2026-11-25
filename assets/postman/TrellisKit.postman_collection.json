@@ -64566,6 +64566,565 @@
           }
         }
       ]
+    },
+    {
+      "name": "Training hub",
+      "description": "GET /api/v1/me/training: the session-only Training overview (docs/TRELLISKIT.md section 15; REST_API.md, Training hub).",
+      "item": [
+        {
+          "name": "Training overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/training",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "training"
+              ]
+            },
+            "description": "Session only. Sections (Overview, Library, Schedule, Programs, Progress, each with available, reason, segments) and bounded cards: upNext (training.upNextLimit), continue (training.continueLimit), recentSaves (training.recentSavesLimit), newForYou (training.newForYouLimit), rank { rank, next, curriculum, showVerificationLabels } or null, coach { available, placement }, firstRun, labels, tags. 401 Unauthorized, 402 MembershipRequired, 404 NotAvailable (features.training off or no section available), 503 FeatureDisabled (training kill switch)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('TrainingOverview', function () { const r = pm.response.json(); ['sections','upNext','continue','recentSaves','newForYou','rank','coach','firstRun','labels','tags'].forEach(k => pm.expect(r).to.have.property(k)); pm.expect(r.sections.map(s => s.key)).to.eql(['Overview','Library','Schedule','Programs','Progress']); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Training overview signed out (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/training",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "training"
+              ]
+            },
+            "description": "Signed-out clients never call the overview; it answers 401 Unauthorized."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Library search",
+      "description": "POST /api/v1/library/search: one search across courses, lessons, and techniques (REST_API.md, Library search).",
+      "item": [
+        {
+          "name": "Search the library",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/library/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "library",
+                "search"
+              ]
+            },
+            "description": "Body { query (2 to 100 characters), kinds (Series, Lesson, CatalogEntry; default all), maxResultsPerKind (1 to 25, default 10), labels, tags }. Returns { series, lessons, techniques }, each an EnumerationResult continuable through the kind's own enumeration route with the same search. Techniques only while features.catalog is on. 400 ValidationFailed, 404 NotAvailable, 429 RateLimited (search.perMinute).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"fundamentals\",\n  \"kinds\": [\n    \"Series\",\n    \"Lesson\",\n    \"CatalogEntry\"\n  ],\n  \"maxResultsPerKind\": 10,\n  \"labels\": [],\n  \"tags\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('LibrarySearchResponse', function () { const r = pm.response.json(); ['series','lessons','techniques'].forEach(k => { pm.expect(r).to.have.property(k); pm.expect(r[k].objects.length).to.be.at.most(25); }); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Search the library (short query, 400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/library/search",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "library",
+                "search"
+              ]
+            },
+            "description": "A query shorter than 2 characters is 400 ValidationFailed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"a\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('ValidationFailed', function () { pm.expect(pm.response.json().error).to.eql('ValidationFailed'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Lesson techniques",
+      "description": "Lesson and catalog entry links (REST_API.md, Lesson techniques). Every route is 404 NotAvailable while features.catalog is off.",
+      "item": [
+        {
+          "name": "Replace a lesson's techniques",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/lessons/{{lessonId}}/catalog-entries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "lessons",
+                "{{lessonId}}",
+                "catalog-entries"
+              ]
+            },
+            "description": "SystemAdmin or LibraryEditor. Body { items: [{ catalogEntryId, startSeconds, position, source (Editor or Suggested), labels, tags }] }, at most 50, each entry once; [] removes every link. Returns the stored links as one EnumerationResult of LessonCatalogEntryView. 400 ValidationFailed, 403 Forbidden, 404 NotFound or NotAvailable, 409 CatalogEntryNotPublished.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"catalogEntryId\": \"{{catalogEntryId}}\",\n      \"startSeconds\": 42,\n      \"position\": 1,\n      \"source\": \"Editor\",\n      \"labels\": [\n        \"key-point\"\n      ],\n      \"tags\": {}\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); ['objects','maxResults','endOfResults'].forEach(k => pm.expect(r).to.have.property(k)); pm.expect(r.objects.length).to.be.at.most(50); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List the techniques in a lesson",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/lessons/{{lessonId}}/catalog-entries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "lessons",
+                "{{lessonId}}",
+                "catalog-entries"
+              ]
+            },
+            "description": "Catalog entries linked to a lesson you can see, PositionAscending default, at most 50 per page. Staff also see unpublished entries with warning EntryNotPublished."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); ['objects','maxResults','endOfResults'].forEach(k => pm.expect(r).to.have.property(k)); pm.expect(r.objects.length).to.be.at.most(50); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enumerate the techniques in a lesson",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/lessons/{{lessonId}}/catalog-entries/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "lessons",
+                "{{lessonId}}",
+                "catalog-entries",
+                "enumerate"
+              ]
+            },
+            "description": "EnumerationQuery: orderings PositionAscending, NameAscending, CreatedDescending, CreatedAscending; search (entry name and summary); labels and tags filter the links.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25,\n  \"ordering\": \"PositionAscending\",\n  \"labels\": [],\n  \"tags\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); ['objects','maxResults','endOfResults'].forEach(k => pm.expect(r).to.have.property(k)); pm.expect(r.objects.length).to.be.at.most(50); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List the lessons that teach a technique",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalog/entries/{{catalogEntryId}}/lessons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "lessons"
+              ]
+            },
+            "description": "Lessons linked to a published entry under your lesson access (locked stubs where your access model shows them), PublishedDescending default, at most 50 per page."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); ['objects','maxResults','endOfResults'].forEach(k => pm.expect(r).to.have.property(k)); pm.expect(r.objects.length).to.be.at.most(50); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enumerate the lessons that teach a technique",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalog/entries/{{catalogEntryId}}/lessons/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "lessons",
+                "enumerate"
+              ]
+            },
+            "description": "EnumerationQuery: orderings PublishedDescending, TitleAscending, CreatedDescending, CreatedAscending; search (title and summary); labels and tags filter the lessons.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25,\n  \"labels\": [],\n  \"tags\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); ['objects','maxResults','endOfResults'].forEach(k => pm.expect(r).to.have.property(k)); pm.expect(r.objects.length).to.be.at.most(50); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List the public lessons that teach a technique",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/catalog/entries/{{catalogEntryId}}/lessons",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "lessons"
+              ]
+            },
+            "description": "Anonymous. Public, published lessons linked to a published entry, at most 50 per page. Rate limited per IP."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); ['objects','maxResults','endOfResults'].forEach(k => pm.expect(r).to.have.property(k)); pm.expect(r.objects.length).to.be.at.most(50); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enumerate the public lessons that teach a technique",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/catalog/entries/{{catalogEntryId}}/lessons/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "lessons",
+                "enumerate"
+              ]
+            },
+            "description": "Anonymous EnumerationQuery over the public lessons that teach an entry.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); ['objects','maxResults','endOfResults'].forEach(k => pm.expect(r).to.have.property(k)); pm.expect(r.objects.length).to.be.at.most(50); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "event": [

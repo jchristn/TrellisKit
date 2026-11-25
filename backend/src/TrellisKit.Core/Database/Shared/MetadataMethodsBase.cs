@@ -344,6 +344,7 @@ namespace TrellisKit.Core.Database.Shared
                 case TargetTypeEnum.AssistantConversation: return "aiconversations";
                 case TargetTypeEnum.Favorite: return "favorites";
                 case TargetTypeEnum.FavoriteCollection: return "favoritecollections";
+                case TargetTypeEnum.LessonCatalogEntry: return "lessoncatalogentries";
                 default: return null;
             }
         }

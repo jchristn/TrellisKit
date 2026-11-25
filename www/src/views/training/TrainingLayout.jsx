@@ -21,7 +21,7 @@ export function useTraining() {
 
 /** Errors after which the hub falls back to the Library alone (no Overview to show). */
 function libraryOnly(error) {
-  return Boolean(error && [403, 404, 503].includes(error.status));
+  return Boolean(error && [402, 403, 404, 503].includes(error.status));
 }
 
 /**
