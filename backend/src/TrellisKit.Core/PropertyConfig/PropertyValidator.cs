@@ -39,7 +39,13 @@ namespace TrellisKit.Core.PropertyConfig
         private static readonly HashSet<string> _MobileDestinations = new HashSet<string>(StringComparer.Ordinal)
         {
             "feed", "forums", "members", "library", "events", "directory", "messages", "assistants",
-            "announcements", "ideas", "profile", "notifications", "support", "settings", "about"
+            "announcements", "ideas", "profile", "notifications", "support", "settings", "about",
+            "training", "catalog"
+        };
+        private static readonly HashSet<string> _WebDestinations = new HashSet<string>(StringComparer.Ordinal)
+        {
+            "feed", "forums", "search", "members", "library", "training", "events", "directory", "messages",
+            "ideas", "announcements", "support", "assistants", "notifications", "profile"
         };
         private static readonly string[] _Intervals = new[] { "Year", "Month" };
 
@@ -86,6 +92,7 @@ namespace TrellisKit.Core.PropertyConfig
             }
 
             ValidateMobileNavigation(property.Mobile?.Navigation, problems);
+            ValidateWebNavigation(property.Web?.Navigation, problems);
             ValidateBrand(property.Brand, problems);
             ValidateMembership(property.Membership, property.Access?.Model != Enums.AccessModelEnum.Open, problems);
             ValidateAccess(property.Access, problems);
@@ -122,19 +129,20 @@ namespace TrellisKit.Core.PropertyConfig
         private static void ValidateMobileNavigation(PropertyMobileNavigation? navigation, List<string> problems)
         {
             if (navigation == null) return;
-            ValidateDestinations(navigation.DrawerItems, "mobile.navigation.drawerItems", _MobileDestinations.Count, problems);
-            ValidateDestinations(navigation.Shortcuts, "mobile.navigation.shortcuts", PropertyMobileNavigation.MaxShortcuts, problems);
-            ValidateDestinations(navigation.AccountMenu, "mobile.navigation.accountMenu", _MobileDestinations.Count, problems);
-            if (navigation.Labels == null) return;
-            foreach (KeyValuePair<string, string> label in navigation.Labels)
-            {
-                string field = "mobile.navigation.labels." + label.Key;
-                if (!_MobileDestinations.Contains(label.Key)) problems.Add(field + " must name a known destination");
-                else if (String.IsNullOrWhiteSpace(label.Value) || label.Value.Trim().Length > PropertyMobileNavigation.MaxLabelLength) problems.Add(field + " must be 1 to " + PropertyMobileNavigation.MaxLabelLength + " characters");
-            }
+            ValidateDestinations(navigation.DrawerItems, "mobile.navigation.drawerItems", _MobileDestinations.Count, _MobileDestinations, problems);
+            ValidateDestinations(navigation.Shortcuts, "mobile.navigation.shortcuts", PropertyMobileNavigation.MaxShortcuts, _MobileDestinations, problems);
+            ValidateDestinations(navigation.AccountMenu, "mobile.navigation.accountMenu", _MobileDestinations.Count, _MobileDestinations, problems);
+            ValidateNavigationLabels(navigation.Labels, "mobile.navigation.labels", PropertyMobileNavigation.MaxLabelLength, _MobileDestinations, problems);
         }
 
-        private static void ValidateDestinations(List<string>? destinations, string field, int maximum, List<string> problems)
+        private static void ValidateWebNavigation(PropertyWebNavigation? navigation, List<string> problems)
+        {
+            if (navigation == null) return;
+            ValidateDestinations(navigation.Primary, "web.navigation.primary", PropertyWebNavigation.MaxPrimary, _WebDestinations, problems);
+            ValidateNavigationLabels(navigation.Labels, "web.navigation.labels", PropertyWebNavigation.MaxLabelLength, _WebDestinations, problems);
+        }
+
+        private static void ValidateDestinations(List<string>? destinations, string field, int maximum, HashSet<string> known, List<string> problems)
         {
             if (destinations == null) return;
             if (destinations.Count > maximum) problems.Add(field + " must contain at most " + maximum + " destinations");
@@ -142,8 +150,19 @@ namespace TrellisKit.Core.PropertyConfig
             for (int i = 0; i < destinations.Count; i++)
             {
                 string id = destinations[i];
-                if (id == null || !_MobileDestinations.Contains(id)) problems.Add(field + "[" + i + "] must be a known destination");
+                if (id == null || !known.Contains(id)) problems.Add(field + "[" + i + "] must be a known destination");
                 else if (!seen.Add(id)) problems.Add(field + "[" + i + "] duplicates " + id);
+            }
+        }
+
+        private static void ValidateNavigationLabels(Dictionary<string, string>? labels, string field, int maximum, HashSet<string> known, List<string> problems)
+        {
+            if (labels == null) return;
+            foreach (KeyValuePair<string, string> label in labels)
+            {
+                string path = field + "." + label.Key;
+                if (!known.Contains(label.Key)) problems.Add(path + " must name a known destination");
+                else if (String.IsNullOrWhiteSpace(label.Value) || label.Value.Trim().Length > maximum) problems.Add(path + " must be 1 to " + maximum + " characters");
             }
         }
 

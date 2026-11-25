@@ -46,6 +46,10 @@ namespace Test.Shared.Suites
                     JsonElement navigation = publicProperty.GetProperty("mobile").GetProperty("navigation");
                     Check.Equal("members", navigation.GetProperty("drawerItems")[2].GetString(), "Public property exposes the navigation declaration");
                     Check.Equal(4, navigation.GetProperty("shortcuts").GetArrayLength(), "Public property keeps all configured shortcuts");
+                    Check.Equal("training", navigation.GetProperty("drawerItems")[3].GetString(), "Public property exposes the training destination");
+                    JsonElement features = publicProperty.GetProperty("features");
+                    Check.True(features.GetProperty("training").GetBoolean() && features.GetProperty("saves").GetBoolean() && !features.GetProperty("catalog").GetBoolean(), "Training and saves default on; the catalog defaults off");
+                    Check.True(!publicProperty.TryGetProperty("web", out JsonElement _), "The website navigation is a build input and is not served");
                     await SendAsync(f, "/api/v1/property", TestProperty.SampleId, "test.example.trelliskit", HttpStatusCode.OK, null).ConfigureAwait(false);
                     await SendAsync(f, "/api/v1/property", "app_mwczw7zz_Unknown0Property00", null, HttpStatusCode.NotFound, "PropertyNotFound").ConfigureAwait(false);
                     await SendAsync(f, "/api/v1/property", null, "com.unknown.app", HttpStatusCode.Forbidden, "AppNotRegistered").ConfigureAwait(false);

@@ -60,6 +60,7 @@ namespace Test.Shared.Suites
                     JsonElement serialized = JsonSerializer.SerializeToElement(response, new JsonSerializerOptions(JsonSerializerDefaults.Web));
                     JsonElement navigation = serialized.GetProperty("mobile").GetProperty("navigation");
                     Check.Equal(4, navigation.GetProperty("shortcuts").GetArrayLength(), "Four default shortcuts");
+                    Check.Equal("training", property.Mobile.Navigation!.DrawerItems![3], "Training replaces the library in the sample drawer");
                     JsonObject document = (JsonObject)JsonNode.Parse(File.ReadAllText(Path.Combine(TestProperty.SampleDirectory, PropertyLoader.PropertyFileName)))!;
                     Obj(document, "mobile").Remove("navigation");
                     PropertyConfiguration legacy = PropertyLoader.Parse(document.ToJsonString(), "test");
@@ -79,6 +80,43 @@ namespace Test.Shared.Suites
                     Check.Equal("Explore", placedNavigation.GetProperty("labels").GetProperty("directory").GetString(), "Label overrides keep their destination keys");
                     property.Mobile.Navigation.Shortcuts = new List<string>();
                     Check.Equal(0, PropertyValidator.Validate(property).Count, "Drawer-only navigation is valid");
+                    return Task.CompletedTask;
+                }),
+                SuiteCases.Unit(Id, "Mobile.TrainingDestination", "Five shortcuts, the training and catalog destinations in every list, covered placement, and the catalog without features.catalog are accepted", ct =>
+                {
+                    Check.Equal(5, PropertyMobileNavigation.MaxShortcuts, "Five shortcuts");
+                    PropertyConfiguration property = TestProperty.LoadSample();
+                    property.Mobile.Navigation = new PropertyMobileNavigation
+                    {
+                        Shortcuts = new List<string> { "feed", "training", "members", "messages", "profile" },
+                        DrawerItems = new List<string> { "forums", "training", "catalog", "events" },
+                        AccountMenu = new List<string> { "profile", "training" },
+                        Labels = new Dictionary<string, string> { ["training"] = "Train", ["catalog"] = "Techniques" }
+                    };
+                    Check.Equal(0, PropertyValidator.Validate(property).Count, "Five shortcuts with training, and training and catalog in the drawer and account menu");
+                    property.Mobile.Navigation = new PropertyMobileNavigation { DrawerItems = new List<string> { "library", "training", "catalog" }, Shortcuts = new List<string> { "training" } };
+                    Check.Equal(0, PropertyValidator.Validate(property).Count, "A covered destination may still be placed beside its cover");
+                    Check.True(!property.Features.Catalog, "The sample leaves the catalog off");
+                    property.Mobile.Navigation = new PropertyMobileNavigation { Shortcuts = new List<string> { "catalog" } };
+                    Check.Equal(0, PropertyValidator.Validate(property).Count, "Placing the catalog without features.catalog is valid; clients hide it while the feature is off");
+                    Check.True(new PropertyFeatures().Training && new PropertyFeatures().Saves && !new PropertyFeatures().Catalog, "Training and saves default on, the catalog off");
+                    PropertyConfiguration parsed = PropertyLoader.Parse(File.ReadAllText(Path.Combine(TestProperty.SampleDirectory, PropertyLoader.PropertyFileName)), "test");
+                    Check.True(parsed.Features.Training && parsed.Features.Saves && !parsed.Features.Catalog, "Missing switches take their defaults");
+                    return Task.CompletedTask;
+                }),
+                SuiteCases.Unit(Id, "Web.Navigation", "web.navigation orders member sections and overrides labels with the mobile rules", ct =>
+                {
+                    PropertyConfiguration property = TestProperty.LoadSample();
+                    Check.True(property.Web.Navigation != null && property.Web.Navigation.Primary!.Contains("training"), "Sample declares a web order with training");
+                    Check.True(new PropertyWebNavigation().Primary == null && new PropertyWebNavigation().Labels == null, "Missing values are not empty values");
+                    property.Web.Navigation = new PropertyWebNavigation
+                    {
+                        Primary = new List<string> { "training", "feed", "forums", "members", "events", "directory", "messages", "library" },
+                        Labels = new Dictionary<string, string> { ["training"] = "Train" }
+                    };
+                    Check.Equal(0, PropertyValidator.Validate(property).Count, "Eight known sections and a label");
+                    property.Web.Navigation = null;
+                    Check.Equal(0, PropertyValidator.Validate(property).Count, "The section is optional");
                     return Task.CompletedTask;
                 }),
                 SuiteCases.Unit(Id, "Loader.Resolve", "The directory resolves from an absolute path, a relative path searched upward, or the sample default", ct =>
@@ -167,7 +205,12 @@ namespace Test.Shared.Suites
                 ["mobile.navigation.drawerItems[0]"] = j => Obj(Obj(j, "mobile"), "navigation")["drawerItems"] = new JsonArray("unknown"),
                 ["mobile.navigation.shortcuts[0]"] = j => Obj(Obj(j, "mobile"), "navigation")["shortcuts"] = new JsonArray("/admin"),
                 ["mobile.navigation.shortcuts[1]"] = j => Obj(Obj(j, "mobile"), "navigation")["shortcuts"] = new JsonArray("feed", "feed"),
-                ["mobile.navigation.shortcuts"] = j => Obj(Obj(j, "mobile"), "navigation")["shortcuts"] = new JsonArray("feed", "forums", "members", "messages", "profile"),
+                ["mobile.navigation.shortcuts"] = j => Obj(Obj(j, "mobile"), "navigation")["shortcuts"] = new JsonArray("feed", "forums", "members", "messages", "profile", "training"),
+                ["web.navigation.primary"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["primary"] = new JsonArray("feed", "forums", "search", "members", "library", "training", "events", "directory", "messages") },
+                ["web.navigation.primary[1]"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["primary"] = new JsonArray("feed", "feed") },
+                ["web.navigation.primary[0]"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["primary"] = new JsonArray("settings") },
+                ["web.navigation.labels.catalog"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["labels"] = new JsonObject { ["catalog"] = "Techniques" } },
+                ["web.navigation.labels.training"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["labels"] = new JsonObject { ["training"] = new string('x', 25) } },
                 ["mobile.navigation.accountMenu[1]"] = j => Obj(Obj(j, "mobile"), "navigation")["accountMenu"] = new JsonArray("profile", "profile"),
                 ["mobile.navigation.accountMenu[0]"] = j => Obj(Obj(j, "mobile"), "navigation")["accountMenu"] = new JsonArray("/admin"),
                 ["mobile.navigation.labels.nowhere"] = j => Obj(Obj(j, "mobile"), "navigation")["labels"] = new JsonObject { ["nowhere"] = "Explore" },

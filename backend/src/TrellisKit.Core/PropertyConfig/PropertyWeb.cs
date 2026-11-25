@@ -29,6 +29,11 @@ namespace TrellisKit.Core.PropertyConfig
         /// </summary>
         public bool StoreBadges { get; set; } = false;
 
+        /// <summary>
+        /// Optional member navigation order and labels for the website. Null keeps the engine order and labels.
+        /// </summary>
+        public PropertyWebNavigation? Navigation { get; set; } = null;
+
         #endregion
     }
 }

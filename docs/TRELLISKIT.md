@@ -185,12 +185,12 @@ The optional `publicPages` section turns the server-rendered landing pages on or
 
 ### 2.3 Mobile navigation (`mobile.navigation`)
 
-The mobile app has a complete side drawer, opened from the upper-left menu button, and up to four bottom shortcuts on top-level screens. Members is a community destination, not a Settings action. The engine owns routing and access rules; each property owns its ordering and shortcuts:
+The mobile app has a complete side drawer, opened from the upper-left menu button, and up to five bottom shortcuts on top-level screens. Members is a community destination, not a Settings action. The engine owns routing and access rules; each property owns its ordering and shortcuts:
 
 ```json
 "mobile": {
   "navigation": {
-    "drawerItems": ["feed", "forums", "members", "library", "events", "directory", "messages", "notifications", "announcements", "ideas", "assistants", "profile", "support", "settings", "about"],
+    "drawerItems": ["feed", "forums", "members", "training", "events", "directory", "messages", "notifications", "announcements", "ideas", "assistants", "profile", "support", "settings", "about"],
     "shortcuts": ["feed", "forums", "messages", "profile"],
     "accountMenu": ["profile", "settings", "support", "about"],
     "labels": { "directory": "Explore" }
@@ -198,14 +198,17 @@ The mobile app has a complete side drawer, opened from the upper-left menu butto
 }
 ```
 
-- Supported identifiers are exactly those shown in `drawerItems`. Values are case-sensitive identifiers, not arbitrary routes. Arrays must have distinct known entries; `shortcuts` accepts at most four, and `drawerItems` and `accountMenu` at most 15. The server and mobile build loader reject invalid declarations.
+- Supported identifiers (17): `feed`, `forums`, `members`, `library`, `training`, `catalog`, `events`, `directory`, `messages`, `assistants`, `announcements`, `ideas`, `profile`, `notifications`, `support`, `settings`, `about`. Values are case-sensitive identifiers, not arbitrary routes. Arrays must have distinct known entries; `shortcuts` accepts at most five, and `drawerItems` and `accountMenu` at most 17. The server and mobile build loader reject invalid declarations.
+- `training` (default label "Training", icon `barbell`, route `/training`, switch `features.training`, default on) is the Training hub. `library` and `catalog` (the technique catalog, `/training/library/techniques`, switch `features.catalog`, default **off**) are embedded in it: they carry `coveredBy: "training"`, so placing `training` on any surface keeps them out of the drawer. A property may still place them itself, older property files and deep links keep working, and when Training is off or hidden for the caller an embedded destination placed nowhere returns to the drawer. Without `drawerItems` the engine drawer lists every destination that is not embedded (`DefaultMobileDrawerItems`).
+- Bottom-bar labels longer than 12 characters (`MaxMobileBarLabelLength`) show only the icon, with the label as its accessibility label, at the largest text sizes; the drawer and account menu always show the full label (up to `MaxMobileLabelLength`, 24).
 - `accountMenu` lists the destinations shown, in order, in the menu opened from the member's avatar in the header (followed by Sign out). Missing or empty hides the avatar button. Guests never see the button.
 - `labels` overrides the label of a known destination, 1 to 24 characters each after trimming. Overrides win over property terminology and the app string catalog. Unknown keys and empty or longer values are rejected.
-- Missing/null navigation or arrays use engine defaults. An explicit empty `shortcuts` array hides the bottom bar. Placement is a preference: a known destination placed on no surface is appended to the drawer, so a configuration cannot make enabled screens unreachable. A destination counts as placed when it is in `drawerItems`, `shortcuts`, or `accountMenu`; when the header always offers it (Notifications, which has the header bell); or when the destination that embeds it is placed (`coveredBy` in the registry). Community destinations and account/help destinations render in separate groups, and an empty account group is omitted.
+- Missing/null navigation or arrays use engine defaults (four shortcuts: feed, forums, messages, profile). An explicit empty `shortcuts` array hides the bottom bar. Placement is a preference: a known destination placed on no surface is appended to the drawer, so a configuration cannot make enabled screens unreachable. A destination counts as placed when it is in `drawerItems`, `shortcuts`, or `accountMenu`; when the header always offers it (Notifications, which has the header bell); or when the destination that embeds it is placed (`coveredBy` in the registry). Community destinations and account/help destinations render in separate groups, and an empty account group is omitted.
 - The header does not repeat Messages when Messages is a bottom shortcut. The Map screen drops its Places and Events switch when both `directory` and `events` are bottom shortcuts.
 - Both surfaces resolve from the same registry (`shared/src/mobileNavigation.js`). Feature switches hide disabled destinations. Assistants requires the server's `features.ai === true`. Guests see only anonymously browsable destinations plus Profile and About; account actions, Members and Messages require sign-in. Partially gated signed-in features stay visible with lock badges. Destination screens and the server enforce authorization; navigation never grants access.
 - Labels use the app string catalog. Members uses `terminology.members`, and the venue directory uses `directory.venueLabelPlural`. Events and the venue directory are separate destinations into the existing Map screen (`/map?section=events` and `/map?section=places`). Existing deep-link routes remain valid.
 - `GET /api/v1/property` returns the declaration under `mobile.navigation`. A runtime declaration overrides bundled values per key (`drawerItems`, `shortcuts`, `accountMenu`, `labels`). An older server that omits navigation or sends null preserves the bundled declaration. Consequently a client-only release can adopt a property's new navigation before a server upgrade; offline startup uses the bundled configuration.
+- `web.navigation` (optional, build input for the website, validated by the server but not served) orders the website's member sections: `primary` lists at most 8 known section ids shown first, in order (the rest follow in engine order), and `labels` overrides section labels (1 to 24 characters). Section ids: `feed`, `forums`, `search`, `members`, `library`, `training`, `events`, `directory`, `messages`, `ideas`, `announcements`, `support`, `assistants`, `notifications`, `profile`. The library is covered by Training on the website too. Both surfaces validate through one shared function, `validateNavigation(surface, navigation)` (`shared/src/navigation.js`), and the server applies the same rules (`PropertyValidator`), so the rules cannot drift.
 - Detail screens retain their Back action. The drawer closes after selection, outside tap, accessibility escape, and Android Back. Onboarding and paywall flows retain their existing access gates. The UI supports safe areas, light/dark schemes, scrolling at large text sizes, and tablet widths.
 
 ---
@@ -621,3 +624,44 @@ An optional list (at most 30). Absent or empty means the property has no documen
 - `GET /api/v1/property` serves `documents` (summaries with the live current version; the ETag follows publishes). `GET /api/v1/public/documents/{key}` serves the current content (anonymous).
 - **Website:** each document is a page at `/<slug>`, prerendered for SEO from the build-time file and replaced at runtime by the live content, with version and last updated; the footer lists documents with `footer: true`; sign-up links the terms-covered documents and shows a required checkbox (with a link to read the full text) for each separately accepted document; checkout links `ShownAtPurchase` documents. The admin console has a Documents page (list, counts, versions, publish, acceptances) and a Documents section in the member drawer; the platform console has the same page per property.
 - **Mobile:** sign-up mirrors the website; a document screen renders any document; Account lists the documents and the member's acceptance history; the paywall and membership screens link `ShownAtPurchase` documents; a setup step after age attestation handles pending documents.
+
+---
+
+## 15. Training hub
+
+The Training hub is an engine feature available to every property (`features.training`, default on). It gathers a member's training into one destination: an Overview and one Library, with further sections reported by the server only when they have data. Library and catalog are combined in navigation only; courses (series and lessons) and techniques (the catalog) remain separate data sets with separate editors and review.
+
+### 15.1 Switches
+
+| Switch | Default when missing | Effect |
+|--------|----------------------|--------|
+| `features.training` | on | The `training` destination and `GET /api/v1/me/training`. Off hides the hub; the library, events, and saves stay reachable on their own routes. |
+| `features.saves` | on | Saves and private collections. Independent of Training: turning Training off never removes saved items. |
+| `features.catalog` | **off** | The reviewed technique catalog. The one switch that is off when missing (`OffByDefaultFeatures` beside `propertyFeatureEnabled` in `shared/src/access.js`; `PropertyFeatures.Catalog` on the server). |
+
+Kill switches are scoped: the `training` kill switch (`KillSwitchCatalog`) hides the hub and blocks `/api/v1/me/training` only; `/library`, `/series`, `/lessons`, and deep links keep following the `library` switch, and catalog routes follow the `catalog` switch. `training` is a gateable access feature key (`FeatureKeyEnum.Training`); its access is the union of its sections' access, and a member who can see no section gets `404 NotAvailable` from `GET /api/v1/me/training`.
+
+### 15.2 Section contract
+
+The server reports the hub's sections in order, each with whether it is available to the caller:
+
+```json
+{
+  "sections": [
+    { "key": "Overview", "available": true },
+    { "key": "Library", "available": true, "segments": ["Courses", "Techniques", "Saved"] },
+    { "key": "Schedule", "available": false, "reason": "NoData" },
+    { "key": "Progress", "available": true }
+  ]
+}
+```
+
+- `key` is a `TrainingSectionEnum` value: `Overview`, `Library`, `Schedule`, `Programs`, `Progress`. `Programs` is reserved for structured programs or curricula.
+- `reason` (only when `available` is false) is a `TrainingSectionReasonEnum` value: `FeatureOff`, `NoAccess`, `NoData`, `SignedOut`.
+- Clients show only sections with `available: true` and ignore unknown keys and unknown segments, so a newer server can add sections without breaking older apps.
+
+### 15.3 Navigation
+
+- Mobile: the `training` destination (section 2.3) routes to `/training`. Properties may place it in the bar, the drawer, the account menu, or several; placing it keeps `library` and `catalog` out of the drawer.
+- Website: the `training` member section (`/app/training`) follows `web.navigation` (section 2.3); the library is covered by it in the navigation and keeps its own routes.
+

@@ -372,6 +372,13 @@ describe('mobile navigation build declarations', () => {
       document.mobile.navigation.shortcuts = [];
       fs.writeFileSync(file, JSON.stringify(document));
       expect(readProperty(temporary).mobile.navigation.shortcuts).toEqual([]);
+      // Five shortcuts, the training destination, the account menu, and labels are accepted; six shortcuts are not.
+      document.mobile.navigation = { drawerItems: ['training', 'library', 'catalog'], shortcuts: ['feed', 'training', 'members', 'messages', 'profile'], accountMenu: ['profile', 'training'], labels: { training: 'Train' } };
+      fs.writeFileSync(file, JSON.stringify(document));
+      expect(publicProperty(readProperty(temporary)).mobile.navigation).toEqual(document.mobile.navigation);
+      document.mobile.navigation.shortcuts = ['feed', 'training', 'members', 'messages', 'profile', 'forums'];
+      fs.writeFileSync(file, JSON.stringify(document));
+      expect(() => readProperty(temporary)).toThrow(/mobile.navigation.shortcuts must contain at most 5/);
     } finally {
       fs.rmSync(temporary, { recursive: true, force: true });
     }

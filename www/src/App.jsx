@@ -65,6 +65,7 @@ import AssistantChatView from './views/ai/AssistantChatView.jsx';
 import { EmbedAssistantView, PublicAssistantView } from './views/ai/PublicAssistantView.jsx';
 import { aiAvailable, purchasesEnabled } from '@trelliskit/shared';
 import { AccessPromptProvider } from './components/AccessPrompt.jsx';
+import TrainingLayout from './views/training/TrainingLayout.jsx';
 import { MEMBER_ROUTES, featureEnabled, memberRoutesFor, routeAvailable } from './views/member/memberRoutes.js';
 import { LEVELS } from './utils/onboarding.js';
 import { Loading } from './components/States.jsx';
@@ -81,6 +82,7 @@ const EMPTY_REALTIME = Object.freeze({});
 const forumsRoute = MEMBER_ROUTES.find((route) => route.id === 'forums');
 const searchRoute = MEMBER_ROUTES.find((route) => route.id === 'search');
 const libraryRoute = MEMBER_ROUTES.find((route) => route.id === 'library');
+const trainingRoute = MEMBER_ROUTES.find((route) => route.id === 'training');
 const eventsRoute = MEMBER_ROUTES.find((route) => route.id === 'events');
 const directoryRoute = MEMBER_ROUTES.find((route) => route.id === 'directory');
 
@@ -165,6 +167,9 @@ export function AppRoutes({ fetchImpl = null, adminFetchImpl = null, restoreOnLo
                 <Route path="series/:id" element={<RequireMember level={LEVELS.member} catalog="library"><SeriesView /></RequireMember>} />
                 <Route path="lessons/:id" element={<RequireMember level={LEVELS.member} catalog="library"><LessonView /></RequireMember>} />
               </>
+            )}
+            {featureEnabled(property, 'training') && featureEnabled(property, 'library') && routeAvailable(property, trainingRoute) && (
+              <Route path="training" element={<RequireMember level={LEVELS.member} catalog="library"><TrainingLayout /></RequireMember>} />
             )}
             {featureEnabled(property, 'events') && routeAvailable(property, eventsRoute) && (
               <>

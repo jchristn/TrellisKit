@@ -201,7 +201,7 @@ function MemberShell({ ready, guest, me, property, isAdmin, client, flash, setFl
                 </NavLink>
               ))}
             </>
-          ) : ready ? memberRoutesFor(property).filter((route) => route.id !== 'notifications' && !routeKilled(route)).map((route) => (
+          ) : ready ? memberRoutesFor(property, routeKilled).filter((route) => route.id !== 'notifications').map((route) => (
             <NavLink key={route.id} to={'/app/' + route.id} className="member-nav-link" title={route.label}>
               <Icon name={route.icon} size={18} />
               <span>{route.label}</span>

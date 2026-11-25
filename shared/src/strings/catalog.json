@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "38ecbf128940acd9f088f3a056ca51823ad24fb35bbf7253d0de0ddf3bafd69b",
+ "sha256": "95412b43dd95dcc90ba5410ade1cd6413a86b61343f38eace4ac4ed5d23d5be4",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -246,6 +246,13 @@
    "key": "mobile.access.features.search",
    "client": "mobile",
    "default": "Search",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.access.features.training",
+   "client": "mobile",
+   "default": "Training",
    "tokens": [],
    "maxLength": 200
   },
@@ -13103,6 +13110,20 @@
    "maxLength": 200
   },
   {
+   "key": "mobile.tabs.techniques",
+   "client": "mobile",
+   "default": "Techniques",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.tabs.training",
+   "client": "mobile",
+   "default": "Training",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "mobile.updates.later",
    "client": "mobile",
    "default": "Later",
@@ -13423,6 +13444,13 @@
    "key": "web.access.features.search",
    "client": "web",
    "default": "Search",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.access.features.training",
+   "client": "web",
+   "default": "Training",
    "tokens": [],
    "maxLength": 200
   },
@@ -49617,6 +49645,13 @@
    "key": "web.member.nav.support",
    "client": "web",
    "default": "Support",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.member.nav.training",
+   "client": "web",
+   "default": "Training",
    "tokens": [],
    "maxLength": 200
   },

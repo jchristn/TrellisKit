@@ -4,9 +4,10 @@ import { router as appRouter } from 'expo-router';
 import { renderRouter } from 'expo-router/testing-library';
 import path from 'path';
 import { Dimensions, Keyboard, Platform } from 'react-native';
-import { destinationMatches, drawerHeaderOptions } from '../src/navigation/AppNavigation';
+import { BarLabelFontScale, destinationMatches, drawerHeaderOptions, showsBarLabel } from '../src/navigation/AppNavigation';
 import { enumerationResult } from '../test-utils/community';
 import { installFakeServer, makeUser, resetEnvironment, signedInAs } from '../test-utils/fakeServer';
+import { fiveShortcutsProperty } from '../test-utils/fiveShortcuts';
 import { property } from '../test-utils/property';
 
 const APP_DIR = path.resolve(__dirname, '../app');
@@ -236,4 +237,36 @@ test('without an account menu the header has no avatar and Messages stays in the
   expect(await screen.findByTestId('header-notifications')).toBeOnTheScreen();
   expect(screen.queryByTestId('header-account')).toBeNull();
   expect(screen.getByTestId('header-messages')).toBeOnTheScreen();
+});
+
+test('five shortcuts fit the bar and Training opens its stack with the library home', async () => {
+  serve(fiveShortcutsProperty);
+  const router = await renderRouter(APP_DIR, { initialUrl: '/feed' });
+  const bar = await screen.findByTestId('navigation-shortcuts');
+  expect(within(bar).getAllByRole('tab').map((item) => item.props.testID)).toEqual(['tab-feed', 'tab-training', 'tab-members', 'tab-messages', 'tab-profile']);
+  expect(within(bar).getByText('Training')).toBeOnTheScreen();
+  await fireEvent.press(screen.getByTestId('tab-training'));
+  await waitFor(() => expect(router.getPathname()).toBe('/training'));
+  expect(await screen.findByTestId('screen-library')).toBeOnTheScreen();
+  expect(screen.getByTestId('tab-training')).toHaveProp('accessibilityState', { selected: true });
+  expect(screen.getByTestId('header-menu')).toBeOnTheScreen();
+  // Training in the bar covers the library, so the drawer does not append it.
+  const drawer = await openMenu();
+  expect(within(drawer).queryByTestId('drawer-library')).toBeNull();
+  expect(within(drawer).queryByTestId('drawer-catalog')).toBeNull();
+});
+
+test('features.training off hides Training and returns the library to the drawer', async () => {
+  serve({ ...fiveShortcutsProperty, features: { ...fiveShortcutsProperty.features, training: false } });
+  await renderRouter(APP_DIR, { initialUrl: '/feed' });
+  const bar = await screen.findByTestId('navigation-shortcuts');
+  expect(within(bar).queryByTestId('tab-training')).toBeNull();
+  const drawer = await openMenu();
+  expect(within(drawer).getByTestId('drawer-library')).toBeOnTheScreen();
+});
+
+test('bar labels longer than the bar limit fall back to the icon at the largest text sizes', () => {
+  expect(showsBarLabel('Training', 3)).toBe(true);
+  expect(showsBarLabel('A much longer label', 1)).toBe(true);
+  expect(showsBarLabel('A much longer label', BarLabelFontScale)).toBe(false);
 });

@@ -91,7 +91,7 @@ describe('router', () => {
     expect((await screen.findAllByRole('heading', { name: 'Messages' })).length).toBeGreaterThan(0);
     expect(screen.queryByText('Coming soon')).toBeNull();
     expect(screen.queryByText(/Phase/)).toBeNull();
-    for (const name of ['Feed', 'Forums', 'Library', 'Events', 'Directory', 'Messages', 'Profile']) {
+    for (const name of ['Feed', 'Forums', 'Training', 'Events', 'Directory', 'Messages', 'Profile']) {
       expect(screen.getAllByRole('link', { name: new RegExp(name) }).length).toBeGreaterThan(0);
     }
     // The navigation collapses to an icon rail and the choice is remembered.

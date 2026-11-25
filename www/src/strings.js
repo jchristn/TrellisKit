@@ -162,7 +162,8 @@ const strings = {
       assistants: 'Assistants',
       support: 'Support',
       ideas: 'Ideas',
-      announcements: 'Announcements'
+      announcements: 'Announcements',
+      training: 'Training'
     },
     comingSoon: 'Coming soon',
     comingSoonTitle: (name) => name + ' is coming soon',
@@ -4863,7 +4864,8 @@ const strings = {
     lockBadgeLabel: (feature) => feature + ' (members only)',
     features: {
       feed: 'Feed', members: 'Member profiles', forums: 'Forums', library: 'Library', events: 'Events',
-      directory: 'Member directory', messaging: 'Messages', assistants: 'Assistants', search: 'Search', ideas: 'Ideas'
+      directory: 'Member directory', messaging: 'Messages', assistants: 'Assistants', search: 'Search', ideas: 'Ideas',
+      training: 'Training'
     },
     audiences: { Public: 'Public', SignedIn: 'Signed-in accounts', Members: 'Members only' },
     audienceHints: {

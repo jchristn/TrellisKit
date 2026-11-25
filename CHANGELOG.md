@@ -4,6 +4,15 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (Training destination and navigation contract)
+
+- `training` navigation destination (label "Training", icon `barbell`, `/training`, `features.training`, default on), placed after `library`. `library` and the new `catalog` destination (technique catalog, `/training/library/techniques`, `features.catalog`) are `coveredBy: "training"`: placing Training keeps them out of the drawer, and they return when Training is off or hidden. Seventeen destination ids; the default drawer (`DefaultMobileDrawerItems`) lists every destination that is not embedded. The mobile `/training` stack and the website `/app/training` route are placeholders that show the Library home until the hub screens land.
+- Up to five bottom shortcuts (`MaxMobileShortcuts`, `PropertyMobileNavigation.MaxShortcuts`); properties that keep four lose nothing. `MaxMobileBarLabelLength = 12`: longer bar labels show only the icon at the largest text sizes.
+- `features.training` (default true), `features.saves` (default true), and `features.catalog` (default **false**; the one switch that is off when missing, `OffByDefaultFeatures` in `shared/src/access.js`) in `PropertyFeatures` and the public property response. `FeatureKeyEnum.Training`, `AccessFeature.Training`, and a scoped `training` kill switch that blocks only `/api/v1/me/training`.
+- Optional `web.navigation` (`PropertyWebNavigation`: `primary`, at most 8 member section ids, and `labels`) orders the website's member sections; `memberRoutesFor` and `guestRoutesFor` follow it and drop the library while Training is shown. One shared validator, `validateNavigation(surface, navigation)` (`shared/src/navigation.js`), serves both surfaces; the server applies the same rules.
+- Training hub section contract types `TrainingSectionEnum` (Overview, Library, Schedule, Programs, Progress) and `TrainingSectionReasonEnum` (FeatureOff, NoAccess, NoData, SignedOut), documented in `docs/TRELLISKIT.md` section 15.
+- The neutral sample places Training in its drawer and declares a `web.navigation` order.
+
 ### Added (navigation contract port)
 
 - Ported the engine parts of the forked engine's navigation contract (Trainerdate commits `c7135f7` and `cefa704`): `mobile.navigation.accountMenu` (distinct known destinations) opened from a header avatar button with Sign out, and `mobile.navigation.labels` (known destination ids, 1 to 24 characters). Both are validated by the server model (`PropertyMobileNavigation.AccountMenu`, `Labels`, `MaxLabelLength`) and the shared client (`validateMobileNavigation`, `MaxMobileLabelLength`) and merged per key from the server (`mergeProperty`).

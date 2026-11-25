@@ -94,7 +94,8 @@ export const stringTemplates = Object.freeze({
     lockedLabel: (feature) => feature + ', members only',
     features: {
       feed: 'Feed', members: 'Member profiles', forums: 'Forums', library: 'Library', events: 'Events',
-      directory: 'Member directory', messaging: 'Messages', assistants: 'Assistants', search: 'Search'
+      directory: 'Member directory', messaging: 'Messages', assistants: 'Assistants', search: 'Search',
+      training: 'Training'
     },
     audiences: { Public: 'Public', SignedIn: 'Signed-in accounts', Members: 'Members only' },
     audienceHints: {
@@ -624,7 +625,9 @@ export const stringTemplates = Object.freeze({
     library: 'Library',
     map: 'Map',
     events: 'Events',
-    profile: 'Profile'
+    profile: 'Profile',
+    training: 'Training',
+    techniques: 'Techniques'
   },
 
   header: {

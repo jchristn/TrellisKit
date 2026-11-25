@@ -35,8 +35,11 @@ describe('member routes and access', () => {
   it('opens library, events, and the venue directory, and lets guests browse catalogs under anonymous browsing', () => {
     for (const id of ['library', 'events', 'directory']) expect(MEMBER_ROUTES.find((r) => r.id === id)).toMatchObject({ live: true, catalog: true });
     const partial = { access: { model: 'PartiallyGated', anonymousBrowsing: true, gatedFeatures: ['library', 'directory'] }, features: {} };
-    expect(guestRoutesFor(partial).map((r) => r.id)).toEqual(expect.arrayContaining(['library', 'events', 'directory']));
+    // The library is browsable inside Training, which covers it in the navigation.
+    expect(guestRoutesFor(partial).map((r) => r.id)).toEqual(expect.arrayContaining(['training', 'events', 'directory']));
+    expect(guestRoutesFor({ ...partial, features: { training: false } }).map((r) => r.id)).toEqual(expect.arrayContaining(['library', 'events', 'directory']));
     expect(guestRoutesFor({ access: { model: 'FullyGated' }, features: {} }).map((r) => r.id)).not.toContain('library');
+    expect(guestRoutesFor({ access: { model: 'FullyGated' }, features: {} }).map((r) => r.id)).not.toContain('training');
   });
 
   it('reads filters from the URL', () => {

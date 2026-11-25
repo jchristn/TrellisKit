@@ -23,7 +23,7 @@ namespace TrellisKit.Core.PropertyConfig
         /// <summary>
         /// Maximum number of bottom shortcuts. Empty shortcuts explicitly selects drawer-only navigation.
         /// </summary>
-        public const int MaxShortcuts = 4;
+        public const int MaxShortcuts = 5;
 
         /// <summary>
         /// Maximum length of a destination label override, after trimming.
@@ -31,7 +31,7 @@ namespace TrellisKit.Core.PropertyConfig
         public const int MaxLabelLength = 24;
 
         /// <summary>
-        /// Preferred drawer destination identifiers, in display order. Null uses engine order. At most 15
+        /// Preferred drawer destination identifiers, in display order. Null uses engine order. At most 17
         /// distinct known identifiers are accepted. Identifiers placed on no surface are appended by the client.
         /// </summary>
         public List<string>? DrawerItems
@@ -41,7 +41,7 @@ namespace TrellisKit.Core.PropertyConfig
         }
 
         /// <summary>
-        /// Zero to four distinct known destination identifiers for the bottom bar. Null defaults to
+        /// Zero to five distinct known destination identifiers for the bottom bar. Null defaults to
         /// feed, forums, messages and profile. Disabled or inaccessible destinations are hidden.
         /// </summary>
         public List<string>? Shortcuts
@@ -52,7 +52,7 @@ namespace TrellisKit.Core.PropertyConfig
 
         /// <summary>
         /// Destination identifiers shown, in order, in the menu opened from the header account button.
-        /// Null or empty hides the button. At most 15 distinct known identifiers are accepted; destinations
+        /// Null or empty hides the button. At most 17 distinct known identifiers are accepted; destinations
         /// listed here are not appended to the drawer.
         /// </summary>
         public List<string>? AccountMenu

@@ -58,7 +58,7 @@
         "feed",
         "forums",
         "members",
-        "library",
+        "training",
         "events",
         "directory",
         "messages",
@@ -341,13 +341,17 @@
     "directory": true,
     "events": true,
     "library": true,
-    "messaging": true
+    "messaging": true,
+    "training": true
   },
   "web": {
     "theme": "web/theme.css",
     "content": "web/content",
     "legal": "legal",
-    "storeBadges": false
+    "storeBadges": false,
+    "navigation": {
+      "primary": ["feed", "forums", "members", "training", "events", "directory", "messages"]
+    }
   },
   "documents": [
     {

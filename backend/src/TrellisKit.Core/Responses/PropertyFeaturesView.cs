@@ -42,7 +42,10 @@ namespace TrellisKit.Core.Responses
                 Forums = features.Forums,
                 Search = features.Search,
                 Support = features.Support,
-                Ai = features.Ai
+                Ai = features.Ai,
+                Training = features.Training,
+                Saves = features.Saves,
+                Catalog = features.Catalog
             };
         }
 

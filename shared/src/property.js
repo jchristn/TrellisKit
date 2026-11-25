@@ -12,6 +12,7 @@ export const PropertySchemaVersion = 1;
 
 import { minimumAgeOf } from './access.js';
 import { validateMobileNavigation } from './mobileNavigation.js';
+import { validateNavigation } from './navigation.js';
 
 const HEX_COLOR = /^#[0-9A-Fa-f]{6}$/;
 
@@ -158,6 +159,7 @@ export function validateProperty(property) {
     });
   }
   problems.push(...validateMobileNavigation(property.mobile?.navigation));
+  problems.push(...validateNavigation('web', property.web?.navigation));
   return problems;
 }
 

@@ -20,7 +20,8 @@ namespace TrellisKit.Server.Services
         {
             "signups", "purchases", "signupCodes", "feed", "feedComposer", "comments", "reactions", "mediaUpload", "videoUpload", "linkPreviews",
             "forums", "polls", "directory", "events", "library", "libraryDownloads", "messaging", "assistants", "notificationsPush", "search",
-            "support", "ideas", "broadcasts", "realtime"
+            "support", "ideas", "broadcasts", "realtime",
+            "training"
         };
 
         #endregion
@@ -76,6 +77,8 @@ namespace TrellisKit.Server.Services
                 Starts(p, _Api + "/public/events")) result.Add("events");
             if (Starts(p, _Api + "/library") || Starts(p, _Api + "/series") || Starts(p, _Api + "/lessons") || Starts(p, _Api + "/me/library") ||
                 Starts(p, _Api + "/public/lessons")) result.Add("library");
+            // training blocks only the hub; the library, events, and saves keep their own switches.
+            if (Starts(p, _Api + "/me/training")) result.Add("training");
             // libraryDownloads blocks only the download routes (and stops background downloads on mobile).
             if ((Starts(p, _Api + "/lessons") && p.EndsWith("/downloads", StringComparison.OrdinalIgnoreCase)) || Starts(p, _Api + "/me/library/downloads")) result.Add("libraryDownloads");
             if (Starts(p, _Api + "/conversations") || Starts(p, _Api + "/messages") || Starts(p, _Api + "/me/messaging")) result.Add("messaging");

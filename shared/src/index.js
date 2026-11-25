@@ -7,6 +7,7 @@ export { singleFlight } from './singleFlight.js';
 export * from './identity.js';
 export * from './property.js';
 export * from './mobileNavigation.js';
+export * from './navigation.js';
 export * from './brand.js';
 export { appearanceMethods } from './appearanceApi.js';
 export * from './embedOrigins.js';

@@ -54,6 +54,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// Ideas board.
         /// </summary>
-        Ideas
+        Ideas,
+
+        /// <summary>
+        /// The member Training hub. Its access is the union of its sections' access.
+        /// </summary>
+        Training
     }
 }

@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { resolveMobileNavigation } from '@trelliskit/shared';
+import { MaxMobileBarLabelLength, resolveMobileNavigation } from '@trelliskit/shared';
 import { useGlobalSearchParams, usePathname, useRouter } from 'expo-router';
 import { createContext, createElement, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AccessibilityInfo, Animated, findNodeHandle, Keyboard, Modal, Platform, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
@@ -19,6 +19,21 @@ import strings from '../strings';
 import { useTheme } from '../theme';
 
 const NavigationContext = createContext(null);
+
+/** Font scale from which bottom-bar labels longer than `MaxMobileBarLabelLength` show only their icon. */
+export const BarLabelFontScale = 1.35;
+
+/**
+ * Whether a bottom shortcut shows its text label. Labels longer than `MaxMobileBarLabelLength`
+ * fall back to the icon (with the label as its accessibility label) at the largest text sizes;
+ * the drawer always shows the full label.
+ * @param {string} label
+ * @param {number} fontScale
+ * @returns {boolean}
+ */
+export function showsBarLabel(label, fontScale) {
+  return !(typeof label === 'string' && label.length > MaxMobileBarLabelLength && fontScale >= BarLabelFontScale);
+}
 
 /** Whether a destination matches the current top-level route, including the two map sections. */
 export function destinationMatches(item, pathname, section) {
@@ -98,7 +113,7 @@ export function AppNavigationProvider({ children }) {
   const pathname = usePathname();
   const { section } = useGlobalSearchParams();
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
+  const { width, fontScale = 1 } = useWindowDimensions();
   const reduceMotion = useReducedMotion();
   const { unread } = useMessaging();
   const { unreadCount } = useNotificationsState();
@@ -120,6 +135,7 @@ export function AppNavigationProvider({ children }) {
   const [progress] = useState(() => new Animated.Value(0));
   const navigation = useMemo(() => resolveMobileNavigation(property, user, {
     feed: strings.tabs.feed, forums: strings.tabs.forums, library: strings.tabs.library,
+    training: strings.tabs.training, catalog: strings.tabs.techniques,
     events: strings.events.title, messages: strings.messaging.title, assistants: strings.assistants.menu,
     profile: strings.tabs.profile, announcements: strings.announcements.menu, ideas: strings.ideas.menu,
     support: strings.support.menu, settings: strings.navigation.settings, about: strings.profile.about,
@@ -198,7 +214,7 @@ export function AppNavigationProvider({ children }) {
                     <Ionicons name={item.locked ? 'lock-closed-outline' : item.icon + (selected ? '' : '-outline')} size={23} color={selected ? theme.colors.primary : theme.colors.tabInactive} />
                     <CountBadge count={count(item)} testID={'tab-' + item.id + '-badge'} />
                   </View>
-                  <AppText variant="caption" style={{ textAlign: 'center', color: selected ? theme.colors.primary : theme.colors.tabInactive, fontWeight: selected ? '700' : '500' }}>{item.label}</AppText>
+                  {showsBarLabel(item.label, fontScale) ? <AppText variant="caption" style={{ textAlign: 'center', color: selected ? theme.colors.primary : theme.colors.tabInactive, fontWeight: selected ? '700' : '500' }}>{item.label}</AppText> : null}
                 </Pressable>;
               })}
             </View>

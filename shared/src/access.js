@@ -29,7 +29,8 @@ export const AccessFeature = Object.freeze({
   Messaging: 'messaging',
   Assistants: 'assistants',
   Search: 'search',
-  Ideas: 'ideas'
+  Ideas: 'ideas',
+  Training: 'training'
 });
 
 /** Every gateable feature key, in the contract's order. */
@@ -423,9 +424,21 @@ function hasRole(me, role, resourceType) {
   return roleEntries(me).some((r) => r.role === role && (!resourceType || r.resourceType === resourceType));
 }
 
-/** Whether `features.<key>` is on in the property configuration (missing means on). */
+/**
+ * Features whose switch is off when `property.json` omits it. Every other switch is on when
+ * missing. The reviewed exercise and technique catalog (`features.catalog`) is the exception: a
+ * property must turn it on (`true`) before the catalog and its navigation entries appear. This
+ * matches the server default (`PropertyFeatures.Catalog`).
+ */
+export const OffByDefaultFeatures = Object.freeze(['catalog']);
+
+/**
+ * Whether `features.<key>` is on in the property configuration. A missing switch means on, except
+ * for `OffByDefaultFeatures` (`catalog`), where a missing switch means off.
+ */
 export function propertyFeatureEnabled(property, key) {
   const features = isObject(property) && isObject(property.features) ? property.features : {};
+  if (OffByDefaultFeatures.includes(key)) return features[key] === true;
   return features[key] !== false;
 }
 

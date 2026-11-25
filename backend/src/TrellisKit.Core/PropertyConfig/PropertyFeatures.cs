@@ -72,6 +72,24 @@ namespace TrellisKit.Core.PropertyConfig
         /// </summary>
         public bool Ai { get; set; } = false;
 
+        /// <summary>
+        /// The member Training hub (the <c>training</c> navigation destination and <c>GET /api/v1/me/training</c>).
+        /// Default true when absent. The hub only gathers other features; turning it off leaves the library, events,
+        /// and saves reachable on their own routes.
+        /// </summary>
+        public bool Training { get; set; } = true;
+
+        /// <summary>
+        /// Saves and private collections. Default true when absent. Independent of <see cref="Training"/>.
+        /// </summary>
+        public bool Saves { get; set; } = true;
+
+        /// <summary>
+        /// The reviewed exercise and technique catalog. Default false when absent: unlike the other switches, a
+        /// missing value means off, so the catalog appears only when the property turns it on.
+        /// </summary>
+        public bool Catalog { get; set; } = false;
+
         #endregion
     }
 }
