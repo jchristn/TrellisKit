@@ -151,3 +151,20 @@ it('treats configured redirect aliases as first-party without trusting lookalike
   expect(resolveAppLink('https://members.community.test/app/feed', aliased)).toEqual({ kind: 'native', path: '/feed' });
   expect(resolveAppLink('https://members.community.test.evil.test/app/feed', aliased).kind).toBe('web');
 });
+
+describe('incoming system links', () => {
+  const { redirectSystemPath } = require('../app/+native-intent');
+  const { getBundledProperty } = require('../src/property/property');
+  const web = 'https://' + getBundledProperty().domains.web;
+
+  it('opens a check-in universal link at the native check-in screen', () => {
+    expect(redirectSystemPath({ path: web + '/app/check-in?t=Event&id=evt_1&c=123456', initial: true })).toBe('/check-in?t=Event&id=evt_1&c=123456');
+  });
+
+  it('leaves app-scheme links, other hosts, and unknown pages unchanged', () => {
+    expect(redirectSystemPath({ path: 'example://feed', initial: false })).toBe('example://feed');
+    expect(redirectSystemPath({ path: 'https://elsewhere.test/app/check-in', initial: false })).toBe('https://elsewhere.test/app/check-in');
+    expect(redirectSystemPath({ path: web + '/app/nowhere/x', initial: false })).toBe(web + '/app/nowhere/x');
+    expect(redirectSystemPath({ path: null, initial: false })).toBeNull();
+  });
+});

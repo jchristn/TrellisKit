@@ -25,6 +25,7 @@ namespace TrellisKit.Server.Routes
 
         private const string _Tag = "Public pages";
         private const string _Base = Constants.ApiPrefix + "/public/pages";
+        private const string _CheckInWebPath = "/app/check-in";
         private readonly PropertyDirectory _Directory;
 
         #endregion
@@ -67,10 +68,10 @@ namespace TrellisKit.Server.Routes
                 openApiMetadata: Doc("Child sitemap", _Tag, "Served at /sitemap-{name}: venues-{n}.xml, events-{n}.xml, profiles-{n}.xml, or catalog-{n}.xml (loc, lastmod, changefreq, priority). Events leave the sitemap once they end. Catalog entries appear only while Published, unmoderated, and undeleted with features.catalog on; catalog sitemaps require revalidation. Anonymous.")
                     .PathParam("name", "For example venues-1.xml").File("application/xml", "Sitemap").Resp(404, "Unknown sitemap").Resp(429, "RateLimited"));
             pre.Static.Add(HttpMethod.GET, _Base + "/well-known/apple-app-site-association", AppleAppSiteAssociationAsync, RouteHelper.HandleExceptionAsync,
-                openApiMetadata: Doc("Apple app site association", _Tag, "Served at /.well-known/apple-app-site-association: { webcredentials: { apps: [\"<mobile.appleTeamId>.<mobile.bundleId>\"] } }, so iOS offers to save and autofill the app's passwords for the website domain. 404 when mobile.appleTeamId or mobile.bundleId is not set. Cache-Control: public, max-age=3600. Anonymous.")
+                openApiMetadata: Doc("Apple app site association", _Tag, "Served at /.well-known/apple-app-site-association: { applinks: { apps: [], details: [{ appID, appIDs, paths: [\"/app/check-in\"], components: [{ \"/\": \"/app/check-in\" }] }] }, webcredentials: { apps: [\"<mobile.appleTeamId>.<mobile.bundleId>\"] } }, so iOS offers to save and autofill the app's passwords for the website domain and opens check-in QR links (only /app/check-in) in the app. 404 when mobile.appleTeamId or mobile.bundleId is not set. Cache-Control: public, max-age=3600. Anonymous.")
                     .File("application/json", "Association file").Resp(404, "NotFound"));
             pre.Static.Add(HttpMethod.GET, _Base + "/well-known/assetlinks.json", AssetLinksAsync, RouteHelper.HandleExceptionAsync,
-                openApiMetadata: Doc("Android asset links", _Tag, "Served at /.well-known/assetlinks.json: the delegate_permission/common.get_login_creds statement for mobile.androidPackage and mobile.androidCertFingerprints, so Android shares saved passwords between the app and the website. 404 when either is not set. Cache-Control: public, max-age=3600. Anonymous.")
+                openApiMetadata: Doc("Android asset links", _Tag, "Served at /.well-known/assetlinks.json: the delegate_permission/common.get_login_creds and delegate_permission/common.handle_all_urls statement for mobile.androidPackage and mobile.androidCertFingerprints, so Android shares saved passwords between the app and the website and verifies the app's check-in link (the app declares only https://{domains.web}/app/check-in). 404 when either is not set. Cache-Control: public, max-age=3600. Anonymous.")
                     .File("application/json", "Asset links").Resp(404, "NotFound"));
             pre.Static.Add(HttpMethod.GET, _Base + "/robots.txt", RobotsAsync, RouteHelper.HandleExceptionAsync,
                 openApiMetadata: Doc("robots.txt", _Tag, "Served at /robots.txt: allows the site, disallows /app, /admin, and /api (except the public media, avatar, and brand image paths), and names the sitemap. Anonymous.")
@@ -149,7 +150,26 @@ namespace TrellisKit.Server.Routes
                 await RouteHelper.SendErrorAsync(ctx, 404, "NotFound", "No app association is configured.").ConfigureAwait(false);
                 return;
             }
-            object body = new { webcredentials = new { apps = new[] { team + "." + bundle } } };
+            string appId = team + "." + bundle;
+            Dictionary<string, string> checkIn = new Dictionary<string, string>(StringComparer.Ordinal) { ["/"] = _CheckInWebPath, ["comment"] = "Check-in QR codes open the app." };
+            object body = new
+            {
+                applinks = new
+                {
+                    apps = Array.Empty<string>(),
+                    details = new[]
+                    {
+                        new
+                        {
+                            appID = appId,
+                            appIDs = new[] { appId },
+                            paths = new[] { _CheckInWebPath },
+                            components = new[] { checkIn }
+                        }
+                    }
+                },
+                webcredentials = new { apps = new[] { appId } }
+            };
             await SendWellKnownAsync(ctx, body).ConfigureAwait(false);
         }
 
@@ -167,7 +187,7 @@ namespace TrellisKit.Server.Routes
             {
                 new
                 {
-                    relation = new[] { "delegate_permission/common.get_login_creds" },
+                    relation = new[] { "delegate_permission/common.get_login_creds", "delegate_permission/common.handle_all_urls" },
                     target = new { @namespace = "android_app", package_name = package, sha256_cert_fingerprints = fingerprints }
                 }
             };

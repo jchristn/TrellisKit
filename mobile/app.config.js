@@ -62,6 +62,24 @@ function env(name) {
   return (process.env[name] || '').trim();
 }
 
+/** The website path a check-in QR code opens; the only web path that opens the app. */
+const CHECK_IN_WEB_PATH = '/app/check-in';
+
+/** iOS associated domains for the website: password autofill and the check-in app link. */
+function associatedDomains(webDomain) {
+  return ['webcredentials:' + webDomain, 'applinks:' + webDomain];
+}
+
+/** Whether the property lists Android signing certificate fingerprints (needed for verified app links). */
+function hasFingerprints(mobile) {
+  return Array.isArray(mobile.androidCertFingerprints) && mobile.androidCertFingerprints.some((value) => typeof value === 'string' && value.trim());
+}
+
+/** Android intent filter for verified https check-in links on the website domain (that exact path only). */
+function checkInIntentFilters(webDomain) {
+  return [{ action: 'VIEW', autoVerify: true, data: [{ scheme: 'https', host: webDomain, path: CHECK_IN_WEB_PATH }], category: ['BROWSABLE', 'DEFAULT'] }];
+}
+
 /** Google Sign-In plugin entry, or null when the iOS URL scheme is not configured. */
 function googleSignInPlugin(iosUrlScheme) {
   if (!iosUrlScheme.startsWith('com.googleusercontent.apps.')) return null;
@@ -117,14 +135,18 @@ module.exports = () => {
       bundleIdentifier: property.mobile.bundleId,
       supportsTablet: true,
       usesAppleSignIn: true,
-      // webcredentials: iOS offers to save and autofill the app's passwords for the website domain. The website
-      // serves /.well-known/apple-app-site-association when the property sets mobile.appleTeamId.
-      ...(property.domains && property.domains.web && property.mobile.appleTeamId ? { associatedDomains: ['webcredentials:' + property.domains.web] } : null),
+      // webcredentials: iOS offers to save and autofill the app's passwords for the website domain. applinks: check-in
+      // QR links (https://{domains.web}/app/check-in?...) open the app; the association file limits app links to that
+      // one path. The website serves /.well-known/apple-app-site-association when the property sets mobile.appleTeamId.
+      ...(property.domains && property.domains.web && property.mobile.appleTeamId ? { associatedDomains: associatedDomains(property.domains.web) } : null),
       // HTTPS only (exempt encryption), so App Store Connect skips the export compliance prompt.
       config: { usesNonExemptEncryption: false }
     },
     android: {
       package: property.mobile.androidPackage,
+      // Verified app link for check-in QR links only; the website's /.well-known/assetlinks.json grants it when the
+      // property sets mobile.androidCertFingerprints.
+      ...(property.domains && property.domains.web && hasFingerprints(property.mobile) ? { intentFilters: checkInIntentFilters(property.domains.web) } : null),
       ...(googleServicesFile ? { googleServicesFile } : null),
       adaptiveIcon: {
         backgroundColor: '#FFFFFF',

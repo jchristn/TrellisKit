@@ -18,7 +18,7 @@ jest.mock('react-native-safe-area-context', () => {
 jest.mock('../src/hooks/useNetworkStatus', () => ({ ...jest.requireActual('../src/hooks/useNetworkStatus'), useIsOffline: jest.fn(() => false) }));
 jest.mock('../src/updates/NewVersionHint', () => ({ ...jest.requireActual('../src/updates/NewVersionHint'), useNewVersionHint: jest.fn(() => ({ visible: false })) }));
 
-function NavigationProbe() {
+function mockNavigationProbe() {
   const { top } = useSafeAreaInsets();
   const navigation = useAppNavigation();
   return <>
@@ -27,13 +27,17 @@ function NavigationProbe() {
   </>;
 }
 
+// The probe replaces the Profile screen. (renderRouter overrides normalize route keys without their
+// extension, which expo-router's special-file filter misses, so +native-intent would read as a route.)
+jest.mock('../app/(tabs)/profile/index', () => ({ __esModule: true, default: function ProfileProbe() { return mockNavigationProbe(); } }));
+
 beforeEach(() => { resetEnvironment(); installFakeServer(signedInAs(makeUser())); });
 afterEach(() => { delete global.fetch; jest.clearAllMocks(); });
 
 test.each(['offline', 'new-version'])('%s banner consumes only the navigator inset, never the fullscreen drawer inset', async (banner) => {
   useIsOffline.mockReturnValue(banner === 'offline');
   useNewVersionHint.mockReturnValue({ visible: banner === 'new-version', dismiss: jest.fn(), storeUrl: null });
-  await renderRouter({ appDir: path.resolve(__dirname, '../app'), overrides: { '(tabs)/profile/index': NavigationProbe } }, { initialUrl: '/profile' });
+  await renderRouter(path.resolve(__dirname, '../app'), { initialUrl: '/profile' });
   expect(await screen.findByTestId('content-top-inset')).toHaveTextContent('0');
   expect(screen.getByTestId(banner === 'offline' ? 'offline-banner' : 'new-version-hint')).toBeOnTheScreen();
   await fireEvent.press(screen.getByTestId('open-drawer-probe'));

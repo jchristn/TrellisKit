@@ -8,6 +8,8 @@ Notification rows and tapped pushes use the same native route resolver. Metric a
 
 `src/linkTargets.js` classifies links from property configuration. Known property URLs, including `/app/...` and legal document slugs, resolve to native routes. Unknown property paths show an in-app unavailable state. External HTTP(S) pages use `/external-content`, an embedded WebView with controlled redirects and popups; they never receive API credentials and never fall back to a system browser. Phone, email, calendar and explicit store actions remain operating-system integrations. File resources use native download and sharing.
 
+Check-in QR codes encode `https://{domains.web}/app/check-in?...`. Builds for a property with `mobile.appleTeamId` declare `applinks:{domains.web}` (beside `webcredentials:`), and builds with `mobile.androidCertFingerprints` declare a verified intent filter for that exact path; the website's association files allow only `/app/check-in`, so no other web page opens the app. `app/+native-intent.js` maps the incoming URL to `/check-in` through `resolveAppLink`. These are native configuration changes: binaries built before them open check-in links in the browser.
+
 `react-native-webview` and `expo-sharing` are native dependencies. Ship new iOS and Android binaries before publishing updates with their runtime fingerprints. Do not send this bundle to older binaries by overriding runtime compatibility.
 
 ## Navigation

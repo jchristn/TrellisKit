@@ -4,6 +4,10 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (check-in links open the app)
+
+- Check-in QR links (`https://{domains.web}/app/check-in?...`) open the app's check-in screen. iOS: `associatedDomains` gains `applinks:{domains.web}` next to `webcredentials:` (when `mobile.appleTeamId` is set), and `/.well-known/apple-app-site-association` gains an `applinks` section limited to `/app/check-in` (legacy `paths` and `components`), so no other website page opens the app; password autofill is unchanged. Android: a verified (`autoVerify`) `VIEW` intent filter for `https` on `domains.web` with path `/app/check-in` only (when `mobile.androidCertFingerprints` is set), and `/.well-known/assetlinks.json` adds `delegate_permission/common.handle_all_urls` beside `get_login_creds`. Incoming https links are mapped through `resolveAppLink` in `mobile/app/+native-intent.js`. Native configuration change: requires a new store build.
+
 ### Added (Training hub in the mobile app)
 
 - Mobile Training stack (`mobile/app/training/`): Overview (`/training`) with section tabs from the overview's available sections and the cards Up next, Continue training (reusing the Library's continue rail), Your rank and curriculum (the ranks components), Ask your coach, Recently saved, and New for you, each only with real data; a first-run card with real featured series and the places or events entry; two columns at 768 points and wider. Library segments with their own routes (`/training/library/courses`, `/training/library/techniques` only when the overview lists Techniques, `/training/library/saved` and `/training/saved`), one search across courses, lessons, and techniques (`searchLibrary`), and Downloads in the header. Schedule (events you are going to, recent check-ins) and Progress (completed lessons, rank history, attendance, curriculum completion), and `/training/curricula/{id}`. Section and segment routes keep the bar and the menu button. Signed-out visitors get the public Library only and never call `/me/training`.
