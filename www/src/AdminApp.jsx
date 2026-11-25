@@ -54,6 +54,7 @@ import LessonEditorView from './views/admin/library/LessonEditorView.jsx';
 import EventsAdminView from './views/admin/events/EventsAdminView.jsx';
 import EventEditorView from './views/admin/events/EventEditorView.jsx';
 import DirectoryAdminView from './views/admin/directory/DirectoryAdminView.jsx';
+import { CatalogAdminView, CatalogAdminEntryView } from './views/admin/catalog/CatalogAdminViews.jsx';
 import { featureEnabled } from './views/member/memberRoutes.js';
 import { PLACEHOLDER_ROUTES, adminRouteAvailable, findAdminRoute } from './views/admin/adminRoutes.js';
 import { Loading } from './components/States.jsx';
@@ -129,6 +130,8 @@ function AdminApp({ fetchImpl = null }) {
           {featureEnabled(property, 'events') && <Route path="events/new" element={<RequireAdmin area="events"><EventEditorView /></RequireAdmin>} />}
           {featureEnabled(property, 'events') && <Route path="events/:id" element={<RequireAdmin area="events"><EventEditorView /></RequireAdmin>} />}
           {featureEnabled(property, 'directory') && <Route path="directory" element={<RequireAdmin area="directory">{gate('directory', <DirectoryAdminView />)}</RequireAdmin>} />}
+          {featureEnabled(property, 'catalog') && <Route path="catalog" element={<RequireAdmin area="library"><CatalogAdminView /></RequireAdmin>} />}
+          {featureEnabled(property, 'catalog') && <Route path="catalog/:id" element={<RequireAdmin area="library"><CatalogAdminEntryView /></RequireAdmin>} />}
           <Route path="support" element={<RequireAdmin supportStaff>{feature('support', <SupportInboxView />)}</RequireAdmin>} />
           <Route path="ideas" element={<RequireAdmin supportStaff>{feature('ideas', <IdeasAdminView />)}</RequireAdmin>} />
           <Route path="broadcasts" element={<RequireAdmin communicator>{feature('broadcasts', <BroadcastsView />)}</RequireAdmin>} />

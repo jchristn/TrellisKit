@@ -1,15 +1,15 @@
 /**
  * Public landing pages (docs/PHASE4_CONTRACT.md section 18): server-rendered pages for member profiles (opt-in),
- * venues, and events at `/<path word>/<slug>`, where the path words come from the property's `publicPages` section
- * (engine defaults `venues`, `events`, `profiles`). The backend is authoritative; these helpers mirror its slug rules
+ * venues, events, and catalog entries at `/<path word>/<slug>`, where the path words come from the property's `publicPages` section
+ * (engine defaults `venues`, `events`, `profiles`, `catalog`). The backend is authoritative; these helpers mirror its slug rules
  * for live validation and build the page URLs for share and copy actions.
  */
 
 /** The kinds of public landing page. */
-export const PublicPageKind = Object.freeze({ Venue: 'Venue', Event: 'Event', Profile: 'Profile' });
+export const PublicPageKind = Object.freeze({ Venue: 'Venue', Event: 'Event', Profile: 'Profile', Catalog: 'Catalog' });
 
 /** Engine defaults of `publicPages` (a property's property.json may set its own path words). */
-export const PUBLIC_PAGE_DEFAULTS = Object.freeze({ enabled: true, venuesPath: 'venues', eventsPath: 'events', profilesPath: 'profiles' });
+export const PUBLIC_PAGE_DEFAULTS = Object.freeze({ enabled: true, venuesPath: 'venues', eventsPath: 'events', profilesPath: 'profiles', catalogPath: 'catalog' });
 
 /** Slug length bounds. */
 export const SLUG_MIN = 3;
@@ -32,15 +32,17 @@ export function publicPagesConfig(property) {
     enabled: raw.enabled !== false,
     venuesPath: raw.venuesPath || PUBLIC_PAGE_DEFAULTS.venuesPath,
     eventsPath: raw.eventsPath || PUBLIC_PAGE_DEFAULTS.eventsPath,
-    profilesPath: raw.profilesPath || PUBLIC_PAGE_DEFAULTS.profilesPath
+    profilesPath: raw.profilesPath || PUBLIC_PAGE_DEFAULTS.profilesPath,
+    catalogPath: raw.catalogPath || PUBLIC_PAGE_DEFAULTS.catalogPath
   };
 }
 
-/** The path word of a kind (`Venue`, `Event`, or `Profile`). */
+/** The path word of a kind (`Venue`, `Event`, `Profile`, or `Catalog`). */
 export function publicPagePathWord(property, kind) {
   const config = publicPagesConfig(property);
   if (kind === PublicPageKind.Venue) return config.venuesPath;
   if (kind === PublicPageKind.Event) return config.eventsPath;
+  if (kind === PublicPageKind.Catalog) return config.catalogPath;
   return config.profilesPath;
 }
 

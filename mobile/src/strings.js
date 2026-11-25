@@ -1,5 +1,6 @@
 import { directoryTerms, formatTemplate, propertyTokens, remoteStringOverlay, remoteStringValue } from '@trelliskit/shared';
 import { fillDeep, fillFromProperty, getBundledProperty } from './property/property';
+import { catalogTemplates } from './catalogStrings';
 
 /**
  * All user-facing strings for the mobile app. English only; no i18n library.
@@ -13,6 +14,8 @@ import { fillDeep, fillFromProperty, getBundledProperty } from './property/prope
  */
 export const stringTemplates = Object.freeze({
   appName: '{name}',
+
+  exerciseCatalog: catalogTemplates,
 
   links: {
     title: 'Web content',

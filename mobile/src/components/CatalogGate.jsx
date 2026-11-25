@@ -16,18 +16,21 @@ import Screen from './Screen';
  * arrive as locked stubs), need a membership in `FullyGated`; signed-out visitors pass when
  * anonymous browsing is on (they see `Public` objects only). A feature switched off for the
  * property shows a not-available message and makes no API call; so does a catalog whose kill switch is on for
- * the caller (with the operator's message, LIVE_UPDATES_CONTRACT.md section 13.2).
- * @param {{ feature: 'library'|'events'|'directory', action?: 'read'|'write', children: React.ReactNode, testID?: string }} props
+ * the caller (with the operator's message, LIVE_UPDATES_CONTRACT.md section 13.2). `optIn` names an
+ * additional opt-in property switch (for example `catalog`) that must be explicitly `true`; a missing
+ * switch counts as off and shows the same not-available message.
+ * @param {{ feature: 'library'|'events'|'directory', optIn?: string, action?: 'read'|'write', children: React.ReactNode, testID?: string }} props
  */
-export default function CatalogGate({ feature, action = 'read', children, testID }) {
+export default function CatalogGate({ feature, optIn, action = 'read', children, testID }) {
   const { user } = useAuth();
   const property = useProperty();
   const killKey = killSwitchKeyFor({ catalog: feature });
   const kill = useKillSwitch(killKey);
-  if (!featureOn(property, feature)) {
+  const optedIn = !optIn || property?.features?.[optIn] === true;
+  if (!featureOn(property, feature) || !optedIn) {
     return (
-      <Screen testID={testID || 'catalog-off-' + feature}>
-        <ErrorState title={strings.errors.generic} message={strings.access.features[feature] || ''} />
+      <Screen testID={testID || 'catalog-off-' + (optedIn ? feature : optIn)}>
+        <ErrorState title={strings.errors.generic} message={strings.access.features[optedIn ? feature : optIn] || ''} />
       </Screen>
     );
   }

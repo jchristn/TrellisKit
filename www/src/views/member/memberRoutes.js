@@ -1,4 +1,4 @@
-import { catalogAccess, hasServerCapability, signedOutBrowsable } from '@trelliskit/shared';
+import { catalogAccess, catalogFeatureEnabled, hasServerCapability, signedOutBrowsable } from '@trelliskit/shared';
 import strings from '../../strings.js';
 
 const n = strings.member.nav;
@@ -22,6 +22,8 @@ export const MEMBER_ROUTES = [
   { id: 'library', label: n.library, icon: 'book', feature: 'library', live: true, access: 'library', catalog: true, killSwitch: 'library' },
   { id: 'events', label: n.events, icon: 'calendar', feature: 'events', live: true, access: 'events', catalog: true, killSwitch: 'events' },
   { id: 'directory', label: n.directory, icon: 'pin', feature: 'directory', live: true, access: 'directory', catalog: true, killSwitch: 'directory' },
+  // The reviewed exercise and technique catalog is opt-in (features.catalog) and uses the library access rules.
+  { id: 'catalog', label: strings.exerciseCatalog.nav, icon: 'book', feature: 'catalog', live: true, access: 'library', catalog: true, killSwitch: 'library' },
   { id: 'messages', label: n.messages, icon: 'message', feature: 'messaging', live: true, access: 'messaging', killSwitch: 'messaging' },
   { id: 'ideas', label: n.ideas, icon: 'trending', feature: 'ideas', live: true, lock: 'ideas' },
   { id: 'announcements', label: n.announcements, icon: 'megaphone', feature: 'broadcasts', live: true },
@@ -31,9 +33,13 @@ export const MEMBER_ROUTES = [
   { id: 'profile', label: n.profile, icon: 'user', live: true }
 ];
 
-/** Whether a property feature switch is on (missing switches count as on). */
+/**
+ * Whether a property feature switch is on. Missing switches count as on, except the opt-in
+ * catalog (`features.catalog`), which is on only when set to `true`.
+ */
 export function featureEnabled(property, feature) {
   if (!feature) return true;
+  if (feature === 'catalog') return catalogFeatureEnabled(property);
   const features = (property && property.features) || {};
   return features[feature] !== false;
 }

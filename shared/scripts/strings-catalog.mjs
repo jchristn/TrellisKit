@@ -27,7 +27,10 @@ export const SOURCES = [
   { file: 'www/src/platformMetricsStrings.js', binding: 'platformMetrics', prefix: 'web.platformMetrics', client: 'web' },
   { file: 'www/src/strings.js', binding: 'strings', prefix: 'web', client: 'web' },
   { file: 'mobile/src/strings.js', binding: 'stringTemplates', prefix: 'mobile', client: 'mobile' },
-  { file: 'mobile/src/strings.js', binding: 'placesTemplates', prefix: 'mobile.places', client: 'mobile' }
+  { file: 'mobile/src/strings.js', binding: 'placesTemplates', prefix: 'mobile.places', client: 'mobile' },
+  { file: 'www/src/views/catalog/catalogStrings.js', binding: 'exerciseCatalog', prefix: 'web.exerciseCatalog', client: 'web' },
+  { file: 'www/src/views/admin/catalog/catalogImportStrings.js', binding: 'catalogImport', prefix: 'web.catalogImport', client: 'web' },
+  { file: 'mobile/src/catalogStrings.js', binding: 'catalogTemplates', prefix: 'mobile.exerciseCatalog', client: 'mobile' }
 ];
 
 const TOKEN = /\{([A-Za-z][A-Za-z0-9]*)\}/g;

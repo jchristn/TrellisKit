@@ -6,9 +6,9 @@ const STATIC_PATHS = new Set([
   '/members', '/notifications', '/assistants', '/announcements', '/ideas', '/ideas/new', '/messages', '/messages/requests', '/messages/search',
   '/support', '/support/new', '/account', '/account/blocked', '/account/edit-profile', '/account/password', '/account/notifications',
   '/account/delete', '/account/sign-in-methods', '/account/membership', '/account/messaging', '/account/appearance', '/account/legal',
-  '/directory/submit', '/directory/submissions', '/events/calendar-feed', '/events/propose', '/events/proposals', '/compose', '/compose-thread'
+  '/directory/submit', '/directory/submissions', '/events/calendar-feed', '/events/propose', '/events/proposals', '/compose', '/compose-thread', '/catalog'
 ]);
-const DETAIL_PATH = new RegExp('^/(?:feed|forums|members|assistants|announcements|ideas|messages|threads|venues|instructors|events|series|lessons|documents)/' + IDENTIFIER + '$');
+const DETAIL_PATH = new RegExp('^/(?:feed|forums|members|assistants|announcements|ideas|messages|threads|venues|instructors|events|series|lessons|documents|catalog)/' + IDENTIFIER + '$');
 
 /** HTTP(S) only, with no embedded credentials, control characters, or ambiguous slashes. */
 export function safeWebUrl(value) {

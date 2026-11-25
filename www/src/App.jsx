@@ -22,6 +22,7 @@ import JoinPage from './views/auth/JoinPage.jsx';
 import AppleCallbackPage from './views/auth/AppleCallbackPage.jsx';
 import AccountDeletedPage from './views/auth/AccountDeletedPage.jsx';
 import RequireMember from './views/member/RequireMember.jsx';
+import { CatalogHomeView, CatalogEntryView } from './views/catalog/CatalogViews.jsx';
 import { MemberLanding } from './views/member/MemberHomeView.jsx';
 import GuestHomeView from './views/member/GuestHomeView.jsx';
 import ComingSoonView from './views/member/ComingSoonView.jsx';
@@ -83,6 +84,7 @@ const searchRoute = MEMBER_ROUTES.find((route) => route.id === 'search');
 const libraryRoute = MEMBER_ROUTES.find((route) => route.id === 'library');
 const eventsRoute = MEMBER_ROUTES.find((route) => route.id === 'events');
 const directoryRoute = MEMBER_ROUTES.find((route) => route.id === 'directory');
+const catalogRoute = MEMBER_ROUTES.find((route) => route.id === 'catalog');
 
 /** `/announcements/:id` (the notification path) opens the announcement in the member app. */
 function AnnouncementRedirect() {
@@ -181,6 +183,12 @@ export function AppRoutes({ fetchImpl = null, adminFetchImpl = null, restoreOnLo
                 <Route path="directory/submissions" element={<RequireMember level={LEVELS.member} catalog="directory"><MySubmissionsView /></RequireMember>} />
                 <Route path="venues/:id" element={<RequireMember level={LEVELS.member} catalog="directory"><VenueView /></RequireMember>} />
                 <Route path="instructors/:id" element={<RequireMember level={LEVELS.member} catalog="directory"><InstructorView /></RequireMember>} />
+              </>
+            )}
+            {featureEnabled(property, 'catalog') && routeAvailable(property, catalogRoute) && (
+              <>
+                <Route path="catalog" element={<RequireMember level={LEVELS.member} catalog="library"><CatalogHomeView /></RequireMember>} />
+                <Route path="catalog/:id" element={<RequireMember level={LEVELS.member} catalog="library"><CatalogEntryView /></RequireMember>} />
               </>
             )}
             <Route path="members" element={<RequireMember level={LEVELS.member} feature="directory"><MemberDirectoryView /></RequireMember>} />

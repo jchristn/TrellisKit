@@ -73,6 +73,7 @@ function AppStack() {
       <Stack.Screen name="events" options={{ headerShown: false }} />
       <Stack.Screen name="series" options={{ headerShown: false }} />
       <Stack.Screen name="lessons" options={{ headerShown: false }} />
+      <Stack.Screen name="catalog" options={{ headerShown: false }} />
       <Stack.Screen name="compose-thread" options={{ title: strings.forums.composer.newTitle, presentation: 'modal' }} />
     </Stack>
   );

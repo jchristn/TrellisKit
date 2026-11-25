@@ -18,6 +18,7 @@ import { documentsMethods } from './documentsApi.js';
 import { jobsMethods } from './jobsApi.js';
 import { metricsMethods } from './metricsApi.js';
 import { contentReviewMethods } from './contentReviewApi.js';
+import { exerciseCatalogMethods } from './exerciseCatalogApi.js';
 import { publicPageMethods } from './publicPages.js';
 
 /**
@@ -271,6 +272,8 @@ Object.assign(ApiClient.prototype, contentReviewMethods);
 Object.assign(ApiClient.prototype, documentsMethods);
 // Public landing pages: the member's opt-in profile page and slug checks (docs/PHASE4_CONTRACT.md section 18).
 Object.assign(ApiClient.prototype, publicPageMethods);
+// Reviewed exercise and technique catalog (docs/CATALOG_PUBLIC_PAGES.md, docs/CATALOG_IMPORTS.md).
+Object.assign(ApiClient.prototype, exerciseCatalogMethods);
 // `client.messaging`: the direct message methods under their contract names (assistant chats keep
 // `enumerateConversations` and friends on the client itself).
 Object.defineProperty(ApiClient.prototype, 'messaging', {
