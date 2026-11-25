@@ -156,6 +156,9 @@ namespace TrellisKit.Server.Services
             if (Equals(p, _Api + "/auth/me") || Equals(p, _Api + "/auth/email/resend")) return RouteGroupEnum.SignedIn;
             // Public landing page slug checks (docs/PHASE4_CONTRACT.md section 18.3): members, hosts, staff, and admin principals.
             if (StartsWith(p, _Api + "/public-pages")) return RouteGroupEnum.SignedIn;
+            // The Training overview is session only but gated like content, so it is a Member group route with an AccessRoutes
+            // declaration (docs/TRELLISKIT.md section 15).
+            if (Equals(p, _Api + "/me/training")) return RouteGroupEnum.Member;
             if (StartsWith(p, _Api + "/me") || StartsWith(p, _Api + "/handles") || StartsWith(p, _Api + "/membership") || StartsWith(p, _Api + "/signup-codes")) return RouteGroupEnum.SignedIn;
             // Support is an account route in every model (docs/PHASE5_CONTRACT.md section 0.2), so a lapsed or unpaid member can
             // always reach billing help; announcements are read by any signed-in recipient of a broadcast.

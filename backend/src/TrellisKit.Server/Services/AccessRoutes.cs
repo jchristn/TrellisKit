@@ -90,6 +90,11 @@ namespace TrellisKit.Server.Services
                     // applies its own object access, docs/TRELLISKIT.md section 15).
                     if (s.Length == 4 && s[3] == "search" && m == "POST") return Stub(Declare(FeatureKeyEnum.Library, AccessActionEnum.List, true, m, s));
                     return read ? Stub(Declare(FeatureKeyEnum.Library, AccessActionEnum.List, true, m, s)) : null;
+                case "me":
+                    // GET /me/training is the one me route in the Member group: session only, and gated like a feature read
+                    // (FullyGated needs a membership; PartiallyGated only when training is a gated feature).
+                    if (s.Length == 4 && s[3] == "training" && m == "GET") return Declare(FeatureKeyEnum.Training, AccessActionEnum.List, false, m, s);
+                    return null;
                 case "catalog":
                     // /catalog/entries[/enumerate|/{idOrSlug}|/{id}/relationships]: each published entry decides.
                     return read ? Stub(Declare(FeatureKeyEnum.Catalog, AccessActionEnum.List, true, m, s)) : null;

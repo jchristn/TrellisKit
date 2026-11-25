@@ -4,6 +4,11 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (Training overview)
+
+- `GET /api/v1/me/training`: the session-only Training overview (`docs/TRELLISKIT.md` section 15.4; `REST_API.md`, "Training hub"), composed by `TrainingHubService` from concurrent `ITrainingSectionProvider` implementations (library, saves, events, rank, coach). Sections Overview, Library (segments Courses, Techniques when the catalog is on and has a published entry, Saved when saves are on), Schedule, Programs, and Progress are reported only with real data; cards `upNext`, `continue`, `recentSaves`, `newForYou` (each a bounded `EnumerationResult`), `rank` (`{ rank, next, curriculum, showVerificationLabels }` while `ranks.enabled`), `coach` (`{ available, placement }`), and `firstRun` (no sample content). A failing provider reports its sections `NoData` without failing the request (`trelliskit.training.provider.errors`). Member group route declared for the `training` feature key: `402 MembershipRequired` in FullyGated, or in PartiallyGated when `training` is gated.
+- Settings `training.upNextLimit`, `training.continueLimit`, `training.recentSavesLimit`, `training.newForYouLimit`, `training.newForYouDays`; telemetry span `training.overview`, `trelliskit.training.overview.duration`, `trelliskit.training.overview.requests`. Postman folder "Training hub"; Touchstone suite `Training`.
+
 ### Added (one Library: lesson techniques and library search)
 
 - Lesson techniques (migration 135, `lessoncatalogentries`, ids `lce_`, labels and tags in the shared metadata tables): `PUT /api/v1/admin/lessons/{id}/catalog-entries` (library staff, at most 50, published entries only, `409 CatalogEntryNotPublished`), "Techniques in this lesson" (`/api/v1/lessons/{id}/catalog-entries[/enumerate]`), "Lessons that teach this" under the member's lesson access (`/api/v1/catalog/entries/{id}/lessons[/enumerate]`), and the public variant (`/api/v1/public/catalog/entries/{id}/lessons`). All `404 NotAvailable` while `features.catalog` is off; deleting a lesson or an entry deletes its links.

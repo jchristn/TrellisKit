@@ -2646,6 +2646,52 @@ A collection membership always links a save and a collection of the same member 
 
 Settings: `saves.maxPerMember` (default 2000, 100 to 20000), `saves.maxCollectionsPerMember` (default 50, 1 to 500). Metrics: `trelliskit.saves.created` and `trelliskit.saves.removed`, labeled `target_type` (`Any` for account deletion).
 
+## Training hub (signed in)
+
+`GET /api/v1/me/training` returns the signed-in member's Training overview in one round trip (docs/TRELLISKIT.md section 15). It is session only: signed-out clients never call it and show the public Library (the library and catalog routes) instead. The route is in the Member group with a `training` declaration: `FullyGated` needs a membership, `PartiallyGated` needs one only when `training` is listed in `access.gatedFeatures`, `Open` needs a session. `features.training: false` answers `404 NotAvailable`; the `training` kill switch answers `503 FeatureDisabled` on this route only (the library, catalog, events, and saves routes keep their own switches).
+
+### Shape
+
+```json
+{
+  "sections": [
+    { "key": "Overview", "available": true, "reason": null, "segments": [] },
+    { "key": "Library", "available": true, "reason": null, "segments": ["Courses", "Techniques", "Saved"] },
+    { "key": "Schedule", "available": false, "reason": "NoData", "segments": [] },
+    { "key": "Programs", "available": false, "reason": "FeatureOff", "segments": [] },
+    { "key": "Progress", "available": true, "reason": null, "segments": [] }
+  ],
+  "upNext": { "objects": [{ "kind": "Event", "id": "evt_...", "title": "...", "startUtc": "...", "endUtc": "...", "timeZone": "Etc/UTC", "locationSummary": "...", "path": "/events/evt_...", "labels": [], "tags": {} }], "...": "EnumerationResult" },
+  "continue": "EnumerationResult<ContinueWatchingItem>",
+  "recentSaves": "EnumerationResult<FavoriteView>",
+  "newForYou": "EnumerationResult<LessonSummary>",
+  "rank": { "rank": "EffectiveRankView", "next": "RankNextView | null", "curriculum": "CurriculumView | null", "showVerificationLabels": true },
+  "coach": { "available": false, "placement": "Menu" },
+  "firstRun": false,
+  "labels": [],
+  "tags": {}
+}
+```
+
+- `sections`: always the five keys in this order. `reason` (`FeatureOff`, `NoAccess`, `NoData`, `SignedOut`) is set only when `available` is false; clients show only available sections and ignore unknown keys. `segments` (at most 3) is set on an available Library only.
+- Library: available when any segment is: `Courses` (`features.library`), `Techniques` (`features.catalog` and at least one published entry), `Saved` (`features.saves`).
+- Schedule: available when the member has an upcoming RSVP (Going, Interested, or Waitlisted) to a published event, or (with `ranks.enabled`) at least one check-in. `FeatureOff` when events and ranks are both off.
+- Programs: available when `ranks.enabled` is on and a published curriculum is visible to the member.
+- Progress: available when the member has any lesson progress, holds a rank, has a recorded promotion, or has a check-in.
+- Overview: available when any other section is.
+- `upNext`: upcoming published events the member RSVPed Going to, by start (at most `training.upNextLimit`). `continue`: lessons in progress, most recently watched first (`training.continueLimit`). `recentSaves`: newest saves (`training.recentSavesLimit`, empty while `features.saves` is off). `newForYou`: lessons published within `training.newForYouDays` in series the member follows (not opted out) and has not started, newest first, readable by the member (`training.newForYouLimit`). Each is an `EnumerationResult`; an empty card is an empty, terminal page.
+- `rank`: the first Rank profile field (profile order): the effective rank (`source` `None` when the member holds none), the next step with requirements, the next requirement's curriculum (or the first published curriculum visible to the member for the field) with progress, and `ranks.showVerificationLabels`. `null` while `ranks.enabled` is off or the property has no Rank field.
+- `coach`: `available` when AI is available for the property (the `features.ai` rule: the property AI switch and `ai.enabled`) and at least one assistant serves the member; `placement` is `features.aiPlacement` (`ai.mobilePlacement`).
+- `firstRun`: true when the member has no lesson progress, saves, or RSVPs (and every provider answered). The overview then carries no sample content; clients build their first-run card from real featured series and the events or directory entry.
+
+A section provider that fails is logged, counted (`trelliskit.training.provider.errors`, label `provider`), and reports its sections `available: false` with `reason: NoData`; the request still succeeds. `404 NotAvailable` is answered only when no section is available and no provider failed.
+
+| Method and path | Body | Success | Errors |
+|---|---|---|---|
+| `GET /api/v1/me/training` | | `200 TrainingOverview` (sections exactly 5; cards bounded by the `training.*` settings, maxima 10, 25, 20, 20) | `401 Unauthorized`, `402 MembershipRequired`, `404 NotAvailable` (`features.training` off or no section available), `429 RateLimited`, `503 FeatureDisabled` (training kill switch) |
+
+Settings (live): `training.upNextLimit` (default 3, 1 to 10), `training.continueLimit` (default 10, 1 to 25), `training.recentSavesLimit` (default 6, 1 to 20), `training.newForYouLimit` (default 6, 1 to 20), `training.newForYouDays` (default 14, 1 to 90). Telemetry: span `training.overview`; histogram `trelliskit.training.overview.duration` and counter `trelliskit.training.overview.requests`, labeled `outcome` (`success`, `partial`, `not_available`, `error`). Product events `training_opened`, `training_section_viewed`, and `training_card_opened` are client events a property declares in `metrics.events` (opt in).
+
 ## Library search (member, object gated)
 
 `POST /api/v1/library/search` searches courses (series), lessons, and techniques (published catalog entries) at once. Each kind runs through its own member enumeration with the same search text, so access rules, locked stubs (PartiallyGated free accounts), and continuation are exactly those of `POST /api/v1/series/enumerate`, `POST /api/v1/lessons/enumerate`, and `POST /api/v1/catalog/entries/enumerate`: continue a kind by sending its `continuationToken` there with the same `search`. Signed out works where anonymous browsing is on (signed-out readers see Public lessons unlocked). Techniques are searched only while `features.catalog` is on (otherwise the page is empty). Rate limited by the shared search limiter (`search.perMinute`, bucket `search.global`; per IP when signed out). The series and lesson search columns carry trigram GIN indexes when the `pg_trgm` extension is installed (migration 135). Counter `trelliskit.library.search.requests` labeled `outcome`.

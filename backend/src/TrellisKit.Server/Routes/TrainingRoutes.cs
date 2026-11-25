@@ -12,13 +12,15 @@ namespace TrellisKit.Server.Routes
     using static TrellisKit.Server.Routes.OpenApiExtensions;
 
     /// <summary>
-    /// Training hub routes (docs/TRELLISKIT.md section 15; REST_API.md, Library search and Lesson techniques): unified library search, and lesson and catalog links (staff write, member
+    /// Training hub routes (docs/TRELLISKIT.md section 15; REST_API.md, Training hub, Library search, and Lesson
+    /// techniques): the session-only overview, unified library search, and lesson and catalog links (staff write, member
     /// and public reads).
     /// </summary>
     public sealed class TrainingRoutes
     {
         #region Private-Members
 
+        private const string _Tag = "Training";
         private const string _LinksTag = "Lesson techniques";
         private const string _Technique = "LessonCatalogEntryView (a CatalogEntry view plus linkId, lessonId, position, startSeconds, source, warning, linkLabels, linkTags)";
         private const string _Lesson = "LessonSummary";
@@ -53,6 +55,7 @@ namespace TrellisKit.Server.Routes
             ArgumentNullException.ThrowIfNull(server);
             RoutingGroup post = server.Routes.PostAuthentication;
             RoutingGroup pre = server.Routes.PreAuthentication;
+            RegisterOverview(post);
             RegisterSearch(post);
             RegisterLinks(post, pre);
         }
@@ -60,6 +63,17 @@ namespace TrellisKit.Server.Routes
         #endregion
 
         #region Private-Methods
+
+        private void RegisterOverview(RoutingGroup post)
+        {
+            post.Static.Add(HttpMethod.GET, Constants.ApiPrefix + "/me/training", async ctx =>
+            {
+                ContentActor actor = await ActorAsync(ctx).ConfigureAwait(false);
+                await RouteHelper.SendJsonAsync(ctx, 200, await _Directory.For(ctx).Training.Hub.OverviewAsync(actor, ctx.Token).ConfigureAwait(false)).ConfigureAwait(false);
+            }, RouteHelper.HandleExceptionAsync, openApiMetadata: Doc("Training overview", _Tag, "Session only; signed-out clients do not call it and show the public Library instead. One round trip for the Training hub: sections [{ key (Overview, Library, Schedule, Programs, Progress), available, reason (FeatureOff, NoAccess, NoData, SignedOut) when unavailable, segments (Library only: Courses, Techniques, Saved) }] in that fixed order, and bounded cards: upNext (EnumerationResult of upcoming published events you RSVPed Going to, by start, at most training.upNextLimit, default 3, maximum 10), continue (lessons in progress, at most training.continueLimit, default 10, maximum 25), recentSaves (at most training.recentSavesLimit, default 6, maximum 20), newForYou (lessons published within training.newForYouDays in series you follow and have not started, at most training.newForYouLimit, default 6, maximum 20), rank { rank: EffectiveRank, next: RankNext | null, curriculum: Curriculum | null, showVerificationLabels } for the first Rank profile field (null while ranks.enabled is off or the property has no Rank field), coach { available, placement }, firstRun (true when you have no lesson progress, saves, or RSVPs; the response then carries no sample content), labels, tags. Library is available when any segment is: Courses (features.library), Techniques (features.catalog and at least one published entry), Saved (features.saves). Schedule is available when you have an upcoming RSVP or a check-in; Programs when a published curriculum is visible to you; Progress when you have lesson progress, a rank or promotion, or a check-in. A section provider that fails is logged, counted (trelliskit.training.provider.errors), and its sections are reported unavailable (NoData) without failing the request. 402 MembershipRequired in FullyGated properties without a membership (and in PartiallyGated when training is a gated feature). 404 NotAvailable when features.training is false or no section is available; 503 FeatureDisabled under the training kill switch.")
+                .Bounded("TrainingOverview", "sections exactly 5; segments at most 3; upNext at most 10, continue at most 25, recentSaves at most 20, newForYou at most 20 (training.* settings), each an EnumerationResult; rank.curriculum.items at most 500; labels and tags empty")
+                .Resp(401, "Unauthorized").Resp(402, "MembershipRequired").Resp(404, "NotAvailable").Resp(429, "RateLimited").Resp(503, "FeatureDisabled"));
+        }
 
         private void RegisterSearch(RoutingGroup post)
         {

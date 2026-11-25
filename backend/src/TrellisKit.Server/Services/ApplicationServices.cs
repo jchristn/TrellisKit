@@ -408,7 +408,7 @@ namespace TrellisKit.Server.Services
         public FavoriteService Favorites { get; }
 
         /// <summary>
-        /// Training hub: lesson and catalog links and unified library search
+        /// Training hub: the overview and its section providers, lesson and catalog links, and unified library search
         /// (docs/TRELLISKIT.md section 15).
         /// </summary>
         public Training.TrainingModule Training { get; }

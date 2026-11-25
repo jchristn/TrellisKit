@@ -558,6 +558,16 @@ namespace TrellisKit.Core.Settings
         }
 
         /// <summary>
+        /// Training hub overview card limits (docs/TRELLISKIT.md section 15).
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The value is null.</exception>
+        public TrainingSettings Training
+        {
+            get { return _Training; }
+            set { _Training = value ?? throw new ArgumentNullException(nameof(Training)); }
+        }
+
+        /// <summary>
         /// Engine secrets key (per-property integration secrets, queued email payloads, stored update signing keys, AI endpoint secrets).
         /// </summary>
         /// <exception cref="ArgumentNullException">The value is null.</exception>
@@ -627,6 +637,7 @@ namespace TrellisKit.Core.Settings
         private RankSettings _Ranks = new RankSettings();
         private AttendanceSettings _Attendance = new AttendanceSettings();
         private SavesSettings _Saves = new SavesSettings();
+        private TrainingSettings _Training = new TrainingSettings();
 
         #endregion
     }

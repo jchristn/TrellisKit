@@ -64568,6 +64568,88 @@
       ]
     },
     {
+      "name": "Training hub",
+      "description": "GET /api/v1/me/training: the session-only Training overview (docs/TRELLISKIT.md section 15; REST_API.md, Training hub).",
+      "item": [
+        {
+          "name": "Training overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/training",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "training"
+              ]
+            },
+            "description": "Session only. Sections (Overview, Library, Schedule, Programs, Progress, each with available, reason, segments) and bounded cards: upNext (training.upNextLimit), continue (training.continueLimit), recentSaves (training.recentSavesLimit), newForYou (training.newForYouLimit), rank { rank, next, curriculum, showVerificationLabels } or null, coach { available, placement }, firstRun, labels, tags. 401 Unauthorized, 402 MembershipRequired, 404 NotAvailable (features.training off or no section available), 503 FeatureDisabled (training kill switch)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('TrainingOverview', function () { const r = pm.response.json(); ['sections','upNext','continue','recentSaves','newForYou','rank','coach','firstRun','labels','tags'].forEach(k => pm.expect(r).to.have.property(k)); pm.expect(r.sections.map(s => s.key)).to.eql(['Overview','Library','Schedule','Programs','Progress']); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Training overview signed out (401)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/training",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "training"
+              ]
+            },
+            "description": "Signed-out clients never call the overview; it answers 401 Unauthorized."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 401', function () { pm.response.to.have.status(401); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Library search",
       "description": "POST /api/v1/library/search: one search across courses, lessons, and techniques (REST_API.md, Library search).",
       "item": [

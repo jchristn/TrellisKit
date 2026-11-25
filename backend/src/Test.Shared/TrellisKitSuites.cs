@@ -119,6 +119,7 @@ namespace Test.Shared
                     FavoriteSuite.Build(),
                     LessonCatalogSuite.Build(),
                     LibrarySearchSuite.Build(),
+                    TrainingSuite.Build(),
                     EngagementSuite.Build(),
                     Phase4StaffSuite.Build(),
                     EventSuite.Build(),
