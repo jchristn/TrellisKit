@@ -46,7 +46,7 @@ function TagValueField({ row, index, suggestions, onChange, hideStaff }) {
  *   Extra filter controls for the collection (for example the member directory's profile
  *   filters), editing the same draft; shown after the tag filters.
  */
-export default function FilterPanel({ filters, onApply, targetType, orderings = [], searchLabel, extra, testID = 'filters' }) {
+export default function FilterPanel({ filters, onApply, targetType, orderings = [], searchLabel, showSearch = true, extra, testID = 'filters' }) {
   const theme = useTheme();
   const { user } = useAuth();
   const staff = isStaffUser(user);
@@ -66,7 +66,7 @@ export default function FilterPanel({ filters, onApply, targetType, orderings = 
 
   return (
     <View style={{ gap: theme.spacing.lg }} testID={testID}>
-      <TextField label={searchLabel || t.search} value={draft.search} onChangeText={(search) => setDraft((d) => ({ ...d, search }))} maxLength={QueryLimits.search} returnKeyType="search" onSubmitEditing={() => onApply(draft)} testID={testID + '-search'} />
+      {showSearch && <TextField label={searchLabel || t.search} value={draft.search} onChangeText={(search) => setDraft((d) => ({ ...d, search }))} maxLength={QueryLimits.search} returnKeyType="search" onSubmitEditing={() => onApply(draft)} testID={testID + '-search'} />}
       {orderings.length ? <ChipGroup label={t.ordering} options={orderings} value={draft.ordering || orderings[0].value} onToggle={(ordering) => setDraft((d) => ({ ...d, ordering }))} testID={testID + '-ordering'} /> : null}
 
       <View style={{ gap: theme.spacing.sm }}>

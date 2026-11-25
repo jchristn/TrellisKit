@@ -4,6 +4,13 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (profile and public multimedia)
+
+- Owner-managed profile photo/video galleries on web and mobile, with bounded metadata filters, uploads, deletion, per-item reports and Feed moderation. Schema 125 adds property-scoped `profilemedia`; attachment claims an upload atomically. Account export/deletion includes gallery items.
+- Public venue and opted-in profile pages show live uploaded media, with per-item report links. A checked streaming route revokes access when the parent page or media becomes unavailable and supports Local/S3 storage, byte ranges and HLS.
+- Light/dark controls on venue and profile pages, including public pages; public video playback uses the bundled HLS player.
+- Directory listing notice now sits below the map/list on web and mobile. The schedule action reads “Add schedule”. Empty galleries remain visible as a multimedia section.
+
 ### Added (daily administrator summary)
 
 - Daily administrator summary email (`staff_admin_summary`) sent to the addresses in the new `AdminSummary` settings section once per day after `AdminSummary.SendHour` in the property's usage time zone: total members, new sign-ups, deleted accounts, daily, weekly, and monthly active members, activity by type, items needing attention, and platform health, each compared with the day before and the seven-day average. Lines come from registered metrics; `AdminSummary.Items` adds more (including property-declared metrics) by key. Delivery is once per property, date, and recipient across instances. See `docs/ADMIN_SUMMARY.md`.

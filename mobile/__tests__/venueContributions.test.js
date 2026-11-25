@@ -346,3 +346,29 @@ describe('venue rows and notifications', () => {
     expect(resolveNotificationPath('/venues/ven_1?review=vrv_2')).toBe('/venues/ven_1?review=vrv_2');
   });
 });
+
+describe('profile multimedia', () => {
+  test('uses profile upload and delete endpoints and labels public visibility', async () => {
+    mockAuth.api.enumerateProfileMedia = jest.fn(async () => page([]));
+    mockAuth.api.addProfileMedia = jest.fn(async () => ({ objects: [mediaItem('pmd_1', { isUploader: true, canRemove: true })] }));
+    mockAuth.api.removeProfileMedia = jest.fn(async () => null);
+    await render(<VenueMedia profile venue={{ id: me.id, viewer: { canAddMedia: true } }} />);
+    await fireEvent.press(screen.getByTestId('venue-media-add'));
+    expect(screen.getByText(/including its public page when enabled/)).toBeOnTheScreen();
+    mockUploads.mediaIds = ['med_profile'];
+    await fireEvent.press(screen.getByTestId('venue-media-add-sheet-submit'));
+    await waitFor(() => expect(mockAuth.api.addProfileMedia).toHaveBeenCalledWith(me.id, ['med_profile']));
+    await fireEvent.press(await screen.findByTestId('venue-media-item-0'));
+    await fireEvent.press(screen.getByTestId('venue-media-viewer-remove'));
+    await fireEvent.press(screen.getByTestId('venue-media-remove-confirm'));
+    await waitFor(() => expect(mockAuth.api.removeProfileMedia).toHaveBeenCalledWith(me.id, 'pmd_1'));
+  });
+
+  test('reports the exact profile item linked from a public page', async () => {
+    mockAuth.api.enumerateProfileMedia = jest.fn(async () => page([]));
+    await render(<VenueMedia profile initialReportId="pmd_old" venue={{ id: other.id, viewer: {} }} />);
+    await fireEvent.press(screen.getByTestId('report-reason-Spam'));
+    await fireEvent.press(screen.getByTestId('report-submit'));
+    await waitFor(() => expect(mockAuth.api.post).toHaveBeenCalledWith('/reports', expect.objectContaining({ targetType: 'ProfileMedia', targetId: 'pmd_old', reason: 'Spam' })));
+  });
+});

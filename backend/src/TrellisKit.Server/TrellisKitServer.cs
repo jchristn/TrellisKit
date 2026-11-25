@@ -387,6 +387,7 @@ namespace TrellisKit.Server
             new LibraryRoutes(Directory).Register(Server);
             new EventRoutes(Directory).Register(Server);
             new DirectoryRoutes(Directory).Register(Server);
+            new ProfileMediaRoutes(Directory).Register(Server);
             new PublicPageRoutes(Directory).Register(Server);
             new IdeaRoutes(Directory).Register(Server);
             new AdminIdeaRoutes(Directory).Register(Server);

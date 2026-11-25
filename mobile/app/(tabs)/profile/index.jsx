@@ -1,3 +1,5 @@
+import ProfileMedia from '../../../src/components/profile/ProfileMedia';
+import ThemeToggle from '../../../src/components/ThemeToggle';
 import { aiAvailable, signedOutBrowsable } from '@trelliskit/shared';
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
@@ -32,6 +34,7 @@ export default function ProfileScreen() {
 
   return (
     <Screen testID="screen-profile" contentStyle={{ gap: theme.spacing.lg }}>
+      <ThemeToggle />
       {user ? (
         <Card testID="profile-summary">
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.lg }}>
@@ -48,6 +51,7 @@ export default function ProfileScreen() {
           <ProfileFieldList profile={profile} fields={fields} testID="profile-fields" />
         </Card>
       ) : null}
+      {user ? <ProfileMedia user={user} /> : null}
       {!user ? (
         <>
           <AccessPromptCard required="SignIn" title={strings.access.guestProfileTitle} body={strings.access.joinInBody} testID="profile-guest" />

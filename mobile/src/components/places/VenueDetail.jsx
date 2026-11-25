@@ -1,3 +1,4 @@
+import ThemeToggle from '../ThemeToggle';
 import { formatAddress, isLockedItem, lockedRequirement, programLabels, venueHasPin } from '@trelliskit/shared';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -51,7 +52,7 @@ function Row({ label, children }) {
  * `focusReviewId` (a notification's `?review=`) shows that review first. A locked stub shows the
  * membership prompt and nothing else.
  */
-export default function VenueDetail({ venueId, focusReviewId = null, testID = 'venue' }) {
+export default function VenueDetail({ venueId, focusReviewId = null, reportMediaId = null, testID = 'venue' }) {
   const theme = useTheme();
   const router = useRouter();
   const property = useProperty();
@@ -109,6 +110,7 @@ export default function VenueDetail({ venueId, focusReviewId = null, testID = 'v
 
   return (
     <ScrollView contentContainerStyle={{ padding: theme.spacing.lg, gap: theme.spacing.lg }} testID={testID}>
+      <ThemeToggle />
       {venue.photos && venue.photos.length && imageUrl(venue.photos[0]) ? <MediaImage url={imageUrl(venue.photos[0])} blurhash={venue.photos[0].blurhash} alt={venue.photos[0].altText || null} style={{ width: '100%', aspectRatio: 16 / 9, borderRadius: theme.radii.lg }} /> : null}
       <View style={{ gap: theme.spacing.xs }}>
         <AppText variant="title" accessibilityRole="header" testID={testID + '-name'}>
@@ -170,7 +172,7 @@ export default function VenueDetail({ venueId, focusReviewId = null, testID = 'v
           ))}
         </Row>
       ) : null}
-      <VenueMedia venue={venue} testID={testID + '-media'} />
+      <VenueMedia initialReportId={reportMediaId} venue={venue} testID={testID + '-media'} />
       {venue.reviews ? <VenueReviews venue={venue} focusReviewId={focusReviewId} onChanged={() => resource.reload({ quiet: true })} testID={testID + '-reviews'} /> : null}
       <Card>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>

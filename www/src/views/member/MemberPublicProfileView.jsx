@@ -1,3 +1,5 @@
+import ProfileMedia from '../../components/profile/ProfileMedia.jsx';
+import ThemeToggle from '../../components/ThemeToggle.jsx';
 import { useCallback, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import strings from '../../strings.js';
@@ -67,6 +69,7 @@ function MemberPublicProfileView() {
 
   return (
     <div className="member-view">
+      <div className="row-actions"><ThemeToggle /></div>
       {query.loading && !user && <Loading />}
       {query.error && <ErrorBanner message={errorText(query.error)} onRetry={query.reload} />}
       {user && (
@@ -98,6 +101,7 @@ function MemberPublicProfileView() {
           )}
         </section>
       )}
+      {user && !isBlocked && <ProfileMedia user={user} />}
       {user && dialog === 'report' && <ReportDialog target={{ type: 'User', id: user.id }} author={user} onClose={() => setDialog(null)} onBlocked={() => setBlocked(true)} />}
       {user && (dialog === 'block' || dialog === 'unblock') && (
         <BlockDialog user={user} unblock={dialog === 'unblock'} onClose={() => setDialog(null)} onDone={(_u, nowBlocked) => setBlocked(nowBlocked)} />

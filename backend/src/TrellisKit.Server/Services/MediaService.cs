@@ -954,6 +954,19 @@ namespace TrellisKit.Server.Services
             throw ApiErrorException.NotFound("File");
         }
 
+        /// <summary>Resolve a processed gallery output after the caller has checked page visibility. Originals are never served.</summary>
+        public async Task<PrivateMediaFile> ResolveGalleryFileAsync(string mediaId, string file, CancellationToken token = default)
+        {
+            if (!MediaKeys.IsMediaId(mediaId) || !MediaKeys.IsSafeFileName(file)) throw ApiErrorException.NotFound("File");
+            foreach (MediaLocationEnum location in new[] { MediaLocationEnum.Images, MediaLocationEnum.Transcoded })
+            {
+                string key = (location == MediaLocationEnum.Images ? MediaKeys.ImagePrefix(PropertyId, mediaId) : MediaKeys.VideoPrefix(PropertyId, mediaId)) + file;
+                ObjectHead? head = await _Integrations.ObjectStore.HeadAsync(location, key, token).ConfigureAwait(false);
+                if (head != null) return new PrivateMediaFile { Location = location, Key = key, SizeBytes = head.SizeBytes, ContentType = MediaKeys.ContentTypeFor(file), ExpiresUtc = DateTime.UtcNow };
+            }
+            throw ApiErrorException.NotFound("File");
+        }
+
         /// <summary>
         /// Read a byte range of a resolved private file.
         /// </summary>

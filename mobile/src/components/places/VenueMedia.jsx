@@ -1,3 +1,6 @@
+import strings from '../../strings';
+import { emptyFilters, filtersToQuery } from '../../content/enumeration';
+import { FilterButton } from '../filters/FilterBar';
 import { REVIEW_LIMITS, venueContributionConfig } from '@trelliskit/shared';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Modal, Pressable, View } from 'react-native';
@@ -40,15 +43,16 @@ function thumbUrl(media) {
 }
 
 /** The add sheet: pick with the composer's buttons, upload with the composer's tray, then attach. */
-function AddMediaSheet({ venueId, onAdded, onClose, transport, testID }) {
+function AddMediaSheet({ profile, venueId, onAdded, onClose, transport, testID }) {
   const theme = useTheme();
-  const t = useDirectoryStrings();
+  const directory = useDirectoryStrings();
+  const t = profile ? { ...directory, media: { ...directory.media, ...strings.profileMedia } } : directory;
   const { api, user } = useAuth();
   const uploads = useUploads({ api, transport });
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
   const max = REVIEW_LIMITS.maxMediaPerAdd;
-  const permissions = attachPermissions(user, { canAttachMedia: true });
+  const permissions = attachPermissions(user);
 
   async function submit() {
     setError(null);
@@ -56,7 +60,7 @@ function AddMediaSheet({ venueId, onAdded, onClose, transport, testID }) {
     if (!uploads.mediaIds.length) return setError(t.media.nothingPicked);
     setBusy(true);
     try {
-      const result = await api.addVenueMedia(venueId, uploads.mediaIds);
+      const result = await (profile ? api.addProfileMedia(venueId, uploads.mediaIds) : api.addVenueMedia(venueId, uploads.mediaIds));
       uploads.clear();
       onAdded((result && result.objects) || []);
     } catch (e) {
@@ -89,8 +93,9 @@ function AddMediaSheet({ venueId, onAdded, onClose, transport, testID }) {
 }
 
 /** Remove confirmation; a non-uploader (staff, a linked instructor) may give a reason. */
-function RemoveSheet({ venueId, item, onRemoved, onClose, testID }) {
-  const t = useDirectoryStrings();
+function RemoveSheet({ profile, venueId, item, onRemoved, onClose, testID }) {
+  const directory = useDirectoryStrings();
+  const t = profile ? { ...directory, media: { ...directory.media, ...strings.profileMedia } } : directory;
   const { api } = useAuth();
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
@@ -101,7 +106,8 @@ function RemoveSheet({ venueId, item, onRemoved, onClose, testID }) {
     setBusy(true);
     setError(null);
     try {
-      await api.removeVenueMedia(venueId, item.id, own ? undefined : reason.trim() || undefined);
+      if (profile) await api.removeProfileMedia(venueId, item.id);
+      else await api.removeVenueMedia(venueId, item.id, own ? undefined : reason.trim() || undefined);
       onRemoved(item);
     } catch (e) {
       setError(describeFeatureError(e, 'places', t));
@@ -173,9 +179,10 @@ function MediaViewer({ entries, index, onIndex, onClose, onRemove, onReport, tes
  * item Remove and Report from the item's `viewer` flags. Three columns on phones, five on wide
  * windows.
  */
-export default function VenueMedia({ venue, transport, testID = 'venue-media' }) {
+export default function VenueMedia({ profile = false, initialReportId = null, venue, transport, testID = 'venue-media' }) {
   const theme = useTheme();
-  const t = useDirectoryStrings();
+  const directory = useDirectoryStrings();
+  const t = profile ? { ...directory, media: { ...directory.media, ...strings.profileMedia } } : directory;
   const property = useProperty();
   const { api, user } = useAuth();
   const { isWide } = useLayout();
@@ -186,20 +193,21 @@ export default function VenueMedia({ venue, transport, testID = 'venue-media' })
   const [open, setOpen] = useState(null);
   const [adding, setAdding] = useState(false);
   const [removing, setRemoving] = useState(null);
-  const [reporting, setReporting] = useState(null);
+  const [reporting, setReporting] = useState(() => initialReportId ? { id: initialReportId } : null);
   const generation = useRef(0);
-  const memberMedia = venueContributionConfig(property).memberMedia;
+  const memberMedia = profile || venueContributionConfig(property).memberMedia;
+  const [filters, setFilters] = useState(() => emptyFilters());
   const viewer = venue.viewer || {};
   const signedIn = Boolean(user);
   const venueId = venue.id;
-  const hasMemberMedia = (venue.mediaCount || 0) > 0;
+  const hasMemberMedia = profile || (venue.mediaCount || 0) > 0;
 
   const load = useCallback(
     async (continuationToken) => {
       const gen = continuationToken ? generation.current : (generation.current += 1);
       setStatus(continuationToken ? 'more' : 'loading');
       try {
-        const page = await api.enumerateVenueMedia(venueId, { maxResults: MediaPageSize, continuationToken: continuationToken || undefined });
+        const page = await (profile ? api.enumerateProfileMedia : api.enumerateVenueMedia).call(api, venueId, { ...filtersToQuery(filters), maxResults: MediaPageSize, continuationToken: continuationToken || undefined });
         if (gen !== generation.current) return;
         const objects = (page && page.objects) || [];
         setItems((current) => (continuationToken ? current.concat(objects) : objects));
@@ -210,7 +218,7 @@ export default function VenueMedia({ venue, transport, testID = 'venue-media' })
         setStatus('failed');
       }
     },
-    [api, venueId]
+    [api, venueId, profile, filters]
   );
 
   useEffect(() => {
@@ -220,8 +228,8 @@ export default function VenueMedia({ venue, transport, testID = 'venue-media' })
   }, [signedIn, hasMemberMedia, load]);
 
   const entries = galleryEntries(venue.photos, items);
-  const canAdd = Boolean(signedIn && memberMedia && viewer.canAddMedia);
-  if (!entries.length && !canAdd) return null;
+  const canAdd = Boolean(signedIn && memberMedia && viewer.canAddMedia && attachPermissions(user).media);
+
 
   const columns = isWide ? 5 : 3;
   const gap = theme.spacing.xs;
@@ -232,6 +240,7 @@ export default function VenueMedia({ venue, transport, testID = 'venue-media' })
       <AppText variant="heading" accessibilityRole="header">
         {t.media.title}
       </AppText>
+      {signedIn && memberMedia ? <FilterButton sheetOnly showSearch={false} filters={filters} onChange={setFilters} targetType={profile ? 'ProfileMedia' : 'VenueMedia'} testID={testID + '-filters'} /> : null}
       {entries.length ? (
         <View onLayout={(e) => setWidth(e.nativeEvent.layout.width)} style={{ flexDirection: 'row', flexWrap: 'wrap', gap }} testID={testID + '-grid'}>
           {entries.map((entry, index) => {
@@ -262,7 +271,7 @@ export default function VenueMedia({ venue, transport, testID = 'venue-media' })
       ) : (
         <AppText color="textMuted">{t.media.empty}</AppText>
       )}
-      {status === 'failed' ? <Notice tone="error">{t.loadMoreFailed}</Notice> : null}
+      {status === 'failed' ? <><Notice tone="error">{t.loadMoreFailed}</Notice><Button label={strings.common.retry} onPress={() => load(null)} /></> : null}
       {token ? <Button label={t.media.loadMore} variant="ghost" onPress={() => load(token)} disabled={status === 'more'} style={{ alignSelf: 'auto' }} testID={testID + '-more'} /> : null}
       {canAdd ? <Button label={t.media.add} accessibilityHint={t.media.addHint} variant="secondary" onPress={() => setAdding(true)} style={{ alignSelf: 'auto' }} testID={testID + '-add'} /> : null}
       {open !== null && entries[open] ? (
@@ -284,6 +293,7 @@ export default function VenueMedia({ venue, transport, testID = 'venue-media' })
       ) : null}
       {adding ? (
         <AddMediaSheet
+          profile={profile}
           venueId={venueId}
           transport={transport}
           onAdded={(added) => {
@@ -296,6 +306,7 @@ export default function VenueMedia({ venue, transport, testID = 'venue-media' })
       ) : null}
       {removing ? (
         <RemoveSheet
+          profile={profile}
           venueId={venueId}
           item={removing}
           onRemoved={(item) => {
@@ -306,7 +317,7 @@ export default function VenueMedia({ venue, transport, testID = 'venue-media' })
           testID={testID + '-remove'}
         />
       ) : null}
-      {reporting ? <ReportSheet reasons={Phase4ReportReasons} target={{ targetType: 'VenueMedia', targetId: reporting.id }} author={reporting.uploader || null} onClose={() => setReporting(null)} /> : null}
+      {reporting ? <ReportSheet reasons={Phase4ReportReasons} target={{ targetType: profile ? 'ProfileMedia' : 'VenueMedia', targetId: reporting.id }} author={reporting.uploader || null} onClose={() => setReporting(null)} /> : null}
     </View>
   );
 }

@@ -485,5 +485,8 @@ namespace TrellisKit.Core.Enums
         /// <summary>A background job definition (jbd_), administrators only.</summary>
         JobDefinition,
 
+        /// <summary>A photo or video in a member profile gallery (pmd_).</summary>
+        ProfileMedia,
+
     }
 }

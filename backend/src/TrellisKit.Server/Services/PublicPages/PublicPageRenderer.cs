@@ -4,6 +4,7 @@ namespace TrellisKit.Server.Services.PublicPages
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
+    using System.Security.Cryptography;
     using System.Text;
     using System.Text.RegularExpressions;
     using HtmlPageBuilder;
@@ -14,7 +15,7 @@ namespace TrellisKit.Server.Services.PublicPages
     /// HTML document in the property's brand (logo, name, light and dark colors), with the title, meta description,
     /// canonical URL, Open Graph and Twitter card tags, JSON-LD, a header, the page's main content, a call to action into
     /// the member app, and a footer. Every value is HTML-encoded; JSON-LD is escaped so it cannot close its script element.
-    /// No scripts, no external styles. Thread safety: stateless; safe to call concurrently.
+    /// A hash-authorized theme script, no external styles. Thread safety: stateless; safe to call concurrently.
     /// </summary>
     public static class PublicPageRenderer
     {
@@ -23,6 +24,12 @@ namespace TrellisKit.Server.Services.PublicPages
         private static readonly Regex _Color = new Regex("^#[0-9A-Fa-f]{3,8}$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         #endregion
+
+        /// <summary>Static theme bootstrap, authorized by its exact CSP hash.</summary>
+        public const string ThemeScript = "(function(){var root=document.documentElement,mode;try{mode=localStorage.getItem('tk.theme')}catch(e){}if(mode!=='light'&&mode!=='dark')mode=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';root.dataset.theme=mode;document.addEventListener('DOMContentLoaded',function(){var button=document.getElementById('theme-toggle');if(!button)return;function update(){var dark=root.dataset.theme==='dark';button.textContent=dark?button.dataset.lightLabel:button.dataset.darkLabel;button.setAttribute('aria-label',button.textContent)}update();button.addEventListener('click',function(){root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';try{localStorage.setItem('tk.theme',root.dataset.theme)}catch(e){}update()})})})();";
+
+        /// <summary>CSP source expression for the theme bootstrap.</summary>
+        public static string ThemeScriptSource => "'sha256-" + Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(ThemeScript))) + "'";
 
         #region Public-Methods
 
@@ -48,6 +55,7 @@ namespace TrellisKit.Server.Services.PublicPages
                 header.Append(b.LinkHtml(mark, home, false, classId: "brand"));
                 header.Append(b.NavHtml(b.LinkText(PublicPageText.SignIn, brand.SignInUrl, false, classId: "nav-link") + b.LinkText(PublicPageText.Join(brand.Name), brand.JoinUrl, false, classId: "button"),
                     classId: "nav"));
+                header.Append("<button type=\"button\" id=\"theme-toggle\" class=\"button secondary\" data-light-label=\"" + Attr(PublicPageText.LightTheme) + "\" data-dark-label=\"" + Attr(PublicPageText.DarkTheme) + "\">" + Attr(PublicPageText.DarkTheme) + "</button>");
 
                 StringBuilder cta = new StringBuilder();
                 cta.Append(b.H2Text(PublicPageText.CtaHeading(brand.Name)));
@@ -84,6 +92,8 @@ namespace TrellisKit.Server.Services.PublicPages
                             Meta("twitter:card", String.IsNullOrWhiteSpace(page.ImageUrl) ? "summary" : "summary_large_image", false) + Meta("twitter:title", page.Title, false) +
                             Meta("twitter:description", page.Description, false) +
                             (String.IsNullOrWhiteSpace(page.ImageUrl) ? String.Empty : Meta("twitter:image", page.ImageUrl, false) + Meta("twitter:image:alt", page.ImageAlt, false)));
+                        h.AddRawElement("<script>" + ThemeScript + "</script>");
+                        h.AddRawElement("<script type=\"module\" src=\"/assets/public-page-media.js\"></script>");
                         h.WithStyle(Css(brand.Colors ?? new PropertyBrandColors()));
                         if (!String.IsNullOrWhiteSpace(page.JsonLd)) h.AddRawElement("<script type=\"application/ld+json\">" + ScriptSafe(page.JsonLd!) + "</script>");
                     })
@@ -158,7 +168,8 @@ namespace TrellisKit.Server.Services.PublicPages
         private static string Css(PropertyBrandColors colors)
         {
             return ":root{" + Vars(colors.Light, false) + "color-scheme:light dark}" +
-                "@media (prefers-color-scheme: dark){:root{" + Vars(colors.Dark, true) + "}}" +
+                "@media (prefers-color-scheme: dark){:root:not([data-theme=light]){" + Vars(colors.Dark, true) + "color-scheme:dark}}" +
+                ":root[data-theme=dark]{" + Vars(colors.Dark, true) + "color-scheme:dark}:root[data-theme=light]{color-scheme:light}" +
                 "*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif}" +
                 "a{color:var(--primary)}a:hover{color:var(--primary-hover)}img{max-width:100%;height:auto}" +
                 ".skip{position:absolute;left:-9999px}.skip:focus{left:16px;top:8px;background:var(--surface);padding:8px;z-index:2}" +
@@ -172,7 +183,7 @@ namespace TrellisKit.Server.Services.PublicPages
                 ".cover{width:100%;max-height:420px;object-fit:cover;border-radius:12px;margin:0 0 20px;display:block}" +
                 ".subtitle{color:var(--muted);margin:0}.eyebrow{color:var(--on-accent-soft);background:var(--accent-soft);display:inline-block;border-radius:999px;padding:2px 10px;font-size:.85rem;font-weight:600;margin:0 0 8px}" +
                 ".chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:8px 0}.chips li{background:var(--accent-soft);color:var(--on-accent-soft);border-radius:999px;padding:2px 12px;font-size:.9rem}" +
-                ".photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;list-style:none;padding:0;margin:0}.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px}" +
+                ".photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;list-style:none;padding:0;margin:0}.photos video{width:100%;aspect-ratio:4/3;object-fit:contain;background:#000;border-radius:8px}.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px}" +
                 "dl.facts{display:grid;grid-template-columns:minmax(120px,max-content) 1fr;gap:6px 16px;margin:0}dl.facts dt{color:var(--muted);font-weight:600}dl.facts dd{margin:0}" +
                 ".people{list-style:none;padding:0;margin:0;display:grid;gap:8px}.description{white-space:pre-line}" +
                 ".status{font-weight:700;color:var(--primary)}" +

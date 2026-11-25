@@ -284,7 +284,7 @@ export const stringTemplates = Object.freeze({
 
   publicPage: {
     heading: 'Public profile page',
-    body: 'A page anyone can find on the web with your name, photo, and bio. It is off until you turn it on.',
+    body: 'A page anyone can find on the web with your public profile information and uploaded photos and videos. It is off until you turn it on.',
     toggle: 'Show my public profile page',
     slug: 'Page address',
     slugHint: '3 to 80 lowercase letters, numbers, and single hyphens.',
@@ -525,7 +525,16 @@ export const stringTemplates = Object.freeze({
     signOut: 'Sign out'
   },
 
+  profileMedia: {
+    title: 'Multimedia',
+    addNote: 'Your photos and videos appear on your profile, including its public page when enabled. Share only what you have the right to share.',
+    addSubmit: 'Add to profile',
+    addHint: 'Share photos or videos on your profile',
+    removeOwnBody: 'Your photo or video is deleted from your profile.',
+  },
+
   appearance: {
+    useLight: 'Use light theme', useDark: 'Use dark theme',
     title: 'Appearance',
     body: 'Choose light or dark mode for this device, and the colors you see. Your palette is saved to your account, so it follows you to your other devices; every palette has light and dark.',
     mode: 'Mode',
@@ -1968,7 +1977,7 @@ export const stringTemplates = Object.freeze({
  */
 export const placesTemplates = Object.freeze({
     scheduleEditor: {
-      title: 'Weekly schedule', enable: 'Add a structured schedule', remove: 'Remove structured schedule',
+      title: 'Weekly schedule', enable: 'Add schedule', remove: 'Remove structured schedule',
       timeZone: 'Time zone', timeZoneHint: 'Use an IANA time zone, for example Pacific/Honolulu.',
       hours: 'Opening hours', sessions: '{sessions}', day: 'Day', start: 'Start time', end: 'End time',
       nextDay: 'Ends the next day', name: '{session} name', instructor: '{instructor} (optional)',
@@ -2130,12 +2139,12 @@ export const placesTemplates = Object.freeze({
     deletedAuthor: 'Former member'
   },
   media: {
-    title: 'Media',
+    title: 'Multimedia',
     empty: 'No photos or videos yet.',
     add: 'Add photos or videos',
     addHint: 'Share photos or videos of this {venueLower} with other members',
     addTitle: 'Add photos or videos',
-    addNote: 'Your photos and videos appear on this {venueLower} right away. Share only what you have the right to share.',
+    addNote: 'Your photos and videos appear on this {venueLower} right away, including its public page when available. Share only what you have the right to share.',
     addSubmit: 'Add to {venueLower}',
     adding: 'Adding...',
     nothingPicked: 'Choose at least one photo or video.',

@@ -288,7 +288,7 @@ describe('venue media', () => {
 
     await openVenue(venueFake({ mediaItems: items }), { siteExtra: { memberMedia: false } });
     expect(screen.queryByRole('button', { name: /^Add photos/ })).toBeNull();
-    expect(screen.queryByRole('heading', { name: 'Photos and videos' })).toBeNull();
+    expect(screen.getByRole('heading', { name: 'Multimedia' })).toBeInTheDocument();
   });
 
   it('hides adding when the viewer may not add media', async () => {
@@ -318,7 +318,7 @@ describe('venue media', () => {
       return <VenueMediaSection venue={venue} uploadOptions={{ put, sleep: async () => {} }} />;
     };
     await renderP4(<Harness />, { fetchImpl, site: site() });
-    await screen.findByRole('heading', { name: 'Photos and videos' });
+    await screen.findByRole('heading', { name: 'Multimedia' });
     expect(await screen.findByText('No photos or videos yet.')).toBeInTheDocument();
     await userEvent.upload(screen.getByLabelText(/^Add photos/), new File([new Uint8Array(10)], 'mat.png', { type: 'image/png' }));
     expect(await screen.findByText('Ready')).toBeInTheDocument();
@@ -327,5 +327,47 @@ describe('venue media', () => {
     expect(fake.state.mediaItems[0].media.id).toBe('med_up');
     expect(fake.calls.find((c) => c.method === 'POST' && c.path === '/venues/ven_1/media').body.mediaIds).toEqual(['med_up']);
     expect(await screen.findByRole('list', { name: '1 photo or video' })).toBeInTheDocument();
+  });
+});
+
+describe('profile multimedia', () => {
+  it('uploads photos to the profile endpoint and deletes the owned item', async () => {
+    const ready = makeFakeMedia('med_profile', { kind: 'Image', status: 'Ready' });
+    const items = [];
+    const { fetchImpl, calls } = phase4Fetch([], makeMe(), (call) => {
+      if (call.path === '/api/v1/media/uploads') return json({ media: { ...ready, status: 'Uploading' }, upload: { mode: 'Single', single: { method: 'PUT', url: 'https://store.test/profile', headers: {} }, multipart: null, uploadedParts: [] } }, 201);
+      if (call.path.endsWith('/med_profile/complete')) return json(ready, 202);
+      if (call.path === '/api/v1/media/enumerate') return json({ objects: [ready], endOfResults: true });
+      if (call.path.endsWith('/users/usr_1/media/enumerate')) return json({ objects: items, endOfResults: true });
+      if (call.path.endsWith('/users/usr_1/media') && call.method === 'POST') {
+        items.push({ id: 'pmd_1', media: ready, uploader: sam, viewer: { isUploader: true, canRemove: true } });
+        return json({ objects: items }, 201);
+      }
+      if (call.path.endsWith('/users/usr_1/media/pmd_1') && call.method === 'DELETE') return new Response(null, { status: 204 });
+      return undefined;
+    });
+    await renderP4(<VenueMediaSection profile venue={{ id: 'usr_1', viewer: { canAddMedia: true } }} uploadOptions={{ put: async () => ({ etag: 'e1' }), sleep: async () => {} }} />, { fetchImpl, site: site() });
+    await userEvent.upload(screen.getByLabelText(/^Add photos/), new File([new Uint8Array(10)], 'photo.png', { type: 'image/png' }));
+    await screen.findByText('Ready');
+    await userEvent.click(screen.getByRole('button', { name: 'Add to profile' }));
+    await screen.findByTestId('venue-media-pmd_1');
+    expect(calls.some((c) => c.path.endsWith('/users/usr_1/media') && c.body.mediaIds[0] === 'med_profile')).toBe(true);
+    await userEvent.click(screen.getByRole('button', { name: 'Remove photo 1' }));
+    await userEvent.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Delete' }));
+    await waitFor(() => expect(screen.queryByTestId('venue-media-pmd_1')).toBeNull());
+  });
+
+  it('opens a public-page report link for the exact item and submits ProfileMedia', async () => {
+    const { fetchImpl, calls } = phase4Fetch([], makeMe(), (call) => {
+      if (call.path.endsWith('/media/enumerate')) return json({ objects: [], endOfResults: true });
+      if (call.path === '/api/v1/reports') return json({ id: 'rpt_profile' }, 201);
+      return undefined;
+    });
+    await renderP4(<VenueMediaSection profile venue={{ id: 'usr_2', viewer: { canAddMedia: false } }} />, { fetchImpl, site: site(), path: '/test?reportMedia=pmd_old' });
+    expect(screen.queryByRole('button', { name: 'Add to profile' })).toBeNull();
+    const dialog = screen.getByRole('dialog');
+    await userEvent.click(within(dialog).getByLabelText(/Spam/));
+    await userEvent.click(within(dialog).getByRole('button', { name: /Send report/ }));
+    await waitFor(() => expect(calls.find((c) => c.path === '/api/v1/reports')?.body).toMatchObject({ targetType: 'ProfileMedia', targetId: 'pmd_old', reason: 'Spam' }));
   });
 });

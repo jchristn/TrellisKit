@@ -29,7 +29,7 @@ namespace TrellisKit.Server.Services.PublicPages
     /// the server-rendered pages, sitemap, and robots.txt that crawlers read.
     /// Thread safety: safe to call concurrently.
     /// </summary>
-    public class PublicPageService
+    public partial class PublicPageService
     {
         #region Public-Members
 
@@ -527,7 +527,7 @@ namespace TrellisKit.Server.Services.PublicPages
                 page.ImageUrl = brand.LogoUrl ?? String.Empty;
                 page.ImageAlt = brand.Name;
             }
-            return new PublicPageResult { StatusCode = status, Body = PublicPageRenderer.Render(brand, page), CacheControl = status == 200 ? "public, max-age=300" : "no-cache" };
+            return new PublicPageResult { StatusCode = status, Body = PublicPageRenderer.Render(brand, page), CacheControl = "no-cache" };
         }
 
         private PublicPageResult NotFound()
@@ -700,6 +700,8 @@ namespace TrellisKit.Server.Services.PublicPages
                 }
                 main.Append("</ul></section>");
             }
+
+            main.Append(await GalleryHtmlAsync(TargetTypeEnum.VenueMedia, venue.Id, token).ConfigureAwait(false));
 
             Dictionary<string, object?> ld = new Dictionary<string, object?>
             {
@@ -884,6 +886,8 @@ namespace TrellisKit.Server.Services.PublicPages
             if (!String.IsNullOrWhiteSpace(view.Bio))
                 main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(PublicPageText.About)).Append("</h2><p class=\"description\">").Append(PublicPageRenderer.Attr(view.Bio)).Append("</p></section>");
             if (facts.Count > 0) main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(PublicPageText.Details)).Append("</h2>").Append(Facts(facts)).Append("</section>");
+
+            main.Append(await GalleryHtmlAsync(TargetTypeEnum.ProfileMedia, user.Id, token).ConfigureAwait(false));
 
             Dictionary<string, object?> person = new Dictionary<string, object?>
             {

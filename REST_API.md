@@ -2803,6 +2803,22 @@ Anonymous, in every access model, only while `directory.publicListingsEnabled` i
 | `GET /api/v1/public/venues/{id}` | | `Venue` | `404`, `429` |
 | `POST /api/v1/public/directory/map/enumerate` | as the member map | `EnumerationResult<MapFeature>` | `400`, `404`, `429` |
 
+## Profile multimedia
+
+Profile galleries use the existing image/video upload pipeline (`POST /api/v1/media/uploads`, upload bytes, complete), then attach the uploaded IDs. Only the profile owner may attach or delete. The normal members access policy, posting/media/video permissions, mutes, blocks, and property isolation apply. Documents and another member's uploads are refused. Attachment is atomic, including concurrent requests for the same upload.
+
+| Route | Body / query | Result |
+|---|---|---|
+| `POST /api/v1/users/{id}/media/enumerate` | `EnumerationQuery`; `filters.kind`: `Image` or `Video`, labels and tags | `EnumerationResult<ProfileMediaItem>`; bounded pages, newest first |
+| `GET /api/v1/users/{id}/media` | Same query in GET form | Same result |
+| `POST /api/v1/users/{id}/media` | `{ mediaIds: [1..10 distinct own uploads], labels?, tags? }` | `201 { objects: ProfileMediaItem[] }`; `403` permissions, `409 MediaNotAttachable` |
+| `DELETE /api/v1/users/{id}/media/{itemId}` | Owner only | `204`; purges the media; `403` other owner, `404` absent |
+| `GET /api/v1/media/gallery/{id}/{file}` | Anonymous; a processed image, poster, MP4, HLS playlist or segment | Bytes, `206` for Range; `404` unless the item and its parent page are currently public; `Cache-Control: no-store` |
+
+`ProfileMediaItem`: `{ id, profileUserId, media, uploader, moderationState, labels, tags, viewer: { isUploader, canRemove, canReport }, createdUtc, updatedUtc }`. IDs use `pmd_`. Report with `POST /api/v1/reports` and `{ targetType: "ProfileMedia", targetId, reason, details? }`. Reports enter the Feed moderation scope and support the existing auto-hide, Hide, Unhide, Remove, Restore and Dismiss actions. Feed moderators may see moderated gallery items; other readers see live items. Account exports include `profileMedia`; account closure purges these uploads.
+
+Venue and profile public pages include up to 24 live uploaded photos/videos and per-item report links into the signed-in app. The profile gallery is public only while its owner's public profile page is enabled and the account is active. Venue galleries follow the venue public-page rules and member-media setting. Public file requests recheck the page, account and item's visibility each time, including HLS segments; no permanent public copies or originals are exposed. Local and S3 storage use the same checked route. HLS playback uses native support or the bundled web player. Public pages provide a persisted light/dark switch using the same `tk.theme` preference as the website.
+
 ## Public landing pages
 
 Server-rendered, crawlable pages for venues, events, and opt-in member profiles (design record: `docs/PHASE4_CONTRACT.md` section 18). The website origin serves them at `/<path word>/<slug>`, where the path words come from the property's `publicPages` section (`docs/TRELLISKIT.md` section 2.2; engine defaults `venues`, `events`, `profiles`; `GET /api/v1/property` returns `publicPages { enabled, venuesPath, eventsPath, profilesPath }`). The website's nginx maps the public paths onto the fixed backend prefix `/api/v1/public/pages`: `/sitemap.xml`, `/sitemap-{venues|events|profiles}-{n}.xml`, `/robots.txt`, and every two-segment path that is not a file and does not start with `/app`, `/admin`, `/api`, `/assets`, `/embed`, or `/platform` (the backend answers `X-Accel-Redirect: /spa.html` for paths that are not page paths, so the website keeps its own routes).

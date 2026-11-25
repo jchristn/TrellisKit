@@ -112,6 +112,7 @@ namespace Test.Shared
                     DirectoryAccessSuite.Build(),
                     PublicPageSuite.Build(),
                     VenueContributionSuite.Build(),
+                    ProfileMediaSuite.Build(),
                     EngagementSuite.Build(),
                     Phase4StaffSuite.Build(),
                     EventSuite.Build(),

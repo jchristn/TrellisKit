@@ -393,10 +393,10 @@ namespace TrellisKit.Server.Services
         /// </summary>
         public TrellisKit.Server.Services.PublicPages.PublicPageService PublicPages { get; }
 
-        /// <summary>
-        /// Phase 4 content target providers (comments, reactions, reports, moderation, and search for Venue,
-        /// Instructor, Event, Series, and Lesson). Modules register during construction.
-        /// </summary>
+        /// <summary>Profile photo/video galleries.</summary>
+        public ProfileMediaService ProfileMedia { get; }
+
+        /// <summary>Registry of content visibility and moderation providers.</summary>
         public ContentTargetRegistry ContentTargets { get; } = new ContentTargetRegistry();
 
         /// <summary>
@@ -567,6 +567,8 @@ namespace TrellisKit.Server.Services
             Library.Attach();
             Events.Attach();
             Directory.Attach();
+            ProfileMedia = new ProfileMediaService(this);
+            ProfileMedia.Attach();
             Ideas = new IdeaModule(this);
             Ideas.Attach();
             Support = new SupportModule(this);

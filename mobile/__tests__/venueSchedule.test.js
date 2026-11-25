@@ -19,7 +19,7 @@ test('native display shows structured hours and sessions', async () => {
 test('native editor adds opening hours and sessions', async () => {
   function Harness() { const [value, set] = useState(null); return <VenueScheduleEditor value={value} onChange={set} t={t} />; }
   await render(<Harness />);
-  await fireEvent.press(screen.getByText('Add a structured schedule'));
+  await fireEvent.press(screen.getByText('Add schedule'));
   await fireEvent.press(screen.getByText('Add opening hours'));
   await fireEvent.press(screen.getByText('Add a session'));
   expect(screen.getAllByLabelText('Start time')).toHaveLength(2);
@@ -32,7 +32,7 @@ test('schedule labels use the property session and instructor terms', async () =
   const terms = directoryStrings({ ...property, directory: { ...(property.directory || {}), sessionLabel: 'Meeting', sessionLabelPlural: 'Meetings', instructorLabel: 'Host', instructorLabelPlural: 'Hosts' } });
   function Harness() { const [value, set] = useState(null); return <VenueScheduleEditor value={value} onChange={set} t={terms} />; }
   await render(<Harness />);
-  await fireEvent.press(screen.getByText('Add a structured schedule'));
+  await fireEvent.press(screen.getByText('Add schedule'));
   expect(screen.getByText('Meetings')).toBeTruthy();
   await fireEvent.press(screen.getByText('Add a meeting'));
   expect(screen.getByLabelText('Meeting name')).toBeTruthy();

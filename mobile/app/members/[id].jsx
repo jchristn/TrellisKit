@@ -1,3 +1,5 @@
+import ProfileMedia from '../../src/components/profile/ProfileMedia';
+import ThemeToggle from '../../src/components/ThemeToggle';
 import { canUseMessaging, propertyFeatureEnabled } from '@trelliskit/shared';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -40,7 +42,7 @@ function MemberProfileScreenContent() {
   const { api, user } = useAuth();
   const router = useRouter();
   const property = useProperty();
-  const { id } = useLocalSearchParams();
+  const { id, reportMedia } = useLocalSearchParams();
   const memberId = Array.isArray(id) ? id[0] : id;
   const [profile, setProfile] = useState(null);
   const [status, setStatus] = useState('loading');
@@ -113,6 +115,7 @@ function MemberProfileScreenContent() {
 
   return (
     <Screen contentStyle={{ gap: theme.spacing.lg }} testID="screen-member">
+      <ThemeToggle />
       <Card>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.lg }}>
           <Avatar uri={profile.avatarUrl ? api.url(profile.avatarUrl) : null} token={api.accessToken} name={profile.displayName} />
@@ -136,6 +139,7 @@ function MemberProfileScreenContent() {
         <ProfileFieldList profile={values} fields={fields} testID="member-fields" />
       </Card>
 
+      {!blocked ? <ProfileMedia user={profile} initialReportId={Array.isArray(reportMedia) ? reportMedia[0] : reportMedia} /> : null}
       {isSelf ? <AppText color="textMuted">{t.you}</AppText> : null}
       {!isSelf && blocked ? <Notice tone="info">{t.blockedNote}</Notice> : null}
       <Notice tone={blocker.error ? 'error' : 'success'} testID="member-message">

@@ -21,7 +21,7 @@ describe('structured schedules', () => {
   it('lets an editor add and remove opening hours and sessions', async () => {
     function Harness() { const [value, set] = useState(null); return <VenueScheduleEditor value={value} onChange={set} />; }
     render(<Harness />);
-    await userEvent.click(screen.getByRole('button', { name: 'Add a structured schedule' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Add schedule' }));
     await userEvent.type(screen.getByLabelText('Time zone'), 'Pacific/Honolulu');
     await userEvent.click(screen.getByRole('button', { name: 'Add opening hours' }));
     await userEvent.click(screen.getByRole('button', { name: 'Add a session' }));
@@ -36,7 +36,7 @@ describe('structured schedules', () => {
     function Harness() { const [value, set] = useState(null); return <VenueScheduleEditor value={value} onChange={set} />; }
     render(<PropertyProvider site={site}><VenueSchedule schedule={schedule} /><Harness /></PropertyProvider>);
     expect(screen.getByRole('heading', { name: 'Meetings' })).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Add a structured schedule' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Add schedule' }));
     await userEvent.click(screen.getByRole('button', { name: 'Add a meeting' }));
     expect(screen.getByLabelText('Meeting name')).toBeInTheDocument();
     expect(screen.getByLabelText('Host (optional)')).toBeInTheDocument();

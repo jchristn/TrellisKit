@@ -1003,7 +1003,7 @@ const strings = {
 
   safety: {
     reportTitle: (what) => 'Report ' + what,
-    reportWhat: { FeedPost: 'post', Comment: 'comment', User: 'member', Thread: 'thread', AssistantMessage: 'assistant reply', Message: 'message', Conversation: 'conversation', Idea: 'idea', VenueReview: 'review', VenueMedia: 'photo or video' },
+    reportWhat: { FeedPost: 'post', Comment: 'comment', User: 'member', Thread: 'thread', AssistantMessage: 'assistant reply', Message: 'message', Conversation: 'conversation', Idea: 'idea', VenueReview: 'review', VenueMedia: 'photo or video', ProfileMedia: 'photo or video' },
     reasonLabel: 'Why are you reporting this?',
     detailsLabel: 'Details',
     detailsOptional: 'Details (optional)',
@@ -1060,6 +1060,12 @@ const strings = {
     blockedError: 'Your blocked list could not be loaded.'
   },
 
+  profileMedia: {
+    title: 'Multimedia',
+    addIntro: 'Share photos and videos on your profile. They are public when your public profile page is enabled. Only upload media you have the right to share.',
+    submit: 'Add to profile',
+    deleteBody: 'Your photo or video will be deleted from your profile.'
+  },
   memberProfile: {
     title: 'Member',
     notFound: 'This member is no longer available.',
@@ -1693,7 +1699,7 @@ const strings = {
     title: '{venues}',
     summary: 'Find {venuesLower} near you.',
     scheduleEditor: {
-      title: 'Weekly schedule', enable: 'Add a structured schedule', remove: 'Remove structured schedule',
+      title: 'Weekly schedule', enable: 'Add schedule', remove: 'Remove structured schedule',
       timeZone: 'Time zone', timeZoneHint: 'Use an IANA time zone, for example Pacific/Honolulu.',
       hours: 'Opening hours', sessions: '{sessions}', day: 'Day', start: 'Start time', end: 'End time',
       nextDay: 'Ends the next day', name: '{session} name', instructor: '{instructor} (optional)',
@@ -1870,7 +1876,8 @@ const strings = {
     },
     /** Venue media: staff photos first, then member photos and videos (section 3.13). */
     media: {
-      title: 'Photos and videos',
+      title: 'Multimedia',
+      kind: 'Media type', allKinds: 'All photos and videos', images: 'Photos', videos: 'Videos',
       galleryLabel: (n) => (n === 1 ? '1 photo or video' : n + ' photos and videos'),
       openItem: (kind, n, total) => 'Open ' + (kind === 'Video' ? 'video ' : 'photo ') + n + ' of ' + total,
       viewerTitle: (kind, n, total) => (kind === 'Video' ? 'Video ' : 'Photo ') + n + ' of ' + total,
@@ -1880,7 +1887,7 @@ const strings = {
       empty: 'No photos or videos yet.',
       add: 'Add photos or videos',
       addImages: 'Add photos',
-      addIntro: 'What you add appears on this {venueLower} right away. Only add photos and videos you have the right to share, and ask before showing other people.',
+      addIntro: 'What you add appears on this {venueLower} right away and is public when its public page is available. Only add photos and videos you have the right to share, and ask before showing other people.',
       submit: 'Add to this {venueLower}',
       submitting: 'Adding...',
       added: (n) => (n === 1 ? 'Added 1 photo or video.' : 'Added ' + n + ' photos and videos.'),
@@ -3613,7 +3620,7 @@ const strings = {
       status: 'Status',
       statusOptions: { Open: 'Open', Resolved: 'Resolved' },
       targetType: 'Target',
-      targetTypes: { FeedPost: 'Feed post', Comment: 'Comment', User: 'Member', Thread: 'Thread', AssistantMessage: 'Assistant reply', Message: 'Direct message', Conversation: 'Conversation', Idea: 'Idea' },
+      targetTypes: { FeedPost: 'Feed post', Comment: 'Comment', User: 'Member', Thread: 'Thread', AssistantMessage: 'Assistant reply', Message: 'Direct message', Conversation: 'Conversation', Idea: 'Idea', ProfileMedia: 'Profile photo or video', VenueMedia: 'Venue photo or video' },
       messageSnapshot: {
         title: 'Reported messages (snapshot)',
         note: 'A frozen copy taken when the report was filed. Staff tools never open the conversation itself; viewing this snapshot is audited.',
@@ -5523,7 +5530,7 @@ const strings = {
     clients: { Web: 'Web', Mobile: 'Mobile', Api: 'API', System: 'System' },
     targetTypes: {
       FeedPost: 'Post', Comment: 'Comment', Thread: 'Thread', PollOption: 'Poll option', Message: 'Message', VenueReview: 'Review', VenueReviewReply: 'Review reply', User: 'Profile',
-      Media: 'Media', DirectorySubmission: 'Listing submission', VenueMedia: 'Venue media', Event: 'Event', Lesson: 'Lesson', Idea: 'Idea', Ticket: 'Support ticket',
+      Media: 'Media', DirectorySubmission: 'Listing submission', VenueMedia: 'Venue media', ProfileMedia: 'Profile media', Event: 'Event', Lesson: 'Lesson', Idea: 'Idea', Ticket: 'Support ticket',
       TicketMessage: 'Support reply', AssistantMessage: 'Assistant message'
     },
     actions: { Dismiss: 'Dismiss', Hide: 'Hide', Remove: 'Remove', Warn: 'Warn', Mute: 'Mute', Ban: 'Ban' },
@@ -6604,7 +6611,7 @@ const strings = {
     },
     profile: {
       title: 'Public profile page',
-      intro: 'A page about you that anyone can open, even without a {name} account. It shows only your public profile information.',
+      intro: 'A page about you that anyone can open, even without a {name} account. It shows your public profile information and uploaded photos and videos.',
       toggle: 'Show my public profile page',
       toggleHint: 'Off by default. Turn it off at any time to take the page down.',
       offNote: 'The page is off. Turn it on and save to publish it.',
@@ -6615,7 +6622,7 @@ const strings = {
     },
     admin: {
       title: 'Public profile page',
-      intro: 'The member\'s opt-in public page. It shows only public profile information.',
+      intro: 'The member\'s opt-in public page. It shows public profile information and uploaded photos and videos.',
       toggle: 'Public page on',
       toggleHint: 'Members turn this on themselves; change it only on request.',
       saved: 'Public page saved.'

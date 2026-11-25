@@ -11,6 +11,7 @@ namespace TrellisKit.Server.Routes
     using TrellisKit.Core.Enumeration;
     using TrellisKit.Core.Exceptions;
     using TrellisKit.Core.Helpers;
+    using TrellisKit.Core.Models;
     using TrellisKit.Core.Integrations.Models;
     using TrellisKit.Core.Requests;
     using TrellisKit.Core.Responses;
@@ -76,6 +77,9 @@ namespace TrellisKit.Server.Routes
                     .PathParam("id", "Media identifier").PathParam("partNumber", "One-based part number").QueryParam("exp", "Unix expiry").QueryParam("sig", "Signature")
                     .Resp(200, "Stored; ETag header carries the quoted MD5").Resp(403, "InvalidSignature").Resp(404, "NotFound").Resp(410, "UploadExpired").Resp(413, "TooLarge"));
 
+            pre.Parameter.Add(HttpMethod.GET, _Base + "/gallery/{id}/{file}", GetGalleryFileAsync, RouteHelper.HandleExceptionAsync,
+                openApiMetadata: Doc("Read a public gallery output", _Tag, "Anonymous. Re-checks the public venue/profile page and live item on every request. Processed outputs only, no-store, Range supported in Local and S3 storage.")
+                    .PathParam("id", "Media identifier").PathParam("file", "Flat output file name").File("application/octet-stream", "Media bytes").Resp(206, "Partial content").Resp(404, "NotFound").Resp(416, "RangeNotSatisfiable"));
             pre.Parameter.Add(HttpMethod.GET, _Base + "/files/public/{id}/{file}", GetPublicFileAsync, RouteHelper.HandleExceptionAsync,
                 openApiMetadata: Doc("Read a public media file", _Tag, "Public copies of media on Public posts. Anonymous; Local mode only (production serves /public/media/ and /public/video/ from the media CDN). Supports Range.")
                     .PathParam("id", "Media identifier").PathParam("file", "Flat file name").File("application/octet-stream", "Media bytes").Resp(206, "Partial content").Resp(404, "NotFound").Resp(416, "RangeNotSatisfiable"));
@@ -265,14 +269,28 @@ namespace TrellisKit.Server.Routes
             await ServeAsync(ctx, _Directory.For(ctx).Media.ResolveLocalFile(RouteHelper.Param(ctx, "id"), file, false), file).ConfigureAwait(false);
         }
 
+        private async Task GetGalleryFileAsync(HttpContextBase ctx)
+        {
+            ApplicationServices services = _Directory.For(ctx);
+            MediaAttachment? item = await services.Database.Media.ReadAsync(RouteHelper.Param(ctx, "id"), ctx.Token).ConfigureAwait(false);
+            if (item == null || !await services.PublicPages.GalleryMediaVisibleAsync(item, ctx.Token).ConfigureAwait(false)) throw ApiErrorException.NotFound("File");
+            PrivateMediaFile resolved = await services.Media.ResolveGalleryFileAsync(item.Id, RouteHelper.Param(ctx, "file"), ctx.Token).ConfigureAwait(false);
+            await ServeObjectAsync(ctx, services.Media, resolved, "no-store").ConfigureAwait(false);
+        }
+
         private async Task GetPrivateFileAsync(HttpContextBase ctx)
         {
             MediaService media = _Directory.For(ctx).Media;
             PrivateMediaFile resolved = await media.ResolvePrivateFileAsync(RouteHelper.Param(ctx, "token"), RouteHelper.Param(ctx, "file"), ctx.Token).ConfigureAwait(false);
-            long length = resolved.SizeBytes;
             long maxAge = Math.Max(0, Math.Min(3600, (long)(resolved.ExpiresUtc - DateTime.UtcNow).TotalSeconds));
+            await ServeObjectAsync(ctx, media, resolved, "private, max-age=" + maxAge.ToString(CultureInfo.InvariantCulture)).ConfigureAwait(false);
+        }
+
+        private static async Task ServeObjectAsync(HttpContextBase ctx, MediaService media, PrivateMediaFile resolved, string cacheControl)
+        {
+            long length = resolved.SizeBytes;
             ctx.Response.Headers["Accept-Ranges"] = "bytes";
-            ctx.Response.Headers["Cache-Control"] = "private, max-age=" + maxAge.ToString(CultureInfo.InvariantCulture);
+            ctx.Response.Headers["Cache-Control"] = cacheControl;
             ctx.Response.Headers["X-Content-Type-Options"] = "nosniff";
             ctx.Response.Headers["Referrer-Policy"] = "no-referrer";
             ctx.Response.ContentType = resolved.ContentType;

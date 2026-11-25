@@ -46,7 +46,7 @@ describe('member public profile page settings', () => {
     const section = await screen.findByTestId('account-public-page');
     const toggle = await within(section).findByRole('switch', { name: /Show my public profile page/ });
     expect(toggle).not.toBeChecked();
-    expect(within(section).getByText(/It shows only your public profile information/)).toBeInTheDocument();
+    expect(within(section).getByText(/It shows your public profile information and uploaded photos and videos/)).toBeInTheDocument();
     const input = within(section).getByLabelText('Page address');
     expect(input).toHaveValue('sam-rivera');
     expect(within(section).getByText(window.location.origin + '/profiles/sam-rivera')).toBeInTheDocument();

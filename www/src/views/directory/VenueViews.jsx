@@ -1,3 +1,4 @@
+import ThemeToggle from '../../components/ThemeToggle.jsx';
 import { useCallback, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { directoryConfig, formatAddress, isLockedItem, lockedRequirement, programLabels } from '@trelliskit/shared';
@@ -133,6 +134,7 @@ export function VenueView() {
 
   return (
     <div className="member-view venue-view">
+      <div className="row-actions"><ThemeToggle /></div>
       {back}
       <header className="page-header">
         <div className="page-header-text">

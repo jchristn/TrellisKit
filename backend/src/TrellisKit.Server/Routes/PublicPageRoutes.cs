@@ -112,7 +112,7 @@ namespace TrellisKit.Server.Routes
             if (result.Location != null) ctx.Response.Headers["Location"] = result.Location;
             if (result.ContentType.StartsWith("text/html", StringComparison.Ordinal))
             {
-                ctx.Response.Headers["Content-Security-Policy"] = "default-src 'none'; img-src https: http: data:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
+                ctx.Response.Headers["Content-Security-Policy"] = "default-src 'none'; script-src 'self' " + PublicPageRenderer.ThemeScriptSource + "; connect-src 'self'; media-src 'self' blob:; worker-src blob:; img-src https: http: data:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
                 ctx.Response.Headers["Vary"] = "Host, X-TK-Property";
             }
             await ctx.Response.Send(result.Body ?? String.Empty, ctx.Token).ConfigureAwait(false);

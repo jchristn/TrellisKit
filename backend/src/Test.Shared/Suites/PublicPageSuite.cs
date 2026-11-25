@@ -423,7 +423,7 @@ namespace Test.Shared.Suites
             Check.True(!html.Contains("<script>alert(1)", StringComparison.Ordinal), "No injected script element");
             Check.True(!html.Contains("<img src=x", StringComparison.Ordinal), "No injected image element");
             Check.True(html.Contains("&lt;/script&gt;&lt;script&gt;alert(1)&lt;/script&gt; &quot;Quote&quot; &amp; Co", StringComparison.Ordinal), "Text is HTML-encoded");
-            Check.Equal(1, Regex.Matches(html, "</script>", RegexOptions.CultureInvariant).Count, "Only the JSON-LD script closes a script element");
+            Check.Equal(3, Regex.Matches(html, "</script>", RegexOptions.CultureInvariant).Count, "Only the static theme, gallery player and JSON-LD scripts close elements");
             JsonElement ld = JsonLd(html);
             Check.True(Api.Str(ld, "name").Contains("</script>", StringComparison.Ordinal), "JSON-LD keeps the value after decoding");
             Check.True(html.Contains("\\u003c/script\\u003e", StringComparison.OrdinalIgnoreCase), "JSON-LD escapes angle brackets");

@@ -250,7 +250,6 @@ function DirectoryView() {
           </>
         )}
       />
-      {config.listingNotice && <p className="muted small">{config.listingNotice}</p>}
       {mapFailed && <Banner tone="info">{v.mapFailed}</Banner>}
       {mapFirst ? (
         <VenueMapSearch client={client} property={property} meta={meta} setMeta={setMeta} filters={filters} write={write} toggle={toggle} programs={programs} onFailed={() => setMapFailed(true)} onListOnly={() => write({ map: 'off' })} />
@@ -282,6 +281,7 @@ function DirectoryView() {
           </section>
         </>
       )}
+      {config.listingNotice && <p className="muted small">{config.listingNotice}</p>}
     </div>
   );
 }

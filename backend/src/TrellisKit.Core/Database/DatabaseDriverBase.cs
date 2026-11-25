@@ -267,9 +267,10 @@ namespace TrellisKit.Core.Database
         /// </summary>
         public IEventMethods Events { get; protected internal set; } = null!;
 
-        /// <summary>
-        /// Directory data access (Phase 4): venues, instructors, programs, submissions, and the geocoder cache.
-        /// </summary>
+        /// <summary>Profile gallery storage, bound to the current property.</summary>
+        public IProfileMediaMethods ProfileMedia { get; protected internal set; } = null!;
+
+        /// <summary>Directory listing storage, bound to the property.</summary>
         public IDirectoryMethods DirectoryListings { get; protected internal set; } = null!;
 
         /// <summary>

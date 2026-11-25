@@ -55,7 +55,9 @@ export default defineConfig(({ isSsrBuild }) => ({
     outDir: 'dist',
     sourcemap: true,
     rollupOptions: isSsrBuild ? {} : {
+      input: { main: path.resolve(import.meta.dirname, 'index.html'), publicPageMedia: path.resolve(import.meta.dirname, 'src/publicPageMedia.js') },
       output: {
+        entryFileNames: (chunk) => chunk.name === 'publicPageMedia' ? 'assets/public-page-media.js' : 'assets/[name]-[hash].js',
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-dom/client', 'react-router-dom']
         }

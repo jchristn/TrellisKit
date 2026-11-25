@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "0d6b023b7c4b2f7b98c00d747f26f5ff4ff6fa9df30c2e4bc18502948256bed0",
+ "sha256": "2534da6a827226157793f7115efbbeffc32574a11aa6968d37677ceaa270f6df",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -997,6 +997,20 @@
    "key": "mobile.appearance.title",
    "client": "mobile",
    "default": "Appearance",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.appearance.useDark",
+   "client": "mobile",
+   "default": "Use dark theme",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.appearance.useLight",
+   "client": "mobile",
+   "default": "Use light theme",
    "tokens": [],
    "maxLength": 200
   },
@@ -9800,11 +9814,11 @@
   {
    "key": "mobile.places.media.addNote",
    "client": "mobile",
-   "default": "Your photos and videos appear on this {venueLower} right away. Share only what you have the right to share.",
+   "default": "Your photos and videos appear on this {venueLower} right away, including its public page when available. Share only what you have the right to share.",
    "tokens": [
     "venueLower"
    ],
-   "maxLength": 214
+   "maxLength": 298
   },
   {
    "key": "mobile.places.media.addSubmit",
@@ -9964,7 +9978,7 @@
   {
    "key": "mobile.places.media.title",
    "client": "mobile",
-   "default": "Media",
+   "default": "Multimedia",
    "tokens": [],
    "maxLength": 200
   },
@@ -10496,7 +10510,7 @@
   {
    "key": "mobile.places.scheduleEditor.enable",
    "client": "mobile",
-   "default": "Add a structured schedule",
+   "default": "Add schedule",
    "tokens": [],
    "maxLength": 200
   },
@@ -11841,6 +11855,41 @@
    "maxLength": 200
   },
   {
+   "key": "mobile.profileMedia.addHint",
+   "client": "mobile",
+   "default": "Share photos or videos on your profile",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.profileMedia.addNote",
+   "client": "mobile",
+   "default": "Your photos and videos appear on your profile, including its public page when enabled. Share only what you have the right to share.",
+   "tokens": [],
+   "maxLength": 262
+  },
+  {
+   "key": "mobile.profileMedia.addSubmit",
+   "client": "mobile",
+   "default": "Add to profile",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.profileMedia.removeOwnBody",
+   "client": "mobile",
+   "default": "Your photo or video is deleted from your profile.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.profileMedia.title",
+   "client": "mobile",
+   "default": "Multimedia",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "mobile.profileSetup.body",
    "client": "mobile",
    "default": "Tell the community about yourself. You can change this later.",
@@ -11906,9 +11955,9 @@
   {
    "key": "mobile.publicPage.body",
    "client": "mobile",
-   "default": "A page anyone can find on the web with your name, photo, and bio. It is off until you turn it on.",
+   "default": "A page anyone can find on the web with your public profile information and uploaded photos and videos. It is off until you turn it on.",
    "tokens": [],
-   "maxLength": 200
+   "maxLength": 268
   },
   {
    "key": "mobile.publicPage.checkError",
@@ -27976,6 +28025,13 @@
    "maxLength": 200
   },
   {
+   "key": "web.admin.moderation.targetTypes.ProfileMedia",
+   "client": "web",
+   "default": "Profile photo or video",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.admin.moderation.targetTypes.Thread",
    "client": "web",
    "default": "Thread",
@@ -27986,6 +28042,13 @@
    "key": "web.admin.moderation.targetTypes.User",
    "client": "web",
    "default": "Member",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.admin.moderation.targetTypes.VenueMedia",
+   "client": "web",
+   "default": "Venue photo or video",
    "tokens": [],
    "maxLength": 200
   },
@@ -42161,6 +42224,13 @@
    "maxLength": 200
   },
   {
+   "key": "web.contentReview.targetTypes.ProfileMedia",
+   "client": "web",
+   "default": "Profile media",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.contentReview.targetTypes.Thread",
    "client": "web",
    "default": "Thread",
@@ -55298,6 +55368,34 @@
    "maxLength": 200
   },
   {
+   "key": "web.profileMedia.addIntro",
+   "client": "web",
+   "default": "Share photos and videos on your profile. They are public when your public profile page is enabled. Only upload media you have the right to share.",
+   "tokens": [],
+   "maxLength": 290
+  },
+  {
+   "key": "web.profileMedia.deleteBody",
+   "client": "web",
+   "default": "Your photo or video will be deleted from your profile.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.profileMedia.submit",
+   "client": "web",
+   "default": "Add to profile",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.profileMedia.title",
+   "client": "web",
+   "default": "Multimedia",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.publicCatalog.events.join",
    "client": "web",
    "default": "Join to RSVP",
@@ -55531,7 +55629,7 @@
   {
    "key": "web.publicPages.admin.intro",
    "client": "web",
-   "default": "The member's opt-in public page. It shows only public profile information.",
+   "default": "The member's opt-in public page. It shows public profile information and uploaded photos and videos.",
    "tokens": [],
    "maxLength": 200
   },
@@ -55650,11 +55748,11 @@
   {
    "key": "web.publicPages.profile.intro",
    "client": "web",
-   "default": "A page about you that anyone can open, even without a {name} account. It shows only your public profile information.",
+   "default": "A page about you that anyone can open, even without a {name} account. It shows your public profile information and uploaded photos and videos.",
    "tokens": [
     "name"
    ],
-   "maxLength": 232
+   "maxLength": 284
   },
   {
    "key": "web.publicPages.profile.loadError",
@@ -56274,6 +56372,13 @@
    "key": "web.safety.reportWhat.Message",
    "client": "web",
    "default": "message",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.safety.reportWhat.ProfileMedia",
+   "client": "web",
+   "default": "photo or video",
    "tokens": [],
    "maxLength": 200
   },
@@ -59475,11 +59580,18 @@
   {
    "key": "web.venues.media.addIntro",
    "client": "web",
-   "default": "What you add appears on this {venueLower} right away. Only add photos and videos you have the right to share, and ask before showing other people.",
+   "default": "What you add appears on this {venueLower} right away and is public when its public page is available. Only add photos and videos you have the right to share, and ask before showing other people.",
    "tokens": [
     "venueLower"
    ],
-   "maxLength": 292
+   "maxLength": 388
+  },
+  {
+   "key": "web.venues.media.allKinds",
+   "client": "web",
+   "default": "All photos and videos",
+   "tokens": [],
+   "maxLength": 200
   },
   {
    "key": "web.venues.media.cancel",
@@ -59508,6 +59620,20 @@
    "key": "web.venues.media.empty",
    "client": "web",
    "default": "No photos or videos yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.media.images",
+   "client": "web",
+   "default": "Photos",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.media.kind",
+   "client": "web",
+   "default": "Media type",
    "tokens": [],
    "maxLength": 200
   },
@@ -59609,7 +59735,14 @@
   {
    "key": "web.venues.media.title",
    "client": "web",
-   "default": "Photos and videos",
+   "default": "Multimedia",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.media.videos",
+   "client": "web",
+   "default": "Videos",
    "tokens": [],
    "maxLength": 200
   },
@@ -60337,7 +60470,7 @@
   {
    "key": "web.venues.scheduleEditor.enable",
    "client": "web",
-   "default": "Add a structured schedule",
+   "default": "Add schedule",
    "tokens": [],
    "maxLength": 200
   },

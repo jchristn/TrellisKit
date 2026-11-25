@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useId, useState } from 'react';
 import { REVIEW_LIMITS, venueContributionConfig } from '@trelliskit/shared';
 import strings from '../../strings.js';
+import MetadataFilterBar from '../MetadataFilterBar.jsx';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useProperty } from '../../context/PropertyContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
@@ -86,7 +88,8 @@ export function MediaLightbox({ entries, index, onIndex, onClose }) {
 }
 
 /** Remove a member item: a plain confirm for the uploader, an optional reason for staff and linked instructors. */
-function RemoveDialog({ item, onConfirm, onCancel }) {
+function RemoveDialog({ item, onConfirm, onCancel, profile = false }) {
+  const vm = profile ? { ...strings.venues.media, ...strings.profileMedia } : strings.venues.media;
   const { d } = useDirectoryTerms();
   const id = useId();
   const [reason, setReason] = useState('');
@@ -122,7 +125,8 @@ function RemoveDialog({ item, onConfirm, onCancel }) {
 }
 
 /** Upload photos and videos through the media flow, then attach the uploaded ids to the venue. */
-function AddMedia({ venueId, onAdded, uploadOptions }) {
+function AddMedia({ venueId, onAdded, uploadOptions, profile = false }) {
+  const vm = profile ? { ...strings.venues.media, ...strings.profileMedia } : strings.venues.media;
   const { client, me } = useAuth();
   const { d } = useDirectoryTerms();
   const toast = useToast();
@@ -142,7 +146,7 @@ function AddMedia({ venueId, onAdded, uploadOptions }) {
     if (!uploads.mediaIds.length) return;
     setBusy(true);
     try {
-      const result = await client.addVenueMedia(venueId, uploads.mediaIds);
+      const result = await client[profile ? 'addProfileMedia' : 'addVenueMedia'](venueId, uploads.mediaIds);
       const added = (result && result.objects) || [];
       uploads.reset();
       onAdded(added);
@@ -175,30 +179,33 @@ function AddMedia({ venueId, onAdded, uploadOptions }) {
  * property's `directory.memberMedia` allow it, and remove and report by each item's `viewer`.
  * @param {{ venue: object, uploadOptions?: object }} props `uploadOptions` passes through to the upload hook (tests).
  */
-export function VenueMediaSection({ venue, uploadOptions }) {
+export function VenueMediaSection({ venue, uploadOptions, profile = false }) {
+  const vm = profile ? { ...strings.venues.media, ...strings.profileMedia } : strings.venues.media;
+  const [searchParams] = useSearchParams();
+  const [meta, setMeta] = useState({ labels: [], tags: {} });
+  const [kind, setKind] = useState('');
   const { client, me } = useAuth();
   const { property } = useProperty();
   const toast = useToast();
-  const memberMedia = venueContributionConfig(property).memberMedia;
+  const memberMedia = profile || venueContributionConfig(property).memberMedia;
   const venueId = venue.id;
   const viewer = venue.viewer || {};
   const [viewing, setViewing] = useState(null);
   const [removing, setRemoving] = useState(null);
-  const [reporting, setReporting] = useState(null);
-  const fetchPage = useCallback((cursor, signal) => client.enumerateVenueMedia(venueId, { continuationToken: cursor, maxResults: PAGE_SIZE }, signal), [client, venueId]);
-  const list = useCursorList(fetchPage, { enabled: memberMedia });
+  const [reporting, setReporting] = useState(() => searchParams.get('reportMedia') ? { id: searchParams.get('reportMedia') } : null);
+  const fetchPage = useCallback((cursor, signal) => client[profile ? 'enumerateProfileMedia' : 'enumerateVenueMedia'](venueId, { ...meta, filters: kind ? { kind } : {}, continuationToken: cursor, maxResults: PAGE_SIZE }, signal), [client, venueId, profile, meta, kind]);
+  const list = useCursorList(fetchPage, { enabled: memberMedia && Boolean(me) });
   const canAdd = Boolean(me) && memberMedia && viewer.canAddMedia === true;
 
   const entries = [
     ...(venue.photos || []).filter(Boolean).map((media) => ({ key: 'photo-' + media.id, media, item: null })),
     ...(memberMedia ? list.items.filter((item) => item && item.media).map((item) => ({ key: item.id, media: item.media, item })) : [])
   ];
-  if (!entries.length && !canAdd && !list.error) return null;
 
   const remove = async (reason) => {
     const item = removing;
     try {
-      await client.removeVenueMedia(venueId, item.id, reason || undefined);
+      await client[profile ? 'removeProfileMedia' : 'removeVenueMedia'](venueId, item.id, reason || undefined);
     } catch (err) {
       if (item.viewer && item.viewer.isUploader) {
         toast.error(errorText(err, phase4Errors()));
@@ -217,6 +224,10 @@ export function VenueMediaSection({ venue, uploadOptions }) {
   return (
     <section className="p4-section venue-media" aria-labelledby="venue-media">
       <h2 id="venue-media">{vm.title}</h2>
+      {me && memberMedia && <>
+        <MetadataFilterBar value={meta} onChange={setMeta} client={client} targetType={profile ? 'ProfileMedia' : 'VenueMedia'} />
+        <label className="field"><span className="label-text">{vm.kind}</span><select value={kind} onChange={(event) => setKind(event.target.value)}><option value="">{vm.allKinds}</option><option value="Image">{vm.images}</option><option value="Video">{vm.videos}</option></select></label>
+      </>}
       {entries.length > 0 ? (
         <ul className="venue-media-grid" aria-label={vm.galleryLabel(entries.length)}>
           {entries.map((entry, i) => {
@@ -237,13 +248,13 @@ export function VenueMediaSection({ venue, uploadOptions }) {
             );
           })}
         </ul>
-      ) : (list.loaded && <p className="muted small">{vm.empty}</p>)}
+      ) : ((list.loaded || !me || !memberMedia) && <p className="muted small">{vm.empty}</p>)}
       <ErrorBanner message={list.error ? errorText(list.error, phase4Errors(), vm.loadError) : ''} onRetry={list.refresh} />
       {memberMedia && list.loaded && !list.done && <button type="button" className="button button-secondary button-sm" onClick={list.loadMore} disabled={list.loading}>{vm.loadMore}</button>}
-      {canAdd && <AddMedia venueId={venueId} onAdded={added} uploadOptions={uploadOptions} />}
+      {canAdd && <AddMedia profile={profile} venueId={venueId} onAdded={added} uploadOptions={uploadOptions} />}
       {viewing !== null && entries[viewing] && <MediaLightbox entries={entries} index={viewing} onIndex={setViewing} onClose={() => setViewing(null)} />}
-      {removing && <RemoveDialog item={removing} onConfirm={remove} onCancel={() => setRemoving(null)} />}
-      {reporting && <ReportDialog target={{ type: 'VenueMedia', id: reporting.id }} author={reporting.uploader} onClose={() => setReporting(null)} />}
+      {removing && <RemoveDialog profile={profile} item={removing} onConfirm={remove} onCancel={() => setRemoving(null)} />}
+      {reporting && <ReportDialog target={{ type: profile ? 'ProfileMedia' : 'VenueMedia', id: reporting.id }} author={reporting.uploader} onClose={() => setReporting(null)} />}
     </section>
   );
 }

@@ -65,7 +65,7 @@ namespace TrellisKit.Core.Database
             "serieslevels", "seriesslugs", "series", "librarylevels", "libraryconfig",
             "calendarfeeds", "eventreminders", "eventrsvps", "eventinstructors", "eventhosts", "eventslugs", "events", "eventrecurrenceexceptions", "eventrecurrencedays",
             "eventrecurrences", "eventcategories", "eventconfig",
-            "aiharnessprofiles", "aicalls", "aitaskroleexecutors", "aitaskroles", "jobitems", "jobruns", "jobdefinitions", "aiprompttemplateversions", "aiprompttemplates", "venuemedia", "venuereviews", "geocoderesults", "directorysubmissionfields", "directorysubmissions", "venueinstructors", "instructorsociallinks", "instructorslugs", "instructors",
+            "aiharnessprofiles", "aicalls", "aitaskroleexecutors", "aitaskroles", "jobitems", "jobruns", "jobdefinitions", "aiprompttemplateversions", "aiprompttemplates", "profilemedia", "venuemedia", "venuereviews", "geocoderesults", "directorysubmissionfields", "directorysubmissions", "venueinstructors", "instructorsociallinks", "instructorslugs", "instructors",
             "venuescheduleentries", "venuephotos", "venuesociallinks", "venueprograms", "venueslugs", "venues", "directoryprograms", "directoryconfig",
             "broadcastdeliveries", "broadcastsegmentfilters", "broadcasts", "broadcastsegments",
             "ideafollows", "ideavotes", "ideas", "ideastatuses",

@@ -48,10 +48,11 @@ namespace TrellisKit.Server.Services
                     if (read && s.Length >= 4 && s[3] == "set" && (s.Length == 4 || (s.Length == 5 && s[4] == "enumerate"))) return Declare(null, AccessActionEnum.Read, true, m, s);
                     return null;
                 case "media":
-                    if (s.Length >= 4 && (s[3] == "files" || s[3] == "private" || s[3] == "local-uploads" || s[3] == "avatars")) return null;
+                    if (s.Length >= 4 && (s[3] == "files" || s[3] == "gallery" || s[3] == "private" || s[3] == "local-uploads" || s[3] == "avatars")) return null;
                     if (read || (s.Length == 4 && s[3] == "grant" && m == "POST")) return Declare(null, AccessActionEnum.Read, false, m, s);
                     return Declare(null, AccessActionEnum.Write, false, m, s);
                 case "users":
+                    if (s.Length >= 5 && s[4] == "media") return Declare(FeatureKeyEnum.Members, read ? AccessActionEnum.List : AccessActionEnum.Write, false, m, s);
                     if (s.Length == 5 && s[4] == "block") return Account(m, s);
                     if (s.Length == 4 && m == "GET") return Declare(FeatureKeyEnum.Members, AccessActionEnum.Read, false, m, s);
                     return null;

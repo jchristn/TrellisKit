@@ -373,6 +373,7 @@ namespace TrellisKit.Server.Services
             {
                 case TrellisKit.Core.Enums.TargetTypeEnum.FeedPost:
                 case TrellisKit.Core.Enums.TargetTypeEnum.Comment:
+                case TrellisKit.Core.Enums.TargetTypeEnum.ProfileMedia:
                 case TrellisKit.Core.Enums.TargetTypeEnum.Media:
                 case TrellisKit.Core.Enums.TargetTypeEnum.Reaction:
                 case TrellisKit.Core.Enums.TargetTypeEnum.Report:

@@ -11,6 +11,33 @@ namespace TrellisKit.Server.Services.PublicPages
     {
         #region Public-Members
 
+        /// <summary>Public gallery text.</summary>
+        public const string Multimedia = "Multimedia";
+
+        /// <summary>Public gallery text.</summary>
+        public const string Photo = "Photo";
+
+        /// <summary>Public gallery text.</summary>
+        public const string Video = "Video";
+
+        /// <summary>Public gallery text.</summary>
+        public const string ReportMedia = "Report this photo or video";
+
+        /// <summary>Public gallery text.</summary>
+        public const string NoMedia = "No photos or videos yet.";
+
+        /// <summary>Public gallery text.</summary>
+        public const string MoreMedia = "View more photos and videos in the app";
+
+        /// <summary>Public gallery text.</summary>
+        public const string ManageMedia = "Add or manage photos and videos in the app";
+
+        /// <summary>Switch to the light theme.</summary>
+        public const string LightTheme = "Use light theme";
+
+        /// <summary>Switch to the dark theme.</summary>
+        public const string DarkTheme = "Use dark theme";
+
         /// <summary>
         /// Sign in link.
         /// </summary>

@@ -131,10 +131,10 @@ function QueueDetail({ targetType, targetId, onClose, onChanged }) {
               </>
             ) : (
               <>
-                <AuthorLine user={target.author} time={target.publishedUtc || target.createdUtc} linkProfile={false} />
+                <AuthorLine user={target.author || target.uploader} time={target.publishedUtc || target.createdUtc} linkProfile={false} />
                 {(target.title || target.name || target.displayName) && <strong>{target.title || target.name || target.displayName}</strong>}
                 <MarkdownBody body={target.body || target.summary || target.bio} mentions={target.mentions} allowHeadings={targetType === 'FeedPost'} linkMentions={false} />
-                <MediaGallery items={target.attachments} compact />
+                <MediaGallery items={target.media ? [target.media] : target.attachments} compact />
                 {postId && <a href={postPath(postId, targetType === 'Comment' ? targetId : null)} target="_blank" rel="noreferrer" className="small">{s.openPost}</a>}
               </>
             )}

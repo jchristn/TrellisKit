@@ -49,7 +49,7 @@ export function ActiveFilters({ filters, onChange, extraChips, testID = 'filters
  * opens in a bottom sheet; on tablets use FilterSidePanel next to the results instead. `sheetOnly`
  * keeps the sheet on tablets too, for lists that already sit in a detail pane (comments).
  */
-export function FilterButton({ filters, onChange, targetType, orderings, searchLabel, sheetOnly = false, extra, extraChips, testID = 'filters' }) {
+export function FilterButton({ filters, onChange, targetType, orderings, searchLabel, showSearch = true, sheetOnly = false, extra, extraChips, testID = 'filters' }) {
   const theme = useTheme();
   const { isWide: wide } = useLayout();
   const isWide = wide && !sheetOnly;
@@ -70,6 +70,7 @@ export function FilterButton({ filters, onChange, targetType, orderings, searchL
           targetType={targetType}
           orderings={orderings}
           searchLabel={searchLabel}
+          showSearch={showSearch}
           extra={extra}
           onApply={(next) => {
             setOpen(false);
@@ -86,7 +87,7 @@ export function FilterButton({ filters, onChange, targetType, orderings, searchL
  * Filters inside a sheet (who reacted, edit history): a Filters toggle with the active count that
  * opens the panel in place (a sheet cannot open another sheet), and the active chips.
  */
-export function InlineFilters({ filters, onChange, targetType, searchLabel, testID = 'filters' }) {
+export function InlineFilters({ filters, onChange, targetType, searchLabel, showSearch = true, testID = 'filters' }) {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const count = activeFilterCount(filters);
@@ -103,6 +104,7 @@ export function InlineFilters({ filters, onChange, targetType, searchLabel, test
           filters={filters}
           targetType={targetType}
           searchLabel={searchLabel}
+          showSearch={showSearch}
           onApply={(next) => {
             setOpen(false);
             onChange(next);

@@ -1,3 +1,5 @@
+import ThemeToggle from '../../components/ThemeToggle.jsx';
+import ProfileMedia from '../../components/profile/ProfileMedia.jsx';
 import { useCallback, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import strings from '../../strings.js';
@@ -299,6 +301,7 @@ function AccountView() {
           <h1>{ac.title}</h1>
           <p className="page-summary">{ac.summary}</p>
         </div>
+        <ThemeToggle />
       </header>
       <ErrorBanner message={error} onDismiss={() => setError('')} />
 
@@ -320,6 +323,8 @@ function AccountView() {
           onToast={(text) => toast.success(text)}
         />
       )}
+
+      <ProfileMedia user={me} />
 
       <SignInMethodsSection me={me} />
 

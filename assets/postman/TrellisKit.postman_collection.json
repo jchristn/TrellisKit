@@ -651,6 +651,11 @@
     {
       "key": "contentChangeId",
       "value": "chg_unknown"
+    },
+    {
+      "key": "profileMediaItemId",
+      "value": "",
+      "type": "string"
     }
   ],
   "item": [
@@ -4202,6 +4207,32 @@
               }
             }
           ]
+        },
+        {
+          "name": "Read public gallery output",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/media/gallery/{{mediaId}}/{{mediaFile}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "media",
+                "gallery",
+                "{{mediaId}}",
+                "{{mediaFile}}"
+              ]
+            },
+            "description": "Rechecks public page and item visibility on every request. Processed outputs only, no-store, Range supported; Local/S3."
+          },
+          "response": []
         }
       ]
     },
@@ -5859,6 +5890,213 @@
                   "pm.test('Page is bounded', function () { pm.expect(b.objects.length).to.be.at.most(b.maxResults); });"
                 ]
               }
+            }
+          ]
+        },
+        {
+          "name": "Profile multimedia",
+          "item": [
+            {
+              "name": "Enumerate profile media (POST)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/{{userId}}/media/enumerate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "{{userId}}",
+                    "media",
+                    "enumerate"
+                  ]
+                },
+                "description": "Bounded profile gallery; kind, labels and tags filters. Signed-in profile readers.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maxResults\": 24,\n  \"labels\": [],\n  \"tags\": {},\n  \"filters\": {}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Enumerate profile media (GET)",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/{{userId}}/media",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "{{userId}}",
+                    "media"
+                  ]
+                },
+                "description": "GET form of the bounded gallery enumeration."
+              },
+              "response": []
+            },
+            {
+              "name": "Attach profile uploads",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/{{userId}}/media",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "{{userId}}",
+                    "media"
+                  ]
+                },
+                "description": "Profile owner only; 1 to 10 own unattached image/video uploads. Public when the profile page is enabled.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"mediaIds\": [\n    \"{{mediaId}}\"\n  ],\n  \"labels\": [],\n  \"tags\": {}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete owned profile item",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/{{userId}}/media/{{profileMediaItemId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "{{userId}}",
+                    "media",
+                    "{{profileMediaItemId}}"
+                  ]
+                },
+                "description": "Owner only; purges uploaded media. Staff use moderation actions on ProfileMedia."
+              },
+              "response": []
+            },
+            {
+              "name": "Report profile photo or video",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/reports",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "reports"
+                  ]
+                },
+                "description": "Report the gallery item; enters Feed moderation.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"targetType\": \"ProfileMedia\",\n  \"targetId\": \"{{profileMediaItemId}}\",\n  \"reason\": \"Spam\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "response": []
             }
           ]
         }
