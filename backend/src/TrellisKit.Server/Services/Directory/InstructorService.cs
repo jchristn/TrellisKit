@@ -236,6 +236,7 @@ namespace TrellisKit.Server.Services
             if (!await _Services.Database.DirectoryListings.Instructors.SoftDeleteAsync(instructor.Id, DateTime.UtcNow, token).ConfigureAwait(false)) throw ApiErrorException.NotFound("Instructor");
             await _Services.Media.UnpublishTargetAsync(TargetTypeEnum.Instructor, instructor.Id, token).ConfigureAwait(false);
             await _Services.Directory.ChangedAsync(TargetTypeEnum.Instructor, instructor.Id, token).ConfigureAwait(false);
+            await _Services.Favorites.TargetDeletedAsync(FavoriteTargetTypeEnum.Instructor, instructor.Id, token).ConfigureAwait(false);
             await _Services.Audit.WriteAsync(info, "instructor.delete", TargetTypeEnum.Instructor.ToString(), instructor.Id, instructor.DisplayName, token).ConfigureAwait(false);
         }
 

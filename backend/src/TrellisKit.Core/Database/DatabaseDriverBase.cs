@@ -270,6 +270,9 @@ namespace TrellisKit.Core.Database
         /// <summary>Profile gallery storage, bound to the current property.</summary>
         public IProfileMediaMethods ProfileMedia { get; protected internal set; } = null!;
 
+        /// <summary>Saves and private collections, bound to the current property.</summary>
+        public IFavoriteMethods Favorites { get; protected internal set; } = null!;
+
         /// <summary>Directory listing storage, bound to the property.</summary>
         public IDirectoryMethods DirectoryListings { get; protected internal set; } = null!;
 

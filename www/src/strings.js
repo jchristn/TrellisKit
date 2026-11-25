@@ -4374,7 +4374,8 @@ const strings = {
         messaging: 'Direct messages.',
         assistants: 'The AI assistants.',
         ideas: 'The ideas board (reading, voting, and submitting ideas).',
-        search: 'Global search across posts, threads, comments, and members (independent of the forums).'
+        search: 'Global search across posts, threads, comments, and members (independent of the forums).',
+        saves: 'Saving content and creating collections (members can still read and remove their saves).'
       },
       audienceLabel: 'Default audience for new content',
       audienceModelDefault: (label) => 'Model default (' + label + ')',
@@ -4863,7 +4864,8 @@ const strings = {
     lockBadgeLabel: (feature) => feature + ' (members only)',
     features: {
       feed: 'Feed', members: 'Member profiles', forums: 'Forums', library: 'Library', events: 'Events',
-      directory: 'Member directory', messaging: 'Messages', assistants: 'Assistants', search: 'Search', ideas: 'Ideas'
+      directory: 'Member directory', messaging: 'Messages', assistants: 'Assistants', search: 'Search', ideas: 'Ideas',
+      saves: 'Saves'
     },
     audiences: { Public: 'Public', SignedIn: 'Signed-in accounts', Members: 'Members only' },
     audienceHints: {

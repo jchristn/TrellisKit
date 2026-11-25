@@ -66,3 +66,6 @@ export * from "./jobsApi.js";
 export * from "./contentReviewApi.js";
 
 export { metricsMethods, metricSeriesFromEnumeration, legacyMetricSeriesFromEnumeration, usageSeriesFromEnumeration } from "./metricsApi.js";
+
+export { favoritesMethods } from './favoritesApi.js';
+export * from './favorites.js';

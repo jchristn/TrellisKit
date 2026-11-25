@@ -699,6 +699,7 @@ namespace TrellisKit.Server.Services
                 if (deleted)
                 {
                     await _Services.Media.UnpublishTargetAsync(TargetTypeEnum.FeedPost, post.Id, token).ConfigureAwait(false);
+                    await _Services.Favorites.TargetDeletedAsync(FavoriteTargetTypeEnum.Post, post.Id, token).ConfigureAwait(false);
                     Count("delete", "success");
                 }
                 activity?.SetStatus(ActivityStatusCode.Ok);

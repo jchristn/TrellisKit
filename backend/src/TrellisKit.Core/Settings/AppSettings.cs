@@ -530,6 +530,16 @@ namespace TrellisKit.Core.Settings
         }
 
         /// <summary>
+        /// Saves and private collections (REST_API.md, Saves).
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The value is null.</exception>
+        public SavesSettings Saves
+        {
+            get { return _Saves; }
+            set { _Saves = value ?? throw new ArgumentNullException(nameof(Saves)); }
+        }
+
+        /// <summary>
         /// Engine secrets key (per-property integration secrets, queued email payloads, stored update signing keys, AI endpoint secrets).
         /// </summary>
         /// <exception cref="ArgumentNullException">The value is null.</exception>
@@ -596,6 +606,7 @@ namespace TrellisKit.Core.Settings
         private IdeaSettings _Ideas = new IdeaSettings();
         private BroadcastSettings _Broadcasts = new BroadcastSettings();
         private AdminSummarySettings _AdminSummary = new AdminSummarySettings();
+        private SavesSettings _Saves = new SavesSettings();
 
         #endregion
     }

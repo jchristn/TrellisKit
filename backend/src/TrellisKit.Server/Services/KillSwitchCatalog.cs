@@ -20,7 +20,8 @@ namespace TrellisKit.Server.Services
         {
             "signups", "purchases", "signupCodes", "feed", "feedComposer", "comments", "reactions", "mediaUpload", "videoUpload", "linkPreviews",
             "forums", "polls", "directory", "events", "library", "libraryDownloads", "messaging", "assistants", "notificationsPush", "search",
-            "support", "ideas", "broadcasts", "realtime"
+            "support", "ideas", "broadcasts", "realtime",
+            "saves"
         };
 
         #endregion
@@ -85,6 +86,7 @@ namespace TrellisKit.Server.Services
             if (Starts(p, _Api + "/assistants")) result.Add("assistants");
             if (Starts(p, _Api + "/me/push-tokens")) result.Add("notificationsPush");
             if (Starts(p, _Api + "/members/search") || Starts(p, _Api + "/members/enumerate") || Starts(p, _Api + "/search")) result.Add("search");
+            if (Starts(p, _Api + "/me/saves") || Starts(p, _Api + "/me/save-collections")) result.Add("saves");
             return result;
         }
 

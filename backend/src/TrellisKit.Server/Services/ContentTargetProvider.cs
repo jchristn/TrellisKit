@@ -373,6 +373,34 @@ namespace TrellisKit.Server.Services
             return Task.FromResult(new List<KnowledgeDocument>());
         }
 
+        /// <summary>
+        /// What a member's saved list shows about an object (REST_API.md, Saves): null when the object does not exist
+        /// or was deleted; <see cref="FavoriteTargetSummary.Available"/> false (and no title, image, or link) when the
+        /// caller cannot open it; otherwise its title, image, and app path. The default uses
+        /// <see cref="LoadModerationTargetAsync"/> for existence, <see cref="IsVisibleAsync"/> for access, and
+        /// <see cref="SearchResultAsync"/> (no terms) for the title and path; override it to add an image.
+        /// </summary>
+        /// <param name="actor">Caller.</param>
+        /// <param name="targetType">Target type.</param>
+        /// <param name="targetId">Target identifier.</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Summary, or null when the object does not exist.</returns>
+        public virtual async Task<FavoriteTargetSummary?> SaveSummaryAsync(ContentActor actor, TargetTypeEnum targetType, string targetId, CancellationToken token = default)
+        {
+            ArgumentNullException.ThrowIfNull(actor);
+            if (String.IsNullOrEmpty(targetId)) return null;
+            ModerationTarget? target = await LoadModerationTargetAsync(targetType, targetId, token).ConfigureAwait(false);
+            if (target == null || target.Deleted) return null;
+            if (!await IsVisibleAsync(actor, targetType, targetId, token).ConfigureAwait(false)) return FavoriteTargetSummary.Unavailable();
+            SearchResultItem? item = await SearchResultAsync(actor, targetType, targetId, Array.Empty<string>(), token).ConfigureAwait(false);
+            return new FavoriteTargetSummary
+            {
+                Available = true,
+                Title = item?.Title,
+                Href = String.IsNullOrEmpty(item?.Path) ? PathOf(targetType, targetId) : item.Path
+            };
+        }
+
         #endregion
     }
 }

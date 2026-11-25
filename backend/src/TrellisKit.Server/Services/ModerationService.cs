@@ -855,6 +855,8 @@ namespace TrellisKit.Server.Services
                             ? await _Services.Database.Comments.PurgeAsync(candidate.TargetId, now, token).ConfigureAwait(false)
                             : owner != null && await owner.PurgeAsync(candidate.TargetId, now, token).ConfigureAwait(false);
                     if (done) purged++;
+                    if (done && candidate.TargetType == TargetTypeEnum.FeedPost) await _Services.Favorites.TargetDeletedAsync(FavoriteTargetTypeEnum.Post, candidate.TargetId, token).ConfigureAwait(false);
+                    if (done && candidate.TargetType == TargetTypeEnum.Thread) await _Services.Favorites.TargetDeletedAsync(FavoriteTargetTypeEnum.Thread, candidate.TargetId, token).ConfigureAwait(false);
                 }
                 activity?.SetTag("job.batch_size", candidates.Count);
                 activity?.SetStatus(ActivityStatusCode.Ok);

@@ -29,7 +29,8 @@ export const AccessFeature = Object.freeze({
   Messaging: 'messaging',
   Assistants: 'assistants',
   Search: 'search',
-  Ideas: 'ideas'
+  Ideas: 'ideas',
+  Saves: 'saves'
 });
 
 /** Every gateable feature key, in the contract's order. */

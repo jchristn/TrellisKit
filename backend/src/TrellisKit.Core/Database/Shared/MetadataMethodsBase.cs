@@ -255,6 +255,8 @@ namespace TrellisKit.Core.Database.Shared
                 case TargetTypeEnum.IdeaVote:
                 case TargetTypeEnum.DocumentAcceptance:
                 case TargetTypeEnum.AssistantConversation:
+                case TargetTypeEnum.Favorite:
+                case TargetTypeEnum.FavoriteCollection:
                     return "SELECT id FROM " + TableFor(type) + " WHERE " + Scope() + " AND userid = " + viewer;
                 case TargetTypeEnum.DirectorySubmission:
                     return "SELECT id FROM directorysubmissions WHERE " + Scope() + " AND submitteruserid = " + viewer;
@@ -340,6 +342,8 @@ namespace TrellisKit.Core.Database.Shared
                 case TargetTypeEnum.PropertyDocumentVersion: return "propertydocumentversions";
                 case TargetTypeEnum.DocumentAcceptance: return "propertydocumentacceptances";
                 case TargetTypeEnum.AssistantConversation: return "aiconversations";
+                case TargetTypeEnum.Favorite: return "favorites";
+                case TargetTypeEnum.FavoriteCollection: return "favoritecollections";
                 default: return null;
             }
         }
@@ -374,6 +378,8 @@ namespace TrellisKit.Core.Database.Shared
                 case TargetTypeEnum.BroadcastDelivery: return "userid";
                 case TargetTypeEnum.DocumentAcceptance: return "userid";
                 case TargetTypeEnum.AssistantConversation: return "userid";
+                case TargetTypeEnum.Favorite: return "userid";
+                case TargetTypeEnum.FavoriteCollection: return "userid";
                 default: return null;
             }
         }

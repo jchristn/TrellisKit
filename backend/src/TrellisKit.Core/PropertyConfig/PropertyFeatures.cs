@@ -72,6 +72,12 @@ namespace TrellisKit.Core.PropertyConfig
         /// </summary>
         public bool Ai { get; set; } = false;
 
+        /// <summary>
+        /// Saves and private collections (/api/v1/me/saves, /api/v1/me/save-collections). Default true when absent;
+        /// false makes the saves routes 404 NotAvailable. Independent of any hub or navigation switch.
+        /// </summary>
+        public bool Saves { get; set; } = true;
+
         #endregion
     }
 }

@@ -659,6 +659,8 @@ namespace TrellisKit.Server.Services.ContentReview
                     return "support request";
                 case "AssistantMessage":
                     return "assistant message";
+                case "Favorite":
+                    return "saved item note";
                 default:
                     return "contribution";
             }

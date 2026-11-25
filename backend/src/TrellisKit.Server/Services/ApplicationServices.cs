@@ -400,6 +400,11 @@ namespace TrellisKit.Server.Services
         public ContentTargetRegistry ContentTargets { get; } = new ContentTargetRegistry();
 
         /// <summary>
+        /// Generic saves and private collections (REST_API.md, Saves).
+        /// </summary>
+        public FavoriteService Favorites { get; }
+
+        /// <summary>
         /// Decorators applied to GET /api/v1/property after the property.json defaults (the Phase 4 modules replace the
         /// directory, events, and library sections with the database copy). Modules add to it during construction.
         /// </summary>
@@ -583,6 +588,8 @@ namespace TrellisKit.Server.Services
             ContentReview = new ContentReview.ContentReviewService(this);
             ContentReview.Attach();
             AdminSummary = new AdminSummary.AdminSummaryService(this);
+            Favorites = new FavoriteService(this);
+            Favorites.Attach();
         }
 
         #endregion

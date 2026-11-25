@@ -54,6 +54,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// Ideas board.
         /// </summary>
-        Ideas
+        Ideas,
+
+        /// <summary>
+        /// Saves and private collections (features.saves).
+        /// </summary>
+        Saves
     }
 }

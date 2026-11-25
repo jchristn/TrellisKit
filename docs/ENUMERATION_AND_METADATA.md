@@ -142,6 +142,15 @@ Single-object attribute exceptions have fixed, documented upper bounds: configur
 - `CatalogEnumeration` applies the same validation and scoped keyset rules to independently bounded sources. Immutable declarations use `1970-01-01T00:00:00Z`; stored records use their real creation time. Growing sources page in SQL.
 - A shared backend helper applies `maxResults` clamping, continuation tokens, ordering validation, label and tag `EXISTS` filters, and staff-metadata stripping, so collections cannot implement paging differently.
 
+### 2.6 Saves collections
+
+| Collection | Routes | Maximum | Orderings | Filters | Metadata target type |
+|---|---|---|---|---|---|
+| `me-saves` | `GET /api/v1/me/saves`, `POST /api/v1/me/saves/enumerate` | member maximum (`enumeration.maxResultsMember`, 100) | `CreatedDescending` (default), `CreatedAscending`, `UpdatedDescending` | `targetTypes`, `collectionId`; search covers notes | `Favorite` |
+| `me-save-collections` | `GET /api/v1/me/save-collections`, `POST /api/v1/me/save-collections/enumerate` | member maximum (100) | `PositionAscending` (default), `NameAscending`, `CreatedDescending`, `CreatedAscending` | search covers names | `FavoriteCollection` |
+
+`POST /api/v1/me/saves/state` is a fixed-bound lookup, not a collection: its `items` answer exactly the request's 1 to 100 targets. A save's `collectionIds` is bounded by `saves.maxCollectionsPerMember` (at most 500). Labels and tags of saves and collections are discoverable only by their owner (`POST /api/v1/labels/enumerate` with `targetType` `Favorite` or `FavoriteCollection`).
+
 ---
 
 ## 3. Client UX (web, mobile, tablet; member app and admin console)

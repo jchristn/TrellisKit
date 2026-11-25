@@ -113,6 +113,7 @@ namespace Test.Shared
                     PublicPageSuite.Build(),
                     VenueContributionSuite.Build(),
                     ProfileMediaSuite.Build(),
+                    FavoriteSuite.Build(),
                     EngagementSuite.Build(),
                     Phase4StaffSuite.Build(),
                     EventSuite.Build(),

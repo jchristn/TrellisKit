@@ -488,5 +488,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>A photo or video in a member profile gallery (pmd_).</summary>
         ProfileMedia,
 
+        /// <summary>A member's saved item (fav_), private to the member.</summary>
+        Favorite,
+
+        /// <summary>A member's named collection of saved items (fvc_), private to the member.</summary>
+        FavoriteCollection,
+
     }
 }
