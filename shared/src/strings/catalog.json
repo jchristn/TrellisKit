@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "b77ddcb0224000d5a2eb44005f11f8aff9fa294adcaa85bba28a533c76579559",
+ "sha256": "174035ec61fe6c48e740caae17cf6a5a3c3ea7c0ecb6ee6c88e46b55970e6069",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -35230,9 +35230,9 @@
   {
    "key": "web.admin.wordFilter.starterBody",
    "client": "web",
-   "default": "Adds about 80 common English swear words, sexual vulgarities, and slurs with the action Flag: matching posts, comments, and threads are saved, put in the moderation queue, and sent to administrators as a notification and email with a link to the content. Terms already on the list are skipped. You can change any term to Block or delete it afterwards.",
+   "default": "Adds 70 common English swear words, sexual vulgarities, and slurs with the action Flag: matching posts, comments, and threads are saved, put in the moderation queue, and sent to administrators as a notification and email with a link to the content. Terms already on the list are skipped. You can change any term to Block or delete it afterwards.",
    "tokens": [],
-   "maxLength": 702
+   "maxLength": 690
   },
   {
    "key": "web.admin.wordFilter.starterButton",

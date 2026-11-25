@@ -3771,7 +3771,7 @@ const strings = {
       importButton: 'Import',
       starterButton: 'Load starter list',
       starterTitle: 'Load the starter profanity list?',
-      starterBody: 'Adds about 80 common English swear words, sexual vulgarities, and slurs with the action Flag: matching posts, comments, and threads are saved, put in the moderation queue, and sent to administrators as a notification and email with a link to the content. Terms already on the list are skipped. You can change any term to Block or delete it afterwards.',
+      starterBody: 'Adds 70 common English swear words, sexual vulgarities, and slurs with the action Flag: matching posts, comments, and threads are saved, put in the moderation queue, and sent to administrators as a notification and email with a link to the content. Terms already on the list are skipped. You can change any term to Block or delete it afterwards.',
       starterConfirm: 'Load starter list',
       importTitle: 'Import terms',
       importLabel: 'Terms, one per line (up to 1000)',
