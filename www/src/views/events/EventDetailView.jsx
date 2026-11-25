@@ -21,6 +21,7 @@ import { CategoryChip, EventRow, EventTime, RsvpControl } from '../../components
 import useCursorList from '../../hooks/useCursorList.js';
 import { authorName, errorText, mediaUrl, memberPath } from '../../utils/engagement.js';
 import { appPaths, downloadText, phase4Errors } from '../../utils/phase4.js';
+import { CheckInPanel } from '../ranks/CheckIn.jsx';
 
 const t = strings.events;
 
@@ -166,6 +167,7 @@ function EventDetailView() {
             {event.capacity && event.spotsLeft !== null && <p className="small">{event.spotsLeft > 0 ? t.spotsLeft(event.spotsLeft) : <Badge tone="warning">{t.full}</Badge>}{event.waitlistCount > 0 && <> · {t.waitlistCount(event.waitlistCount)}</>}</p>}
             {locked ? <p className="muted small">{t.lockedBody}</p> : <RsvpControl event={event} client={client} me={me} onChange={(updated) => setOverride(updated)} />}
           </section>
+          {!locked && !canceled && <CheckInPanel targetType="Event" targetId={event.id} title={event.title} />}
           {!locked && viewer.canSeeAttendees && event.attendeePreview && (
             <section className="panel" aria-labelledby="event-attendees">
               <h2 id="event-attendees" className="section-title">{t.attendees}</h2>

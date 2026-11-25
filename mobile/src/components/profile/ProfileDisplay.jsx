@@ -6,6 +6,7 @@ import strings from '../../strings';
 import { openAppLink } from '../../links';
 import { useTheme } from '../../theme';
 import AppText from '../AppText';
+import VerificationBadge from '../ranks/VerificationBadge';
 
 /**
  * Display components for configurable profile fields (docs/MULTIPROPERTY_CONTRACT.md section
@@ -29,8 +30,9 @@ export function Swatch({ color, size = 14, testID }) {
  * @param {object} props.field `Rank` field.
  * @param {{ key: string, level?: number }} props.value
  * @param {'swatch'|'bar'} [props.variant]
+ * @param {'verified'|'selfReported'|null} [props.verification] Verification label when ranks are on.
  */
-export function RankBadge({ field, value, variant = 'swatch', textVariant = 'body', textColor = 'text', testID }) {
+export function RankBadge({ field, value, variant = 'swatch', textVariant = 'body', textColor = 'text', testID, verification = null }) {
   const theme = useTheme();
   const text = formatRankValue(field, value);
   if (!text) return null;
@@ -42,6 +44,7 @@ export function RankBadge({ field, value, variant = 'swatch', textVariant = 'bod
       <AppText variant={textVariant} color={textColor} testID={testID ? testID + '-text' : undefined}>
         {text}
       </AppText>
+      <VerificationBadge badge={verification} fieldLabel={field.label} testID={testID ? testID + '-verification' : undefined} />
     </View>
   );
 }
@@ -130,11 +133,11 @@ export function HistoryList({ field, value, fields, testID }) {
  * A field value for display: rank badge, History list, links for URLs, email, and phone, and
  * formatted text otherwise (locale numbers and dates, Yes or No, option labels, country names).
  */
-export function ProfileValue({ field, value, fields, testID }) {
+export function ProfileValue({ field, value, fields, testID, verification = null }) {
   if (!field || !hasProfileValue(field, value)) return null;
   switch (field.type) {
     case 'Rank':
-      return <RankBadge field={field} value={value} testID={testID} />;
+      return <RankBadge field={field} value={value} testID={testID} verification={verification} />;
     case 'History':
       return <HistoryList field={field} value={value} fields={fields} testID={testID} />;
     case 'Url':
@@ -154,8 +157,9 @@ export function ProfileValue({ field, value, fields, testID }) {
  * @param {object} props
  * @param {Record<string, any>} props.profile `profile` map (Me or public profile).
  * @param {object[]} [props.fields] Definitions (defaults to the property's).
+ * @param {object} [props.rankBadges] Rank field key to 'verified' or 'selfReported' (`rankBadgeMap`).
  */
-export function ProfileFieldList({ profile, fields: fieldsProp, testID = 'profile-fields' }) {
+export function ProfileFieldList({ profile, fields: fieldsProp, testID = 'profile-fields', rankBadges = null }) {
   const theme = useTheme();
   const propertyFields = useProfileFields();
   const fields = fieldsProp || propertyFields;
@@ -168,7 +172,7 @@ export function ProfileFieldList({ profile, fields: fieldsProp, testID = 'profil
           <AppText variant="caption" color="textMuted" accessibilityRole={field.type === 'History' ? 'header' : undefined}>
             {field.label}
           </AppText>
-          <ProfileValue field={field} value={profile[field.key]} fields={fields} testID={testID + '-' + field.key + '-value'} />
+          <ProfileValue field={field} value={profile[field.key]} fields={fields} testID={testID + '-' + field.key + '-value'} verification={rankBadges ? rankBadges[field.key] || null : null} />
         </View>
       ))}
     </View>
@@ -178,8 +182,9 @@ export function ProfileFieldList({ profile, fields: fieldsProp, testID = 'profil
 /**
  * Compact card fields of a `UserSummary` or profile (`showOnCard` with a value, at most
  * `maxCardFields`, in profile order): `Rank` as a color bar plus its text, others as short text.
+ * `rankBadges` maps Rank field keys to 'verified' or 'selfReported' when ranks are on.
  */
-export function CardFields({ profile, fields: fieldsProp, testID }) {
+export function CardFields({ profile, fields: fieldsProp, testID, rankBadges = null }) {
   const theme = useTheme();
   const propertyFields = useProfileFields();
   const fields = fieldsProp || propertyFields;
@@ -189,7 +194,7 @@ export function CardFields({ profile, fields: fieldsProp, testID }) {
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: theme.spacing.sm, rowGap: theme.spacing.xxs }} testID={testID}>
       {shown.map((field) =>
         field.type === 'Rank' ? (
-          <RankBadge key={field.key} field={field} value={profile[field.key]} variant="bar" textVariant="caption" textColor="textMuted" testID={testID ? testID + '-' + field.key : undefined} />
+          <RankBadge key={field.key} field={field} value={profile[field.key]} variant="bar" textVariant="caption" textColor="textMuted" testID={testID ? testID + '-' + field.key : undefined} verification={rankBadges ? rankBadges[field.key] || null : null} />
         ) : (
           <AppText key={field.key} variant="caption" color="textMuted" testID={testID ? testID + '-' + field.key : undefined}>
             {formatProfileValue(field, profile[field.key], { fields, ...words() })}

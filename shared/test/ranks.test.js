@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   ApiClient, AttendanceMethod, RankSource, RankStatus, StaffRoles, Role, canAwardRank, effectiveRank, eligibilityDisplay, groupCurriculumItems, isSelfCompletable,
-  nextRank, optionMaxLevel, parseCheckInPayload, rankIndex, rankLevelChoices, rankText, ranksMethods, venueSessionTargetId, verificationBadge
+  nextRank, optionMaxLevel, parseCheckInPayload, checkInLink, checkInAppPath, ranksFeatureEnabled, rankVerificationLabelsEnabled, rankBadgeMap, verifiedRankFieldKeys, secondsUntil, localIsoDate, isRankStaff, promotersFor, rankIndex, rankLevelChoices, rankText, ranksMethods, venueSessionTargetId, verificationBadge
 } from '../src/index.js';
 
 const field = {
@@ -163,6 +163,44 @@ test('check-in payloads and venue session ids', () => {
   assert.equal(parseCheckInPayload('checkin?targetType=Class&targetId=x&code=123456'), null);
   assert.equal(parseCheckInPayload('checkin?targetType=Event&targetId=evt_1&code=12'), null);
   assert.equal(parseCheckInPayload('hello'), null);
+  assert.equal(parseCheckInPayload('https://example.test/app/feed?t=Event&id=evt_1'), null);
+});
+
+test('check-in universal links round-trip through the parser', () => {
+  const property = { domains: { web: 'example.test' } };
+  const code = { targetType: 'VenueSession', targetId: 'ven_1:2', occurrenceDate: '2026-11-25', code: '012345', expiresUtc: '2026-11-25T10:00:00Z' };
+  const link = checkInLink(property, code);
+  assert.equal(link, 'https://example.test/app/check-in?t=VenueSession&id=ven_1%3A2&d=2026-11-25&c=012345');
+  assert.deepEqual(parseCheckInPayload(link), { targetType: 'VenueSession', targetId: 'ven_1:2', occurrenceDate: '2026-11-25', code: '012345', method: 'QR' });
+  assert.equal(checkInAppPath(code), '/check-in?t=VenueSession&id=ven_1%3A2&d=2026-11-25&c=012345');
+  assert.deepEqual(parseCheckInPayload(checkInAppPath(code)), parseCheckInPayload(link));
+  assert.deepEqual(parseCheckInPayload({ t: 'Event', id: 'evt_1' }), { targetType: 'Event', targetId: 'evt_1' });
+  assert.deepEqual(parseCheckInPayload({ t: ['Event'], id: 'evt_1', c: '123456' }), { targetType: 'Event', targetId: 'evt_1', code: '123456', method: 'QR' });
+  assert.equal(parseCheckInPayload({ t: 'Event', id: 'evt_1', d: 'tomorrow' }), null);
+  assert.equal(checkInLink({ domains: { web: 'https://example.test/' } }, code).startsWith('https://example.test/app/check-in?'), true);
+  assert.equal(checkInLink({}, code), null);
+  assert.equal(checkInLink(property, { ...code, code: '' }), null);
+});
+
+test('rank feature switches, badges, locks, and countdowns', () => {
+  assert.equal(ranksFeatureEnabled({ features: {} }), false);
+  assert.equal(ranksFeatureEnabled({ features: { ranks: true } }), true);
+  assert.equal(rankVerificationLabelsEnabled({ features: { ranks: true } }), true);
+  assert.equal(rankVerificationLabelsEnabled({ features: { ranks: true, rankVerificationLabels: false } }), false);
+  assert.equal(rankVerificationLabelsEnabled({ features: { rankVerificationLabels: true } }), false);
+  const me = { showVerificationLabels: true, fields: [{ rank: { fieldKey: 'rank', optionKey: 'Beginner', verified: true, source: 'Verified' } }, { rank: { fieldKey: 'other', optionKey: 'x', verified: false, source: 'SelfReported' } }, { rank: { fieldKey: 'none', optionKey: null, verified: false, source: 'None' } }] };
+  assert.deepEqual(rankBadgeMap(me), { rank: 'verified', other: 'selfReported' });
+  assert.deepEqual(rankBadgeMap({ ...me, showVerificationLabels: false }), {});
+  assert.deepEqual(rankBadgeMap({ showVerificationLabels: true, ranks: [{ fieldKey: 'rank', optionKey: 'A', verified: false, source: 'SelfReported' }] }), { rank: 'selfReported' });
+  assert.deepEqual(verifiedRankFieldKeys(me), ['rank']);
+  assert.equal(secondsUntil('2026-11-25T10:00:30Z', Date.parse('2026-11-25T10:00:00Z')), 30);
+  assert.equal(secondsUntil('2026-11-25T09:00:00Z', Date.parse('2026-11-25T10:00:00Z')), 0);
+  assert.equal(secondsUntil(null), 0);
+  assert.equal(localIsoDate(new Date(2026, 0, 5, 12)), '2026-01-05');
+  assert.equal(isRankStaff({ roles: [{ role: 'RankAwarder' }] }), true);
+  assert.equal(isRankStaff({ roles: ['User'] }), false);
+  assert.deepEqual(promotersFor({ lineage: [{ id: 'a', fieldKey: 'rank' }, { id: 'b', fieldKey: 'other' }] }, 'rank').map((e) => e.id), ['a']);
+  assert.deepEqual(promotersFor(null, 'rank'), []);
 });
 
 test('curriculum helpers', () => {

@@ -23,6 +23,9 @@ import AppleCallbackPage from './views/auth/AppleCallbackPage.jsx';
 import AccountDeletedPage from './views/auth/AccountDeletedPage.jsx';
 import RequireMember from './views/member/RequireMember.jsx';
 import { CatalogHomeView, CatalogEntryView } from './views/catalog/CatalogViews.jsx';
+import MyRankView from './views/ranks/MyRankView.jsx';
+import CheckInView from './views/ranks/CheckInView.jsx';
+import { CurriculaListView, CurriculumDetailView } from './views/ranks/CurriculaViews.jsx';
 import { MemberLanding } from './views/member/MemberHomeView.jsx';
 import GuestHomeView from './views/member/GuestHomeView.jsx';
 import ComingSoonView from './views/member/ComingSoonView.jsx';
@@ -194,6 +197,14 @@ export function AppRoutes({ fetchImpl = null, adminFetchImpl = null, restoreOnLo
               <>
                 <Route path="catalog" element={<RequireMember level={LEVELS.member} catalog="library"><CatalogHomeView /></RequireMember>} />
                 <Route path="catalog/:id" element={<RequireMember level={LEVELS.member} catalog="library"><CatalogEntryView /></RequireMember>} />
+              </>
+            )}
+            {featureEnabled(property, 'ranks') && (
+              <>
+                <Route path="rank" element={<RequireMember level={LEVELS.member} feature="ranks"><MyRankView /></RequireMember>} />
+                <Route path="curricula" element={<RequireMember level={LEVELS.member} feature="ranks"><CurriculaListView /></RequireMember>} />
+                <Route path="curricula/:id" element={<RequireMember level={LEVELS.member} feature="ranks"><CurriculumDetailView /></RequireMember>} />
+                <Route path="check-in" element={<RequireMember level={LEVELS.member} feature="ranks"><CheckInView /></RequireMember>} />
               </>
             )}
             <Route path="members" element={<RequireMember level={LEVELS.member} feature="directory"><MemberDirectoryView /></RequireMember>} />

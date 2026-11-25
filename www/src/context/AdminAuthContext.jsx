@@ -151,7 +151,7 @@ export function AdminAuthProvider({ children, fetchImpl = null }) {
   } else status = 'signedOut';
   const isSystemAdmin = mode === 'token' || mode === 'delegated' || (mode === 'session' && auth.isAdmin);
   const isModeratorOnly = status === 'signedIn' && !isSystemAdmin;
-  const staffAreas = useMemo(() => (isSystemAdmin ? ['directory', 'events', 'library'] : mode === 'session' ? staffAreasOf(auth.me) : []), [isSystemAdmin, mode, auth.me]);
+  const staffAreas = useMemo(() => (isSystemAdmin ? ['directory', 'events', 'library', 'ranks'] : mode === 'session' ? staffAreasOf(auth.me) : []), [isSystemAdmin, mode, auth.me]);
   const sessionMe = mode === 'session' ? auth.me : null;
   // What a non-admin staff member may open (a SystemAdmin, token, or delegated session may open everything).
   const staff = useMemo(() => ({

@@ -1,6 +1,7 @@
 import { directoryTerms, formatTemplate, propertyTokens, remoteStringOverlay, remoteStringValue } from '@trelliskit/shared';
 import { fillDeep, fillFromProperty, getBundledProperty } from './property/property';
 import { catalogTemplates } from './catalogStrings';
+import { ranksTemplates } from './ranksStrings';
 
 /**
  * All user-facing strings for the mobile app. English only; no i18n library.
@@ -16,6 +17,8 @@ export const stringTemplates = Object.freeze({
   appName: '{name}',
 
   exerciseCatalog: catalogTemplates,
+
+  ranks: ranksTemplates,
 
   links: {
     title: 'Web content',
@@ -98,7 +101,8 @@ export const stringTemplates = Object.freeze({
     features: {
       feed: 'Feed', members: 'Member profiles', forums: 'Forums', library: 'Library', events: 'Events',
       directory: 'Member directory', messaging: 'Messages', assistants: 'Assistants', search: 'Search',
-      training: 'Training'
+      training: 'Training',
+      ranks: 'Ranks and attendance'
     },
     audiences: { Public: 'Public', SignedIn: 'Signed-in accounts', Members: 'Members only' },
     audienceHints: {

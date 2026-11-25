@@ -286,16 +286,19 @@ function HistoryInput({ field, value, onChange, idPrefix, disabled, errors, allF
 
 /**
  * The control for one field (section 9.11 `control`), by type. `value` is the form value from
- * `toFormValue`; `errors` maps `profile.<key>` (and nested History keys) to text.
+ * `toFormValue`; `errors` maps `profile.<key>` (and nested History keys) to text. `locked` (text)
+ * makes the field read-only with that explanation (a verified rank, server 409 RankVerified).
  */
-export function ProfileFieldInput({ field, value, onChange, errors = {}, disabled = false, idPrefix = 'pf', allFields = [], optional = false }) {
+export function ProfileFieldInput({ field, value, onChange, errors = {}, disabled: disabledProp = false, idPrefix = 'pf', allFields = [], optional = false, locked = null }) {
+  const disabled = disabledProp || Boolean(locked);
   const generated = useId();
   const id = fieldInputId(idPrefix, field.key) || generated;
   const errorKey = 'profile.' + field.key;
   const error = errors[errorKey];
   const required = isFieldRequired(field);
   const helpId = field.helpText ? id + '-help' : undefined;
-  const describedBy = [helpId, error ? id + '-error' : null].filter(Boolean).join(' ') || undefined;
+  const lockId = locked ? id + '-locked' : null;
+  const describedBy = [helpId, lockId, error ? id + '-error' : null].filter(Boolean).join(' ') || undefined;
   const common = { id, disabled, invalid: Boolean(error), describedBy };
   let control;
   switch (field.type) {
@@ -329,9 +332,10 @@ export function ProfileFieldInput({ field, value, onChange, errors = {}, disable
       {!required && optional && <span className="muted small"> ({s.optional.toLowerCase()})</span>}
     </>
   );
-  const hint = field.helpText
+  const baseHint = field.helpText
     ? <span id={helpId} className="muted small field-help">{field.helpText}</span>
     : field.type === 'Phone' ? <span className="muted small field-help">{s.phoneHint}</span> : null;
+  const hint = locked ? <>{baseHint}<span id={lockId} className="muted small field-help field-locked" data-locked="true">{locked}</span></> : baseHint;
   if (grouped) {
     return (
       <fieldset className={'fieldset profile-field profile-field-' + field.type.toLowerCase()} data-field={field.key}>
@@ -355,9 +359,10 @@ export function ProfileFieldInput({ field, value, onChange, errors = {}, disable
 /**
  * Inputs for a list of fields, in the given order. Short single-line fields sit in a grid; long
  * text, groups, and history take the full width.
- * @param {{ fields: object[], allFields?: object[], values: Record<string, any>, onChange: (key: string, value: any) => void, errors?: Record<string,string>, disabled?: boolean, idPrefix?: string, markOptional?: boolean }} props
+ * `locked` maps field keys to the read-only explanation of a locked field (verified ranks).
+ * @param {{ fields: object[], allFields?: object[], values: Record<string, any>, onChange: (key: string, value: any) => void, errors?: Record<string,string>, disabled?: boolean, idPrefix?: string, markOptional?: boolean, locked?: Record<string,string> }} props
  */
-export function ProfileFieldsEditor({ fields, allFields, values, onChange, errors = {}, disabled = false, idPrefix = 'pf', markOptional = false }) {
+export function ProfileFieldsEditor({ fields, allFields, values, onChange, errors = {}, disabled = false, idPrefix = 'pf', markOptional = false, locked = null }) {
   const every = allFields || fields;
   const compact = (f) => ['Text', 'Number', 'Date', 'Url', 'Email', 'Phone', 'Country', 'Boolean'].includes(f.type) || (f.type === 'SingleSelect' && pickerOptions(f).length > PROFILE_RADIO_MAX_OPTIONS) || f.type === 'Rank';
   const groups = [];
@@ -372,7 +377,7 @@ export function ProfileFieldsEditor({ fields, allFields, values, onChange, error
         const items = group.items.map((field) => (
           <ProfileFieldInput
             key={field.key} field={field} value={values ? values[field.key] : undefined} onChange={(next) => onChange(field.key, next)}
-            errors={errors} disabled={disabled} idPrefix={idPrefix} allFields={every} optional={markOptional}
+            errors={errors} disabled={disabled} idPrefix={idPrefix} allFields={every} optional={markOptional} locked={locked ? locked[field.key] || null : null}
           />
         ));
         return group.compact ? <div className="form-grid" key={group.items[0].key}>{items}</div> : items;

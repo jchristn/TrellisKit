@@ -25,6 +25,7 @@ import { directionsUrl } from '../places/VenueDetail';
 import EventCard from './EventCard';
 import AttendeesSheet from './AttendeesSheet';
 import RsvpControl from './RsvpControl';
+import { CheckInControls } from '../ranks/CheckIn';
 
 const t = strings.events;
 
@@ -179,6 +180,7 @@ export function EventHeader({ event, onChange, testID = 'event' }) {
         {event.spotsLeft !== null && event.spotsLeft !== undefined ? <AppText color="textMuted">{event.spotsLeft > 0 ? t.spotsLeft(event.spotsLeft) : t.full}</AppText> : null}
       </View>
       <RsvpControl event={event} onChange={onChange} />
+      {!canceled ? <CheckInControls targetType="Event" targetId={event.id} title={event.title} testID={testID + '-check-in'} /> : null}
       {!canceled ? (
         <View style={{ gap: theme.spacing.xs }}>
           <Button

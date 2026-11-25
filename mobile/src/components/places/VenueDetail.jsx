@@ -23,6 +23,7 @@ import { StarDisplay } from './StarRating';
 import VenueMedia from './VenueMedia';
 import VenueReviews from './VenueReviews';
 import { VenueAbout, VenueSchedule } from './VenueSchedule';
+import { venueSessionCheckIn } from '../ranks/CheckIn';
 
 /** A maps app URL for a venue (the maps app URL scheme on iOS, a geo URI elsewhere). */
 export function directionsUrl(venue) {
@@ -141,7 +142,7 @@ export default function VenueDetail({ venueId, focusReviewId = null, reportMedia
           {venue.websiteUrl ? <Button label={t.website} variant="ghost" onPress={() => openAppLink(venue.websiteUrl)} style={{ alignSelf: 'auto' }} testID={testID + '-website'} /> : null}
         </Row>
       ) : null}
-      {(venue.schedule || venue.scheduleText) ? <VenueSchedule schedule={venue.schedule} text={venue.scheduleText} t={t} testID={testID + '-schedule'} /> : null}
+      {(venue.schedule || venue.scheduleText) ? <VenueSchedule schedule={venue.schedule} text={venue.scheduleText} t={t} testID={testID + '-schedule'} sessionAction={venueSessionCheckIn(venue)} /> : null}
       {programs.length ? (
         <Row label={t.programs}>
           <AppText testID={testID + '-programs'}>{programs.join(', ')}</AppText>

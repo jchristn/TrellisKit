@@ -30,7 +30,9 @@ export const SOURCES = [
   { file: 'mobile/src/strings.js', binding: 'placesTemplates', prefix: 'mobile.places', client: 'mobile' },
   { file: 'www/src/views/catalog/catalogStrings.js', binding: 'exerciseCatalog', prefix: 'web.exerciseCatalog', client: 'web' },
   { file: 'www/src/views/admin/catalog/catalogImportStrings.js', binding: 'catalogImport', prefix: 'web.catalogImport', client: 'web' },
-  { file: 'mobile/src/catalogStrings.js', binding: 'catalogTemplates', prefix: 'mobile.exerciseCatalog', client: 'mobile' }
+  { file: 'mobile/src/catalogStrings.js', binding: 'catalogTemplates', prefix: 'mobile.exerciseCatalog', client: 'mobile' },
+  { file: 'www/src/views/ranks/ranksStrings.js', binding: 'ranks', prefix: 'web.ranks', client: 'web' },
+  { file: 'mobile/src/ranksStrings.js', binding: 'ranksTemplates', prefix: 'mobile.ranks', client: 'mobile' }
 ];
 
 const TOKEN = /\{([A-Za-z][A-Za-z0-9]*)\}/g;

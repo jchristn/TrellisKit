@@ -27,6 +27,7 @@ import { useProperty } from '../../src/property';
 import strings from '../../src/strings';
 import { useTheme } from '../../src/theme';
 import FeatureGate from '../../src/components/FeatureGate';
+import { useMemberRankBadges } from '../../src/components/ranks/rankHooks';
 
 /**
  * Another member's public profile (GET /users/{id}): avatar, name, handle, and card fields in the
@@ -52,6 +53,7 @@ function MemberProfileScreenContent() {
   const [starting, setStarting] = useState(false);
   const [startError, setStartError] = useState(null);
   const blocker = useBlock(api);
+  const rankBadges = useMemberRankBadges(api, memberId);
   const t = strings.member;
 
   const load = useCallback(async () => {
@@ -127,7 +129,7 @@ function MemberProfileScreenContent() {
               {isStaff ? <StaffBadge /> : null}
             </View>
             {profile.handle ? <AppText color="textMuted">{'@' + profile.handle}</AppText> : null}
-            <CardFields profile={values} fields={fields} testID="member-card" />
+            <CardFields profile={values} fields={fields} testID="member-card" rankBadges={rankBadges} />
             {profile.createdUtc ? (
               <AppText variant="caption" color="textMuted">
                 {t.joined(new Date(profile.createdUtc).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }))}
@@ -136,7 +138,7 @@ function MemberProfileScreenContent() {
           </View>
         </View>
         {profile.bio ? <AppText testID="member-bio">{profile.bio}</AppText> : null}
-        <ProfileFieldList profile={values} fields={fields} testID="member-fields" />
+        <ProfileFieldList profile={values} fields={fields} testID="member-fields" rankBadges={rankBadges} />
       </Card>
 
       {!blocked ? <ProfileMedia user={profile} initialReportId={Array.isArray(reportMedia) ? reportMedia[0] : reportMedia} /> : null}

@@ -16,12 +16,14 @@ import chartKit from './components/charts/chartStrings.js';
 import platformMetrics from './platformMetricsStrings.js';
 import exerciseCatalog from './views/catalog/catalogStrings.js';
 import catalogImport from './views/admin/catalog/catalogImportStrings.js';
+import ranks from './views/ranks/ranksStrings.js';
 
 const strings = {
   chartKit,
   platformMetrics,
   exerciseCatalog,
   catalogImport,
+  ranks,
   engine: {
     name: 'TrellisKit',
     poweredBy: 'Powered by TrellisKit'
@@ -213,8 +215,8 @@ const strings = {
     grantType: { DurationMonths: 'Number of months', FixedEndDate: 'Until a fixed date', Lifetime: 'Lifetime' },
     codeStatus: { Active: 'Active', Scheduled: 'Scheduled', Expired: 'Expired', Exhausted: 'Exhausted', Inactive: 'Inactive' },
     redemptionStatus: { Active: 'Active', Expired: 'Expired', Revoked: 'Revoked' },
-    role: { User: 'User', SystemAdmin: 'System admin', Moderator: 'Forum moderator', FeedModerator: 'Feed moderator', DirectoryModerator: 'Directory moderator', EventManager: 'Event manager', LibraryEditor: 'Library editor', SupportAgent: 'Support agent', Communicator: 'Communicator', ReleaseManager: 'Release manager' },
-    resourceType: { Global: 'Global', Forum: 'Forum', Feed: 'Feed', Directory: 'Directory', Events: 'Events', Library: 'Library', Messaging: 'Direct messages' },
+    role: { User: 'User', SystemAdmin: 'System admin', Moderator: 'Forum moderator', FeedModerator: 'Feed moderator', DirectoryModerator: 'Directory moderator', EventManager: 'Event manager', LibraryEditor: 'Library editor', SupportAgent: 'Support agent', Communicator: 'Communicator', ReleaseManager: 'Release manager', RankAwarder: 'Rank awarder' },
+    resourceType: { Global: 'Global', Forum: 'Forum', Feed: 'Feed', Directory: 'Directory', Events: 'Events', Library: 'Library', Messaging: 'Direct messages', Ranks: 'Ranks' },
     signInMethod: { Email: 'Email and password', Apple: 'Apple', Google: 'Google', Facebook: 'Facebook' },
     historyStatus: { Active: 'Active', Expired: 'Expired', Revoked: 'Revoked', Cancelled: 'Cancelled', Scheduled: 'Scheduled', Refunded: 'Refunded' }
   },
@@ -4869,7 +4871,8 @@ const strings = {
     features: {
       feed: 'Feed', members: 'Member profiles', forums: 'Forums', library: 'Library', events: 'Events',
       directory: 'Member directory', messaging: 'Messages', assistants: 'Assistants', search: 'Search', ideas: 'Ideas',
-      training: 'Training'
+      training: 'Training',
+      ranks: 'Ranks and attendance'
     },
     audiences: { Public: 'Public', SignedIn: 'Signed-in accounts', Members: 'Members only' },
     audienceHints: {

@@ -57,7 +57,7 @@ function multipartUpload(id, partCount, partSize, uploadedParts = []) {
 
 describe('staff roles', () => {
   test('every global staff role counts as staff, members do not', () => {
-    expect([...STAFF_ROLES].sort()).toEqual(['Communicator', 'DirectoryModerator', 'EventManager', 'FeedModerator', 'LibraryEditor', 'Moderator', 'SupportAgent', 'SystemAdmin']);
+    expect([...STAFF_ROLES].sort()).toEqual(['Communicator', 'DirectoryModerator', 'EventManager', 'FeedModerator', 'LibraryEditor', 'Moderator', 'RankAwarder', 'SupportAgent', 'SystemAdmin']);
     for (const role of STAFF_ROLES) expect(isStaffUser({ roles: [{ role, resourceType: null, resourceId: '*' }] })).toBe(true);
     expect(isStaffUser({ roles: [] })).toBe(false);
     expect(isStaffUser({ roles: [{ role: 'Member' }] })).toBe(false);

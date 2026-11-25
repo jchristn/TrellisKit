@@ -5,6 +5,7 @@ import {
 import strings from '../../strings.js';
 import { memberPath } from '../../utils/engagement.js';
 import { LOCALE } from '../../utils/format.js';
+import VerificationBadge from '../../views/ranks/VerificationBadge.jsx';
 
 const s = strings.profileFields;
 const words = { yes: s.yes, no: s.no, locale: LOCALE };
@@ -15,20 +16,25 @@ export function RankSwatch({ color, label = '' }) {
   return <span className="rank-swatch" style={{ backgroundColor: color }} role={label ? 'img' : undefined} aria-label={label || undefined} aria-hidden={label ? undefined : 'true'} />;
 }
 
-/** A rank value with its color swatch and configured text, for example "Gold, 2 stars". */
-export function RankBadge({ field, value, compact = false }) {
+/**
+ * A rank value with its color swatch and configured text, for example "Gold, 2 stars".
+ * `verification` ('verified' | 'selfReported' | null) adds the verification label when ranks are on.
+ */
+export function RankBadge({ field, value, compact = false, verification = null }) {
   const text = formatRankValue(field, value);
   if (!text) return null;
   const color = optionColor(field, value && value.key);
+  const badge = verification ? <> <VerificationBadge badge={verification} fieldLabel={field.label} /></> : null;
   if (compact) {
     return (
       <span className="rank-chip" title={field.label + ': ' + text}>
         {color && <span className="rank-bar" style={{ backgroundColor: color }} aria-hidden="true" />}
         <span>{text}</span>
+        {badge}
       </span>
     );
   }
-  return <span className="rank-text"><RankSwatch color={color} /><span>{text}</span></span>;
+  return <span className="rank-text"><RankSwatch color={color} /><span>{text}</span>{badge}</span>;
 }
 
 function HistoryList({ field, value, allFields }) {
@@ -59,9 +65,9 @@ function HistoryList({ field, value, allFields }) {
 }
 
 /** One field's value rendered per its type (section 9.11 `display`). */
-export function ProfileFieldValue({ field, value, allFields = [] }) {
+export function ProfileFieldValue({ field, value, allFields = [], verification = null }) {
   switch (field.type) {
-    case 'Rank': return <RankBadge field={field} value={value} />;
+    case 'Rank': return <RankBadge field={field} value={value} verification={verification} />;
     case 'History': return <HistoryList field={field} value={value} allFields={allFields} />;
     case 'Url':
       return <a href={value} rel="nofollow ugc noopener noreferrer" target="_blank">{urlHost(value)}</a>;
@@ -75,10 +81,11 @@ export function ProfileFieldValue({ field, value, allFields = [] }) {
 /**
  * The profile page body: every field with `showOnProfile` and a value, in profile order, as
  * labeled rows. History fields take the full width under the grid.
- * @param {{ fields: object[], profile: object, allFields?: object[], emptyText?: string, showEmpty?: object[] }} props
+ * @param {{ fields: object[], profile: object, allFields?: object[], emptyText?: string, showEmpty?: object[], rankBadges?: object }} props
  *   `showEmpty` lists fields to show even without a value (with `emptyText`), for staff views.
+ *   `rankBadges` maps Rank field keys to 'verified' or 'selfReported' (from `rankBadgeMap`).
  */
-export function ProfileFieldList({ fields, profile, allFields, emptyText = null, showEmpty = null }) {
+export function ProfileFieldList({ fields, profile, allFields, emptyText = null, showEmpty = null, rankBadges = null }) {
   const every = allFields || fields;
   const shown = showEmpty || profilePageFields(fields, profile);
   const flat = shown.filter((f) => f.type !== 'History');
@@ -93,7 +100,7 @@ export function ProfileFieldList({ fields, profile, allFields, emptyText = null,
           {flat.map((f) => (
             <div className="kv-item" key={f.key} data-field={f.key}>
               <dt>{f.label}</dt>
-              <dd>{present(f) ? <ProfileFieldValue field={f} value={value(f)} allFields={every} /> : <span className="muted">{emptyText || s.notSet}</span>}</dd>
+              <dd>{present(f) ? <ProfileFieldValue field={f} value={value(f)} allFields={every} verification={rankBadges ? rankBadges[f.key] || null : null} /> : <span className="muted">{emptyText || s.notSet}</span>}</dd>
             </div>
           ))}
         </dl>
@@ -110,9 +117,10 @@ export function ProfileFieldList({ fields, profile, allFields, emptyText = null,
 
 /**
  * Compact card fields of a `UserSummary` (`showOnCard` with a value, at most `max`), inline:
- * a rank as a color bar plus its short text, other fields as text chips.
+ * a rank as a color bar plus its short text, other fields as text chips. `rankBadges` maps Rank
+ * field keys to 'verified' or 'selfReported' (from `rankBadgeMap`) when ranks are on.
  */
-export function CardFields({ fields, profile, max, allFields }) {
+export function CardFields({ fields, profile, max, allFields, rankBadges = null }) {
   const list = cardFields(fields, profile, max);
   if (!list.length) return null;
   return (
@@ -121,7 +129,7 @@ export function CardFields({ fields, profile, max, allFields }) {
         <span key={f.key} className="card-field" data-field={f.key}>
           {i > 0 && <span aria-hidden="true" className="card-field-sep">·</span>}
           {f.type === 'Rank'
-            ? <RankBadge field={f} value={profile[f.key]} compact />
+            ? <RankBadge field={f} value={profile[f.key]} compact verification={rankBadges ? rankBadges[f.key] || null : null} />
             : <span title={f.label}>{formatProfileValue(f, profile[f.key], { fields: allFields || fields, ...words })}</span>}
         </span>
       ))}

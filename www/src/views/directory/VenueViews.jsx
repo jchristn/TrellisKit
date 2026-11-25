@@ -26,6 +26,7 @@ import { PublicPageLink } from '../../components/PublicPageFields.jsx';
 import { instructorRankOptions } from '../../components/directory/DirectoryForms.jsx';
 import { errorText, memberPath } from '../../utils/engagement.js';
 import { appPaths, phase4Errors, useDirectoryTerms } from '../../utils/phase4.js';
+import { venueSessionCheckIn } from '../ranks/CheckIn.jsx';
 
 const v = strings.venues;
 
@@ -161,7 +162,7 @@ export function VenueView() {
           <div className="p4-section">
             <VenueMediaSection venue={venue} />
             {venue.description && <VenueAbout text={venue.description} />}
-            {(venue.schedule || venue.scheduleText) && <VenueSchedule schedule={venue.schedule} text={venue.scheduleText} />}
+            {(venue.schedule || venue.scheduleText) && <VenueSchedule schedule={venue.schedule} text={venue.scheduleText} sessionAction={venueSessionCheckIn(venue)} />}
             <section className="p4-section" aria-labelledby="venue-instructors">
               <h2 id="venue-instructors">{d(v.instructorsTitle)}</h2>
               {instructors.loaded && !instructors.items.length && <p className="muted small">{d(v.instructorsEmpty)}</p>}

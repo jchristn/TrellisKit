@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   buildProfilePatch, builtInField, editorFields, isDisplayName, isHandle, onboardingFields, profileFieldsOf, staffSetFields, toFormValues,
   validateProfileValues,
-  numberedHandle, suggestHandle
+  numberedHandle, suggestHandle, verifiedRankFieldKeys
 } from '@trelliskit/shared';
 import strings from '../strings.js';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -16,6 +16,7 @@ import Icon from './Icon.jsx';
 import { ErrorBanner } from './States.jsx';
 import { ProfileFieldsEditor } from './profile/ProfileFieldInputs.jsx';
 import { ProfileFieldList } from './profile/ProfileFieldDisplay.jsx';
+import { useMyRank, useRanksFeature } from '../views/ranks/rankHooks.js';
 
 const p = strings.profileForm;
 const DEFAULT_BIO_MAX = 1000;
@@ -107,9 +108,17 @@ function useHandleStatus(handle, currentHandle) {
  * @param {{ me: object, onSaved: (me: object) => void, onMeChange?: (me: object, message?: string) => void, submitLabel?: string, mode?: 'onboarding'|'editor', skipLabel?: string }} props
  */
 function ProfileForm({ me, onSaved, onMeChange, submitLabel = p.save, mode = 'editor', skipLabel = null }) {
-  const { api } = useAuth();
+  const { api, client } = useAuth();
   const { property } = useProperty();
   const fields = useMemo(() => profileFieldsOf(property), [property]);
+  const ranks = useRanksFeature();
+  const myRank = useMyRank(client, ranks.enabled && Boolean(me));
+  const [lockedByServer, setLockedByServer] = useState([]);
+  const locked = useMemo(() => {
+    const keys = new Set([...verifiedRankFieldKeys(myRank.data), ...lockedByServer]);
+    if (!ranks.enabled || !keys.size) return null;
+    return Object.fromEntries(fields.filter((f) => keys.has(f.key)).map((f) => [f.key, strings.ranks.locked.hint(f.label)]));
+  }, [ranks.enabled, myRank.data, lockedByServer, fields]);
   const layout = useMemo(() => profileFormLayout(fields, mode), [fields, mode]);
   const profile = (me && me.profile) || {};
   const [initial] = useState(() => toFormValues(fields, profile));
@@ -156,6 +165,10 @@ function ProfileForm({ me, onSaved, onMeChange, submitLabel = p.save, mode = 'ed
       const saved = await api.updateProfile(body);
       onSaved(saved);
     } catch (err) {
+      if (err && err.code === 'RankVerified') {
+        const keys = Object.keys(getFieldErrors(err) || {}).filter((k) => k.startsWith('profile.')).map((k) => k.slice('profile.'.length));
+        if (keys.length) setLockedByServer((list) => [...new Set([...list, ...keys])]);
+      }
       const mapped = serverFieldErrors(getFieldErrors(err));
       setErrors(mapped);
       setFormError(Object.keys(mapped).length ? p.fixBelow : authErrorMessage(err));
@@ -217,7 +230,7 @@ function ProfileForm({ me, onSaved, onMeChange, submitLabel = p.save, mode = 'ed
       {layout.editable.length > 0 && (
         <ProfileFieldsEditor
           fields={layout.editable} allFields={fields} values={values} onChange={setField} errors={errors} disabled={busy}
-          idPrefix="profile" markOptional={mode === 'onboarding'}
+          idPrefix="profile" markOptional={mode === 'onboarding'} locked={locked}
         />
       )}
 

@@ -16,6 +16,7 @@ import { useProperty } from '../../../src/property';
 import strings from '../../../src/strings';
 import { useTheme } from '../../../src/theme';
 import { AccessPromptCard } from '../../../src/components/AccessPrompt';
+import { useMemberRankBadges, useRanksFeature } from '../../../src/components/ranks/rankHooks';
 
 /**
  * Profile tab: the member's own profile from `Me.profile` (header with card fields, then bio and
@@ -31,6 +32,8 @@ export default function ProfileScreen() {
   const bio = builtInsOf(fields).bio;
   const t = strings.profile;
   const profile = (user && user.profile) || {};
+  const ranks = useRanksFeature();
+  const rankBadges = useMemberRankBadges(api, user && user.id, { self: true });
 
   return (
     <Screen testID="screen-profile" contentStyle={{ gap: theme.spacing.lg }}>
@@ -44,11 +47,12 @@ export default function ProfileScreen() {
                 {user.displayName}
               </AppText>
               {user.handle ? <AppText color="textMuted">{'@' + user.handle}</AppText> : null}
-              <CardFields profile={profile} fields={fields} testID="profile-card" />
+              <CardFields profile={profile} fields={fields} testID="profile-card" rankBadges={rankBadges} />
             </View>
           </View>
           {bio && bio.showOnProfile !== false && user.bio ? <AppText testID="profile-bio-text">{user.bio}</AppText> : null}
-          <ProfileFieldList profile={profile} fields={fields} testID="profile-fields" />
+          <ProfileFieldList profile={profile} fields={fields} testID="profile-fields" rankBadges={rankBadges} />
+          {ranks.enabled ? <Button label={strings.ranks.title} variant="secondary" onPress={() => router.push('/rank')} testID="profile-my-rank" /> : null}
         </Card>
       ) : null}
       {user ? <ProfileMedia user={user} /> : null}

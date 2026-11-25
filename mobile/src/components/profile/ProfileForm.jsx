@@ -1,4 +1,4 @@
-import { buildProfilePatch, editorFields, hasProfileValue, isFieldRequired, numberedHandle, onboardingFields, staffSetFields, suggestHandle, toFormValues, validateProfileValues } from '@trelliskit/shared';
+import { buildProfilePatch, editorFields, hasProfileValue, isFieldRequired, numberedHandle, onboardingFields, staffSetFields, suggestHandle, toFormValues, validateProfileValues, verifiedRankFieldKeys } from '@trelliskit/shared';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { account } from '../../api/endpoints';
@@ -17,8 +17,9 @@ import Card from '../Card';
 import MetadataEditor from '../filters/MetadataEditor';
 import Notice from '../Notice';
 import TextField from '../TextField';
-import { ProfileValue } from './ProfileDisplay';
+import { ProfileValue, RankBadge } from './ProfileDisplay';
 import ProfileFieldInput, { FieldShell } from './ProfileFieldInput';
+import { loadMemberRank, useRanksFeature } from '../ranks/rankHooks';
 
 const orNull = (text) => {
   const value = (text || '').trim();
@@ -98,6 +99,15 @@ export default function ProfileForm({ api, user, onUserChange, onSaved, submitLa
   const [busy, setBusy] = useState(false);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [originalHandle] = useState(() => (user && user.handle) || null);
+  const ranks = useRanksFeature();
+  const [lockedKeys, setLockedKeys] = useState([]);
+  const userId = user && user.id;
+  useEffect(() => {
+    if (!ranks.enabled || !userId || !api || !api.getMyRank) return undefined;
+    let live = true;
+    loadMemberRank(api, userId, true).then((response) => { if (live) setLockedKeys((keys) => [...new Set([...keys, ...verifiedRankFieldKeys(response)])]); });
+    return () => { live = false; };
+  }, [ranks.enabled, userId, api]);
   const handleStatus = useHandleAvailability(api, values.handle, originalHandle);
   // Until the member edits the handle, it follows the display name; a taken suggestion gets a short number.
   const [handleTouched, setHandleTouched] = useState(Boolean(user && user.handle));
@@ -168,6 +178,7 @@ export default function ProfileForm({ api, user, onUserChange, onSaved, submitLa
       onSaved(await account.updateProfile(api, body));
     } catch (error) {
       const fieldErrors = fieldErrorsOf(error);
+      if (error && error.code === 'RankVerified') setLockedKeys((keys) => [...new Set([...keys, ...Object.keys(fieldErrors).filter((k) => k.startsWith('profile.')).map((k) => k.slice('profile.'.length))])]);
       setErrors(fieldErrors);
       setMessage(Object.keys(fieldErrors).length ? null : describeError(error));
     } finally {
@@ -229,9 +240,13 @@ export default function ProfileForm({ api, user, onUserChange, onSaved, submitLa
         </FieldShell>
       ) : null}
 
-      {editable.map((field) => (
+      {editable.map((field) => (ranks.enabled && lockedKeys.includes(field.key) ? (
+        <FieldShell key={field.key} label={field.label} helpText={strings.ranks.lockedHint(field.label)} testID={'profile-field-' + field.key + '-locked'}>
+          <RankBadge field={field} value={user && user.profile ? user.profile[field.key] : null} verification={ranks.labels ? 'verified' : null} testID={'profile-field-' + field.key + '-locked-value'} />
+        </FieldShell>
+      ) : (
         <ProfileFieldInput key={field.key} field={field} value={values.profile[field.key]} onChange={setField(field.key)} errors={errors} fields={fields} api={api} />
-      ))}
+      )))}
 
       {staffSet.filter((f) => Object.prototype.hasOwnProperty.call(profile, f.key)).length ? (
         <Card testID="profile-staff-set">

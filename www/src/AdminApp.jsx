@@ -55,6 +55,9 @@ import EventsAdminView from './views/admin/events/EventsAdminView.jsx';
 import EventEditorView from './views/admin/events/EventEditorView.jsx';
 import DirectoryAdminView from './views/admin/directory/DirectoryAdminView.jsx';
 import { CatalogAdminView, CatalogAdminEntryView } from './views/admin/catalog/CatalogAdminViews.jsx';
+import RanksAdminView from './views/admin/ranks/RanksAdminView.jsx';
+import AttendanceAdminView from './views/admin/ranks/AttendanceAdminView.jsx';
+import { CurriculaAdminView, CurriculumAdminEditView } from './views/admin/ranks/CurriculaAdminViews.jsx';
 import { featureEnabled } from './views/member/memberRoutes.js';
 import { PLACEHOLDER_ROUTES, adminRouteAvailable, findAdminRoute } from './views/admin/adminRoutes.js';
 import { Loading } from './components/States.jsx';
@@ -132,6 +135,10 @@ function AdminApp({ fetchImpl = null }) {
           {featureEnabled(property, 'directory') && <Route path="directory" element={<RequireAdmin area="directory">{gate('directory', <DirectoryAdminView />)}</RequireAdmin>} />}
           {featureEnabled(property, 'catalog') && <Route path="catalog" element={<RequireAdmin area="library"><CatalogAdminView /></RequireAdmin>} />}
           {featureEnabled(property, 'catalog') && <Route path="catalog/:id" element={<RequireAdmin area="library"><CatalogAdminEntryView /></RequireAdmin>} />}
+          {featureEnabled(property, 'ranks') && <Route path="ranks" element={<RequireAdmin area="ranks"><RanksAdminView /></RequireAdmin>} />}
+          {featureEnabled(property, 'ranks') && <Route path="curricula" element={<RequireAdmin area={['library', 'ranks']}><CurriculaAdminView /></RequireAdmin>} />}
+          {featureEnabled(property, 'ranks') && <Route path="curricula/:id" element={<RequireAdmin area={['library', 'ranks']}><CurriculumAdminEditView /></RequireAdmin>} />}
+          {featureEnabled(property, 'ranks') && <Route path="attendance" element={<RequireAdmin area="ranks"><AttendanceAdminView /></RequireAdmin>} />}
           <Route path="support" element={<RequireAdmin supportStaff>{feature('support', <SupportInboxView />)}</RequireAdmin>} />
           <Route path="ideas" element={<RequireAdmin supportStaff>{feature('ideas', <IdeasAdminView />)}</RequireAdmin>} />
           <Route path="broadcasts" element={<RequireAdmin communicator>{feature('broadcasts', <BroadcastsView />)}</RequireAdmin>} />

@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "32185df58fe300492d1a7718bc2d9af6954d6798d50b1dcabbdb907112e5c3a9",
+ "sha256": "288a7cb0aa6d97a50b6c6e67e52f5557399bfe37d367c9610485d68ce87d56c2",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -239,6 +239,13 @@
    "key": "mobile.access.features.messaging",
    "client": "mobile",
    "default": "Messages",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.access.features.ranks",
+   "client": "mobile",
+   "default": "Ranks and attendance",
    "tokens": [],
    "maxLength": 200
   },
@@ -13150,6 +13157,587 @@
    "maxLength": 200
   },
   {
+   "key": "mobile.ranks.actions.Award",
+   "client": "mobile",
+   "default": "Awarded",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.actions.Revoke",
+   "client": "mobile",
+   "default": "Revoked",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.attendanceTitle",
+   "client": "mobile",
+   "default": "Attendance",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.button",
+   "client": "mobile",
+   "default": "Check in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.code",
+   "client": "mobile",
+   "default": "Check-in number",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.codeError",
+   "client": "mobile",
+   "default": "The check-in number could not be loaded.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.codeInvalid",
+   "client": "mobile",
+   "default": "Enter the six digits of the check-in number.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.done",
+   "client": "mobile",
+   "default": "You are checked in.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.errors.AlreadyCheckedIn",
+   "client": "mobile",
+   "default": "You are already checked in.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.errors.Forbidden",
+   "client": "mobile",
+   "default": "You cannot check in here.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.errors.InvalidCode",
+   "client": "mobile",
+   "default": "That number is not valid. Numbers change every minute; ask staff for the current one.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.errors.NotAvailable",
+   "client": "mobile",
+   "default": "Check-in is not available right now.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.errors.NotFound",
+   "client": "mobile",
+   "default": "This session or event was not found.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.errors.OutsideCheckInWindow",
+   "client": "mobile",
+   "default": "Check-in is not open right now.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.errors.ValidationFailed",
+   "client": "mobile",
+   "default": "Check the details and try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.intro",
+   "client": "mobile",
+   "default": "Enter the six-digit check-in number shown by staff, or scan the QR image with your phone camera.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.linkInvalid",
+   "client": "mobile",
+   "default": "This check-in link is not valid. Ask staff for the current number.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.methods.QR",
+   "client": "mobile",
+   "default": "QR scan",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.methods.SelfWithCode",
+   "client": "mobile",
+   "default": "Number",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.methods.Staff",
+   "client": "mobile",
+   "default": "Staff",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.qrLabel",
+   "client": "mobile",
+   "default": "Check-in QR image",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.refreshing",
+   "client": "mobile",
+   "default": "Getting a new number",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.rosterEmpty",
+   "client": "mobile",
+   "default": "Nobody has checked in yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.rosterTitle",
+   "client": "mobile",
+   "default": "Checked in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.staffButton",
+   "client": "mobile",
+   "default": "Show check-in number",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.staffIntro",
+   "client": "mobile",
+   "default": "Members scan the QR image with their phone camera or enter the six digits.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.staffTitle",
+   "client": "mobile",
+   "default": "Check-in number",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.submit",
+   "client": "mobile",
+   "default": "Check in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.submitting",
+   "client": "mobile",
+   "default": "Checking in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.title",
+   "client": "mobile",
+   "default": "Check in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.checkIn.working",
+   "client": "mobile",
+   "default": "Checking you in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.autoComplete",
+   "client": "mobile",
+   "default": "Completes when you finish it in the library.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.complete",
+   "client": "mobile",
+   "default": "Mark complete",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.empty",
+   "client": "mobile",
+   "default": "No curricula are published yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.error",
+   "client": "mobile",
+   "default": "Curricula could not be loaded.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.loading",
+   "client": "mobile",
+   "default": "Loading curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.more",
+   "client": "mobile",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.optional",
+   "client": "mobile",
+   "default": "Optional",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.required",
+   "client": "mobile",
+   "default": "Required",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.states.Completed",
+   "client": "mobile",
+   "default": "Completed",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.states.Incomplete",
+   "client": "mobile",
+   "default": "Not started",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.states.SelfComplete",
+   "client": "mobile",
+   "default": "Marked complete",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.states.Verified",
+   "client": "mobile",
+   "default": "Verified",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.title",
+   "client": "mobile",
+   "default": "Curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.types.CatalogEntry",
+   "client": "mobile",
+   "default": "Catalog entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.types.Custom",
+   "client": "mobile",
+   "default": "Item",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.types.Lesson",
+   "client": "mobile",
+   "default": "Lesson",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.types.Series",
+   "client": "mobile",
+   "default": "Series",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.unavailable",
+   "client": "mobile",
+   "default": "This item is not available.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.undo",
+   "client": "mobile",
+   "default": "Mark not complete",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.ungrouped",
+   "client": "mobile",
+   "default": "Other items",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curricula.waitingVerification",
+   "client": "mobile",
+   "default": "Counts once rank staff verify it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curriculaEmpty",
+   "client": "mobile",
+   "default": "No curricula are published yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curriculaLink",
+   "client": "mobile",
+   "default": "View curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.curriculaTitle",
+   "client": "mobile",
+   "default": "Curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.eligible",
+   "client": "mobile",
+   "default": "You meet every requirement for the next rank.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.error",
+   "client": "mobile",
+   "default": "Your rank could not be loaded.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.errors.AlreadyVerified",
+   "client": "mobile",
+   "default": "This item was verified and cannot be undone.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.errors.NotAvailable",
+   "client": "mobile",
+   "default": "Ranks are not available right now.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.errors.NotSelfCompletable",
+   "client": "mobile",
+   "default": "This item completes on its own when you finish it in the library.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.errors.generic",
+   "client": "mobile",
+   "default": "Something went wrong. Try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.highest",
+   "client": "mobile",
+   "default": "You hold the highest rank.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.historyEmpty",
+   "client": "mobile",
+   "default": "No verified changes yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.historyTitle",
+   "client": "mobile",
+   "default": "History",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.inProgress",
+   "client": "mobile",
+   "default": "Requirements for the next rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.loading",
+   "client": "mobile",
+   "default": "Loading rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.met",
+   "client": "mobile",
+   "default": "Met",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.next",
+   "client": "mobile",
+   "default": "Next",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.noRank",
+   "client": "mobile",
+   "default": "Not set",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.noRequirements",
+   "client": "mobile",
+   "default": "No requirements are set for the next rank.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.notAvailable",
+   "client": "mobile",
+   "default": "Ranks are not available right now.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.notMet",
+   "client": "mobile",
+   "default": "Not met yet",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.promoters.editOnWeb",
+   "client": "mobile",
+   "default": "Who promoted you is edited in the web app.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.promoters.empty",
+   "client": "mobile",
+   "default": "No promotions recorded yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.promoters.promoter",
+   "client": "mobile",
+   "default": "Promoted by",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.promoters.title",
+   "client": "mobile",
+   "default": "Promoted by",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.promoters.unverified",
+   "client": "mobile",
+   "default": "Not verified",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.promoters.verified",
+   "client": "mobile",
+   "default": "Verified",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.promoters.verify",
+   "client": "mobile",
+   "default": "Verify",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.selfReported",
+   "client": "mobile",
+   "default": "Self-reported",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.summary",
+   "client": "mobile",
+   "default": "Your current rank, what comes next, and your history.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.title",
+   "client": "mobile",
+   "default": "My rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.ranks.verified",
+   "client": "mobile",
+   "default": "Verified",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "mobile.reactions.add",
    "client": "mobile",
    "default": "Add a reaction",
@@ -14445,6 +15033,13 @@
    "key": "web.access.features.messaging",
    "client": "web",
    "default": "Messages",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.access.features.ranks",
+   "client": "web",
+   "default": "Ranks and attendance",
    "tokens": [],
    "maxLength": 200
   },
@@ -44937,6 +45532,13 @@
    "maxLength": 200
   },
   {
+   "key": "web.enums.resourceType.Ranks",
+   "client": "web",
+   "default": "Ranks",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.enums.role.Communicator",
    "client": "web",
    "default": "Communicator",
@@ -44975,6 +45577,13 @@
    "key": "web.enums.role.Moderator",
    "client": "web",
    "default": "Forum moderator",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.enums.role.RankAwarder",
+   "client": "web",
+   "default": "Rank awarder",
    "tokens": [],
    "maxLength": 200
   },
@@ -58253,6 +58862,1924 @@
    "key": "web.publicThreads.title",
    "client": "web",
    "default": "From the forums",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.actions.Award",
+   "client": "web",
+   "default": "Awarded",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.actions.Revoke",
+   "client": "web",
+   "default": "Revoked",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.action",
+   "client": "web",
+   "default": "Action",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.addRequirement",
+   "client": "web",
+   "default": "Add requirement",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.allLevels",
+   "client": "web",
+   "default": "Every level",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.anyAction",
+   "client": "web",
+   "default": "Any action",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.anyOption",
+   "client": "web",
+   "default": "Any rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.anyStatus",
+   "client": "web",
+   "default": "Any status",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.attendanceNav",
+   "client": "web",
+   "default": "Attendance",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.attendanceSummary",
+   "client": "web",
+   "default": "Show check-in codes and review who checked in to events and sessions.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.award",
+   "client": "web",
+   "default": "Award rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.awardBlocked",
+   "client": "web",
+   "default": "The awarding rules do not let you award this rank.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.awardTitle",
+   "client": "web",
+   "default": "Award a rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.awarded",
+   "client": "web",
+   "default": "Rank awarded.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.awardedBy",
+   "client": "web",
+   "default": "By",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.awarding",
+   "client": "web",
+   "default": "Awarding",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.awardsEmpty",
+   "client": "web",
+   "default": "No awards match these filters.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.current",
+   "client": "web",
+   "default": "Current",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.curriculaNav",
+   "client": "web",
+   "default": "Curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.curriculaSummary",
+   "client": "web",
+   "default": "Build rank curricula from the library, publish them, and review member progress.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.date",
+   "client": "web",
+   "default": "Date",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.duplicateRequirement",
+   "client": "web",
+   "default": "Each rank and level can have only one requirement.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.eligibilityEmpty",
+   "client": "web",
+   "default": "No members match.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.eligibleBadge",
+   "client": "web",
+   "default": "Eligible",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.eligibleOnly",
+   "client": "web",
+   "default": "Only members who meet every requirement",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.AlreadyRevoked",
+   "client": "web",
+   "default": "This award was already revoked.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.AwardAboveOwnRank",
+   "client": "web",
+   "default": "The awarding rules do not let you award this rank.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.ContentFiltered",
+   "client": "web",
+   "default": "Some text was not allowed. Change it and try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.CurriculumEmpty",
+   "client": "web",
+   "default": "Add at least one item before publishing.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.Forbidden",
+   "client": "web",
+   "default": "You do not have permission to do this.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.InvalidStatus",
+   "client": "web",
+   "default": "This curriculum cannot change to that status.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.LevelOutOfRange",
+   "client": "web",
+   "default": "Choose a level from the list.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.NotAvailable",
+   "client": "web",
+   "default": "Ranks are turned off on the server (ranks.enabled).",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.SelfAward",
+   "client": "web",
+   "default": "You cannot award, revoke, or verify your own rank.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.UnknownRankOption",
+   "client": "web",
+   "default": "Choose a rank from the list.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.errors.ValidationFailed",
+   "client": "web",
+   "default": "Check the fields and try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.eventId",
+   "client": "web",
+   "default": "Event (optional)",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.field",
+   "client": "web",
+   "default": "Rank field",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.from",
+   "client": "web",
+   "default": "From",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.historyAll",
+   "client": "web",
+   "default": "Open in Ranks",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.historyEmpty",
+   "client": "web",
+   "default": "No awards or revokes.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.historyTitle",
+   "client": "web",
+   "default": "Rank history",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.level",
+   "client": "web",
+   "default": "Level",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.lineageEmpty",
+   "client": "web",
+   "default": "This member has no lineage entries.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.lineageIntro",
+   "client": "web",
+   "default": "Look up a member to review their lineage. Entries naming you, or any entry when you are a system administrator, can be verified.",
+   "tokens": [],
+   "maxLength": 256
+  },
+  {
+   "key": "web.ranks.admin.lineageSessionOnly",
+   "client": "web",
+   "default": "Sign in with a member account to review lineage.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.member",
+   "client": "web",
+   "default": "Member",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.memberPlaceholder",
+   "client": "web",
+   "default": "Search members by name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.minimumAttendance",
+   "client": "web",
+   "default": "Minimum check-ins",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.minimumDays",
+   "client": "web",
+   "default": "Minimum days at the previous rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.more",
+   "client": "web",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.nav",
+   "client": "web",
+   "default": "Ranks",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.next",
+   "client": "web",
+   "default": "Next",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.noCurriculum",
+   "client": "web",
+   "default": "No curriculum",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.noFields",
+   "client": "web",
+   "default": "The property has no Rank profile field. Add one under Profile fields first.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.notEligible",
+   "client": "web",
+   "default": "Not yet",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.note",
+   "client": "web",
+   "default": "Note",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.noteHint",
+   "client": "web",
+   "default": "Optional, up to 500 characters; the member can see it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.option",
+   "client": "web",
+   "default": "Rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.removeRow",
+   "client": "web",
+   "default": "Remove",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.requirementCurriculum",
+   "client": "web",
+   "default": "Curriculum",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.requirementNotes",
+   "client": "web",
+   "default": "Notes",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.requirementsAdminOnly",
+   "client": "web",
+   "default": "Only system administrators change requirements.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.requirementsEmpty",
+   "client": "web",
+   "default": "No requirements are set.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.requirementsIntro",
+   "client": "web",
+   "default": "Requirements apply per rank and level. A row without a level covers every level of that rank without its own row.",
+   "tokens": [],
+   "maxLength": 226
+  },
+  {
+   "key": "web.ranks.admin.requirementsSaved",
+   "client": "web",
+   "default": "Requirements saved.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.revoke",
+   "client": "web",
+   "default": "Revoke",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.revokeReason",
+   "client": "web",
+   "default": "Reason",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.revokeReasonHint",
+   "client": "web",
+   "default": "Required, up to 500 characters.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.revokeTitle",
+   "client": "web",
+   "default": "Revoke this award",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.revoked",
+   "client": "web",
+   "default": "Award revoked.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.saveRequirements",
+   "client": "web",
+   "default": "Save requirements",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.status",
+   "client": "web",
+   "default": "Status",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.statuses.Active",
+   "client": "web",
+   "default": "Active",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.statuses.Revoked",
+   "client": "web",
+   "default": "Revoked",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.summary",
+   "client": "web",
+   "default": "Award and revoke ranks, review eligibility, set requirements, and verify lineage.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.tabs.awards",
+   "client": "web",
+   "default": "Awards",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.tabs.eligibility",
+   "client": "web",
+   "default": "Eligibility",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.tabs.lineage",
+   "client": "web",
+   "default": "Lineage",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.tabs.requirements",
+   "client": "web",
+   "default": "Requirements",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.admin.to",
+   "client": "web",
+   "default": "To",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.chooseTarget",
+   "client": "web",
+   "default": "Choose an event or a venue session to see its roster.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.date",
+   "client": "web",
+   "default": "Date",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.event",
+   "client": "web",
+   "default": "Event",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.eventPlaceholder",
+   "client": "web",
+   "default": "Search events",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.hideCode",
+   "client": "web",
+   "default": "Hide code",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.noSessions",
+   "client": "web",
+   "default": "This venue has no weekly sessions.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.session",
+   "client": "web",
+   "default": "Session",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.showCode",
+   "client": "web",
+   "default": "Show check-in code",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.targetType",
+   "client": "web",
+   "default": "Check-in for",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.title",
+   "client": "web",
+   "default": "Attendance",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.types.Event",
+   "client": "web",
+   "default": "An event",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.types.VenueSession",
+   "client": "web",
+   "default": "A venue session",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.venue",
+   "client": "web",
+   "default": "Venue",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceAdmin.venuePlaceholder",
+   "client": "web",
+   "default": "Search venues",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.attendanceTitle",
+   "client": "web",
+   "default": "Attendance",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.addMember",
+   "client": "web",
+   "default": "Check in a member",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.addMemberHint",
+   "client": "web",
+   "default": "Staff can check a member in without a code once check-in opens.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.added",
+   "client": "web",
+   "default": "Member checked in.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.button",
+   "client": "web",
+   "default": "Check in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.cancel",
+   "client": "web",
+   "default": "Close",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.code",
+   "client": "web",
+   "default": "Check-in code",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.codeError",
+   "client": "web",
+   "default": "The check-in code could not be loaded.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.codeInvalid",
+   "client": "web",
+   "default": "Enter the six digits of the code.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.date",
+   "client": "web",
+   "default": "Date",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.done",
+   "client": "web",
+   "default": "You are checked in.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.errors.AlreadyCheckedIn",
+   "client": "web",
+   "default": "You are already checked in.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.errors.Forbidden",
+   "client": "web",
+   "default": "You cannot check in here.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.errors.InvalidCode",
+   "client": "web",
+   "default": "That code is not valid. Codes change every minute; ask staff for the current one.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.errors.NotAvailable",
+   "client": "web",
+   "default": "Check-in is not available right now.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.errors.NotFound",
+   "client": "web",
+   "default": "This session or event was not found.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.errors.OutsideCheckInWindow",
+   "client": "web",
+   "default": "Check-in is not open right now.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.errors.ValidationFailed",
+   "client": "web",
+   "default": "Check the details and try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.event",
+   "client": "web",
+   "default": "Event",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.intro",
+   "client": "web",
+   "default": "Enter the six-digit code shown by staff.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.linkInvalid",
+   "client": "web",
+   "default": "This check-in link is not valid. Ask staff for the current code.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.methods.QR",
+   "client": "web",
+   "default": "QR code",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.methods.SelfWithCode",
+   "client": "web",
+   "default": "Code",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.methods.Staff",
+   "client": "web",
+   "default": "Staff",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.openApp",
+   "client": "web",
+   "default": "Open in the app",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.qrLabel",
+   "client": "web",
+   "default": "Check-in QR code",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.refreshing",
+   "client": "web",
+   "default": "Getting a new code",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.remove",
+   "client": "web",
+   "default": "Remove",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.removeConfirm",
+   "client": "web",
+   "default": "Remove this check-in?",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.removed",
+   "client": "web",
+   "default": "Check-in removed.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.rosterEmpty",
+   "client": "web",
+   "default": "Nobody has checked in yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.rosterMore",
+   "client": "web",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.rosterTitle",
+   "client": "web",
+   "default": "Checked in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.session",
+   "client": "web",
+   "default": "Session",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.signIn",
+   "client": "web",
+   "default": "Sign in to check in.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.staffButton",
+   "client": "web",
+   "default": "Show check-in code",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.staffIntro",
+   "client": "web",
+   "default": "Members scan the code with their phone camera or enter the six digits.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.staffTitle",
+   "client": "web",
+   "default": "Check-in code",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.submit",
+   "client": "web",
+   "default": "Check in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.submitting",
+   "client": "web",
+   "default": "Checking in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.title",
+   "client": "web",
+   "default": "Check in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.checkIn.working",
+   "client": "web",
+   "default": "Checking you in",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.current",
+   "client": "web",
+   "default": "Current",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.autoComplete",
+   "client": "web",
+   "default": "Completes when you finish it in the library.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.back",
+   "client": "web",
+   "default": "Back to curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.complete",
+   "client": "web",
+   "default": "Mark complete",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.empty",
+   "client": "web",
+   "default": "No curricula are published yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.error",
+   "client": "web",
+   "default": "Curricula could not be loaded. Try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.loading",
+   "client": "web",
+   "default": "Loading curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.more",
+   "client": "web",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.open",
+   "client": "web",
+   "default": "Open",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.optional",
+   "client": "web",
+   "default": "Optional",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.required",
+   "client": "web",
+   "default": "Required",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.states.Completed",
+   "client": "web",
+   "default": "Completed",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.states.Incomplete",
+   "client": "web",
+   "default": "Not started",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.states.SelfComplete",
+   "client": "web",
+   "default": "Marked complete",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.states.Verified",
+   "client": "web",
+   "default": "Verified",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.summary",
+   "client": "web",
+   "default": "Structured lists of what to learn at each rank.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.title",
+   "client": "web",
+   "default": "Curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.types.CatalogEntry",
+   "client": "web",
+   "default": "Catalog entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.types.Custom",
+   "client": "web",
+   "default": "Item",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.types.Lesson",
+   "client": "web",
+   "default": "Lesson",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.types.Series",
+   "client": "web",
+   "default": "Series",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.unavailable",
+   "client": "web",
+   "default": "This item is not available.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.undo",
+   "client": "web",
+   "default": "Mark not complete",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.ungrouped",
+   "client": "web",
+   "default": "Other items",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curricula.waitingVerification",
+   "client": "web",
+   "default": "Counts once rank staff verify it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.addItem",
+   "client": "web",
+   "default": "Add item",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.anyStatus",
+   "client": "web",
+   "default": "Any status",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.archive",
+   "client": "web",
+   "default": "Archive",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.archived",
+   "client": "web",
+   "default": "Curriculum archived.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.back",
+   "client": "web",
+   "default": "Back to curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.confirmArchive",
+   "client": "web",
+   "default": "Archive this curriculum? Members stop seeing it; their progress is kept.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.create",
+   "client": "web",
+   "default": "New curriculum",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.createTitle",
+   "client": "web",
+   "default": "New curriculum",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.created",
+   "client": "web",
+   "default": "Curriculum created.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.customText",
+   "client": "web",
+   "default": "Text",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.description",
+   "client": "web",
+   "default": "Description",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.empty",
+   "client": "web",
+   "default": "No curricula yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.field",
+   "client": "web",
+   "default": "Rank field (groups)",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.group",
+   "client": "web",
+   "default": "Rank group",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.itemProblem",
+   "client": "web",
+   "default": "Choose a target for every item, and enter text for custom items (up to 300 characters).",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.itemsEmpty",
+   "client": "web",
+   "default": "No items yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.itemsIntro",
+   "client": "web",
+   "default": "Group items by rank. Lesson and series items complete on their own from library progress; catalog and custom items are marked complete by the member, and required ones count once verified.",
+   "tokens": [],
+   "maxLength": 376
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.itemsSaved",
+   "client": "web",
+   "default": "Items saved.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.itemsTitle",
+   "client": "web",
+   "default": "Items",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.more",
+   "client": "web",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.moveDown",
+   "client": "web",
+   "default": "Move down",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.moveUp",
+   "client": "web",
+   "default": "Move up",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.name",
+   "client": "web",
+   "default": "Name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.noField",
+   "client": "web",
+   "default": "No rank groups",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.noGroup",
+   "client": "web",
+   "default": "No group",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.position",
+   "client": "web",
+   "default": "Order",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.progressIntro",
+   "client": "web",
+   "default": "Look up a member to see their progress and verify items.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.progressTitle",
+   "client": "web",
+   "default": "Member progress",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.publish",
+   "client": "web",
+   "default": "Publish",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.published",
+   "client": "web",
+   "default": "Curriculum published.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.remove",
+   "client": "web",
+   "default": "Remove",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.required",
+   "client": "web",
+   "default": "Required",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.save",
+   "client": "web",
+   "default": "Save details",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.saveItems",
+   "client": "web",
+   "default": "Save items",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.saved",
+   "client": "web",
+   "default": "Curriculum saved.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.states.Completed",
+   "client": "web",
+   "default": "Completed",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.states.Incomplete",
+   "client": "web",
+   "default": "Not started",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.states.SelfComplete",
+   "client": "web",
+   "default": "Marked complete",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.states.Verified",
+   "client": "web",
+   "default": "Verified",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.status",
+   "client": "web",
+   "default": "Status",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.statuses.Archived",
+   "client": "web",
+   "default": "Archived",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.statuses.Draft",
+   "client": "web",
+   "default": "Draft",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.statuses.Published",
+   "client": "web",
+   "default": "Published",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.target",
+   "client": "web",
+   "default": "Item",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.targetPlaceholder",
+   "client": "web",
+   "default": "Search by title",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.title",
+   "client": "web",
+   "default": "Curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.type",
+   "client": "web",
+   "default": "Type",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.types.CatalogEntry",
+   "client": "web",
+   "default": "Catalog entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.types.Custom",
+   "client": "web",
+   "default": "Custom text",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.types.Lesson",
+   "client": "web",
+   "default": "Lesson",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.types.Series",
+   "client": "web",
+   "default": "Series",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.unavailable",
+   "client": "web",
+   "default": "Not available",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.verified",
+   "client": "web",
+   "default": "Item verified.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.verify",
+   "client": "web",
+   "default": "Verify",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.visibilities.Hidden",
+   "client": "web",
+   "default": "Only with the link",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.visibilities.Members",
+   "client": "web",
+   "default": "Members",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.visibilities.Public",
+   "client": "web",
+   "default": "Everyone",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaAdmin.visibility",
+   "client": "web",
+   "default": "Who can see it",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaEmpty",
+   "client": "web",
+   "default": "No curricula are published yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaLink",
+   "client": "web",
+   "default": "View curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.curriculaTitle",
+   "client": "web",
+   "default": "Curricula",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.eligible",
+   "client": "web",
+   "default": "You meet every requirement for the next rank.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.error",
+   "client": "web",
+   "default": "Your rank could not be loaded. Try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.errors.AlreadyVerified",
+   "client": "web",
+   "default": "This item was verified and cannot be undone.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.errors.ContentFiltered",
+   "client": "web",
+   "default": "Some text was not allowed. Change it and try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.errors.Muted",
+   "client": "web",
+   "default": "Your account cannot make changes right now.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.errors.NotAvailable",
+   "client": "web",
+   "default": "Ranks are not available right now.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.errors.NotSelfCompletable",
+   "client": "web",
+   "default": "This item completes on its own when you finish it in the library.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.errors.RankVerified",
+   "client": "web",
+   "default": "This rank was verified and can only change with a new award.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.errors.generic",
+   "client": "web",
+   "default": "Something went wrong. Try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.highest",
+   "client": "web",
+   "default": "You hold the highest rank.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.historyEmpty",
+   "client": "web",
+   "default": "No verified changes yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.historyTitle",
+   "client": "web",
+   "default": "History",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.inProgress",
+   "client": "web",
+   "default": "Requirements for the next rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.add",
+   "client": "web",
+   "default": "Add entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.cancel",
+   "client": "web",
+   "default": "Cancel",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.date",
+   "client": "web",
+   "default": "Date",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.edit",
+   "client": "web",
+   "default": "Edit lineage",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.empty",
+   "client": "web",
+   "default": "No lineage entries yet.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.intro",
+   "client": "web",
+   "default": "Who promoted you to each rank. Entries naming a member are sent to them to verify.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.pendingForYou",
+   "client": "web",
+   "default": "Awaiting your verification",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.promoter",
+   "client": "web",
+   "default": "Promoted by",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.promoterHint",
+   "client": "web",
+   "default": "Choose a member, or type a name for someone who is not a member.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.promoterMember",
+   "client": "web",
+   "default": "Member",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.promoterName",
+   "client": "web",
+   "default": "Name (not a member)",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.promoterRequired",
+   "client": "web",
+   "default": "Choose a member or enter a name for every entry.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.rank",
+   "client": "web",
+   "default": "Rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.remove",
+   "client": "web",
+   "default": "Remove entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.save",
+   "client": "web",
+   "default": "Save lineage",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.saved",
+   "client": "web",
+   "default": "Lineage saved.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.saving",
+   "client": "web",
+   "default": "Saving",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.searchMember",
+   "client": "web",
+   "default": "Search members",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.title",
+   "client": "web",
+   "default": "Lineage",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.unverified",
+   "client": "web",
+   "default": "Not verified",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.verified",
+   "client": "web",
+   "default": "Verified",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.verifiedToast",
+   "client": "web",
+   "default": "Lineage entry verified.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.lineage.verify",
+   "client": "web",
+   "default": "Verify",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.loading",
+   "client": "web",
+   "default": "Loading rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.locked.badge",
+   "client": "web",
+   "default": "Locked",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.met",
+   "client": "web",
+   "default": "Met",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.nav",
+   "client": "web",
+   "default": "My rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.next",
+   "client": "web",
+   "default": "Next",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.noRank",
+   "client": "web",
+   "default": "Not set",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.noRequirements",
+   "client": "web",
+   "default": "No requirements are set for the next rank.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.notAvailable",
+   "client": "web",
+   "default": "Ranks are not available right now.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.notMet",
+   "client": "web",
+   "default": "Not met yet",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.retry",
+   "client": "web",
+   "default": "Try again",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.selfReported",
+   "client": "web",
+   "default": "Self-reported",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.setRank",
+   "client": "web",
+   "default": "Add it to your profile",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.summary",
+   "client": "web",
+   "default": "Your current rank, what comes next, and your history.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.title",
+   "client": "web",
+   "default": "My rank",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.ranks.verified",
+   "client": "web",
+   "default": "Verified",
    "tokens": [],
    "maxLength": 200
   },

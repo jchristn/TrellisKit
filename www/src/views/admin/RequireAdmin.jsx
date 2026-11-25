@@ -11,7 +11,7 @@ import DocumentsReviewPanel from '../../components/documents/DocumentsReviewPane
  * Guard for admin routes: redirects to /admin/login without a valid session or token. With
  * `adminOnly`, moderators (who see only Home and Moderation) are sent to the moderation queue;
  * with `forumModerator`, only forum moderators (and administrators) stay (PHASE3_CONTRACT.md 11.5).
- * With `area` (`library`, `events`, `directory`), administrators and holders of that area's staff
+ * With `area` (`library`, `events`, `directory`, `ranks`, or a list of them), administrators and holders of that area's staff
  * role stay (docs/PHASE4_CONTRACT.md section 1.1); others go to Home. With `supportStaff` or
  * `communicator`, only SupportAgent or Communicator holders (and administrators) stay
  * (PHASE5_CONTRACT.md as-built note D). With `releaseManager`, only ReleaseManager holders (and
@@ -36,7 +36,7 @@ function RequireAdmin({ children, adminOnly = false, forumModerator = false, are
       </div>
     );
   }
-  if (area && isModeratorOnly && !staffAreas.includes(area)) return <Navigate to="/admin/home" replace />;
+  if (area && isModeratorOnly && ![].concat(area).some((one) => staffAreas.includes(one))) return <Navigate to="/admin/home" replace />;
   // Phase 5 staff sections: SupportAgent (support inbox, ideas) and Communicator (broadcasts).
   if (supportStaff && staff && !staff.supportStaff) return <Navigate to="/admin/home" replace />;
   if (communicator && staff && !staff.communicator) return <Navigate to="/admin/home" replace />;

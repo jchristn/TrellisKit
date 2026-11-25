@@ -39,6 +39,9 @@ export const ADMIN_ROUTES = [
   { id: 'events', group: g.content, icon: 'calendar', feature: 'events', staffArea: 'events', endpoint: 'POST /api/v1/admin/events/enumerate', ...r.events },
   { id: 'directory', group: g.content, icon: 'pin', feature: 'directory', staffArea: 'directory', endpoint: 'POST /api/v1/admin/venues/enumerate', ...r.directory },
   { id: 'catalog', group: g.content, icon: 'book', feature: 'catalog', staffArea: 'library', endpoint: 'POST /api/v1/admin/catalog/entries/enumerate', label: strings.exerciseCatalog.nav, summary: strings.exerciseCatalog.adminSummary },
+  { id: 'ranks', group: g.content, icon: 'trending', feature: 'ranks', staffArea: 'ranks', endpoint: 'POST /api/v1/admin/ranks/awards/enumerate', label: strings.ranks.admin.nav, summary: strings.ranks.admin.summary },
+  { id: 'curricula', group: g.content, icon: 'list', feature: 'ranks', staffArea: ['library', 'ranks'], endpoint: 'POST /api/v1/admin/curricula/enumerate', label: strings.ranks.admin.curriculaNav, summary: strings.ranks.admin.curriculaSummary },
+  { id: 'attendance', group: g.content, icon: 'calendar', feature: 'ranks', staffArea: 'ranks', endpoint: 'POST /api/v1/admin/attendance/enumerate', label: strings.ranks.admin.attendanceNav, summary: strings.ranks.admin.attendanceSummary },
 
   { id: 'support', group: g.engagement, icon: 'help', feature: 'support', supportStaff: true, ...r.support },
   { id: 'ideas', group: g.engagement, icon: 'trending', feature: 'ideas', supportStaff: true, ...r.ideas },
@@ -110,7 +113,7 @@ function staffSees(route, { forumModerator, moderator, supportStaff, communicato
   if (route.supportStaff && supportStaff) return true;
   if (route.communicator && communicator) return true;
   if (route.releaseManager && releaseManager) return true;
-  if (route.staffArea && staffAreas.includes(route.staffArea)) return true;
+  if (route.staffArea && [].concat(route.staffArea).some((area) => staffAreas.includes(area))) return true;
   return false;
 }
 

@@ -33,8 +33,10 @@ function Section({ label, children }) {
  * @param {string} props.text The venue's `scheduleText`.
  * @param {object} props.t Directory strings.
  * @param {boolean} [props.hoursOnly] Show only the hours table (the map preview).
+ * @param {(entry: object, index: number) => React.ReactNode} [props.sessionAction] Extra controls for a
+ *   session row; `index` is the zero-based position in `schedule.sessions` (attendance target `{venueId}:{index}`).
  */
-export function VenueSchedule({ text, schedule, t, hoursOnly = false, testID }) {
+export function VenueSchedule({ text, schedule, t, hoursOnly = false, testID, sessionAction = null }) {
   const theme = useTheme();
   const parsed = venueScheduleDisplay(schedule, text);
   const hours = parsed.hours;
@@ -61,11 +63,14 @@ export function VenueSchedule({ text, schedule, t, hoursOnly = false, testID }) 
         </Section>
       ) : null}
       {!hoursOnly && parsed.sessions.length ? <Section label={t.scheduleEditor.sessions}>
-        {parsed.sessions.map((entry, i) => <AppText key={i}>
-          {entry.name}{' · '}{t.scheduleDays[entry.dayOfWeek]}{' · '}
-          {scheduleTimeLabel(t, { open: entry.startTime, close: entry.endTime, endsNextDay: entry.endsNextDay })}
-          {entry.instructor ? ' · ' + entry.instructor : ''}
-        </AppText>)}
+        {parsed.sessions.map((entry, i) => <View key={i} style={{ gap: theme.spacing.xs }}>
+          <AppText>
+            {entry.name}{' · '}{t.scheduleDays[entry.dayOfWeek]}{' · '}
+            {scheduleTimeLabel(t, { open: entry.startTime, close: entry.endTime, endsNextDay: entry.endsNextDay })}
+            {entry.instructor ? ' · ' + entry.instructor : ''}
+          </AppText>
+          {sessionAction && schedule && Array.isArray(schedule.sessions) ? sessionAction(entry, schedule.sessions.indexOf(entry)) : null}
+        </View>)}
       </Section> : null}
       {notes.length ? (
         <Section label={t.schedule}>

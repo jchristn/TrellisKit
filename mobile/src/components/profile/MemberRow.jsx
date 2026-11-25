@@ -6,11 +6,14 @@ import AppText from '../AppText';
 import Avatar from '../Avatar';
 import { StaffBadge } from '../feed/AuthorRow';
 import { CardFields } from './ProfileDisplay';
+import { useMemberRankBadges } from '../ranks/rankHooks';
 
 /** One member row: avatar, name, staff badge, handle, and card fields. Opens the profile. */
 export default function MemberRow({ member, fields, onOpen }) {
   const theme = useTheme();
   const { api } = useAuth();
+  const showsRank = (fields || []).some((f) => f && f.type === 'Rank' && f.showOnCard && member.profile && member.profile[f.key]);
+  const rankBadges = useMemberRankBadges(api, member.id, { enabled: showsRank });
   return (
     <Pressable
       onPress={() => onOpen(member)}
@@ -31,7 +34,7 @@ export default function MemberRow({ member, fields, onOpen }) {
             {'@' + member.handle}
           </AppText>
         ) : null}
-        <CardFields profile={member.profile} fields={fields} testID={'directory-member-' + member.id + '-card'} />
+        <CardFields profile={member.profile} fields={fields} testID={'directory-member-' + member.id + '-card'} rankBadges={rankBadges} />
       </View>
     </Pressable>
   );

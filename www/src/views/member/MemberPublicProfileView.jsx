@@ -22,6 +22,8 @@ import { authorName, errorText, mediaUrl } from '../../utils/engagement.js';
 import { formatDate } from '../../utils/format.js';
 import { useProperty } from '../../context/PropertyContext.jsx';
 import { canUseMessaging, cardFields, profileFieldsOf, profilePageFields } from '@trelliskit/shared';
+import { useMemberRankBadges } from '../ranks/rankHooks.js';
+import MemberLineagePanel from '../ranks/MemberLineagePanel.jsx';
 
 const p = strings.memberProfile;
 
@@ -59,6 +61,7 @@ function MemberPublicProfileView() {
     }
   };
   const fields = useMemo(() => profileFieldsOf(property), [property]);
+  const rankBadges = useMemberRankBadges(client, id, { enabled: Boolean(user) });
   const profile = (user && user.profile) || {};
   const cardKeys = new Set(cardFields(fields, profile).map((f) => f.key));
   const body = profilePageFields(fields, profile).filter((f) => !cardKeys.has(f.key) || f.type === 'History');
@@ -86,9 +89,9 @@ function MemberPublicProfileView() {
               </div>
             </div>
           </div>
-          <div className="profile-chips"><CardFields fields={fields} profile={profile} /></div>
+          <div className="profile-chips"><CardFields fields={fields} profile={profile} rankBadges={rankBadges} /></div>
           {user.bio && <div><h2 className="label-text">{builtInLabel(fields, 'bio', strings.member.bioTitle)}</h2><p className="profile-bio preserve-lines">{user.bio}</p></div>}
-          <ProfileFieldList fields={fields} profile={profile} showEmpty={body} />
+          <ProfileFieldList fields={fields} profile={profile} showEmpty={body} rankBadges={rankBadges} />
           {user.createdUtc && <p className="muted small">{p.joined(formatDate(user.createdUtc))}</p>}
           <PublicPageLink url={user.publicUrl} />
           {!isSelf && (
@@ -101,6 +104,7 @@ function MemberPublicProfileView() {
           )}
         </section>
       )}
+      {user && !isBlocked && <MemberLineagePanel userId={user.id} />}
       {user && !isBlocked && <ProfileMedia user={user} />}
       {user && dialog === 'report' && <ReportDialog target={{ type: 'User', id: user.id }} author={user} onClose={() => setDialog(null)} onBlocked={() => setBlocked(true)} />}
       {user && (dialog === 'block' || dialog === 'unblock') && (

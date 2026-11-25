@@ -15,6 +15,7 @@ import Icon from '../../components/Icon.jsx';
 import MetadataFilterBar from '../../components/MetadataFilterBar.jsx';
 import { Banner, EmptyState, ErrorBanner, Loading } from '../../components/States.jsx';
 import { CardFields } from '../../components/profile/ProfileFieldDisplay.jsx';
+import { useMemberRankBadges } from '../ranks/rankHooks.js';
 import { authorName, errorText, mediaUrl, memberPath } from '../../utils/engagement.js';
 
 const d = strings.directory;
@@ -173,6 +174,13 @@ export function ProfileFilterControl({ field, value, onChange }) {
   );
 }
 
+/** Card fields of one member with the rank verification label when ranks and labels are on. */
+function MemberCardFields({ fields, user, client }) {
+  const showsRank = fields.some((f) => f.type === 'Rank' && f.showOnCard && user.profile && user.profile[f.key]);
+  const rankBadges = useMemberRankBadges(client, user.id, { enabled: showsRank });
+  return <CardFields fields={fields} profile={user.profile || {}} rankBadges={rankBadges} />;
+}
+
 function DirectoryResults({ client, meta, filters, fields, onFilterError }) {
   const filterKey = JSON.stringify(filters);
   const metaKey = JSON.stringify(meta);
@@ -205,7 +213,7 @@ function DirectoryResults({ client, meta, filters, fields, onFilterError }) {
               <span className="directory-card-text">
                 <strong>{authorName(user)}</strong>
                 {user.handle && <span className="muted small">@{user.handle}</span>}
-                <span className="small"><CardFields fields={fields} profile={user.profile || {}} /></span>
+                <span className="small"><MemberCardFields fields={fields} user={user} client={client} /></span>
               </span>
             </Link>
           </li>

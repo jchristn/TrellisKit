@@ -30,6 +30,7 @@ import MetadataPanel from '../../components/MetadataPanel.jsx';
 import { PublicProfilePageSettings } from '../../components/PublicPageFields.jsx';
 import { capabilityAvailable } from '../member/memberRoutes.js';
 import TableColumns from '../../components/TableColumns.jsx';
+import MemberRankPanel from './ranks/MemberRankPanel.jsx';
 
 const s = strings.admin.members;
 const c = strings.admin.common;
@@ -41,8 +42,8 @@ const FLAG_KEYS = [...POSTING_FLAGS, ...OTHER_FLAGS];
 /** Flag defaults when the server omits one (Phase 2 contract section 1.1). */
 export const FLAG_DEFAULTS = Object.freeze({ canPostToFeed: false, canPost: true, canPostMedia: true, canUploadVideo: true, canPromoteToFeed: false, canSendDirectMessages: true });
 const flagValue = (flags, key) => (flags && typeof flags[key] === 'boolean' ? flags[key] : FLAG_DEFAULTS[key]);
-const ROLE_OPTIONS = ['SystemAdmin', 'Moderator', 'FeedModerator', 'DirectoryModerator', 'EventManager', 'LibraryEditor', 'SupportAgent', 'Communicator', 'ReleaseManager'];
-const DEFAULT_SCOPE = { SystemAdmin: 'Global', Moderator: 'Forum', FeedModerator: 'Feed', DirectoryModerator: 'Directory', EventManager: 'Events', LibraryEditor: 'Library', SupportAgent: 'Global', Communicator: 'Global', ReleaseManager: 'Global' };
+const ROLE_OPTIONS = ['SystemAdmin', 'Moderator', 'FeedModerator', 'DirectoryModerator', 'EventManager', 'LibraryEditor', 'SupportAgent', 'Communicator', 'ReleaseManager', 'RankAwarder'];
+const DEFAULT_SCOPE = { SystemAdmin: 'Global', Moderator: 'Forum', FeedModerator: 'Feed', DirectoryModerator: 'Directory', EventManager: 'Events', LibraryEditor: 'Library', SupportAgent: 'Global', Communicator: 'Global', ReleaseManager: 'Global', RankAwarder: 'Ranks' };
 
 let roleKey = 0;
 const withKey = (role) => ({ key: 'r' + (roleKey += 1), role: role.role, resourceType: role.resourceType || DEFAULT_SCOPE[role.role] || 'Global', resourceId: role.resourceId || '*' });
@@ -603,6 +604,7 @@ function MemberDetailDrawer({ id, onClose, onChanged }) {
             />
           )}
           <RolesEditor key={'roles-' + JSON.stringify(member.roles || [])} member={member} onSaved={saved} />
+          <MemberRankPanel userId={member.id} />
           {forumsOn ? <ForumMutesTab userId={member.id} compact /> : (
             <section className="detail-block" aria-labelledby="member-forum-mutes-title" data-testid="forum-mutes-coming-soon">
               <h3 id="member-forum-mutes-title">{strings.admin.forumMutes.title} <Badge tone="info">{strings.admin.placeholder.badge}</Badge></h3>

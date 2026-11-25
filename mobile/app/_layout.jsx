@@ -75,6 +75,9 @@ function AppStack() {
       <Stack.Screen name="lessons" options={{ headerShown: false }} />
       <Stack.Screen name="training" options={{ headerShown: false }} />
       <Stack.Screen name="catalog" options={{ headerShown: false }} />
+      <Stack.Screen name="rank" options={{ headerShown: false }} />
+      <Stack.Screen name="curricula" options={{ headerShown: false }} />
+      <Stack.Screen name="check-in" options={{ title: strings.ranks.checkIn.title }} />
       <Stack.Screen name="compose-thread" options={{ title: strings.forums.composer.newTitle, presentation: 'modal' }} />
     </Stack>
   );

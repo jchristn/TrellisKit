@@ -28,7 +28,7 @@ export function isModerator(me) {
  * resolved decision 3): `directory` (DirectoryModerator), `events` (EventManager), `library`
  * (LibraryEditor). SystemAdmin opens every area.
  */
-export const STAFF_AREA_ROLES = Object.freeze({ directory: Role.DirectoryModerator, events: Role.EventManager, library: Role.LibraryEditor });
+export const STAFF_AREA_ROLES = Object.freeze({ directory: Role.DirectoryModerator, events: Role.EventManager, library: Role.LibraryEditor, ranks: Role.RankAwarder });
 
 /** The Phase 4 staff areas `Me` holds a role for (`['library', ...]`). */
 export function staffAreas(me) {

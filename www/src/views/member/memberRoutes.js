@@ -1,4 +1,4 @@
-import { MaxWebLabelLength, WebDestinationIds, catalogAccess, catalogFeatureEnabled, cleanNavigationLabels, hasServerCapability, signedOutBrowsable } from '@trelliskit/shared';
+import { MaxWebLabelLength, WebDestinationIds, catalogAccess, catalogFeatureEnabled, ranksFeatureEnabled, cleanNavigationLabels, hasServerCapability, signedOutBrowsable } from '@trelliskit/shared';
 import strings from '../../strings.js';
 
 const n = strings.member.nav;
@@ -43,6 +43,7 @@ export const MEMBER_ROUTES = [
 export function featureEnabled(property, feature) {
   if (!feature) return true;
   if (feature === 'catalog') return catalogFeatureEnabled(property);
+  if (feature === 'ranks') return ranksFeatureEnabled(property);
   const features = (property && property.features) || {};
   return features[feature] !== false;
 }

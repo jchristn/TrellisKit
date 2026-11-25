@@ -124,10 +124,11 @@ test('admin access form helpers', () => {
   assert.deepEqual(validateAccessForm({ model: 'Nope', gatedFeatures: ['feed', 'feed'], defaultAudience: null }), { model: 'modelInvalid', gatedFeatures: 'featureInvalid' });
   assert.deepEqual(validateAccessForm({ model: 'PartiallyGated', gatedFeatures: ['feed'], defaultAudience: '' }), {});
   assert.deepEqual(accessUpdateBody({ model: 'PartiallyGated', anonymousBrowsing: 1, gatedFeatures: ['messaging', 'feed'], defaultAudience: '' }), { model: 'PartiallyGated', anonymousBrowsing: true, gatedFeatures: ['feed', 'messaging'], defaultAudience: null });
-  assert.equal(AccessFeatures.length, 11);
+  assert.equal(AccessFeatures.length, 12);
   assert.equal(AccessFeatures[8], 'search');
   assert.equal(AccessFeatures[9], 'ideas');
   assert.equal(AccessFeatures[10], 'training');
+  assert.equal(AccessFeatures[11], 'ranks');
   assert.deepEqual(accessSwitchConsequences('FullyGated', 'Open'), ['purchasesOff']);
   assert.deepEqual(accessSwitchConsequences('Open', 'FullyGated'), ['purchasesOn', 'membershipRequired']);
   assert.deepEqual(accessSwitchConsequences('Open', 'Open'), []);
