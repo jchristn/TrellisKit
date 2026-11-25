@@ -38,6 +38,7 @@ export const ADMIN_ROUTES = [
   { id: 'library', group: g.content, icon: 'book', feature: 'library', staffArea: 'library', endpoint: 'POST /api/v1/admin/series/enumerate', ...r.library },
   { id: 'events', group: g.content, icon: 'calendar', feature: 'events', staffArea: 'events', endpoint: 'POST /api/v1/admin/events/enumerate', ...r.events },
   { id: 'directory', group: g.content, icon: 'pin', feature: 'directory', staffArea: 'directory', endpoint: 'POST /api/v1/admin/venues/enumerate', ...r.directory },
+  { id: 'catalog', group: g.content, icon: 'book', feature: 'catalog', staffArea: 'library', endpoint: 'POST /api/v1/admin/catalog/entries/enumerate', label: strings.exerciseCatalog.nav, summary: strings.exerciseCatalog.adminSummary },
 
   { id: 'support', group: g.engagement, icon: 'help', feature: 'support', supportStaff: true, ...r.support },
   { id: 'ideas', group: g.engagement, icon: 'trending', feature: 'ideas', supportStaff: true, ...r.ideas },

@@ -44,7 +44,7 @@ namespace TrellisKit.Core.PropertyConfig
         };
         private static readonly HashSet<string> _WebDestinations = new HashSet<string>(StringComparer.Ordinal)
         {
-            "feed", "forums", "search", "members", "library", "training", "events", "directory", "messages",
+            "feed", "forums", "search", "members", "library", "training", "events", "directory", "catalog", "messages",
             "ideas", "announcements", "support", "assistants", "notifications", "profile"
         };
         private static readonly string[] _Intervals = new[] { "Year", "Month" };

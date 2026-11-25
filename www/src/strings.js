@@ -14,10 +14,14 @@
 import { formatRetryAfter, remoteStringOverlay } from '@trelliskit/shared';
 import chartKit from './components/charts/chartStrings.js';
 import platformMetrics from './platformMetricsStrings.js';
+import exerciseCatalog from './views/catalog/catalogStrings.js';
+import catalogImport from './views/admin/catalog/catalogImportStrings.js';
 
 const strings = {
   chartKit,
   platformMetrics,
+  exerciseCatalog,
+  catalogImport,
   engine: {
     name: 'TrellisKit',
     poweredBy: 'Powered by TrellisKit'

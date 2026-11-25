@@ -7,7 +7,7 @@ import {
 const property = { domains: { web: 'example.test' }, publicPages: { venuesPath: 'places' } };
 
 test('publicPagesConfig fills the engine defaults', () => {
-  assert.deepEqual(publicPagesConfig({}), { enabled: true, venuesPath: 'venues', eventsPath: 'events', profilesPath: 'profiles' });
+  assert.deepEqual(publicPagesConfig({}), { enabled: true, venuesPath: 'venues', eventsPath: 'events', profilesPath: 'profiles', catalogPath: 'catalog' });
   assert.equal(publicPagesConfig(property).venuesPath, 'places');
   assert.equal(publicPagesConfig({ publicPages: { enabled: false } }).enabled, false);
 });
@@ -34,6 +34,8 @@ test('deriveSlug joins name, locality, and region', () => {
 test('page paths and URLs use the configured path words', () => {
   assert.equal(publicPagePath(property, PublicPageKind.Venue, 'example-club'), '/places/example-club');
   assert.equal(publicPagePath(property, PublicPageKind.Event, 'meetup'), '/events/meetup');
+  assert.equal(publicPagePath(property, PublicPageKind.Catalog, 'example-movement'), '/catalog/example-movement');
+  assert.equal(publicPagePath({ publicPages: { catalogPath: 'movements' } }, PublicPageKind.Catalog, 'example-movement'), '/movements/example-movement');
   assert.equal(publicPageUrl(property, PublicPageKind.Profile, 'sam-member'), 'https://example.test/profiles/sam-member');
   assert.equal(publicPageUrl(property, PublicPageKind.Profile, 'sam-member', 'http://localhost:8080/'), 'http://localhost:8080/profiles/sam-member');
   assert.equal(publicPagePath(property, PublicPageKind.Venue, ''), null);

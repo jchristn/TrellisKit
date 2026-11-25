@@ -18,7 +18,7 @@ export const NavigationSurface = Object.freeze({ Mobile: 'mobile', Web: 'web' })
  * server keeps the same list (`PropertyValidator`).
  */
 export const WebDestinationIds = Object.freeze([
-  'feed', 'forums', 'search', 'members', 'library', 'training', 'events', 'directory', 'messages',
+  'feed', 'forums', 'search', 'members', 'library', 'training', 'events', 'directory', 'catalog', 'messages',
   'ideas', 'announcements', 'support', 'assistants', 'notifications', 'profile'
 ]);
 

@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "95412b43dd95dcc90ba5410ade1cd6413a86b61343f38eace4ac4ed5d23d5be4",
+ "sha256": "32185df58fe300492d1a7718bc2d9af6954d6798d50b1dcabbdb907112e5c3a9",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -4038,6 +4038,1014 @@
    "key": "mobile.events.whenLabel",
    "client": "mobile",
    "default": "Show",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.actionSaved",
+   "client": "mobile",
+   "default": "Entry updated.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.addLocalizedName",
+   "client": "mobile",
+   "default": "Add localized name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.addRelationship",
+   "client": "mobile",
+   "default": "Add relationship",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.addSource",
+   "client": "mobile",
+   "default": "Add source",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.adminSummary",
+   "client": "mobile",
+   "default": "Author entries, check sources, and review before publishing.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.all",
+   "client": "mobile",
+   "default": "All",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.apparatusKey",
+   "client": "mobile",
+   "default": "Apparatus",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.clear",
+   "client": "mobile",
+   "default": "Clear apparatus setup",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.hint",
+   "client": "mobile",
+   "default": "Choose equipment selected for this entry. Removing equipment retains its setup until you change or clear it.",
+   "tokens": [],
+   "maxLength": 216
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.manufacturer",
+   "client": "mobile",
+   "default": "Manufacturer",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.model",
+   "client": "mobile",
+   "default": "Model",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.problems.apparatusKey",
+   "client": "mobile",
+   "default": "Choose apparatus from the configured equipment selected for this entry, or clear its setup.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.problems.manufacturer",
+   "client": "mobile",
+   "default": "Keep the manufacturer to 120 characters or fewer.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.problems.model",
+   "client": "mobile",
+   "default": "Keep the model to 120 characters or fewer.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.problems.modelManufacturer",
+   "client": "mobile",
+   "default": "Enter the manufacturer for this model.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.problems.setupText",
+   "client": "mobile",
+   "default": "Keep setup notes to 500 characters or fewer.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.problems.springContext",
+   "client": "mobile",
+   "default": "Resistance setup needs both the apparatus manufacturer and model.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.problems.springSetupText",
+   "client": "mobile",
+   "default": "Keep resistance setup to 500 characters or fewer.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.setupText",
+   "client": "mobile",
+   "default": "Setup notes",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.springHint",
+   "client": "mobile",
+   "default": "Resistance settings are specific to the listed apparatus and model and may not carry over to other equipment.",
+   "tokens": [],
+   "maxLength": 218
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.springSetupText",
+   "client": "mobile",
+   "default": "Resistance setup",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.apparatus.title",
+   "client": "mobile",
+   "default": "Apparatus setup",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.approve",
+   "client": "mobile",
+   "default": "Approve and publish",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.archive",
+   "client": "mobile",
+   "default": "Archive",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.attireKey",
+   "client": "mobile",
+   "default": "Attire",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.attribution",
+   "client": "mobile",
+   "default": "Attribution",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.back",
+   "client": "mobile",
+   "default": "Back to catalog",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.cancel",
+   "client": "mobile",
+   "default": "Cancel",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.changed",
+   "client": "mobile",
+   "default": "This entry changed. Reload it before editing again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.chooseDescriptor",
+   "client": "mobile",
+   "default": "Choose a value",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.chooseTarget",
+   "client": "mobile",
+   "default": "Choose an entry for every relationship.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.clearDescriptors",
+   "client": "mobile",
+   "default": "Clear program details",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.confirmApprove",
+   "client": "mobile",
+   "default": "Publish this reviewed entry?",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.confirmArchive",
+   "client": "mobile",
+   "default": "Archive this entry?",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.confirmBody",
+   "client": "mobile",
+   "default": "This changes whether readers can find this entry in the catalog.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.create",
+   "client": "mobile",
+   "default": "Create entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorProblems.attireKey",
+   "client": "mobile",
+   "default": "Choose attire configured for this program or clear it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorProblems.count",
+   "client": "mobile",
+   "default": "Use at most 10 localized names.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorProblems.duplicate",
+   "client": "mobile",
+   "default": "Remove the duplicate name in the same language.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorProblems.familyKey",
+   "client": "mobile",
+   "default": "Choose a family configured for this program or clear it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorProblems.language",
+   "client": "mobile",
+   "default": "Choose a name language configured for this program or remove the name.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorProblems.levelKey",
+   "client": "mobile",
+   "default": "Choose a level configured for this program or clear it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorProblems.notationPair",
+   "client": "mobile",
+   "default": "Enter notation and choose its system together, or clear both.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorProblems.notationSystemKey",
+   "client": "mobile",
+   "default": "Choose a notation system configured for this program or clear it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorProblems.notationText",
+   "client": "mobile",
+   "default": "Keep notation to 500 characters or fewer.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorProblems.text",
+   "client": "mobile",
+   "default": "Each localized name needs 1 to 160 characters.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptors",
+   "client": "mobile",
+   "default": "Names and program details",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.descriptorsHint",
+   "client": "mobile",
+   "default": "Optional source-reviewed names and classification for this program. Changing program retains these values until you change or clear them.",
+   "tokens": [],
+   "maxLength": 274
+  },
+  {
+   "key": "mobile.exerciseCatalog.difficulties.Advanced",
+   "client": "mobile",
+   "default": "Advanced",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.difficulties.AllLevels",
+   "client": "mobile",
+   "default": "All levels",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.difficulties.Beginner",
+   "client": "mobile",
+   "default": "Beginner",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.difficulties.Intermediate",
+   "client": "mobile",
+   "default": "Intermediate",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.difficulty",
+   "client": "mobile",
+   "default": "Difficulty",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.edit",
+   "client": "mobile",
+   "default": "Edit entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.editRelationships",
+   "client": "mobile",
+   "default": "Edit relationships",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.empty",
+   "client": "mobile",
+   "default": "No entries match these filters.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.equipment",
+   "client": "mobile",
+   "default": "Equipment",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.error",
+   "client": "mobile",
+   "default": "The catalog could not be loaded. Try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.familyKey",
+   "client": "mobile",
+   "default": "Family",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.aliases",
+   "client": "mobile",
+   "default": "Other names",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.commonErrors",
+   "client": "mobile",
+   "default": "Common errors",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.contraindications",
+   "client": "mobile",
+   "default": "Considerations",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.cues",
+   "client": "mobile",
+   "default": "Coaching cues",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.equipment",
+   "client": "mobile",
+   "default": "Equipment",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.fromPosition",
+   "client": "mobile",
+   "default": "From position",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.instructions",
+   "client": "mobile",
+   "default": "Instructions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.laterality",
+   "client": "mobile",
+   "default": "Laterality",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.lessonIds",
+   "client": "mobile",
+   "default": "Related lessons",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.movementPattern",
+   "client": "mobile",
+   "default": "Movement pattern",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.name",
+   "client": "mobile",
+   "default": "Name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.plane",
+   "client": "mobile",
+   "default": "Plane",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.primaryMuscles",
+   "client": "mobile",
+   "default": "Primary muscles",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.program",
+   "client": "mobile",
+   "default": "Program",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.progressions",
+   "client": "mobile",
+   "default": "Progressions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.regressions",
+   "client": "mobile",
+   "default": "Regressions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.secondaryMuscles",
+   "client": "mobile",
+   "default": "Secondary muscles",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.slug",
+   "client": "mobile",
+   "default": "Page address",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.substitutions",
+   "client": "mobile",
+   "default": "Substitutions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.summary",
+   "client": "mobile",
+   "default": "Summary",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.techniqueType",
+   "client": "mobile",
+   "default": "Technique type",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.fields.toPosition",
+   "client": "mobile",
+   "default": "To position",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.invalid",
+   "client": "mobile",
+   "default": "Check the fields and try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.kind",
+   "client": "mobile",
+   "default": "Kind",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.kinds.Exercise",
+   "client": "mobile",
+   "default": "Exercise",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.kinds.Technique",
+   "client": "mobile",
+   "default": "Technique",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.lessonPicker",
+   "client": "mobile",
+   "default": "Find related lessons",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.lessons",
+   "client": "mobile",
+   "default": "Related lessons",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.levelHint",
+   "client": "mobile",
+   "default": "Describes this catalog entry, not an instructor rank or credential.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.levelKey",
+   "client": "mobile",
+   "default": "Instructional level",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.license",
+   "client": "mobile",
+   "default": "License",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.linesHint",
+   "client": "mobile",
+   "default": "One item per line.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.loading",
+   "client": "mobile",
+   "default": "Loading catalog",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.localizedName",
+   "client": "mobile",
+   "default": "Localized name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.localizedNames",
+   "client": "mobile",
+   "default": "Localized names",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.more",
+   "client": "mobile",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.muscle",
+   "client": "mobile",
+   "default": "Muscle",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.nameLanguage",
+   "client": "mobile",
+   "default": "Name language",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.nav",
+   "client": "mobile",
+   "default": "Catalog",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.noFamily",
+   "client": "mobile",
+   "default": "No family",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.noPermission",
+   "client": "mobile",
+   "default": "You do not have permission to edit this entry.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.noRelated",
+   "client": "mobile",
+   "default": "No related movements listed.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.notSpecified",
+   "client": "mobile",
+   "default": "Not specified",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.notationHint",
+   "client": "mobile",
+   "default": "Use the source notation literally with its configured system. Number and symbol meanings can differ between systems.",
+   "tokens": [],
+   "maxLength": 232
+  },
+  {
+   "key": "mobile.exerciseCatalog.notationSystemKey",
+   "client": "mobile",
+   "default": "Notation system",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.notationText",
+   "client": "mobile",
+   "default": "Notation",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.noteRequired",
+   "client": "mobile",
+   "default": "Enter a note explaining the requested revision.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.program",
+   "client": "mobile",
+   "default": "Program",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.publicationNeeds",
+   "client": "mobile",
+   "default": "Before submitting, add instructions, a program, licensed sources, and primary muscles for exercises. CC-BY-4.0 sources require attribution.",
+   "tokens": [],
+   "maxLength": 278
+  },
+  {
+   "key": "mobile.exerciseCatalog.reject",
+   "client": "mobile",
+   "default": "Return for revision",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.related",
+   "client": "mobile",
+   "default": "Related movements",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.relationKind",
+   "client": "mobile",
+   "default": "Relationship",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.relationNote",
+   "client": "mobile",
+   "default": "Relationship note",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.relationsIncomplete",
+   "client": "mobile",
+   "default": "All relationships must load before editing. Retry to avoid replacing incomplete data.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.relationshipKinds.Counterpose",
+   "client": "mobile",
+   "default": "Counterpose",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.relationshipKinds.Prerequisite",
+   "client": "mobile",
+   "default": "Prerequisite",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.relationshipKinds.Progression",
+   "client": "mobile",
+   "default": "Progression",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.relationshipKinds.Regression",
+   "client": "mobile",
+   "default": "Regression",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.relationshipKinds.Substitution",
+   "client": "mobile",
+   "default": "Substitution",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.relationshipKinds.Transition",
+   "client": "mobile",
+   "default": "Transition",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.relationshipLimit",
+   "client": "mobile",
+   "default": "Up to 100 relationships per entry.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.remove",
+   "client": "mobile",
+   "default": "Remove",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.retry",
+   "client": "mobile",
+   "default": "Retry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.reviewNote",
+   "client": "mobile",
+   "default": "Review note",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.save",
+   "client": "mobile",
+   "default": "Save draft",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.saveFailed",
+   "client": "mobile",
+   "default": "The change could not be saved. Your draft is still here.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.saveRelationships",
+   "client": "mobile",
+   "default": "Save relationships",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.saved",
+   "client": "mobile",
+   "default": "Draft saved.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.search",
+   "client": "mobile",
+   "default": "Search the catalog",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.sourceTitle",
+   "client": "mobile",
+   "default": "Source title",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.sourceUrl",
+   "client": "mobile",
+   "default": "Source URL",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.sources",
+   "client": "mobile",
+   "default": "Sources and attribution",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.status",
+   "client": "mobile",
+   "default": "Status",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.statuses.Archived",
+   "client": "mobile",
+   "default": "Archived",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.statuses.Draft",
+   "client": "mobile",
+   "default": "Draft",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.statuses.InReview",
+   "client": "mobile",
+   "default": "In review",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.statuses.Published",
+   "client": "mobile",
+   "default": "Published",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.statuses.Rejected",
+   "client": "mobile",
+   "default": "Rejected",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.submit",
+   "client": "mobile",
+   "default": "Submit for review",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.summary",
+   "client": "mobile",
+   "default": "Browse reviewed movements, instructions, and related techniques.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.target",
+   "client": "mobile",
+   "default": "Related entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.title",
+   "client": "mobile",
+   "default": "Catalog",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.unpublished",
+   "client": "mobile",
+   "default": "Saving changes returns the entry to draft. Review and approval are required before it appears in the public catalog.",
+   "tokens": [],
+   "maxLength": 232
+  },
+  {
+   "key": "mobile.exerciseCatalog.viewLesson",
+   "client": "mobile",
+   "default": "View lesson",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.exerciseCatalog.vocabularyHint",
+   "client": "mobile",
+   "default": "Select values from the configured vocabulary.",
    "tokens": [],
    "maxLength": 200
   },
@@ -40045,6 +41053,251 @@
    "maxLength": 200
   },
   {
+   "key": "web.catalogImport.acknowledge",
+   "client": "web",
+   "default": "I reviewed this source and confirm that every record may be reused under the selected license.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.attribution",
+   "client": "web",
+   "default": "Attribution",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.cancel",
+   "client": "web",
+   "default": "Cancel",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.changed",
+   "client": "web",
+   "default": "This source changed. Close the editor and reload it before reviewing or saving.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.confirm",
+   "client": "web",
+   "default": "Authorize draft imports",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.create",
+   "client": "web",
+   "default": "Add import source",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.disabled",
+   "client": "web",
+   "default": "Disabled",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.dryHint",
+   "client": "web",
+   "default": "Preview fetches and validates the manifest but creates no catalog entries.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.edit",
+   "client": "web",
+   "default": "Edit source",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.editHint",
+   "client": "web",
+   "default": "Saving any change revokes source approval. Review the updated source before its next import.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.empty",
+   "client": "web",
+   "default": "No import sources configured.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.enabled",
+   "client": "web",
+   "default": "Include in imports after review",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.errors",
+   "client": "web",
+   "default": "Could not load or save catalog sources.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.format",
+   "client": "web",
+   "default": "Use the version 1 catalog manifest contract. Only HTTPS JSON sources are accepted; redirects, source files over 1 MB and manifests over the configured entry limit are rejected.",
+   "tokens": [],
+   "maxLength": 352
+  },
+  {
+   "key": "web.catalogImport.hide",
+   "client": "web",
+   "default": "Close import sources",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.hint",
+   "client": "web",
+   "default": "Import structured text from reviewed sources into private drafts. Human edits and moderation holds are preserved. Publishing still requires a separate review.",
+   "tokens": [],
+   "maxLength": 316
+  },
+  {
+   "key": "web.catalogImport.jobs",
+   "client": "web",
+   "default": "View runs and schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.lastAttempt",
+   "client": "web",
+   "default": "Last attempted",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.license",
+   "client": "web",
+   "default": "License",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.loading",
+   "client": "web",
+   "default": "Loading sources",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.maximum",
+   "client": "web",
+   "default": "Maximum entries per manifest",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.more",
+   "client": "web",
+   "default": "Load more sources",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.name",
+   "client": "web",
+   "default": "Source name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.never",
+   "client": "web",
+   "default": "Not attempted",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.preview",
+   "client": "web",
+   "default": "Preview import",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.queued",
+   "client": "web",
+   "default": "Import queued. Review the source report in Jobs before publishing any drafts.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.review",
+   "client": "web",
+   "default": "Review source license",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.reviewed",
+   "client": "web",
+   "default": "Source reviewed",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.run",
+   "client": "web",
+   "default": "Import drafts",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.save",
+   "client": "web",
+   "default": "Save source",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.search",
+   "client": "web",
+   "default": "Search import sources",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.show",
+   "client": "web",
+   "default": "Manage import sources",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.title",
+   "client": "web",
+   "default": "Licensed catalog sources",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.unreviewed",
+   "client": "web",
+   "default": "Needs source review",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.catalogImport.url",
+   "client": "web",
+   "default": "Manifest URL (HTTPS)",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.chartKit.all",
    "client": "web",
    "default": "No grouping",
@@ -45007,6 +46260,1014 @@
    "key": "web.events.youAreInterested",
    "client": "web",
    "default": "You are interested.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.actionSaved",
+   "client": "web",
+   "default": "Entry updated.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.addLocalizedName",
+   "client": "web",
+   "default": "Add localized name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.addRelationship",
+   "client": "web",
+   "default": "Add relationship",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.addSource",
+   "client": "web",
+   "default": "Add source",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.adminSummary",
+   "client": "web",
+   "default": "Author entries, check sources, and review before publishing.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.all",
+   "client": "web",
+   "default": "All",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.apparatusKey",
+   "client": "web",
+   "default": "Apparatus",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.clear",
+   "client": "web",
+   "default": "Clear apparatus setup",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.hint",
+   "client": "web",
+   "default": "Choose equipment selected for this entry. Removing equipment retains its setup until you change or clear it.",
+   "tokens": [],
+   "maxLength": 216
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.manufacturer",
+   "client": "web",
+   "default": "Manufacturer",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.model",
+   "client": "web",
+   "default": "Model",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.problems.apparatusKey",
+   "client": "web",
+   "default": "Choose apparatus from the configured equipment selected for this entry, or clear its setup.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.problems.manufacturer",
+   "client": "web",
+   "default": "Keep the manufacturer to 120 characters or fewer.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.problems.model",
+   "client": "web",
+   "default": "Keep the model to 120 characters or fewer.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.problems.modelManufacturer",
+   "client": "web",
+   "default": "Enter the manufacturer for this model.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.problems.setupText",
+   "client": "web",
+   "default": "Keep setup notes to 500 characters or fewer.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.problems.springContext",
+   "client": "web",
+   "default": "Resistance setup needs both the apparatus manufacturer and model.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.problems.springSetupText",
+   "client": "web",
+   "default": "Keep resistance setup to 500 characters or fewer.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.setupText",
+   "client": "web",
+   "default": "Setup notes",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.springHint",
+   "client": "web",
+   "default": "Resistance settings are specific to the listed apparatus and model and may not carry over to other equipment.",
+   "tokens": [],
+   "maxLength": 218
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.springSetupText",
+   "client": "web",
+   "default": "Resistance setup",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.apparatus.title",
+   "client": "web",
+   "default": "Apparatus setup",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.approve",
+   "client": "web",
+   "default": "Approve and publish",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.archive",
+   "client": "web",
+   "default": "Archive",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.attireKey",
+   "client": "web",
+   "default": "Attire",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.attribution",
+   "client": "web",
+   "default": "Attribution",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.back",
+   "client": "web",
+   "default": "Back to catalog",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.cancel",
+   "client": "web",
+   "default": "Cancel",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.changed",
+   "client": "web",
+   "default": "This entry changed. Reload it before editing again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.chooseDescriptor",
+   "client": "web",
+   "default": "Choose a value",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.chooseTarget",
+   "client": "web",
+   "default": "Choose an entry for every relationship.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.clearDescriptors",
+   "client": "web",
+   "default": "Clear program details",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.confirmApprove",
+   "client": "web",
+   "default": "Publish this reviewed entry?",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.confirmArchive",
+   "client": "web",
+   "default": "Archive this entry?",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.confirmBody",
+   "client": "web",
+   "default": "This changes whether readers can find this entry in the catalog.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.create",
+   "client": "web",
+   "default": "Create entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorProblems.attireKey",
+   "client": "web",
+   "default": "Choose attire configured for this program or clear it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorProblems.count",
+   "client": "web",
+   "default": "Use at most 10 localized names.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorProblems.duplicate",
+   "client": "web",
+   "default": "Remove the duplicate name in the same language.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorProblems.familyKey",
+   "client": "web",
+   "default": "Choose a family configured for this program or clear it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorProblems.language",
+   "client": "web",
+   "default": "Choose a name language configured for this program or remove the name.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorProblems.levelKey",
+   "client": "web",
+   "default": "Choose a level configured for this program or clear it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorProblems.notationPair",
+   "client": "web",
+   "default": "Enter notation and choose its system together, or clear both.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorProblems.notationSystemKey",
+   "client": "web",
+   "default": "Choose a notation system configured for this program or clear it.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorProblems.notationText",
+   "client": "web",
+   "default": "Keep notation to 500 characters or fewer.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorProblems.text",
+   "client": "web",
+   "default": "Each localized name needs 1 to 160 characters.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptors",
+   "client": "web",
+   "default": "Names and program details",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.descriptorsHint",
+   "client": "web",
+   "default": "Optional source-reviewed names and classification for this program. Changing program retains these values until you change or clear them.",
+   "tokens": [],
+   "maxLength": 274
+  },
+  {
+   "key": "web.exerciseCatalog.difficulties.Advanced",
+   "client": "web",
+   "default": "Advanced",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.difficulties.AllLevels",
+   "client": "web",
+   "default": "All levels",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.difficulties.Beginner",
+   "client": "web",
+   "default": "Beginner",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.difficulties.Intermediate",
+   "client": "web",
+   "default": "Intermediate",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.difficulty",
+   "client": "web",
+   "default": "Difficulty",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.edit",
+   "client": "web",
+   "default": "Edit entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.editRelationships",
+   "client": "web",
+   "default": "Edit relationships",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.empty",
+   "client": "web",
+   "default": "No entries match these filters.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.equipment",
+   "client": "web",
+   "default": "Equipment",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.error",
+   "client": "web",
+   "default": "The catalog could not be loaded. Try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.familyKey",
+   "client": "web",
+   "default": "Family",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.aliases",
+   "client": "web",
+   "default": "Other names",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.commonErrors",
+   "client": "web",
+   "default": "Common errors",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.contraindications",
+   "client": "web",
+   "default": "Considerations",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.cues",
+   "client": "web",
+   "default": "Coaching cues",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.equipment",
+   "client": "web",
+   "default": "Equipment",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.fromPosition",
+   "client": "web",
+   "default": "From position",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.instructions",
+   "client": "web",
+   "default": "Instructions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.laterality",
+   "client": "web",
+   "default": "Laterality",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.lessonIds",
+   "client": "web",
+   "default": "Related lessons",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.movementPattern",
+   "client": "web",
+   "default": "Movement pattern",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.name",
+   "client": "web",
+   "default": "Name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.plane",
+   "client": "web",
+   "default": "Plane",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.primaryMuscles",
+   "client": "web",
+   "default": "Primary muscles",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.program",
+   "client": "web",
+   "default": "Program",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.progressions",
+   "client": "web",
+   "default": "Progressions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.regressions",
+   "client": "web",
+   "default": "Regressions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.secondaryMuscles",
+   "client": "web",
+   "default": "Secondary muscles",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.slug",
+   "client": "web",
+   "default": "Page address",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.substitutions",
+   "client": "web",
+   "default": "Substitutions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.summary",
+   "client": "web",
+   "default": "Summary",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.techniqueType",
+   "client": "web",
+   "default": "Technique type",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.fields.toPosition",
+   "client": "web",
+   "default": "To position",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.invalid",
+   "client": "web",
+   "default": "Check the fields and try again.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.kind",
+   "client": "web",
+   "default": "Kind",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.kinds.Exercise",
+   "client": "web",
+   "default": "Exercise",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.kinds.Technique",
+   "client": "web",
+   "default": "Technique",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.lessonPicker",
+   "client": "web",
+   "default": "Find related lessons",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.lessons",
+   "client": "web",
+   "default": "Related lessons",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.levelHint",
+   "client": "web",
+   "default": "Describes this catalog entry, not an instructor rank or credential.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.levelKey",
+   "client": "web",
+   "default": "Instructional level",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.license",
+   "client": "web",
+   "default": "License",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.linesHint",
+   "client": "web",
+   "default": "One item per line.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.loading",
+   "client": "web",
+   "default": "Loading catalog",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.localizedName",
+   "client": "web",
+   "default": "Localized name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.localizedNames",
+   "client": "web",
+   "default": "Localized names",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.more",
+   "client": "web",
+   "default": "Load more",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.muscle",
+   "client": "web",
+   "default": "Muscle",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.nameLanguage",
+   "client": "web",
+   "default": "Name language",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.nav",
+   "client": "web",
+   "default": "Catalog",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.noFamily",
+   "client": "web",
+   "default": "No family",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.noPermission",
+   "client": "web",
+   "default": "You do not have permission to edit this entry.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.noRelated",
+   "client": "web",
+   "default": "No related movements listed.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.notSpecified",
+   "client": "web",
+   "default": "Not specified",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.notationHint",
+   "client": "web",
+   "default": "Use the source notation literally with its configured system. Number and symbol meanings can differ between systems.",
+   "tokens": [],
+   "maxLength": 232
+  },
+  {
+   "key": "web.exerciseCatalog.notationSystemKey",
+   "client": "web",
+   "default": "Notation system",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.notationText",
+   "client": "web",
+   "default": "Notation",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.noteRequired",
+   "client": "web",
+   "default": "Enter a note explaining the requested revision.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.program",
+   "client": "web",
+   "default": "Program",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.publicationNeeds",
+   "client": "web",
+   "default": "Before submitting, add instructions, a program, licensed sources, and primary muscles for exercises. CC-BY-4.0 sources require attribution.",
+   "tokens": [],
+   "maxLength": 278
+  },
+  {
+   "key": "web.exerciseCatalog.reject",
+   "client": "web",
+   "default": "Return for revision",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.related",
+   "client": "web",
+   "default": "Related movements",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.relationKind",
+   "client": "web",
+   "default": "Relationship",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.relationNote",
+   "client": "web",
+   "default": "Relationship note",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.relationsIncomplete",
+   "client": "web",
+   "default": "All relationships must load before editing. Retry to avoid replacing incomplete data.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.relationshipKinds.Counterpose",
+   "client": "web",
+   "default": "Counterpose",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.relationshipKinds.Prerequisite",
+   "client": "web",
+   "default": "Prerequisite",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.relationshipKinds.Progression",
+   "client": "web",
+   "default": "Progression",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.relationshipKinds.Regression",
+   "client": "web",
+   "default": "Regression",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.relationshipKinds.Substitution",
+   "client": "web",
+   "default": "Substitution",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.relationshipKinds.Transition",
+   "client": "web",
+   "default": "Transition",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.relationshipLimit",
+   "client": "web",
+   "default": "Up to 100 relationships per entry.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.remove",
+   "client": "web",
+   "default": "Remove",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.retry",
+   "client": "web",
+   "default": "Retry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.reviewNote",
+   "client": "web",
+   "default": "Review note",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.save",
+   "client": "web",
+   "default": "Save draft",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.saveFailed",
+   "client": "web",
+   "default": "The change could not be saved. Your draft is still here.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.saveRelationships",
+   "client": "web",
+   "default": "Save relationships",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.saved",
+   "client": "web",
+   "default": "Draft saved.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.search",
+   "client": "web",
+   "default": "Search the catalog",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.sourceTitle",
+   "client": "web",
+   "default": "Source title",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.sourceUrl",
+   "client": "web",
+   "default": "Source URL",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.sources",
+   "client": "web",
+   "default": "Sources and attribution",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.status",
+   "client": "web",
+   "default": "Status",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.statuses.Archived",
+   "client": "web",
+   "default": "Archived",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.statuses.Draft",
+   "client": "web",
+   "default": "Draft",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.statuses.InReview",
+   "client": "web",
+   "default": "In review",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.statuses.Published",
+   "client": "web",
+   "default": "Published",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.statuses.Rejected",
+   "client": "web",
+   "default": "Rejected",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.submit",
+   "client": "web",
+   "default": "Submit for review",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.summary",
+   "client": "web",
+   "default": "Browse reviewed movements, instructions, and related techniques.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.target",
+   "client": "web",
+   "default": "Related entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.title",
+   "client": "web",
+   "default": "Exercise and technique catalog",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.unpublished",
+   "client": "web",
+   "default": "Saving changes returns the entry to draft. Review and approval are required before it appears in the public catalog.",
+   "tokens": [],
+   "maxLength": 232
+  },
+  {
+   "key": "web.exerciseCatalog.viewLesson",
+   "client": "web",
+   "default": "View lesson",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.exerciseCatalog.vocabularyHint",
+   "client": "web",
+   "default": "Select values from the configured vocabulary.",
    "tokens": [],
    "maxLength": 200
   },

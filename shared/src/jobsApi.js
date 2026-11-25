@@ -34,8 +34,8 @@ export const jobsMethods = {
   adminGetJob(key, signal) { return this.get('/admin/jobs/' + enc(key), { signal }); },
   /** PUT /admin/jobs/{key}: schedule, concurrency, attempts, and run budget (budgetUsdPerRun 0 removes the cap). */
   adminUpdateJob(key, changes) { return this.put('/admin/jobs/' + enc(key), changes || {}); },
-  /** POST /admin/jobs/{key}/run with `{ dryRun }`. */
-  adminRunJob(key, dryRun = false) { return this.post('/admin/jobs/' + enc(key) + '/run', { dryRun: !!dryRun }); },
+  /** POST /admin/jobs/{key}/run with `{ dryRun, parameters? }`; `parameters` is a JSON object encoded as a string. */
+  adminRunJob(key, dryRun = false, parameters) { return this.post('/admin/jobs/' + enc(key) + '/run', { dryRun: !!dryRun, ...(parameters == null ? {} : { parameters }) }); },
   /** POST /admin/jobs/runs/enumerate (filters key, status, trigger). */
   adminEnumerateJobRuns(query = {}, signal) { return this.post('/admin/jobs/runs/enumerate', body(query), { signal }); },
   /** GET /admin/jobs/runs/{id} with live counts. */
