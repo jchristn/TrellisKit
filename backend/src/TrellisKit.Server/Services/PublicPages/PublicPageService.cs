@@ -675,8 +675,9 @@ namespace TrellisKit.Server.Services.PublicPages
             List<DirectorySocialLink> social = venue.SocialLinks.Where(l => IsHttpUrl(l.Url)).OrderBy(l => l.Position).ToList();
             if (social.Count > 0) facts.Add(new KeyValuePair<string, string>(PublicPageText.Links, String.Join(" | ", social.Select(l => Link(l.Url, l.Kind.ToString())))));
             if (facts.Count > 0) main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(PublicPageText.Details)).Append("</h2>").Append(Facts(facts)).Append("</section>");
-            if (!String.IsNullOrWhiteSpace(venue.ScheduleText))
-                main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(PublicPageText.Schedule)).Append("</h2><p class=\"description\">").Append(PublicPageRenderer.Attr(venue.ScheduleText)).Append("</p></section>");
+            string? scheduleText = venue.Schedule == null ? venue.ScheduleText : VenueSchedules.Text(venue.Schedule);
+            if (!String.IsNullOrWhiteSpace(scheduleText))
+                main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(PublicPageText.Schedule)).Append("</h2><p class=\"description\">").Append(PublicPageRenderer.Attr(scheduleText)).Append("</p></section>");
             if (instructors.Count > 0)
             {
                 main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(PublicPageText.Instructors(config.InstructorLabelPlural))).Append("</h2><ul class=\"people\">");

@@ -112,6 +112,7 @@ namespace TrellisKit.Server.Services
             if (level == 1) return view;
             view.Description = venue.Description;
             view.ScheduleText = venue.ScheduleText;
+            view.Schedule = venue.Schedule;
             view.SocialLinks = venue.SocialLinks.OrderBy(l => l.Position).Select(l => new SocialLinkView { Kind = l.Kind, Url = l.Url }).ToList();
             Dictionary<string, List<MediaView>> photos = await _Services.Media.ListViewsForTargetsAsync(TargetTypeEnum.Venue, new[] { venue.Id }, options.PublicRoute || actor.IsAnonymous, staffMeta, token).ConfigureAwait(false);
             if (photos.TryGetValue(venue.Id, out List<MediaView>? list))
@@ -156,6 +157,7 @@ namespace TrellisKit.Server.Services
                 Fill(view, venue, actor, config, programs, metadata, false, options, reviews);
                 view.Description = venue.Description;
                 view.ScheduleText = venue.ScheduleText;
+                view.Schedule = venue.Schedule;
                 view.SocialLinks = venue.SocialLinks.OrderBy(l => l.Position).Select(l => new SocialLinkView { Kind = l.Kind, Url = l.Url }).ToList();
                 if (photos.TryGetValue(venue.Id, out List<MediaView>? list))
                 {

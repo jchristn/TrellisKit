@@ -1691,7 +1691,17 @@ const strings = {
   /** Venue directory (/app/directory, /app/venues/:id, /app/instructors/:id). Placeholders come from directory.* labels. */
   venues: {
     title: '{venues}',
-    summary: 'Find {venuesLower} and {instructorsLower} in the {name} community.',
+    summary: 'Find {venuesLower} near you.',
+    scheduleEditor: {
+      title: 'Weekly schedule', enable: 'Add a structured schedule', remove: 'Remove structured schedule',
+      timeZone: 'Time zone', timeZoneHint: 'Use an IANA time zone, for example Pacific/Honolulu.',
+      hours: 'Opening hours', classes: 'Class sessions', day: 'Day', start: 'Start time', end: 'End time',
+      nextDay: 'Ends the next day', name: 'Class name', instructor: 'Instructor (optional)',
+      addHours: 'Add opening hours', addClass: 'Add class', removeEntry: 'Remove entry', notes: 'Schedule notes',
+      hint: 'Times use the schedule time zone. Days without opening hours are unspecified. Confirm current times with the venue.',
+      invalid: 'Check the schedule: choose a valid time zone, day and HH:mm times, and give each class a name. Intervals must be longer than zero and at most 24 hours.',
+      nextDaySuffix: ' (next day)', legacy: 'Existing schedule notes'
+    },
     searchLabel: 'Search {venuesLower}',
     placeLabel: 'Place',
     placePlaceholder: 'Search a town or area',
@@ -1926,7 +1936,7 @@ const strings = {
     fields: {
       name: 'Name', displayName: 'Name', affiliation: 'Affiliation', summary: 'Short description', description: 'Description', line1: 'Address', line2: 'Address line 2',
       locality: 'City or town', region: 'Region', postalCode: 'Postal code', countryCode: 'Country', addressVisibility: 'Show the address as', phone: 'Phone', email: 'Email',
-      websiteUrl: 'Website (https)', scheduleText: 'Schedule', programs: 'Programs', visitorPolicy: 'Visitors', visitorPolicyNote: 'Visitor note', bio: 'Bio',
+      websiteUrl: 'Website (https)', scheduleText: 'Schedule', schedule: 'Weekly schedule', timeZone: 'Time zone', notes: 'Schedule notes', dayOfWeek: 'Day (Monday = 0)', startTime: 'Start time', endTime: 'End time', endsNextDay: 'Ends the next day', instructor: 'Instructor', set: 'Structured schedule enabled', programs: 'Programs', visitorPolicy: 'Visitors', visitorPolicyNote: 'Visitor note', bio: 'Bio',
       rank: 'Rank', socialLinks: 'Links', venueIds: '{venues}', addLink: 'Add a link', removeLink: 'Remove link', linkKind: 'Kind', linkUrl: 'Link (https)'
     },
     visibilities: { Exact: 'Exact address and pin', Approximate: 'Approximate area only', LocalityOnly: 'Town only, not on the map' },

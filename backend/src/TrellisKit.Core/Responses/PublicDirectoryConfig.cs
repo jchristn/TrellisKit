@@ -10,6 +10,12 @@ namespace TrellisKit.Core.Responses
     {
         #region Public-Members
 
+        /// <summary>Optional directory introduction supplied by the property.</summary>
+        public string? Introduction { get; set; } = null;
+
+        /// <summary>Optional listing notice supplied by the property.</summary>
+        public string? ListingNotice { get; set; } = null;
+
         /// <summary>
         /// Venue label (the {venue} placeholder).
         /// </summary>

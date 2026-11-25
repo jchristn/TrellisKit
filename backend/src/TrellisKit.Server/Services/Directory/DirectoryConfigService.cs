@@ -265,6 +265,8 @@ namespace TrellisKit.Server.Services
             List<DirectoryProgram> programs = await ProgramsAsync(token).ConfigureAwait(false);
             response.Directory = new PublicDirectoryConfig
             {
+                Introduction = Section().Introduction,
+                ListingNotice = Section().ListingNotice,
                 VenueLabel = config.VenueLabel,
                 VenueLabelPlural = config.VenueLabelPlural,
                 InstructorLabel = config.InstructorLabel,

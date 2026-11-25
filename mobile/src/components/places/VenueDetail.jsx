@@ -139,7 +139,7 @@ export default function VenueDetail({ venueId, focusReviewId = null, testID = 'v
           {venue.websiteUrl ? <Button label={t.website} variant="ghost" onPress={() => openAppLink(venue.websiteUrl)} style={{ alignSelf: 'auto' }} testID={testID + '-website'} /> : null}
         </Row>
       ) : null}
-      {venue.scheduleText ? <VenueSchedule text={venue.scheduleText} t={t} testID={testID + '-schedule'} /> : null}
+      {(venue.schedule || venue.scheduleText) ? <VenueSchedule schedule={venue.schedule} text={venue.scheduleText} t={t} testID={testID + '-schedule'} /> : null}
       {programs.length ? (
         <Row label={t.programs}>
           <AppText testID={testID + '-programs'}>{programs.join(', ')}</AppText>

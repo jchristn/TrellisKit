@@ -247,6 +247,28 @@ Every detail and list payload carries `viewer`, computed for the caller; clients
   "websiteUrl": "https://example.test",
   "socialLinks": [ { "kind": "Instagram", "url": "https://..." } ],
   "scheduleText": "Mon to Fri 6 pm; Sat 10 am",
+  "schedule": {
+    "timeZone": "America/Los_Angeles",
+    "openingHours": [
+      {
+        "dayOfWeek": 0,
+        "startTime": "06:00",
+        "endTime": "21:00",
+        "endsNextDay": false
+      }
+    ],
+    "classes": [
+      {
+        "dayOfWeek": 0,
+        "startTime": "18:00",
+        "endTime": "19:00",
+        "endsNextDay": false,
+        "name": "Fundamentals",
+        "instructor": null
+      }
+    ],
+    "notes": "Confirm holiday hours with the venue."
+  },
   "programs": [ { "key": "beginners", "label": "Beginners" } ],
   "visitorPolicy": "Welcome",
   "visitorPolicyNote": "Message ahead for weekend visits.",
@@ -276,7 +298,7 @@ Every detail and list payload carries `viewer`, computed for the caller; clients
 | `instructors` | Bounded preview, at most 10, with the enumeration pointer |
 | `status` | `Active`, `Closed` (permanently closed; kept for history, hidden from lists unless `filters.includeClosed`), `Archived` (staff only) |
 
-`VenueSummary` (list item) is the Venue without `description`, `socialLinks`, `scheduleText`, `instructors` (replaced by `instructorCount`), and `photos` (replaced by `coverPhoto`: the first photo or null).
+`VenueSummary` (list item) is the Venue without `description`, `socialLinks`, `scheduleText`, `schedule`, `instructors` (replaced by `instructorCount`), and `photos` (replaced by `coverPhoto`: the first photo or null).
 
 ### 2.3 Instructor
 
@@ -615,7 +637,7 @@ The map is a client concern configured per property; the engine stores only addr
 
 | Rule | Value |
 |---|---|
-| `fields` | The editable fields of the target type (Venue: name, affiliation, summary, description, address, addressVisibility, phone, email, websiteUrl, socialLinks, scheduleText, programs, visitorPolicy, visitorPolicyNote, photoMediaIds; Instructor: displayName, bio, photoMediaId, rank, rankLevel, affiliation, websiteUrl, socialLinks, venueIds). For `Edit*` only changed fields are sent; unknown fields `400 ValidationFailed` |
+| `fields` | The editable fields of the target type (Venue: name, affiliation, summary, description, address, addressVisibility, phone, email, websiteUrl, socialLinks, scheduleText, schedule, programs, visitorPolicy, visitorPolicyNote, photoMediaIds; Instructor: displayName, bio, photoMediaId, rank, rankLevel, affiliation, websiteUrl, socialLinks, venueIds). For `Edit*` only changed fields are sent; unknown fields `400 ValidationFailed` |
 | `ClaimInstructor` | `targetId` is the instructor, `fields` may be empty, `note` explains the claim (required, 10 to 1000) |
 | `ReportClosed` | `targetId` is the venue, `note` optional |
 | Duplicates | For `NewVenue` and `NewInstructor`, when `possibleDuplicates` is not empty and `confirmNotDuplicate` is false, the response is `200` with `status: "Draft"` and the duplicates, and nothing is queued; the client asks the member and resubmits with `confirmNotDuplicate: true` (`201`) |
@@ -1429,3 +1451,10 @@ These answers override the recommendations in the open questions section whereve
 | 20 | Public sample lessons allowed (only when a staff member sets `audience: Public`) | As recommended |
 | 21 | Members may hide themselves from attendee lists; default visibility `Attendees` | As recommended |
 | 22 | Migrations 50 to 59 reserved for Phase 4 | As recommended |
+
+
+### Structured venue schedules (2026-11-24)
+
+The optional `schedule` object carries `timeZone`, `openingHours`, `classes`, and `notes`; see the weekly schedule contract in `REST_API.md`. The server stores its scalar fields on `venues` and bounded entries in the property-scoped `venuescheduleentries` table (migration 123). Existing free-text schedules remain intact. Submission proposals store individual scalar fields and entry positions so review and approval preserve the same structure. Web and mobile provide matching schedule editors, displays with explicit time zones, and legacy text fallback. The seeder and JSON import accept `schedule` unchanged.
+
+Properties may supply `directory.introduction` and `directory.listingNotice`. They are read from the property configuration and returned on the public property response, independently of admin-editable directory labels.

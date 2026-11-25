@@ -25,6 +25,9 @@ namespace TrellisKit.Core.Responses
         /// </summary>
         public string? ScheduleText { get; set; } = null;
 
+        /// <summary>Structured weekly schedule; null retains the legacy text display. On edit, omit to preserve or send null to clear.</summary>
+        public TrellisKit.Core.Models.VenueSchedule? Schedule { get; set; } = null;
+
         /// <summary>
         /// Photos (at most directory.maxPhotos).
         /// </summary>

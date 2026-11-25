@@ -1,4 +1,4 @@
-import { formatClockTime, parseScheduleText, parseVenueDescription } from '@trelliskit/shared';
+import { formatClockTime, venueScheduleDisplay, parseVenueDescription } from '@trelliskit/shared';
 import { View } from 'react-native';
 import { useTheme } from '../../theme';
 import AppText from '../AppText';
@@ -12,7 +12,7 @@ export function scheduleDayLabel(t, row) {
 
 /** The hours of a row: a time range, or "Open 24 hours". */
 export function scheduleTimeLabel(t, row) {
-  return row.allDay ? t.scheduleOpen24 : t.scheduleTimeRange(formatClockTime(row.open), formatClockTime(row.close));
+  return row.allDay ? t.scheduleOpen24 : t.scheduleTimeRange(formatClockTime(row.open), formatClockTime(row.close)) + (row.endsNextDay ? t.scheduleEditor.nextDaySuffix : '');
 }
 
 function Section({ label, children }) {
@@ -34,20 +34,21 @@ function Section({ label, children }) {
  * @param {object} props.t Directory strings.
  * @param {boolean} [props.hoursOnly] Show only the hours table (the map preview).
  */
-export function VenueSchedule({ text, t, hoursOnly = false, testID }) {
+export function VenueSchedule({ text, schedule, t, hoursOnly = false, testID }) {
   const theme = useTheme();
-  const parsed = parseScheduleText(text);
+  const parsed = venueScheduleDisplay(schedule, text);
   const hours = parsed.hours;
   const notes = hoursOnly ? [] : parsed.notes;
-  if (!hours.length && !notes.length) return null;
+  if (!hours.length && !notes.length && (hoursOnly || !parsed.classes.length)) return null;
   return (
     <View style={{ gap: theme.spacing.md }} testID={testID}>
+      {parsed.timeZone ? <AppText color="textMuted">{parsed.timeZone}</AppText> : null}
       {hours.length ? (
         <Section label={t.hours}>
           <View style={{ borderWidth: 1, borderColor: theme.colors.border, borderRadius: theme.radii.md, backgroundColor: theme.colors.surface }}>
             {hours.map((row, index) => (
               <View
-                key={row.from}
+                key={index}
                 accessible
                 accessibilityLabel={scheduleDayLabel(t, row) + ', ' + scheduleTimeLabel(t, row)}
                 style={{ flexDirection: 'row', justifyContent: 'space-between', gap: theme.spacing.md, paddingHorizontal: theme.spacing.md, paddingVertical: theme.spacing.sm, borderTopWidth: index ? 1 : 0, borderTopColor: theme.colors.border }}
@@ -59,6 +60,13 @@ export function VenueSchedule({ text, t, hoursOnly = false, testID }) {
           </View>
         </Section>
       ) : null}
+      {!hoursOnly && parsed.classes.length ? <Section label={t.scheduleEditor.classes}>
+        {parsed.classes.map((entry, i) => <AppText key={i}>
+          {entry.name}{' · '}{t.scheduleDays[entry.dayOfWeek]}{' · '}
+          {scheduleTimeLabel(t, { open: entry.startTime, close: entry.endTime, endsNextDay: entry.endsNextDay })}
+          {entry.instructor ? ' · ' + entry.instructor : ''}
+        </AppText>)}
+      </Section> : null}
       {notes.length ? (
         <Section label={t.schedule}>
           {notes.map((note, index) => (
@@ -77,7 +85,7 @@ export function VenueSchedule({ text, t, hoursOnly = false, testID }) {
  * @param {string} props.text The venue's `description`.
  * @param {object} props.t Directory strings.
  */
-export function VenueAbout({ text, t, testID }) {
+export function VenueAbout({ text, schedule, t, testID }) {
   const theme = useTheme();
   const { pricing, amenities, body } = parseVenueDescription(text);
   if (!pricing && !amenities.length && !body) return null;

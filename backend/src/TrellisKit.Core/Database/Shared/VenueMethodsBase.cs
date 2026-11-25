@@ -56,6 +56,7 @@ namespace TrellisKit.Core.Database.Shared
                     ", websiteurl = " + D.Str(venue.WebsiteUrl) + ", scheduletext = " + D.Str(venue.ScheduleText) + ", visitorpolicy = " + D.Enum(venue.VisitorPolicy) + ", visitorpolicynote = " + D.Str(venue.VisitorPolicyNote) +
                     ", audience = " + D.Enum(venue.Audience) + ", updatedutc = " + D.Ts(venue.UpdatedUtc) + " WHERE " + Scope() + " AND id = " + id + " AND deletedutc IS NULL;",
                 "DELETE FROM venueprograms WHERE " + Scope() + " AND venueid = " + id + ";",
+                "DELETE FROM venuescheduleentries WHERE " + Scope() + " AND venueid = " + id + ";",
                 "DELETE FROM venuesociallinks WHERE " + Scope() + " AND venueid = " + id + ";",
                 "DELETE FROM venuephotos WHERE " + Scope() + " AND venueid = " + id + ";"
             };
@@ -399,6 +400,20 @@ namespace TrellisKit.Core.Database.Shared
             if (venue.SocialLinks.Count > 0)
                 statements.Add("INSERT INTO venuesociallinks (propertyid, id, venueid, kind, url, position) VALUES " + String.Join(", ", venue.SocialLinks.Select((l, i) => "(" + Pid + ", " +
                     D.Str(IdGenerator.Generate(DirectoryIdPrefixes.SocialLink)) + ", " + id + ", " + D.Enum(l.Kind) + ", " + D.Str(l.Url) + ", " + D.Num(i) + ")")) + ";");
+            statements.Add("UPDATE venues SET hasschedule = " + D.Bool(venue.Schedule != null) + ", scheduletimezone = " + D.Str(venue.Schedule?.TimeZone) + ", schedulenotes = " + D.Str(venue.Schedule?.Notes) + " WHERE " + Scope() + " AND id = " + id + ";");
+            if (venue.Schedule != null)
+            {
+                void Entries(string kind, List<VenueScheduleEntry> entries)
+                {
+                    for (int i = 0; i < entries.Count; i++)
+                    {
+                        VenueScheduleEntry e = entries[i];
+                        statements.Add("INSERT INTO venuescheduleentries (propertyid, venueid, kind, position, dayofweek, starttime, endtime, endsnextday, name, instructor) VALUES (" + Pid + ", " + id + ", " + D.Str(kind) + ", " + D.Num(i) + ", " + D.Num(e.DayOfWeek) + ", " + D.Str(e.StartTime) + ", " + D.Str(e.EndTime) + ", " + D.Bool(e.EndsNextDay) + ", " + D.Str(e.Name) + ", " + D.Str(e.Instructor) + ");");
+                    }
+                }
+                Entries("Hours", venue.Schedule.OpeningHours);
+                Entries("Class", venue.Schedule.Classes);
+            }
             List<string> photos = DirectorySql.Distinct(venue.PhotoMediaIds);
             if (photos.Count > 0)
                 statements.Add("INSERT INTO venuephotos (propertyid, venueid, mediaid, position) VALUES " + String.Join(", ", photos.Select((m, i) => "(" + Pid + ", " + id + ", " + D.Str(m) + ", " + D.Num(i) + ")")) + " ON CONFLICT DO NOTHING;");
@@ -477,6 +492,13 @@ namespace TrellisKit.Core.Database.Shared
                     Position = RowReader.GetInt(row, "position")
                 });
             }
+            DataTable scheduleRows = await QueryAsync("SELECT * FROM venuescheduleentries WHERE " + Scope() + " AND venueid IN " + ids + " ORDER BY venueid, kind, position;", token).ConfigureAwait(false);
+            foreach (DataRow row in scheduleRows.Rows)
+            {
+                if (!byId.TryGetValue(RowReader.GetString(row, "venueid"), out Venue? v) || v.Schedule == null) continue;
+                VenueScheduleEntry entry = new VenueScheduleEntry { DayOfWeek = RowReader.GetInt(row, "dayofweek"), StartTime = RowReader.GetString(row, "starttime"), EndTime = RowReader.GetString(row, "endtime"), EndsNextDay = RowReader.GetBool(row, "endsnextday"), Name = RowReader.GetNullableString(row, "name"), Instructor = RowReader.GetNullableString(row, "instructor") };
+                (RowReader.GetString(row, "kind") == "Class" ? v.Schedule.Classes : v.Schedule.OpeningHours).Add(entry);
+            }
             DataTable photos = await QueryAsync("SELECT venueid, mediaid FROM venuephotos WHERE " + Scope() + " AND venueid IN " + ids + " ORDER BY venueid, position;", token).ConfigureAwait(false);
             foreach (DataRow row in photos.Rows)
                 if (byId.TryGetValue(RowReader.GetString(row, "venueid"), out Venue? v)) v.PhotoMediaIds.Add(RowReader.GetString(row, "mediaid"));
@@ -509,6 +531,7 @@ namespace TrellisKit.Core.Database.Shared
                 Email = RowReader.GetNullableString(row, "email"),
                 WebsiteUrl = RowReader.GetNullableString(row, "websiteurl"),
                 ScheduleText = RowReader.GetNullableString(row, "scheduletext"),
+                Schedule = RowReader.GetBool(row, "hasschedule") ? new VenueSchedule { TimeZone = RowReader.GetNullableString(row, "scheduletimezone"), Notes = RowReader.GetNullableString(row, "schedulenotes") } : null,
                 VisitorPolicy = RowReader.GetEnum(row, "visitorpolicy", VisitorPolicyEnum.Unknown),
                 VisitorPolicyNote = RowReader.GetNullableString(row, "visitorpolicynote"),
                 IsVerified = RowReader.GetBool(row, "isverified"),

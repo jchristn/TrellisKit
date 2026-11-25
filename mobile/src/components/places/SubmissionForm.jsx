@@ -20,6 +20,7 @@ import AttachButtons from '../feed/AttachButtons';
 import UploadTray from '../feed/UploadTray';
 import PinPicker from './PinPicker';
 import VenueCard from './VenueCard';
+import VenueScheduleEditor from './VenueScheduleEditor';
 import { CountrySelect } from '../profile/ProfileFieldInput';
 
 const VENUE_TYPES = [SubmissionType.NewVenue, SubmissionType.EditVenue];
@@ -42,6 +43,7 @@ export function initialValues(type, target) {
     email: v.email || '',
     websiteUrl: v.websiteUrl || '',
     scheduleText: v.scheduleText || '',
+    schedule: v.schedule ? JSON.parse(JSON.stringify(v.schedule)) : null,
     programs: (v.programs || []).map((p) => (p && p.key) || p)
   };
 }
@@ -54,7 +56,9 @@ export function initialValues(type, target) {
 export function submissionFieldsFor(type, values, target, photoMediaIds = [], pin = null) {
   const clean = {};
   for (const [key, value] of Object.entries(values)) {
-    if (key === 'address') {
+    if (key === 'schedule') {
+      if (value || target?.schedule) clean.schedule = value;
+    } else if (key === 'address') {
       const address = {};
       for (const [k, v] of Object.entries(value)) if (String(v || '').trim()) address[k] = k === 'countryCode' ? String(v).trim().toUpperCase() : String(v).trim();
       if (Object.keys(address).length) clean.address = address;
@@ -129,7 +133,7 @@ export default function SubmissionForm({ type, targetId = null, testID = 'submis
     if (editsFields && targetId && !Object.keys(fields).length) return setError(t.submit.nothingChanged);
     if (Object.keys(problems).length) {
       const text = PROBLEM_TEXT(t);
-      setErrors(Object.fromEntries(Object.keys(problems).map((k) => [k, text[k] || t.submit.nameRequired])));
+      setErrors(Object.fromEntries(Object.keys(problems).map((k) => [k, k.startsWith('schedule') ? t.scheduleEditor.invalid : text[k] || t.submit.nameRequired])));
       return undefined;
     }
     if (uploads.busy) return undefined;
@@ -191,7 +195,8 @@ export default function SubmissionForm({ type, targetId = null, testID = 'submis
           {field('phone', t.submit.phone, { maxLength: 40, keyboardType: 'phone-pad' })}
           {field('email', t.submit.email, { maxLength: 254, keyboardType: 'email-address', autoCapitalize: 'none' })}
           {field('websiteUrl', t.submit.websiteUrl, { hint: t.submit.websiteHint, autoCapitalize: 'none', keyboardType: 'url' })}
-          {field('scheduleText', t.submit.scheduleText, { maxLength: 500, multiline: true })}
+          <VenueScheduleEditor legacyText={form.scheduleText} value={form.schedule} onChange={schedule => set('schedule', schedule)} t={t} invalid={Object.keys(errors).some(k => k.startsWith('schedule'))} />
+          {!form.schedule && field('scheduleText', t.scheduleEditor.legacy, { maxLength: 500, multiline: true })}
           {programs.length ? <ChipGroup label={t.programs} options={programs.map((p) => ({ value: p.key, label: p.label }))} values={form.programs} onToggle={(v) => set('programs', form.programs.includes(v) ? form.programs.filter((x) => x !== v) : form.programs.concat(v))} testID={testID + '-programs'} /> : null}
           <View style={{ gap: theme.spacing.sm }}>
             <AppText variant="label">{t.submit.photos}</AppText>

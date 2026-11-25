@@ -494,6 +494,7 @@ namespace TrellisKit.Server.Services
             }
             if (Has("websiteUrl") && (request.WebsiteUrl != null || present != null)) v.WebsiteUrl = DirectoryText.HttpsUrl(request.WebsiteUrl, "websiteUrl", errors);
             if (Has("socialLinks") && (request.SocialLinks != null || present != null)) v.SocialLinks = DirectoryText.SocialLinks(request.SocialLinks, settings.MaxSocialLinks, errors);
+            if (Has("schedule") && (request.Schedule != null || present != null)) v.Schedule = VenueSchedules.Validate(request.Schedule, errors);
             if (Has("scheduleText") && (request.ScheduleText != null || present != null)) v.ScheduleText = DirectoryText.Text(request.ScheduleText, 1000, "scheduleText", errors);
             if (Has("programs") && (request.Programs != null || present != null)) v.Programs = await ProgramKeysAsync(request.Programs, existing?.Programs, token).ConfigureAwait(false);
             if (request.VisitorPolicy != null && Has("visitorPolicy")) v.VisitorPolicy = request.VisitorPolicy.Value;
@@ -543,7 +544,7 @@ namespace TrellisKit.Server.Services
             }
             await _Services.WordFilter.CheckAsync(actor, TargetTypeEnum.Venue, new Dictionary<string, string?>
             {
-                { "name", v.Name }, { "affiliation", v.Affiliation }, { "summary", v.Summary }, { "description", v.Description }, { "scheduleText", v.ScheduleText }, { "visitorPolicyNote", v.VisitorPolicyNote }
+                { "name", v.Name }, { "affiliation", v.Affiliation }, { "summary", v.Summary }, { "description", v.Description }, { "scheduleText", v.ScheduleText }, { "schedule", v.Schedule == null ? null : VenueSchedules.Text(v.Schedule) }, { "visitorPolicyNote", v.VisitorPolicyNote }
             }, token).ConfigureAwait(false);
 
             bool pinGiven = request.Geo != null && Has("geo");

@@ -127,6 +127,9 @@ namespace TrellisKit.Core.Models
         /// </summary>
         public string? ScheduleText { get; set; } = null;
 
+        /// <summary>Structured weekly schedule; null retains the legacy text display. On edit, omit to preserve or send null to clear.</summary>
+        public TrellisKit.Core.Models.VenueSchedule? Schedule { get; set; } = null;
+
         /// <summary>
         /// Visitor policy.
         /// </summary>
@@ -268,6 +271,7 @@ namespace TrellisKit.Core.Models
         public Venue Clone()
         {
             Venue copy = (Venue)MemberwiseClone();
+            copy.Schedule = Schedule?.Clone();
             copy.Programs = new List<string>(Programs);
             copy.SocialLinks = SocialLinks.Select(l => new DirectorySocialLink { Id = l.Id, Kind = l.Kind, Url = l.Url, Position = l.Position }).ToList();
             copy.PhotoMediaIds = new List<string>(PhotoMediaIds);

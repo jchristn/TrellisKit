@@ -69,7 +69,7 @@ function VenuePreviewModal({ client, venueId, onClose }) {
                 {venue.websiteUrl && <a href={venue.websiteUrl} target="_blank" rel="noopener noreferrer">{v.website}</a>}
               </p>
             )}
-            {!locked && venue.scheduleText && <VenueSchedule text={venue.scheduleText} hoursOnly />}
+            {!locked && (venue.schedule || venue.scheduleText) && <VenueSchedule schedule={venue.schedule} text={venue.scheduleText} hoursOnly />}
           </>
         )}
       </div>

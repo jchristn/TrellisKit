@@ -242,7 +242,7 @@ function DirectoryView() {
     <div className="member-view directory-venues-view">
       <PageHeader
         title={d(v.title)}
-        summary={d(v.summary)}
+        summary={config.introduction || d(v.summary)}
         actions={me && (
           <>
             {config.submissions && <Link to={appPaths.submit('NewVenue')} className="button button-primary button-sm"><Icon name="plus" size={14} /><span>{d(v.add)}</span></Link>}
@@ -250,6 +250,7 @@ function DirectoryView() {
           </>
         )}
       />
+      {config.listingNotice && <p className="muted small">{config.listingNotice}</p>}
       {mapFailed && <Banner tone="info">{v.mapFailed}</Banner>}
       {mapFirst ? (
         <VenueMapSearch client={client} property={property} meta={meta} setMeta={setMeta} filters={filters} write={write} toggle={toggle} programs={programs} onFailed={() => setMapFailed(true)} onListOnly={() => write({ map: 'off' })} />

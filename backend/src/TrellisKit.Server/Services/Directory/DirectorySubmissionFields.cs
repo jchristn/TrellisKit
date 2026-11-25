@@ -26,7 +26,7 @@ namespace TrellisKit.Server.Services
         /// </summary>
         public static readonly IReadOnlyList<string> VenueFields = new List<string>
         {
-            "name", "affiliation", "summary", "description", "address", "addressVisibility", "geo", "phone", "email", "websiteUrl", "socialLinks", "scheduleText", "programs", "visitorPolicy", "visitorPolicyNote", "photoMediaIds"
+            "name", "affiliation", "summary", "description", "address", "addressVisibility", "geo", "phone", "email", "websiteUrl", "socialLinks", "scheduleText", "schedule", "programs", "visitorPolicy", "visitorPolicyNote", "photoMediaIds"
         };
 
         /// <summary>
@@ -46,6 +46,11 @@ namespace TrellisKit.Server.Services
         /// Fields stored as one row per value.
         /// </summary>
         public static readonly IReadOnlyCollection<string> MultiValue = new HashSet<string>(StringComparer.Ordinal) { "socialLinks", "programs", "photoMediaIds", "venueIds" };
+
+        /// <summary>Structured schedule row keys; entry fields use matching positions.</summary>
+        public static readonly IReadOnlyList<string> ScheduleParts = new[] { "set", "timeZone", "notes", "openingHours.dayOfWeek", "openingHours.startTime", "openingHours.endTime", "openingHours.endsNextDay", "classes.dayOfWeek", "classes.startTime", "classes.endTime", "classes.endsNextDay", "classes.name", "classes.instructor" };
+
+        private static bool IsMulti(string field) => MultiValue.Contains(field) || field.StartsWith("schedule.openingHours.", StringComparison.Ordinal) || field.StartsWith("schedule.classes.", StringComparison.Ordinal);
 
         #endregion
 
@@ -129,7 +134,7 @@ namespace TrellisKit.Server.Services
         public static Dictionary<string, List<string?>> Values(Venue venue)
         {
             ArgumentNullException.ThrowIfNull(venue);
-            return new Dictionary<string, List<string?>>(StringComparer.Ordinal)
+            Dictionary<string, List<string?>> result = new Dictionary<string, List<string?>>(StringComparer.Ordinal)
             {
                 { "name", One(venue.Name) },
                 { "affiliation", One(venue.Affiliation) },
@@ -152,6 +157,24 @@ namespace TrellisKit.Server.Services
                 { "visitorPolicyNote", One(venue.VisitorPolicyNote) },
                 { "photoMediaIds", venue.PhotoMediaIds.Cast<string?>().ToList() }
             };
+            result["schedule.set"] = One(venue.Schedule == null ? "false" : "true");
+            result["schedule.timeZone"] = One(venue.Schedule?.TimeZone);
+            result["schedule.notes"] = One(venue.Schedule?.Notes);
+            void Entries(string kind, List<VenueScheduleEntry> entries)
+            {
+                result["schedule." + kind + ".dayOfWeek"] = entries.Select(e => (string?)e.DayOfWeek.ToString(CultureInfo.InvariantCulture)).ToList();
+                result["schedule." + kind + ".startTime"] = entries.Select(e => (string?)e.StartTime).ToList();
+                result["schedule." + kind + ".endTime"] = entries.Select(e => (string?)e.EndTime).ToList();
+                result["schedule." + kind + ".endsNextDay"] = entries.Select(e => (string?)(e.EndsNextDay ? "true" : "false")).ToList();
+                if (kind == "classes")
+                {
+                    result["schedule.classes.name"] = entries.Select(e => e.Name).ToList();
+                    result["schedule.classes.instructor"] = entries.Select(e => e.Instructor).ToList();
+                }
+            }
+            Entries("openingHours", venue.Schedule?.OpeningHours ?? new List<VenueScheduleEntry>());
+            Entries("classes", venue.Schedule?.Classes ?? new List<VenueScheduleEntry>());
+            return result;
         }
 
         /// <summary>
@@ -188,7 +211,7 @@ namespace TrellisKit.Server.Services
         {
             ArgumentNullException.ThrowIfNull(rows);
             Dictionary<string, List<string?>> v = Group(rows);
-            present = new HashSet<string>(v.Keys.Select(k => k.StartsWith("address.", StringComparison.Ordinal) ? "address" : k), StringComparer.Ordinal);
+            present = new HashSet<string>(v.Keys.Select(k => k.StartsWith("address.", StringComparison.Ordinal) ? "address" : k.StartsWith("schedule.", StringComparison.Ordinal) ? "schedule" : k), StringComparer.Ordinal);
             VenueRequest r = new VenueRequest
             {
                 Name = First(v, "name"),
@@ -199,6 +222,7 @@ namespace TrellisKit.Server.Services
                 Email = First(v, "email"),
                 WebsiteUrl = First(v, "websiteUrl"),
                 ScheduleText = First(v, "scheduleText"),
+                Schedule = ScheduleOf(v),
                 VisitorPolicyNote = First(v, "visitorPolicyNote"),
                 Programs = v.ContainsKey("programs") ? NonNull(v["programs"]) : null,
                 PhotoMediaIds = v.ContainsKey("photoMediaIds") ? NonNull(v["photoMediaIds"]) : null,
@@ -253,7 +277,7 @@ namespace TrellisKit.Server.Services
             foreach (IGrouping<string, DirectorySubmissionField> group in submission.Fields.GroupBy(f => f.Field).OrderBy(g => Index(order, g.Key)))
             {
                 List<DirectorySubmissionField> rows = group.OrderBy(f => f.Position).ToList();
-                bool multi = MultiValue.Contains(group.Key);
+                bool multi = IsMulti(group.Key);
                 List<string?> proposed = rows.Select(r => r.ProposedValue).Where(p => p != null).ToList();
                 List<string?> current = rows.Select(r => r.CurrentValue).Where(c => c != null).ToList();
                 result.Add(new SubmissionChangeView
@@ -264,7 +288,7 @@ namespace TrellisKit.Server.Services
                     IsOverride = rows.Any(r => r.IsOverride)
                 });
             }
-            return result.Take(40).ToList();
+            return result.Take(60).ToList();
         }
 
         /// <summary>
@@ -282,7 +306,7 @@ namespace TrellisKit.Server.Services
             {
                 List<string?> values = current.TryGetValue(group.Key, out List<string?>? list) ? list : new List<string?>();
                 List<DirectorySubmissionField> ordered = group.OrderBy(r => r.Position).ToList();
-                if (MultiValue.Contains(group.Key))
+                if (IsMulti(group.Key))
                 {
                     for (int i = 0; i < ordered.Count; i++) ordered[i].CurrentValue = i == 0 ? (values.Count == 0 ? null : String.Join("\n", values)) : null;
                 }
@@ -306,7 +330,7 @@ namespace TrellisKit.Server.Services
             foreach (DirectorySubmissionField row in rows)
             {
                 if (row.ProposedValue == null || row.Field == "photoMediaIds" || row.Field == "photoMediaId" || row.Field == "venueIds" || row.Field == "programs") continue;
-                string key = row.Field + (MultiValue.Contains(row.Field) ? "[" + row.Position + "]" : String.Empty);
+                string key = row.Field + (IsMulti(row.Field) ? "[" + row.Position + "]" : String.Empty);
                 result[key] = row.ProposedValue;
             }
             return result;
@@ -369,6 +393,7 @@ namespace TrellisKit.Server.Services
         private static IEnumerable<string> Expand(string field)
         {
             if (field == "address") return AddressParts.Select(p => "address." + p);
+            if (field == "schedule") return ScheduleParts.Select(p => "schedule." + p);
             return new[] { field };
         }
 
@@ -392,6 +417,19 @@ namespace TrellisKit.Server.Services
         private static string? First(Dictionary<string, List<string?>> values, string field)
         {
             return values.TryGetValue(field, out List<string?>? list) ? list.FirstOrDefault() : null;
+        }
+
+        private static VenueSchedule? ScheduleOf(Dictionary<string, List<string?>> values)
+        {
+            if (First(values, "schedule.set") != "true") return null;
+            List<VenueScheduleEntry> Entries(string kind)
+            {
+                string prefix = "schedule." + kind + ".";
+                if (!values.TryGetValue(prefix + "dayOfWeek", out List<string?>? days)) return new List<VenueScheduleEntry>();
+                string? At(string key, int index) => values.TryGetValue(prefix + key, out List<string?>? rows) && index < rows.Count ? rows[index] : null;
+                return days.Select((day, i) => day == null ? null : new VenueScheduleEntry { DayOfWeek = Int32.Parse(day, CultureInfo.InvariantCulture), StartTime = At("startTime", i) ?? "", EndTime = At("endTime", i) ?? "", EndsNextDay = At("endsNextDay", i) == "true", Name = At("name", i), Instructor = At("instructor", i) }).Where(e => e != null).Cast<VenueScheduleEntry>().ToList();
+            }
+            return new VenueSchedule { TimeZone = First(values, "schedule.timeZone"), Notes = First(values, "schedule.notes"), OpeningHours = Entries("openingHours"), Classes = Entries("classes") };
         }
 
         private static List<string> NonNull(List<string?> values)

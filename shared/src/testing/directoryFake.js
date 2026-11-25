@@ -31,7 +31,7 @@ export function makeVenue(id, extra = {}) {
     id, name, slug: rest.slug || slugify(rest.name || id.replace(/^ven_/, '')), affiliation: null, summary: 'About ' + name + '.', description: 'Description of ' + name + '.',
     address: { ...address, formatted: formatAddress(address, 'Exact', { isStaff: true }) }, addressVisibility: 'Exact',
     geo: { lat, lng, precision: 'Exact', source: 'Manual', geocodedUtc: null }, distanceKm: null, timeZone: 'America/Los_Angeles',
-    phone: null, email: null, websiteUrl: null, socialLinks: [], scheduleText: null, programs: [], visitorPolicy: 'Welcome', visitorPolicyNote: null, photos: [],
+    phone: null, email: null, websiteUrl: null, socialLinks: [], schedule: null, scheduleText: null, programs: [], visitorPolicy: 'Welcome', visitorPolicyNote: null, photos: [],
     instructors: { objects: [], totalRecords: 0, enumerate: '/api/v1/venues/' + id + '/instructors/enumerate' }, instructorCount: 0, coverPhoto: null,
     isVerified: false, verifiedUtc: null, status: 'Active', audience: 'SignedIn', locked: false, labels: [], tags: {}, viewer: { ...VENUE_VIEWER },
     ratingAverage: null, ratingCount: 0, mediaCount: 0,
@@ -319,7 +319,7 @@ export function createDirectoryFake(seed = {}) {
     const instructors = instructorsOf(v.id).filter(canOpen);
     out.instructors = { objects: instructors.slice(0, 10).map(instructorSummary), totalRecords: instructors.length, enumerate: '/api/v1/venues/' + v.id + '/instructors/enumerate' };
     out.instructorCount = instructors.length;
-    if (!canOpen(v)) Object.assign(out, { description: null, phone: null, email: null, socialLinks: [], scheduleText: null, photos: [] });
+    if (!canOpen(v)) Object.assign(out, { description: null, phone: null, email: null, socialLinks: [], schedule: null, scheduleText: null, photos: [] });
     if (staff) out.viewer = { ...v.viewer, ...directoryStaffViewer };
     Object.assign(out, venueAggregates(v));
     const seeded = out.viewer || {};
@@ -341,7 +341,7 @@ export function createDirectoryFake(seed = {}) {
   }
 
   function venueSummary(v, options) {
-    const { description: _d, socialLinks: _s, scheduleText: _t, instructors: _i, photos, reviews: _r, ...rest } = presentVenue(v, options);
+    const { description: _d, socialLinks: _s, scheduleText: _t, schedule: _schedule, instructors: _i, photos, reviews: _r, ...rest } = presentVenue(v, options);
     return { ...rest, coverPhoto: (photos || [])[0] || null };
   }
 

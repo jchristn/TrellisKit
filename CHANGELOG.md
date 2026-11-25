@@ -4,6 +4,12 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (directory schedules and copy)
+
+- Structured weekly opening hours and class sessions on venue records, with local times, an IANA time zone, overnight intervals, optional instructors and notes. Web/mobile editors, detail views, previews, member proposals, moderation, public pages and search use the schedule; existing free-text data remains available.
+- Property-owned directory introduction and listing notice, shared by web and mobile.
+
+
 ### Fixed
 
 - Legal pages show the draft banner only when the source contains an explicit draft notice; substantive blockquotes remain visible.

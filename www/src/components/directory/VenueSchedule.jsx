@@ -1,4 +1,4 @@
-import { formatClockTime, parseScheduleText, parseVenueDescription } from '@trelliskit/shared';
+import { formatClockTime, venueScheduleDisplay, parseVenueDescription } from '@trelliskit/shared';
 import strings from '../../strings.js';
 import MarkdownBody from '../feed/MarkdownBody.jsx';
 
@@ -10,7 +10,7 @@ function dayLabel(row) {
 }
 
 function timeLabel(row) {
-  return row.allDay ? v.scheduleOpen24 : v.scheduleTimeRange(formatClockTime(row.open), formatClockTime(row.close));
+  return row.allDay ? v.scheduleOpen24 : v.scheduleTimeRange(formatClockTime(row.open), formatClockTime(row.close)) + (row.endsNextDay ? v.scheduleEditor.nextDaySuffix : '');
 }
 
 /**
@@ -18,20 +18,21 @@ function timeLabel(row) {
  * row), then the class schedule notes as paragraphs. Schedule text in any other shape is shown
  * as paragraphs. `hoursOnly` shows just the hours table, without the panel (the map preview).
  */
-export function VenueSchedule({ text, hoursOnly = false }) {
-  const parsed = parseScheduleText(text);
+export function VenueSchedule({ text, schedule, hoursOnly = false }) {
+  const parsed = venueScheduleDisplay(schedule, text);
   const hours = parsed.hours;
   const notes = hoursOnly ? [] : parsed.notes;
-  if (!hours.length && !notes.length) return null;
+  if (!hours.length && !notes.length && (hoursOnly || !parsed.classes.length)) return null;
   return (
     <section className={hoursOnly ? 'venue-preview-hours' : 'panel'}>
+      {parsed.timeZone && <p className="muted small">{parsed.timeZone}</p>}
       {hours.length > 0 && (
         <>
           <h2 className="section-title">{v.hours}</h2>
           <table className="venue-hours">
             <tbody>
-              {hours.map((row) => (
-                <tr key={row.from}>
+              {hours.map((row, index) => (
+                <tr key={index}>
                   <th scope="row">{dayLabel(row)}</th>
                   <td>{timeLabel(row)}</td>
                 </tr>
@@ -40,6 +41,14 @@ export function VenueSchedule({ text, hoursOnly = false }) {
           </table>
         </>
       )}
+      {!hoursOnly && parsed.classes.length > 0 && <>
+        <h2 className="section-title">{v.scheduleEditor.classes}</h2>
+        {parsed.classes.map((entry, i) => <p key={i}>
+          <strong>{entry.name}</strong>{' · '}{v.scheduleDays[entry.dayOfWeek]}{' · '}
+          {timeLabel({ open: entry.startTime, close: entry.endTime, endsNextDay: entry.endsNextDay })}
+          {entry.instructor ? ' · ' + entry.instructor : ''}
+        </p>)}
+      </>}
       {notes.length > 0 && (
         <>
           <h2 className="section-title">{v.schedule}</h2>

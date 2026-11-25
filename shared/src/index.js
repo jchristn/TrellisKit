@@ -39,6 +39,7 @@ export { directoryMethods, mapEnumerationBody, MAP_MAX_FEATURES } from './direct
 export * from './library.js';
 export * from './events.js';
 export * from './directory.js';
+export * from './venueSchedule.js';
 export {
   messagingMethods, directMessagesApi, MESSAGING_CONTRACT_ALIASES, sendMessageBody, MESSAGES_MAX_RESULTS, MESSAGE_SEARCH_MAX_RESULTS, SYNC_MAX_RESULTS, ConversationFolder, RequestState, MessageState,
   MessageOrdering, ConversationOrdering, ConversationChangeKind, DmPolicy, PushPreview, MessagingError, headlineParts

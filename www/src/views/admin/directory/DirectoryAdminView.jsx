@@ -1,7 +1,7 @@
 import { directorySettingsForm, directorySettingsBody } from '../../../utils/directorySettings.js';
 import { loadDailyMetrics } from '../../../utils/metricCollections.js';
 import { useCallback, useMemo, useState } from 'react';
-import { collectEnumeration, PublicPageKind, SubmissionTypes, VenueStatuses, deriveSlug, directoryConfig, formatAddress, formatChangeValue, isValidPosition, metadataForSave, metadataOf, moveItem } from '@trelliskit/shared';
+import { collectEnumeration, PublicPageKind, SubmissionTypes, VenueStatuses, deriveSlug, directoryConfig, formatAddress, formatChangeValue, isValidPosition, metadataForSave, metadataOf, moveItem, validateVenueSchedule } from '@trelliskit/shared';
 import strings from '../../../strings.js';
 import { useAdminAuth } from '../../../context/AdminAuthContext.jsx';
 import { useProperty } from '../../../context/PropertyContext.jsx';
@@ -87,6 +87,7 @@ function VenueEditor({ venue, onClose, onSaved }) {
       setError(v.problems.tooShort);
       return;
     }
+    if (Object.keys(validateVenueSchedule(form.schedule)).length) { setError(v.scheduleEditor.invalid); return; }
     if (slugBlocks(slugStatus)) {
       setError(strings.publicPages.fixSlug);
       return;

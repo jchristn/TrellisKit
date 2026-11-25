@@ -22860,7 +22860,7 @@
           "name": "Enumerate request history",
           "request": {
             "method": "POST",
-            "description": "POST form of the enumeration. Newest first by default; items omit headers and bodies. Orderings: CreatedDescending, CreatedAscending. Filters: method, statusCode, pathContains, userId. Window: createdAfterUtc, createdBeforeUtc. Search: path, principal name. Stores requestHistoryId.\nExact metric drilldown filters: routeTemplate (max300), statusClass (1xx–5xx), errorCode, clientApp, clientPlatform, clientVersion (max100). Error code falls back to numeric status text. The enumeration time window is createdAfterUtc/createdBeforeUtc; summary and bulk-delete use fromUtc/toUtc.",
+            "description": "POST form of the enumeration. Newest first by default; items omit headers and bodies. Orderings: CreatedDescending, CreatedAscending. Filters: method, statusCode, pathContains, userId. Window: createdAfterUtc, createdBeforeUtc. Search: path, principal name. Stores requestHistoryId.\nExact metric drilldown filters: routeTemplate (max300), statusClass (1xx\u20135xx), errorCode, clientApp, clientPlatform, clientVersion (max100). Error code falls back to numeric status text. The enumeration time window is createdAfterUtc/createdBeforeUtc; summary and bulk-delete use fromUtc/toUtc.",
             "header": [
               {
                 "key": "Accept",
@@ -22932,7 +22932,7 @@
           "name": "List request history (GET form)",
           "request": {
             "method": "GET",
-            "description": "GET form of the same enumeration: EnumerationQuery fields and collection filters as query parameters. Newest first by default; items omit headers and bodies. Orderings: CreatedDescending, CreatedAscending. Filters: method, statusCode, pathContains, userId. Window: createdAfterUtc, createdBeforeUtc. Search: path, principal name. Stores requestHistoryId.\nExact metric drilldown filters: routeTemplate (max300), statusClass (1xx–5xx), errorCode, clientApp, clientPlatform, clientVersion (max100). Error code falls back to numeric status text. The enumeration time window is createdAfterUtc/createdBeforeUtc; summary and bulk-delete use fromUtc/toUtc.",
+            "description": "GET form of the same enumeration: EnumerationQuery fields and collection filters as query parameters. Newest first by default; items omit headers and bodies. Orderings: CreatedDescending, CreatedAscending. Filters: method, statusCode, pathContains, userId. Window: createdAfterUtc, createdBeforeUtc. Search: path, principal name. Stores requestHistoryId.\nExact metric drilldown filters: routeTemplate (max300), statusClass (1xx\u20135xx), errorCode, clientApp, clientPlatform, clientVersion (max100). Error code falls back to numeric status text. The enumeration time window is createdAfterUtc/createdBeforeUtc; summary and bulk-delete use fromUtc/toUtc.",
             "header": [
               {
                 "key": "Accept",
@@ -23325,7 +23325,7 @@
           "name": "Bulk delete request history",
           "request": {
             "method": "DELETE",
-            "description": "Deletes every entry matching the filter. With no filter, deletes ALL entries.\nExact metric drilldown filters: routeTemplate (max300), statusClass (1xx–5xx), errorCode, clientApp, clientPlatform, clientVersion (max100). Error code falls back to numeric status text. The enumeration time window is createdAfterUtc/createdBeforeUtc; summary and bulk-delete use fromUtc/toUtc.",
+            "description": "Deletes every entry matching the filter. With no filter, deletes ALL entries.\nExact metric drilldown filters: routeTemplate (max300), statusClass (1xx\u20135xx), errorCode, clientApp, clientPlatform, clientVersion (max100). Error code falls back to numeric status text. The enumeration time window is createdAfterUtc/createdBeforeUtc; summary and bulk-delete use fromUtc/toUtc.",
             "header": [
               {
                 "key": "Accept",
@@ -44159,7 +44159,7 @@
                 },
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Example Club Downtown\",\n  \"address\": {\n    \"line1\": \"100 Example Street\",\n    \"locality\": \"Exampleville\",\n    \"region\": \"EX\",\n    \"postalCode\": \"00000\",\n    \"countryCode\": \"US\"\n  },\n  \"geo\": {\n    \"lat\": 37.7749,\n    \"lng\": -122.4194\n  },\n  \"programs\": [\n    \"beginners\"\n  ],\n  \"visitorPolicy\": \"Welcome\",\n  \"labels\": [\n    \"downtown\"\n  ]\n}"
+                  "raw": "{\n  \"name\": \"Example Club Downtown\",\n  \"address\": {\n    \"line1\": \"100 Example Street\",\n    \"locality\": \"Exampleville\",\n    \"region\": \"EX\",\n    \"postalCode\": \"00000\",\n    \"countryCode\": \"US\"\n  },\n  \"geo\": {\n    \"lat\": 37.7749,\n    \"lng\": -122.4194\n  },\n  \"programs\": [\n    \"beginners\"\n  ],\n  \"visitorPolicy\": \"Welcome\",\n  \"labels\": [\n    \"downtown\"\n  ],\n  \"schedule\": {\n    \"timeZone\": \"America/Los_Angeles\",\n    \"openingHours\": [\n      {\n        \"dayOfWeek\": 0,\n        \"startTime\": \"06:00\",\n        \"endTime\": \"21:00\",\n        \"endsNextDay\": false\n      }\n    ],\n    \"classes\": [\n      {\n        \"dayOfWeek\": 0,\n        \"startTime\": \"18:00\",\n        \"endTime\": \"19:00\",\n        \"endsNextDay\": false,\n        \"name\": \"Fundamentals\",\n        \"instructor\": null\n      }\n    ],\n    \"notes\": \"Confirm holiday hours with the venue.\"\n  }\n}"
                 }
               }
             },

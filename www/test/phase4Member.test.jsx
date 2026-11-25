@@ -201,7 +201,7 @@ describe('events', () => {
 });
 
 describe('venue directory', () => {
-  const site = siteWith({ directory: { venueLabel: 'Club', venueLabelPlural: 'Clubs', instructorLabel: 'Coach', instructorLabelPlural: 'Coaches', programs: [{ key: 'youth', label: 'Youth' }, { key: 'beginners', label: 'Beginners' }], submissions: true, claims: true, map: { provider: 'None' } } });
+  const site = siteWith({ directory: { introduction: 'Find clubs nearby.', listingNotice: 'Listings are informational, not endorsements.', venueLabel: 'Club', venueLabelPlural: 'Clubs', instructorLabel: 'Coach', instructorLabelPlural: 'Coaches', programs: [{ key: 'youth', label: 'Youth' }, { key: 'beginners', label: 'Beginners' }], submissions: true, claims: true, map: { provider: 'None' } } });
   function directoryFake() {
     return createDirectoryFake({
       venues: [
@@ -226,6 +226,10 @@ describe('venue directory', () => {
     expect(screen.getByTestId('venue-row-ven_2')).toHaveTextContent('Exampleville, EX');
     expect(screen.getByTestId('venue-row-ven_2')).not.toHaveTextContent('100 Example Street');
     expect(screen.getByRole('link', { name: /Add a club/ })).toBeInTheDocument();
+    expect(screen.getByText('Find clubs nearby.')).toBeInTheDocument();
+    const notice = screen.getByText('Listings are informational, not endorsements.');
+    expect(notice.closest('a')).toBeNull();
+    expect(notice).toBeInTheDocument();
     expect(screen.queryByTestId('venue-map')).toBeNull();
     await userEvent.click(screen.getByRole('button', { name: 'Youth' }));
     await waitFor(() => expect(fake.calls.filter((c) => c.path === '/venues/enumerate').pop().body.filters).toEqual({ programs: ['youth'] }));
@@ -280,7 +284,7 @@ describe('venue directory', () => {
     const fake = directoryFake();
     const { fetchImpl } = phase4Fetch([fake]);
     await renderP4(<SubmissionView />, { fetchImpl, site, path: '/app/directory/submit?type=EditVenue&target=ven_1', routePath: '/app/directory/submit', extraRoutes: <Route path="/app/directory/submissions" element={<MySubmissionsView />} /> });
-    const schedule = await screen.findByLabelText('Schedule');
+    const schedule = await screen.findByLabelText('Existing schedule notes');
     await userEvent.clear(schedule);
     await userEvent.type(schedule, 'Tue 7 pm');
     await userEvent.click(screen.getByRole('button', { name: 'Send for review' }));

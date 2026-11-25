@@ -366,7 +366,8 @@ namespace TrellisKit.Server.Services
             string place = DirectoryViewBuilder.Address(venue, contact).Formatted ?? String.Empty;
             if (place.Length > 0) lines.Add("Location: " + place);
             if (venue.Programs.Count > 0) lines.Add("Programs: " + String.Join(", ", venue.Programs.Select(k => DirectoryConfigService.Option(programs, k).Label)));
-            if (!String.IsNullOrWhiteSpace(venue.ScheduleText)) lines.Add("Schedule: " + venue.ScheduleText);
+            if (venue.Schedule != null) lines.Add("Schedule: " + VenueSchedules.Text(venue.Schedule));
+            else if (!String.IsNullOrWhiteSpace(venue.ScheduleText)) lines.Add("Schedule: " + venue.ScheduleText);
             lines.Add("Visitors: " + venue.VisitorPolicy + (String.IsNullOrWhiteSpace(venue.VisitorPolicyNote) ? String.Empty : " (" + venue.VisitorPolicyNote + ")"));
             if (contact)
             {

@@ -1967,6 +1967,16 @@ export const stringTemplates = Object.freeze({
  * copy filled from the bundled property.
  */
 export const placesTemplates = Object.freeze({
+    scheduleEditor: {
+      title: 'Weekly schedule', enable: 'Add a structured schedule', remove: 'Remove structured schedule',
+      timeZone: 'Time zone', timeZoneHint: 'Use an IANA time zone, for example Pacific/Honolulu.',
+      hours: 'Opening hours', classes: 'Class sessions', day: 'Day', start: 'Start time', end: 'End time',
+      nextDay: 'Ends the next day', name: 'Class name', instructor: 'Instructor (optional)',
+      addHours: 'Add opening hours', addClass: 'Add class', removeEntry: 'Remove entry', notes: 'Schedule notes',
+      hint: 'Times use the schedule time zone. Days without opening hours are unspecified. Confirm current times with the venue.',
+      invalid: 'Check the schedule: choose a valid time zone, day and HH:mm times, and give each class a name. Intervals must be longer than zero and at most 24 hours.',
+      nextDaySuffix: ' (next day)', legacy: 'Existing schedule notes'
+    },
   title: '{venues}',
   segments: 'Show',
   eventsSegment: 'Events',

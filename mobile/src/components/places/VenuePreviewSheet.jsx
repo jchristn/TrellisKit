@@ -58,7 +58,7 @@ function PreviewBody({ venueId, t, onOpen, testID }) {
       {venue.summary ? <AppText>{venue.summary}</AppText> : null}
       {address ? <AppText>{address}</AppText> : null}
       {policy ? <AppText color="textMuted">{policy}</AppText> : null}
-      {!locked && venue.scheduleText ? <VenueSchedule text={venue.scheduleText} t={t} hoursOnly /> : null}
+      {!locked && (venue.schedule || venue.scheduleText) ? <VenueSchedule schedule={venue.schedule} text={venue.scheduleText} t={t} hoursOnly /> : null}
       {!locked && (venue.phone || venue.websiteUrl) ? (
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.sm }}>
           {venue.phone ? <Button label={venue.phone} variant="secondary" onPress={() => Linking.openURL('tel:' + venue.phone.replace(/[^+\d]/g, '')).catch(() => {})} style={{ alignSelf: 'auto' }} testID={testID + '-phone'} /> : null}

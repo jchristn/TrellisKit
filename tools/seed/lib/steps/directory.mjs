@@ -25,7 +25,7 @@ export async function seedDirectory(ctx) {
         if (id) photoMediaIds.push(id);
       }
       const body = {
-        ...pick(spec, ['name', 'slug', 'affiliation', 'summary', 'description', 'address', 'addressVisibility', 'geo', 'timeZone', 'phone', 'email', 'websiteUrl', 'socialLinks', 'scheduleText', 'programs', 'visitorPolicy', 'visitorPolicyNote', 'audience']),
+        ...pick(spec, ['name', 'slug', 'affiliation', 'summary', 'description', 'address', 'addressVisibility', 'geo', 'timeZone', 'phone', 'email', 'websiteUrl', 'socialLinks', 'scheduleText', 'schedule', 'programs', 'visitorPolicy', 'visitorPolicyNote', 'audience']),
         photoMediaIds, labels: spec.labels ?? [], tags: ctx.tags(spec.key, spec.tags),
       };
       const res = await ctx.api.request('POST', '/api/v1/admin/venues', { auth: staff, body, ok: ['SlugInUse'] });

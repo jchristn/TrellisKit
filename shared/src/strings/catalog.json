@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "5cf582e7bb767ced33aaa37d80ae274099fb62efc825d30571696e969718d286",
+ "sha256": "61705d67a84eef4ab71d6e9776c3386116e3b35e12d7ec6c57a9fa83b64294c0",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -10467,6 +10467,153 @@
    "key": "mobile.places.schedule",
    "client": "mobile",
    "default": "Schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.addClass",
+   "client": "mobile",
+   "default": "Add class",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.addHours",
+   "client": "mobile",
+   "default": "Add opening hours",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.classes",
+   "client": "mobile",
+   "default": "Class sessions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.day",
+   "client": "mobile",
+   "default": "Day",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.enable",
+   "client": "mobile",
+   "default": "Add a structured schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.end",
+   "client": "mobile",
+   "default": "End time",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.hint",
+   "client": "mobile",
+   "default": "Times use the schedule time zone. Days without opening hours are unspecified. Confirm current times with the venue.",
+   "tokens": [],
+   "maxLength": 230
+  },
+  {
+   "key": "mobile.places.scheduleEditor.hours",
+   "client": "mobile",
+   "default": "Opening hours",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.instructor",
+   "client": "mobile",
+   "default": "Instructor (optional)",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.invalid",
+   "client": "mobile",
+   "default": "Check the schedule: choose a valid time zone, day and HH:mm times, and give each class a name. Intervals must be longer than zero and at most 24 hours.",
+   "tokens": [],
+   "maxLength": 302
+  },
+  {
+   "key": "mobile.places.scheduleEditor.legacy",
+   "client": "mobile",
+   "default": "Existing schedule notes",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.name",
+   "client": "mobile",
+   "default": "Class name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.nextDay",
+   "client": "mobile",
+   "default": "Ends the next day",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.nextDaySuffix",
+   "client": "mobile",
+   "default": " (next day)",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.notes",
+   "client": "mobile",
+   "default": "Schedule notes",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.remove",
+   "client": "mobile",
+   "default": "Remove structured schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.removeEntry",
+   "client": "mobile",
+   "default": "Remove entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.start",
+   "client": "mobile",
+   "default": "Start time",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.timeZone",
+   "client": "mobile",
+   "default": "Time zone",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.timeZoneHint",
+   "client": "mobile",
+   "default": "Use an IANA time zone, for example Pacific/Honolulu.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "mobile.places.scheduleEditor.title",
+   "client": "mobile",
+   "default": "Weekly schedule",
    "tokens": [],
    "maxLength": 200
   },
@@ -58928,6 +59075,13 @@
    "maxLength": 200
   },
   {
+   "key": "web.venues.fields.dayOfWeek",
+   "client": "web",
+   "default": "Day (Monday = 0)",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.venues.fields.description",
    "client": "web",
    "default": "Description",
@@ -58945,6 +59099,27 @@
    "key": "web.venues.fields.email",
    "client": "web",
    "default": "Email",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.fields.endTime",
+   "client": "web",
+   "default": "End time",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.fields.endsNextDay",
+   "client": "web",
+   "default": "Ends the next day",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.fields.instructor",
+   "client": "web",
+   "default": "Instructor",
    "tokens": [],
    "maxLength": 200
   },
@@ -58991,6 +59166,13 @@
    "maxLength": 200
   },
   {
+   "key": "web.venues.fields.notes",
+   "client": "web",
+   "default": "Schedule notes",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.venues.fields.phone",
    "client": "web",
    "default": "Phone",
@@ -59033,9 +59215,23 @@
    "maxLength": 200
   },
   {
+   "key": "web.venues.fields.schedule",
+   "client": "web",
+   "default": "Weekly schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.venues.fields.scheduleText",
    "client": "web",
    "default": "Schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.fields.set",
+   "client": "web",
+   "default": "Structured schedule enabled",
    "tokens": [],
    "maxLength": 200
   },
@@ -59047,9 +59243,23 @@
    "maxLength": 200
   },
   {
+   "key": "web.venues.fields.startTime",
+   "client": "web",
+   "default": "Start time",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.venues.fields.summary",
    "client": "web",
    "default": "Short description",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.fields.timeZone",
+   "client": "web",
+   "default": "Time zone",
    "tokens": [],
    "maxLength": 200
   },
@@ -60074,6 +60284,153 @@
    "maxLength": 200
   },
   {
+   "key": "web.venues.scheduleEditor.addClass",
+   "client": "web",
+   "default": "Add class",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.addHours",
+   "client": "web",
+   "default": "Add opening hours",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.classes",
+   "client": "web",
+   "default": "Class sessions",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.day",
+   "client": "web",
+   "default": "Day",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.enable",
+   "client": "web",
+   "default": "Add a structured schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.end",
+   "client": "web",
+   "default": "End time",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.hint",
+   "client": "web",
+   "default": "Times use the schedule time zone. Days without opening hours are unspecified. Confirm current times with the venue.",
+   "tokens": [],
+   "maxLength": 230
+  },
+  {
+   "key": "web.venues.scheduleEditor.hours",
+   "client": "web",
+   "default": "Opening hours",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.instructor",
+   "client": "web",
+   "default": "Instructor (optional)",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.invalid",
+   "client": "web",
+   "default": "Check the schedule: choose a valid time zone, day and HH:mm times, and give each class a name. Intervals must be longer than zero and at most 24 hours.",
+   "tokens": [],
+   "maxLength": 302
+  },
+  {
+   "key": "web.venues.scheduleEditor.legacy",
+   "client": "web",
+   "default": "Existing schedule notes",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.name",
+   "client": "web",
+   "default": "Class name",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.nextDay",
+   "client": "web",
+   "default": "Ends the next day",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.nextDaySuffix",
+   "client": "web",
+   "default": " (next day)",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.notes",
+   "client": "web",
+   "default": "Schedule notes",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.remove",
+   "client": "web",
+   "default": "Remove structured schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.removeEntry",
+   "client": "web",
+   "default": "Remove entry",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.start",
+   "client": "web",
+   "default": "Start time",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.timeZone",
+   "client": "web",
+   "default": "Time zone",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.timeZoneHint",
+   "client": "web",
+   "default": "Use an IANA time zone, for example Pacific/Honolulu.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.venues.scheduleEditor.title",
+   "client": "web",
+   "default": "Weekly schedule",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.venues.scheduleEveryDay",
    "client": "web",
    "default": "Every day",
@@ -60317,11 +60674,9 @@
   {
    "key": "web.venues.summary",
    "client": "web",
-   "default": "Find {venuesLower} and {instructorsLower} in the {name} community.",
+   "default": "Find {venuesLower} near you.",
    "tokens": [
-    "venuesLower",
-    "instructorsLower",
-    "name"
+    "venuesLower"
    ],
    "maxLength": 200
   },

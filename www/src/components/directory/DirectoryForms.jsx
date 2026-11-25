@@ -2,6 +2,7 @@ import { AddressVisibilities, SocialLinkKinds, VisitorPolicies, directoryConfig,
 import strings from '../../strings.js';
 import { useProperty } from '../../context/PropertyContext.jsx';
 import { countryOptions } from '../../utils/countries.js';
+import VenueScheduleEditor from './VenueScheduleEditor.jsx';
 import Icon from '../Icon.jsx';
 
 const v = strings.venues;
@@ -22,6 +23,7 @@ export function venueFormFrom(venue, { addressVisibility = 'Exact' } = {}) {
     name: (venue && venue.name) || '', affiliation: (venue && venue.affiliation) || '', summary: (venue && venue.summary) || '', description: (venue && venue.description) || '',
     line1: a.line1 || '', line2: a.line2 || '', locality: a.locality || '', region: a.region || '', postalCode: a.postalCode || '', countryCode: a.countryCode || '',
     addressVisibility: (venue && venue.addressVisibility) || addressVisibility, phone: (venue && venue.phone) || '', email: (venue && venue.email) || '',
+    schedule: venue?.schedule ? JSON.parse(JSON.stringify(venue.schedule)) : null,
     websiteUrl: (venue && venue.websiteUrl) || '', scheduleText: (venue && venue.scheduleText) || '',
     programs: ((venue && venue.programs) || []).map((p) => (typeof p === 'object' ? p.key : p)), visitorPolicy: (venue && venue.visitorPolicy) || 'Unknown',
     visitorPolicyNote: (venue && venue.visitorPolicyNote) || '', socialLinks: ((venue && venue.socialLinks) || []).map((l) => ({ kind: l.kind, url: l.url }))
@@ -35,6 +37,7 @@ export function venueFieldsFrom(form) {
     name: trim(form.name), affiliation: trim(form.affiliation) || null, summary: trim(form.summary) || null, description: trim(form.description) || null,
     address: { line1: trim(form.line1), line2: trim(form.line2) || null, locality: trim(form.locality), region: trim(form.region), postalCode: trim(form.postalCode), countryCode: form.countryCode },
     addressVisibility: form.addressVisibility, phone: trim(form.phone) || null, email: trim(form.email) || null, websiteUrl: trim(form.websiteUrl) || null,
+    schedule: form.schedule || null,
     scheduleText: trim(form.scheduleText) || null, programs: form.programs.slice(), visitorPolicy: form.visitorPolicy, visitorPolicyNote: trim(form.visitorPolicyNote) || null,
     socialLinks: form.socialLinks.filter((l) => trim(l.url)).map((l) => ({ kind: l.kind, url: trim(l.url) }))
   };
@@ -140,7 +143,8 @@ export function VenueFields({ form, set, problems = {}, idPrefix, disabled = fal
         {field('email', f.email, input('email', { maxLength: 200, type: 'email' }))}
         {field('websiteUrl', f.websiteUrl, input('websiteUrl', { maxLength: 500, type: 'url', placeholder: 'https://' }))}
       </div>
-      {field('scheduleText', f.scheduleText, <textarea id={idPrefix + '-scheduleText'} rows={3} maxLength={500} value={form.scheduleText} onChange={(e) => set({ scheduleText: e.target.value })} disabled={disabled} />)}
+      <VenueScheduleEditor legacyText={form.scheduleText} value={form.schedule} onChange={schedule => set({ schedule })} disabled={disabled} invalid={Object.keys(problems).some(k => k.startsWith('schedule.'))} />
+      {!form.schedule && field('scheduleText', v.scheduleEditor.legacy, <textarea id={idPrefix + '-scheduleText'} rows={3} maxLength={500} value={form.scheduleText} onChange={(e) => set({ scheduleText: e.target.value })} disabled={disabled} />)}
       {programs.length > 0 && (
         <fieldset className="fieldset">
           <legend>{f.programs}</legend>

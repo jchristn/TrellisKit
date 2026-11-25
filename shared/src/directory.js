@@ -6,6 +6,7 @@
  */
 
 import { formatTemplate } from './property.js';
+import { validateVenueSchedule } from './venueSchedule.js';
 
 /** Engine default labels (section 0.2). */
 export const DEFAULT_DIRECTORY_TERMS = Object.freeze({ venue: 'Venue', venues: 'Venues', instructor: 'Instructor', instructors: 'Instructors' });
@@ -57,6 +58,8 @@ export function directoryConfig(property) {
   const map = isObject(d.map) ? d.map : {};
   const center = isObject(map.defaultCenter) ? map.defaultCenter : {};
   return {
+    introduction: text(d.introduction, null),
+    listingNotice: text(d.listingNotice, null),
     venueLabel: text(d.venueLabel, DEFAULT_DIRECTORY_TERMS.venue),
     venueLabelPlural: text(d.venueLabelPlural, DEFAULT_DIRECTORY_TERMS.venues),
     instructorLabel: text(d.instructorLabel, DEFAULT_DIRECTORY_TERMS.instructor),
@@ -494,7 +497,7 @@ export function instructorPath(idOrSlug) {
   return '/instructors/' + encodeURIComponent(idOrSlug);
 }
 
-const VENUE_FIELDS = ['name', 'affiliation', 'summary', 'description', 'address', 'addressVisibility', 'phone', 'email', 'websiteUrl', 'socialLinks', 'scheduleText', 'programs', 'visitorPolicy', 'visitorPolicyNote', 'photoMediaIds'];
+const VENUE_FIELDS = ['name', 'affiliation', 'summary', 'description', 'address', 'addressVisibility', 'phone', 'email', 'websiteUrl', 'socialLinks', 'scheduleText', 'schedule', 'programs', 'visitorPolicy', 'visitorPolicyNote', 'photoMediaIds'];
 const INSTRUCTOR_FIELDS = ['displayName', 'bio', 'photoMediaId', 'rank', 'rankLevel', 'affiliation', 'websiteUrl', 'socialLinks', 'venueIds'];
 
 /** The editable submission fields of a target type (section 3.7). */
@@ -535,6 +538,7 @@ export function validateSubmission(draft) {
     else if (name.length < DIRECTORY_LIMITS.nameMin) problems.displayName = 'tooShort';
     else if (name.length > DIRECTORY_LIMITS.nameMax) problems.displayName = 'tooLong';
   }
+  if ('schedule' in f) Object.assign(problems, validateVenueSchedule(f.schedule));
   if (f.summary && String(f.summary).length > DIRECTORY_LIMITS.summaryMax) problems.summary = 'tooLong';
   if (f.websiteUrl && !isHttps(f.websiteUrl)) problems.websiteUrl = 'https';
   if (f.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(f.email))) problems.email = 'email';

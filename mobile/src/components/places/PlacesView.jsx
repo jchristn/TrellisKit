@@ -52,12 +52,19 @@ function toggle(list, value) {
  * server's geocoder.
  */
 export default function PlacesView({ inset = false, testID = 'places' }) {
+  const theme = useTheme();
   const property = useProperty();
   const provider = mobileMapProvider(property);
   const [mapFailed, setMapFailed] = useState(() => provider === MapProvider.None || !mapModule(provider));
   const unavailable = useCallback(() => setMapFailed(true), []);
-  if (!mapFailed) return <PlacesMapSearch provider={provider} onUnavailable={unavailable} inset={inset} testID={testID} />;
-  return <PlacesList provider={provider} testID={testID} />;
+  const config = directoryConfig(property);
+  return <View style={{ flex: 1 }}>
+    {(config.introduction || config.listingNotice) ? <View style={{ padding: theme.spacing.md, gap: theme.spacing.xs }}>
+      {config.introduction ? <AppText>{config.introduction}</AppText> : null}
+      {config.listingNotice ? <AppText variant="caption" color="textMuted">{config.listingNotice}</AppText> : null}
+    </View> : null}
+    {!mapFailed ? <PlacesMapSearch provider={provider} onUnavailable={unavailable} inset={inset} testID={testID} /> : <PlacesList provider={provider} testID={testID} />}
+  </View>;
 }
 
 function PlacesList({ provider, testID }) {

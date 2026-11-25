@@ -42,6 +42,7 @@ namespace Test.Shared.Suites
             return new TestSuiteDescriptor(Id, "Directory (" + TestEnvironment.Provider + ")", new[]
             {
                 SuiteCases.Http(Id, "Directory.ConfigAndPrograms", "property.json directory labels and programs are seeded once, GET /api/v1/property carries the stored section, programs are created, ordered, retired when in use, and only SystemAdmin edits them", Section, ConfigAsync),
+                Case("Directory.StructuredSchedule", "Schedules persist, preserve omitted fields, validate times, and survive member submission and approval", ScheduleAsync),
                 Case("Directory.VenueCrud", "Staff create, read, edit, and delete venues; slugs derive, stay unique, and old slugs redirect; members cannot use admin routes; audit records each write", VenueCrudAsync),
                 Case("Directory.VerifyCloseArchive", "Verify and unverify; closed venues leave lists unless includeClosed and stay readable; archived venues are staff only; reopen and unarchive restore them", StatusAsync),
                 SuiteCases.Http(Id, "Directory.InstructorsAndLinks", "Instructors carry the configured rank, link to venues with roles, list each other, link to a member who is notified and may unlink; one entry per member", Section, LinksAsync),
@@ -59,6 +60,8 @@ namespace Test.Shared.Suites
         {
             property.DirectorySection = new PropertyDirectorySection
             {
+                Introduction = "Find clubs nearby.",
+                ListingNotice = "Listings are informational.",
                 VenueLabel = "Club",
                 VenueLabelPlural = "Clubs",
                 InstructorLabel = "Coach",
@@ -77,12 +80,58 @@ namespace Test.Shared.Suites
             });
         }
 
+        private static async Task ScheduleAsync(HttpFixture f, CancellationToken ct)
+        {
+            DirectoryTestKit.Relax(f);
+            TestMember member = await Api.MemberAsync(f, ct).ConfigureAwait(false);
+            VenueSchedule schedule = new VenueSchedule
+            {
+                TimeZone = "Pacific/Honolulu", Notes = "Check holiday hours.",
+                OpeningHours = new List<VenueScheduleEntry> { new VenueScheduleEntry { DayOfWeek = 0, StartTime = "22:00", EndTime = "02:00", EndsNextDay = true } },
+                Classes = new List<VenueScheduleEntry> {
+                    new VenueScheduleEntry { DayOfWeek = 1, StartTime = "17:00", EndTime = "18:00", Name = "Fundamentals" },
+                    new VenueScheduleEntry { DayOfWeek = 1, StartTime = "18:00", EndTime = "19:00", Name = "Advanced", Instructor = "Alex" } }
+            };
+            JsonElement venue = await DirectoryTestKit.VenueAsync(f, "Schedule Club", ct, extra: new { schedule, scheduleText = "Original notes" }).ConfigureAwait(false);
+            string id = Api.Str(venue, "id");
+            JsonElement read = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/venues" + "/" + id, member.AccessToken, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
+            Check.Equal("Pacific/Honolulu", Api.Str(read.GetProperty("schedule"), "timeZone"), "Schedule zone persisted");
+            Check.True(read.GetProperty("schedule").GetProperty("openingHours")[0].GetProperty("endsNextDay").GetBoolean(), "Overnight hours persisted");
+            Check.Equal(2, read.GetProperty("schedule").GetProperty("classes").GetArrayLength(), "Multiple classes persisted");
+            JsonElement renamed = await Api.ExpectAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { summary = "Updated summary" }, HttpStatusCode.OK, ct).ConfigureAwait(false);
+            Check.Equal(2, renamed.GetProperty("schedule").GetProperty("classes").GetArrayLength(), "Omitted schedule stays unchanged");
+            VenueSchedule invalid = schedule.Clone();
+            invalid.Classes[0].EndTime = "16:00";
+            await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { schedule = invalid }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
+            invalid = schedule.Clone(); invalid.TimeZone = "Not/AZone";
+            await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { schedule = invalid }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
+            invalid = schedule.Clone(); invalid.Classes[0].DayOfWeek = 7;
+            await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { schedule = invalid }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
+            invalid = schedule.Clone(); invalid.OpeningHours = null!;
+            await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { schedule = invalid }, HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
+            await Api.ExpectErrorAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken,
+                new { schedule = new { timeZone = "Pacific/Honolulu", openingHours = new[] { new { startTime = "09:00", endTime = "17:00" } }, classes = new object[0] } },
+                HttpStatusCode.BadRequest, "ValidationFailed", ct).ConfigureAwait(false);
+            schedule.Notes = "Updated through review.";
+            JsonElement submission = await Api.ExpectAsync(f, HttpMethod.Post, DirectoryTestKit.Submissions, member.AccessToken, new { type = "EditVenue", targetId = id, fields = new { schedule } }, HttpStatusCode.Created, ct).ConfigureAwait(false);
+            await Api.ExpectAsync(f, HttpMethod.Post, DirectoryTestKit.Review + "/" + Api.Str(submission, "id") + "/approve", HttpFixture.AdminToken, new { reviewNote = "Checked schedule" }, HttpStatusCode.OK, ct).ConfigureAwait(false);
+            read = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/venues" + "/" + id, member.AccessToken, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
+            Check.Equal("Updated through review.", Api.Str(read.GetProperty("schedule"), "notes"), "Approval saves structured schedule");
+            Check.Equal("Alex", Api.Str(read.GetProperty("schedule").GetProperty("classes")[1], "instructor"), "Null instructor on earlier entry does not shift later values");
+            Check.Equal("Original notes", Api.Str(read, "scheduleText"), "Legacy schedule retained");
+            JsonElement cleared = await Api.ExpectAsync(f, HttpMethod.Put, DirectoryTestKit.AdminVenues + "/" + id, HttpFixture.AdminToken, new { schedule = (object?)null }, HttpStatusCode.OK, ct).ConfigureAwait(false);
+            Check.True(!cleared.TryGetProperty("schedule", out JsonElement empty) || empty.ValueKind == JsonValueKind.Null, "Explicit null clears the schedule");
+            Check.Equal(0L, await DirectoryTestKit.CountAsync(f, "SELECT COUNT(*) AS cnt FROM venuescheduleentries;", ct).ConfigureAwait(false), "Clearing removes child rows");
+        }
+
         private static async Task ConfigAsync(HttpFixture f, CancellationToken ct)
         {
             DirectoryTestKit.Relax(f);
             TestMember member = await Api.MemberAsync(f, ct).ConfigureAwait(false);
             JsonElement property = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/property", null, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
             JsonElement directory = property.GetProperty("directory");
+            Check.Equal("Find clubs nearby.", Api.Str(directory, "introduction"), "Property introduction reaches clients");
+            Check.Equal("Listings are informational.", Api.Str(directory, "listingNotice"), "Property notice reaches clients");
             Check.Equal("Club", Api.Str(directory, "venueLabel"), "Venue label from the section");
             Check.Equal(2, directory.GetProperty("programs").GetArrayLength(), "Seeded programs");
             Check.True(!directory.GetProperty("geocoderConfigured").GetBoolean(), "No geocoder by default");
