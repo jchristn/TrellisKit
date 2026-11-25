@@ -33,6 +33,12 @@ namespace TrellisKit.Core.Settings
         public bool AllowVideo { get; set; } = false;
 
         /// <summary>
+        /// Delete tickets when their requester deletes their account, except tickets labeled staff:retain-legal or
+        /// staff:retain-billing. Default false. Operators must review and remove retention holds when no longer required.
+        /// </summary>
+        public bool DeleteOnAccountDeletion { get; set; } = false;
+
+        /// <summary>
         /// Tickets a member may have that are not Closed. Default 10. Minimum 1, maximum 100.
         /// </summary>
         public int MaxOpenTicketsPerMember

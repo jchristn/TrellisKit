@@ -4,6 +4,12 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- Added opt-in ticket deletion on account closure, including private notes and media, with explicit staff-only legal/billing retention holds. Neutral defaults preserve existing behavior.
+- Added opt-in cancellation of queued free membership benefits when purchase processing receives a refund, preserving already active independent grants.
+
+
 ### Fixed (bounded comment trees)
 
 - Comment tree responses (feed, thread, idea, event, and lesson comments, a comment's children, and the permalink subtree) hold at most 1000 comments across every level (`CommentService.MaxTreeNodes`). Before, the per-level limits multiplied to about 8.4 million comments at the maximum page size, depth, and child limit. Replies fill the budget level by level in page order; every parent whose replies were left out carries `moreChildren`, so clients continue on the children route unchanged.

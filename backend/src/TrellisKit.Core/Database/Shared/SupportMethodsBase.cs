@@ -300,6 +300,15 @@ namespace TrellisKit.Core.Database.Shared
             return table.Rows.Cast<DataRow>().Select(MapMessage).ToList();
         }
 
+        public async Task<List<string>> MessageIdsAfterAsync(string ticketId, string? afterId, int limit, CancellationToken token = default)
+        {
+            RequireText(ticketId, nameof(ticketId));
+            DataTable table = await QueryAsync("SELECT id FROM ticketmessages WHERE " + Scope() + " AND ticketid = " + D.Str(ticketId) +
+                (String.IsNullOrEmpty(afterId) ? String.Empty : " AND id > " + D.Str(afterId)) +
+                " ORDER BY id LIMIT " + D.Num(Math.Clamp(limit, 1, 1000)) + ";", token).ConfigureAwait(false);
+            return table.Rows.Cast<DataRow>().Select(r => RowReader.GetString(r, "id")).ToList();
+        }
+
         public async Task<List<string>> MessageIdsAsync(string ticketId, int limit, CancellationToken token = default)
         {
             RequireText(ticketId, nameof(ticketId));

@@ -245,6 +245,16 @@ namespace TrellisKit.Core.Database.Interfaces
         /// <returns>Identifiers.</returns>
         Task<List<string>> MessageIdsAsync(string ticketId, int limit, CancellationToken token = default);
 
+        /// <summary>
+        /// One bounded keyset page of message identifiers for attachment cleanup.
+        /// </summary>
+        /// <param name="ticketId">Ticket.</param>
+        /// <param name="afterId">Exclusive cursor, or null.</param>
+        /// <param name="limit">Maximum identifiers, 1 to 1000.</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Identifiers ordered by id.</returns>
+        Task<List<string>> MessageIdsAfterAsync(string ticketId, string? afterId, int limit, CancellationToken token = default);
+
         #endregion
 
         #region Metrics

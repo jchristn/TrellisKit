@@ -555,6 +555,8 @@ namespace TrellisKit.Server.Services
                 await _Database.Subscriptions.UpdateAsync(subscription, token).ConfigureAwait(false);
             }
             await SyncEntitlementAsync(subscription, token).ConfigureAwait(false);
+            if (subscription.Status == SubscriptionStatusEnum.Refunded && SignupCodes != null)
+                await SignupCodes.CancelQueuedOnRefundAsync(subscription.UserId, token).ConfigureAwait(false);
             await NotifyAsync(subscription, previousStatus, previousAutoRenew, previousEnd, token).ConfigureAwait(false);
             return subscription;
         }

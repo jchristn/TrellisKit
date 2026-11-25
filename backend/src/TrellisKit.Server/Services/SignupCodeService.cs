@@ -771,6 +771,42 @@ namespace TrellisKit.Server.Services
         }
 
         /// <summary>
+        /// Revoke queued free benefits after a subscription refund when the property enables this policy.
+        /// Existing active grants and discount redemptions are preserved. Repeated calls are idempotent.
+        /// </summary>
+        /// <param name="userId">Refunded member.</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Task.</returns>
+        public async Task CancelQueuedOnRefundAsync(string userId, CancellationToken token = default)
+        {
+            if (!_Settings.SignupCodes.CancelQueuedOnRefund) return;
+            DateTime now = DateTime.UtcNow;
+            string? after = null;
+            while (true)
+            {
+                List<SignupCodeRedemption> page = await _Database.SignupCodeRedemptions.EnumerateByUserAfterAsync(userId, after, 100, token).ConfigureAwait(false);
+                if (page.Count == 0) break;
+                foreach (SignupCodeRedemption redemption in page)
+                {
+                    if (redemption.RevokedUtc != null || redemption.MembershipStartsUtc <= now || String.IsNullOrEmpty(redemption.EntitlementId)) continue;
+                    Entitlement? entitlement = await _Database.Entitlements.ReadAsync(redemption.EntitlementId, token).ConfigureAwait(false);
+                    if (entitlement == null) continue;
+                    entitlement.RevokedUtc ??= now;
+                    entitlement.RevokeReason = "Queued benefit canceled after subscription refund";
+                    entitlement.UpdatedUtc = now;
+                    await _Database.Entitlements.UpdateAsync(entitlement, token).ConfigureAwait(false);
+                    redemption.RevokedUtc = now;
+                    redemption.RevokeReason = entitlement.RevokeReason;
+                    await _Database.SignupCodeRedemptions.UpdateAsync(redemption, token).ConfigureAwait(false);
+                    _Tokens.InvalidateUser(userId);
+                    await _Audit.WriteAsync(new RequestInfo(), "signupCode.refundRevoke", "SignupCodeRedemption", redemption.Id,
+                        entitlement.RevokeReason, token).ConfigureAwait(false);
+                }
+                after = page[page.Count - 1].Id;
+            }
+        }
+
+        /// <summary>
         /// Revoke every active redemption of a code.
         /// </summary>
         /// <param name="id">Code identifier.</param>

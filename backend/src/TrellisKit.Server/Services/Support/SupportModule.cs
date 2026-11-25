@@ -13,7 +13,7 @@ namespace TrellisKit.Server.Services
     /// The Phase 5 support ticket services of one property (docs/PHASE5_CONTRACT.md section 6, as-built note C) and their
     /// wiring into the shared services: private ticket media (purpose Ticket), the Support notification category (shown only
     /// to support staff), and the account export. Tickets are never assistant knowledge or global search, and account
-    /// deletion leaves them exactly as they are (the requester renders as Deleted member).
+    /// deletion retains them by default; properties can enable deletion with explicit legal or billing holds.
     /// </summary>
     public class SupportModule
     {
@@ -107,6 +107,12 @@ namespace TrellisKit.Server.Services
             });
             _Services.NotificationPreferences.StaffCategoryCheck = (userId, token) => IsStaffUserAsync(userId, token);
             TicketExportSection.Register(_Services);
+            Func<string, CancellationToken, Task>? previous = _Services.Accounts.AccountClosed;
+            _Services.Accounts.AccountClosed = async (userId, token) =>
+            {
+                await EraseForAccountAsync(userId, token).ConfigureAwait(false);
+                if (previous != null) await previous(userId, token).ConfigureAwait(false);
+            };
         }
 
         /// <summary>
@@ -179,6 +185,41 @@ namespace TrellisKit.Server.Services
         #endregion
 
         #region Private-Methods
+
+        private async Task EraseForAccountAsync(string userId, CancellationToken token)
+        {
+            if (!_Services.Settings.Support.DeleteOnAccountDeletion) return;
+            string? after = null;
+            while (true)
+            {
+                List<Ticket> tickets = await _Services.Database.Support.ListByRequesterAsync(userId, after, 100, token).ConfigureAwait(false);
+                if (tickets.Count == 0) break;
+                foreach (Ticket ticket in tickets)
+                {
+                    ObjectMetadata metadata = await _Services.Database.Metadata.ReadAsync(TargetTypeEnum.Ticket, ticket.Id, token).ConfigureAwait(false);
+                    if (metadata.Labels.Any(label => String.Equals(label, "staff:retain-legal", StringComparison.OrdinalIgnoreCase) ||
+                        String.Equals(label, "staff:retain-billing", StringComparison.OrdinalIgnoreCase))) continue;
+                    ticket.Status = TicketStatusEnum.Closed;
+                    ticket.ClosedUtc = Clock();
+                    ticket.UpdatedUtc = Clock();
+                    await _Services.Database.Support.UpdateTicketAsync(ticket, new List<TicketMessage>(), null, token).ConfigureAwait(false);
+                    string? messageAfter = null;
+                    while (true)
+                    {
+                        List<string> messages = await _Services.Database.Support.MessageIdsAfterAsync(ticket.Id, messageAfter, 100, token).ConfigureAwait(false);
+                        if (messages.Count == 0) break;
+                        foreach (string messageId in messages)
+                            await _Services.Media.PurgeTargetAsync(TargetTypeEnum.TicketMessage, messageId, token).ConfigureAwait(false);
+                        messageAfter = messages[messages.Count - 1];
+                    }
+                    if (!await _Services.Database.Support.DeleteTicketAsync(ticket.Id, token).ConfigureAwait(false))
+                        throw new InvalidOperationException("Account ticket cleanup could not delete a closed ticket.");
+                    await _Services.Audit.WriteAsync(new RequestInfo(), "ticket.delete.account", TargetTypeEnum.Ticket.ToString(), ticket.Id,
+                        "Deleted with requester account", token).ConfigureAwait(false);
+                }
+                after = tickets[tickets.Count - 1].Id;
+            }
+        }
 
         private async Task<bool> CanAccessTicketAsync(string viewerUserId, string ticketId, CancellationToken token)
         {

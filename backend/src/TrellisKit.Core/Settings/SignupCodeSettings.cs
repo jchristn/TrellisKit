@@ -10,6 +10,12 @@ namespace TrellisKit.Core.Settings
         #region Public-Members
 
         /// <summary>
+        /// Revoke future free membership redemptions when a subscription is refunded. Default false.
+        /// </summary>
+        public bool CancelQueuedOnRefund { get; set; } = false;
+
+
+        /// <summary>
         /// Validate and redeem attempts allowed per IP and per account each hour. Default 10. Minimum 1, maximum 1000.
         /// </summary>
         public int AttemptsPerHour

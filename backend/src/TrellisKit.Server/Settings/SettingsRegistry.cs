@@ -413,6 +413,9 @@ namespace TrellisKit.Server.Settings
                     "Minutes a signed export download link stays valid after it is issued. Default 15.", live, null, 1, 1440,
                     s => s.Account.ExportDownloadLinkMinutes, (s, v) => s.Account.ExportDownloadLinkMinutes = v),
 
+                SettingFieldDefinition.Boolean("signupCodes.cancelQueuedOnRefund", "Sign-up codes", "Cancel queued benefits on refund",
+                    "Revoke future free membership benefits when a subscription is refunded. Default false.", live, null,
+                    s => s.SignupCodes.CancelQueuedOnRefund, (s, v) => s.SignupCodes.CancelQueuedOnRefund = v),
                 SettingFieldDefinition.Integer("signupCodes.attemptsPerHour", "Sign-up codes", "Attempts per hour",
                     "Validate and redeem attempts allowed per IP and per account each hour.", live, null, 1, 1000,
                     s => s.SignupCodes.AttemptsPerHour, (s, v) => s.SignupCodes.AttemptsPerHour = v),

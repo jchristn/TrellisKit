@@ -9,6 +9,7 @@ namespace Test.Shared.Suites
     using System.Threading;
     using System.Threading.Tasks;
     using Touchstone.Core;
+    using TrellisKit.Core.Enums;
     using TrellisKit.Core.Integrations.Models;
     using TrellisKit.Core.Models;
     using TrellisKit.Server.Services;
@@ -133,6 +134,34 @@ namespace Test.Shared.Suites
                     Check.Equal("Subscription", Api.Str(redeemed.GetProperty("membership"), "source"), "Paid stays primary");
                     DateTime expires = redeemed.GetProperty("membership").GetProperty("expiresUtc").GetDateTime().ToUniversalTime();
                     Check.True(Math.Abs((expires - paidEnd.AddMonths(6)).TotalMinutes) < 1, "Coverage runs through the free period");
+                }),
+                Case("Member.RefundQueuedBenefit", "Refund policy revokes future grants, preserves active grants and neutral defaults, and is idempotent", async (f, ct) =>
+                {
+                    TestMember member = await Api.RegisterAsync(f, ct).ConfigureAwait(false);
+                    AppStoreTransaction transaction = new AppStoreTransaction
+                    {
+                        TransactionId = "transaction-refund", OriginalTransactionId = "original-refund",
+                        ProductId = "example.membership", PurchaseUtc = DateTime.UtcNow.AddDays(-1), ExpiresUtc = DateTime.UtcNow.AddMonths(1)
+                    };
+                    await f.Services.Purchases.ApplyAppleAsync(transaction, member.Id, SubscriptionStatusEnum.Active, true, ct).ConfigureAwait(false);
+                    await CreateAsync(f, new { code = "REFUNDQUEUE", name = "Queued", grantType = "DurationMonths", grantMonths = 6 }, ct).ConfigureAwait(false);
+                    await Api.ExpectAsync(f, HttpMethod.Post, "/api/v1/signup-codes/redeem", member.AccessToken, new { code = "REFUNDQUEUE" }, HttpStatusCode.OK, ct).ConfigureAwait(false);
+                    await f.Services.Purchases.ApplyAppleAsync(transaction, member.Id, SubscriptionStatusEnum.Refunded, false, ct).ConfigureAwait(false);
+                    List<SignupCodeRedemption> redemptions = await f.Services.Database.SignupCodeRedemptions.EnumerateByUserAfterAsync(member.Id, null, 100, ct).ConfigureAwait(false);
+                    Check.True(redemptions.Single().RevokedUtc == null, "Neutral default preserves queued benefit");
+                    f.Settings.SignupCodes.CancelQueuedOnRefund = true;
+                    await f.Services.Purchases.ApplyAppleAsync(transaction, member.Id, SubscriptionStatusEnum.Refunded, false, ct).ConfigureAwait(false);
+                    SignupCodeRedemption revoked = (await f.Services.Database.SignupCodeRedemptions.ReadAsync(redemptions[0].Id, ct).ConfigureAwait(false))!;
+                    Check.True(revoked.RevokedUtc != null, "Refund revokes future redemption");
+                    Entitlement entitlement = (await f.Services.Database.Entitlements.ReadAsync(revoked.EntitlementId!, ct).ConfigureAwait(false))!;
+                    Check.True(entitlement.RevokedUtc != null, "Future entitlement revoked");
+                    await f.Services.Purchases.ApplyAppleAsync(transaction, member.Id, SubscriptionStatusEnum.Refunded, false, ct).ConfigureAwait(false);
+                    Check.Equal(revoked.RevokedUtc, (await f.Services.Database.SignupCodeRedemptions.ReadAsync(revoked.Id, ct).ConfigureAwait(false))!.RevokedUtc, "Repeated refund keeps original revocation");
+                    TestMember active = await Api.RegisterAsync(f, ct).ConfigureAwait(false);
+                    await CreateAsync(f, new { code = "ACTIVEGRANT", name = "Active", grantType = "DurationMonths", grantMonths = 1 }, ct).ConfigureAwait(false);
+                    await Api.ExpectAsync(f, HttpMethod.Post, "/api/v1/signup-codes/redeem", active.AccessToken, new { code = "ACTIVEGRANT" }, HttpStatusCode.OK, ct).ConfigureAwait(false);
+                    await f.Services.SignupCodes.CancelQueuedOnRefundAsync(active.Id, ct).ConfigureAwait(false);
+                    Check.True((await f.Services.Database.SignupCodeRedemptions.EnumerateByUserAfterAsync(active.Id, null, 100, ct).ConfigureAwait(false)).Single().RevokedUtc == null, "Active independent grant preserved");
                 }),
                 Case("Member.SingleUseRace", "Concurrent redemptions of a single-use code: exactly one member wins", async (f, ct) =>
                 {

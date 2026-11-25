@@ -62,6 +62,7 @@ namespace Test.Shared.Suites
                 SuiteCases.Http(Id, "Tickets.FeatureOff", "features.support off answers 404 NotAvailable on member and staff support routes", p => p.Features.Support = false, FeatureOffAsync),
                 Case("Tickets.KillSwitch", "The support kill switch answers 503 FeatureDisabled on member support routes", KillSwitchAsync),
                 SuiteCases.Http(Id, "Tickets.EmailLinks", "Email links map member app paths to website pages under /app and ticket staff paths open the admin inbox drawer", EmailLinksAsync),
+                Case("Tickets.DeleteWithAccount", "Configured deletion removes ticket content and media, preserves explicit legal and billing holds, and isolates other requesters", DeleteWithAccountAsync),
                 Case("Tickets.Lifecycle", "The account export includes tickets with replies and no notes; account deletion leaves tickets as they are with the requester shown as Deleted member", LifecycleAsync)
             });
         }
@@ -604,6 +605,41 @@ namespace Test.Shared.Suites
             await Api.ExpectErrorAsync(f, HttpMethod.Post, "/api/v1/support/ticket-types/enumerate", member.AccessToken, new { }, HttpStatusCode.ServiceUnavailable, "FeatureDisabled", ct).ConfigureAwait(false);
             await Api.ExpectAsync(f, HttpMethod.Put, "/api/v1/admin/app/kill-switches/support", HttpFixture.AdminToken, new { killed = false, reason = "Resolved" }, HttpStatusCode.OK, ct).ConfigureAwait(false);
             await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/tickets/" + id, member.AccessToken, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
+        }
+
+        private static async Task DeleteWithAccountAsync(HttpFixture f, CancellationToken ct)
+        {
+            SupportTestKit.Relax(f);
+            f.Settings.Support.DeleteOnAccountDeletion = true;
+            TestMember member = await Api.MemberAsync(f, ct).ConfigureAwait(false);
+            TestMember other = await Api.MemberAsync(f, ct).ConfigureAwait(false);
+            string otherId = await SupportTestKit.TicketIdAsync(f, other.AccessToken, ct).ConfigureAwait(false);
+            string mediaId = await SupportTestKit.UploadAsync(f, member.AccessToken, ct).ConfigureAwait(false);
+            string id = Api.Str(await SupportTestKit.TicketAsync(f, member.AccessToken, ct, mediaIds: new[] { mediaId }).ConfigureAwait(false), "id");
+            List<string> held = new List<string>();
+            foreach (string label in new[] { "staff:retain-legal", "staff:retain-billing" })
+            {
+                string holdId = await SupportTestKit.TicketIdAsync(f, member.AccessToken, ct).ConfigureAwait(false);
+                await f.Services.Database.Metadata.WriteAsync(TargetTypeEnum.Ticket, holdId,
+                    new ObjectMetadata { Labels = new List<string> { label } }, ct).ConfigureAwait(false);
+                held.Add(holdId);
+            }
+            // More than one keyset batch, including notes that never appear in member exports.
+            Ticket ticket = (await f.Services.Database.Support.ReadTicketAsync(id, ct).ConfigureAwait(false))!;
+            List<TicketMessage> messages = new List<TicketMessage>();
+            for (int i = 0; i < 105; i++) messages.Add(new TicketMessage
+            {
+                Id = TrellisKit.Core.Helpers.IdGenerator.Generate(TrellisKit.Core.Helpers.SupportIdPrefixes.TicketMessage), TicketId = id,
+                Kind = TicketMessageKindEnum.Note, Body = "Private note", CreatedUtc = DateTime.UtcNow
+            });
+            await f.Services.Database.Support.UpdateTicketAsync(ticket, messages, null, ct).ConfigureAwait(false);
+            await Api.ExpectAsync(f, HttpMethod.Delete, "/api/v1/me", member.AccessToken, new { confirm = "DELETE" }, HttpStatusCode.Accepted, ct).ConfigureAwait(false);
+            Check.True(await f.Services.Database.Support.ReadTicketAsync(id, ct).ConfigureAwait(false) == null, "Ordinary ticket removed");
+            Check.Equal(0L, await f.Services.Database.Support.CountMessagesAsync(id, true, ct).ConfigureAwait(false), "All notes and replies removed");
+            Check.Equal(0L, await SupportTestKit.CountAsync(f, "SELECT COUNT(*) AS cnt FROM mediaattachments WHERE id = '" + mediaId + "' AND deletedutc IS NULL;", ct).ConfigureAwait(false), "Attachment removed");
+            foreach (string holdId in held)
+                Check.True(await f.Services.Database.Support.ReadTicketAsync(holdId, ct).ConfigureAwait(false) != null, "Explicit obligation retained");
+            Check.True(await f.Services.Database.Support.ReadTicketAsync(otherId, ct).ConfigureAwait(false) != null, "Other requester untouched");
         }
 
         private static async Task LifecycleAsync(HttpFixture f, CancellationToken ct)

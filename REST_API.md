@@ -4198,3 +4198,9 @@ Daily engagement/forum/directory/support collections return `{ id, series, date,
 |---|---|---|---|
 | `GET /api/v1/directory/geocode` | `POST /api/v1/directory/geocode/enumerate` | `GeocodeCandidateView` | filters.query; finite top-five provider shortlist, not a global place count |
 | `GET /api/v1/admin/ai/assistants/{id}/knowledge/preview` | `POST /api/v1/admin/ai/assistants/{id}/knowledge/preview/enumerate` | `KnowledgePreviewItem` | filters.query, optional filters.asUserId; finite context shortlist with totalCandidates/mode context |
+
+### Optional lifecycle settings
+
+`support.deleteOnAccountDeletion` (boolean, default false, live): remove requester tickets on account deletion, including private notes and attached media, except staff-only `staff:retain-legal` and `staff:retain-billing` holds. Operators maintain and review the legal/billing basis of each hold.
+
+`signupCodes.cancelQueuedOnRefund` (boolean, default false, live): when purchase processing receives normalized status `Refunded`, revoke that member's future free code redemptions and entitlements. Active independent grants and discount redemptions remain. Refunds handled outside this status flow require the operator to revoke queued benefits through the existing redemption revoke route. Both settings are available through the existing settings API and admin settings screen.
