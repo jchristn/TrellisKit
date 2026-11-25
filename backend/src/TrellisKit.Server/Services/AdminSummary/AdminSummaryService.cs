@@ -344,7 +344,7 @@ namespace TrellisKit.Server.Services.AdminSummary
             }
             foreach (AdminSummaryRow row in shown)
             {
-                row.Label = label + ": " + row.Group;
+                row.Label = label + ": " + (String.IsNullOrWhiteSpace(row.Group) ? "(not set)" : row.Group);
                 row.Display = AdminSummaryFormat.Display(row);
                 output.Add(row);
             }
