@@ -488,5 +488,14 @@ namespace TrellisKit.Core.Enums
         /// <summary>A photo or video in a member profile gallery (pmd_).</summary>
         ProfileMedia,
 
+        /// <summary>A reviewed exercise or technique catalog entry (cex_).</summary>
+        CatalogEntry,
+
+        /// <summary>A directed relationship between catalog entries (cre_).</summary>
+        CatalogRelationship,
+
+        /// <summary>An administrator-reviewed catalog import source (cis_), administrators only.</summary>
+        CatalogImportSource,
+
     }
 }

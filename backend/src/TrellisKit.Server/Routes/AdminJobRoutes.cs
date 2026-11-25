@@ -83,8 +83,8 @@ namespace TrellisKit.Server.Routes
                 openApiMetadata: Doc("Change a job", _Tag, "Body { enabled?, intervalType?, intervalValue?, timeOfDayMinutesUtc?, daysOfWeek?, maxConcurrency?, maxAttempts?, budgetUsdPerRun? (0 removes the cap) }. The next run is recomputed. Audited as job.update." + _Admin)
                     .PathParam("key", "Job key").Body("JobDefinitionRequest").Returns(_Definition).Resp(400, "ValidationFailed").Resp(403, "Forbidden").Resp(404, "NotFound"));
             post.Parameter.Add(HttpMethod.POST, _Base + "/{key}/run", RunNowAsync, RouteHelper.HandleExceptionAsync,
-                openApiMetadata: Doc("Run a job now", _Tag, "Body { dryRun? }. Queues a run whether or not the schedule is enabled. Audited as job.run." + _Admin)
-                    .PathParam("key", "Job key").Body("JobRunRequest").Returns(_Run).Resp(400, "DryRunNotSupported").Resp(403, "Forbidden").Resp(404, "NotFound").Resp(409, "RunActive").Resp(409, "BudgetExceeded").Resp(409, "HandlerMissing"));
+                openApiMetadata: Doc("Run a job now", _Tag, "Body { dryRun?, parameters? }. Parameters is a JSON object encoded as a string, at most 16384 characters, validated by the handler. Queues a run whether or not the schedule is enabled. Audited as job.run." + _Admin)
+                    .PathParam("key", "Job key").Body("JobRunRequest").Returns(_Run).Resp(400, "DryRunNotSupported").Resp(400, "InvalidJobParameters").Resp(403, "Forbidden").Resp(404, "NotFound").Resp(409, "RunActive").Resp(409, "BudgetExceeded").Resp(409, "HandlerMissing"));
         }
 
         #endregion

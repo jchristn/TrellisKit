@@ -29,6 +29,11 @@ namespace TrellisKit.Core.PropertyConfig
         public const string DefaultProfilesPath = "profiles";
 
         /// <summary>
+        /// Default catalog path word.
+        /// </summary>
+        public const string DefaultCatalogPath = "catalog";
+
+        /// <summary>
         /// First path segments the website, the member app, and the server already use; no path word may be one of them.
         /// </summary>
         public static readonly IReadOnlyList<string> ReservedPaths = new[]
@@ -69,6 +74,16 @@ namespace TrellisKit.Core.PropertyConfig
             set { _ProfilesPath = String.IsNullOrWhiteSpace(value) ? DefaultProfilesPath : value.Trim(); }
         }
 
+        /// <summary>
+        /// First path segment of published catalog entry pages (2 to 40 lower case letters, digits, and single hyphens).
+        /// Default catalog. Pages render only when features.catalog is on.
+        /// </summary>
+        public string CatalogPath
+        {
+            get { return _CatalogPath; }
+            set { _CatalogPath = String.IsNullOrWhiteSpace(value) ? DefaultCatalogPath : value.Trim(); }
+        }
+
         #endregion
 
         #region Private-Members
@@ -76,6 +91,7 @@ namespace TrellisKit.Core.PropertyConfig
         private string _VenuesPath = DefaultVenuesPath;
         private string _EventsPath = DefaultEventsPath;
         private string _ProfilesPath = DefaultProfilesPath;
+        private string _CatalogPath = DefaultCatalogPath;
 
         #endregion
 
@@ -90,6 +106,7 @@ namespace TrellisKit.Core.PropertyConfig
         {
             if (kind == PublicPageKindEnum.Venue) return VenuesPath;
             if (kind == PublicPageKindEnum.Event) return EventsPath;
+            if (kind == PublicPageKindEnum.Catalog) return CatalogPath;
             return ProfilesPath;
         }
 
@@ -104,6 +121,7 @@ namespace TrellisKit.Core.PropertyConfig
             if (String.Equals(path, VenuesPath, StringComparison.Ordinal)) return PublicPageKindEnum.Venue;
             if (String.Equals(path, EventsPath, StringComparison.Ordinal)) return PublicPageKindEnum.Event;
             if (String.Equals(path, ProfilesPath, StringComparison.Ordinal)) return PublicPageKindEnum.Profile;
+            if (String.Equals(path, CatalogPath, StringComparison.Ordinal)) return PublicPageKindEnum.Catalog;
             return null;
         }
 

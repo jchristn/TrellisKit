@@ -72,6 +72,13 @@ namespace TrellisKit.Core.PropertyConfig
         /// </summary>
         public bool Ai { get; set; } = false;
 
+        /// <summary>
+        /// Reviewed exercise and technique catalog (docs/CATALOG_PUBLIC_PAGES.md, docs/CATALOG_IMPORTS.md). Default false
+        /// when absent: catalog routes, imports, public pages, and sitemaps return 404 NotAvailable until the property
+        /// turns it on. Independent of features.library.
+        /// </summary>
+        public bool Catalog { get; set; } = false;
+
         #endregion
     }
 }

@@ -54,6 +54,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// Ideas board.
         /// </summary>
-        Ideas
+        Ideas,
+
+        /// <summary>
+        /// Reviewed exercise and technique catalog (features.catalog, default off).
+        /// </summary>
+        Catalog
     }
 }

@@ -4,6 +4,7 @@ namespace TrellisKit.Server.Services.Jobs
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
+    using System.Text.Json;
     using System.Threading;
     using System.Threading.Tasks;
     using TrellisKit.Core.Enumeration;
@@ -336,11 +337,26 @@ namespace TrellisKit.Server.Services.Jobs
         /// <param name="token">Cancellation token.</param>
         /// <returns>The queued run.</returns>
         /// <exception cref="ArgumentNullException">An argument is null.</exception>
-        /// <exception cref="ApiErrorException">400 DryRunNotSupported, 403 Forbidden, 404 NotFound, 409 RunActive, 409 HandlerMissing, 409 BudgetExceeded.</exception>
+        /// <exception cref="ApiErrorException">400 DryRunNotSupported, 400 InvalidJobParameters, 403 Forbidden, 404 NotFound, 409 RunActive, 409 HandlerMissing, 409 BudgetExceeded.</exception>
         public Task<JobRunView> RunNowAsync(ContentActor actor, RequestInfo info, string key, JobRunRequest request, CancellationToken token = default)
         {
             ArgumentNullException.ThrowIfNull(request);
-            return QueueAsync(actor, info, key, null, request.DryRun, token);
+            if (request.Parameters != null)
+            {
+                try
+                {
+                    if (request.Parameters.Length > 16384) throw new ArgumentException("Job parameters must be at most 16384 characters.");
+                    using (JsonDocument document = JsonDocument.Parse(request.Parameters))
+                    {
+                        if (document.RootElement.ValueKind != JsonValueKind.Object) throw new ArgumentException("Job parameters must encode a JSON object.");
+                    }
+                }
+                catch (Exception e) when (e is JsonException || e is ArgumentException)
+                {
+                    throw new ApiErrorException(400, "InvalidJobParameters", "Invalid job parameters: " + e.Message);
+                }
+            }
+            return QueueAsync(actor, info, key, request.Parameters, request.DryRun, token);
         }
 
         /// <summary>
@@ -356,13 +372,24 @@ namespace TrellisKit.Server.Services.Jobs
         /// <param name="token">Cancellation token.</param>
         /// <returns>The queued run.</returns>
         /// <exception cref="ArgumentNullException">info is null.</exception>
-        /// <exception cref="ApiErrorException">400 DryRunNotSupported, 403 Forbidden, 404 NotFound, 409 RunActive, 409 HandlerMissing, 409 BudgetExceeded.</exception>
+        /// <exception cref="ApiErrorException">400 DryRunNotSupported, 400 InvalidJobParameters, 403 Forbidden, 404 NotFound, 409 RunActive, 409 HandlerMissing, 409 BudgetExceeded.</exception>
         public async Task<JobRunView> QueueAsync(ContentActor actor, RequestInfo info, string key, string? parameters, bool dryRun, CancellationToken token = default)
         {
             ArgumentNullException.ThrowIfNull(info);
             RequireAdmin(actor);
             JobDefinition definition = await RequireDefinitionAsync(key, token).ConfigureAwait(false);
             IJobHandler handler = Registry.Find(definition.Key) ?? throw new ApiErrorException(409, "HandlerMissing", "No handler is registered for this job on this server version.");
+            if (handler is IJobParameterValidator validator)
+            {
+                try
+                {
+                    validator.ValidateParameters(parameters);
+                }
+                catch (Exception e) when (e is JsonException || e is ArgumentException)
+                {
+                    throw new ApiErrorException(400, "InvalidJobParameters", "Invalid job parameters: " + e.Message);
+                }
+            }
             if (dryRun && !handler.Defaults.SupportsDryRun) throw new ApiErrorException(400, "DryRunNotSupported", "This job does not support dry runs.");
             if (await _Services.Database.Jobs.HasActiveRunAsync(definition.Key, token).ConfigureAwait(false)) throw new ApiErrorException(409, "RunActive", "A run of this job is already queued or running.");
             DateTime now = Clock();

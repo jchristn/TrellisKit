@@ -249,6 +249,8 @@ namespace TrellisKit.Core.Database.Postgresql
             target.JobLeases = new JobLeaseMethods(target, propertyId);
             target.Jobs = new JobMethods(target, propertyId);
             target.ContentChanges = new ContentChangeMethods(target, propertyId);
+            target.ExerciseCatalog = new ExerciseCatalogMethods(target, propertyId);
+            target.CatalogImports = new CatalogImportMethods(target, propertyId);
             target.LiveUpdates = new LiveUpdateMethods(target, propertyId);
             target.AppConfig = new AppConfigMethods(target, propertyId);
             target.AppContent = new AppContentMethods(target, propertyId);

@@ -66,3 +66,7 @@ export * from "./jobsApi.js";
 export * from "./contentReviewApi.js";
 
 export { metricsMethods, metricSeriesFromEnumeration, legacyMetricSeriesFromEnumeration, usageSeriesFromEnumeration } from "./metricsApi.js";
+
+// Reviewed exercise and technique catalog (features.catalog, default off).
+export { exerciseCatalogMethods } from './exerciseCatalogApi.js';
+export * from './exerciseCatalog.js';

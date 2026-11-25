@@ -20,7 +20,8 @@ namespace TrellisKit.Server.Services
         {
             "signups", "purchases", "signupCodes", "feed", "feedComposer", "comments", "reactions", "mediaUpload", "videoUpload", "linkPreviews",
             "forums", "polls", "directory", "events", "library", "libraryDownloads", "messaging", "assistants", "notificationsPush", "search",
-            "support", "ideas", "broadcasts", "realtime"
+            "support", "ideas", "broadcasts", "realtime",
+            "catalog"
         };
 
         #endregion
@@ -85,6 +86,8 @@ namespace TrellisKit.Server.Services
             if (Starts(p, _Api + "/assistants")) result.Add("assistants");
             if (Starts(p, _Api + "/me/push-tokens")) result.Add("notificationsPush");
             if (Starts(p, _Api + "/members/search") || Starts(p, _Api + "/members/enumerate") || Starts(p, _Api + "/search")) result.Add("search");
+            // The reviewed exercise and technique catalog has its own switch, independent of library.
+            if (Starts(p, _Api + "/catalog") || Starts(p, _Api + "/public/catalog")) result.Add("catalog");
             return result;
         }
 

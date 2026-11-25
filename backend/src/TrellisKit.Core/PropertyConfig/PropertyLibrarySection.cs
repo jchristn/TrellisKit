@@ -25,6 +25,22 @@ namespace TrellisKit.Core.PropertyConfig
         /// </summary>
         public List<PropertyOptionSeed> Levels { get; set; } = new List<PropertyOptionSeed>();
 
+        /// <summary>
+        /// Catalog descriptor vocabularies per directory program (at most 50, one per program). Default empty; the engine
+        /// supplies no modality taxonomy (docs/CATALOG_MODALITIES.md).
+        /// </summary>
+        public List<PropertyCatalogDescriptorProfile> CatalogDescriptorProfiles { get; set; } = new List<PropertyCatalogDescriptorProfile>();
+
+        /// <summary>
+        /// Catalog muscle or body-region vocabulary (at most 100 options). Default empty.
+        /// </summary>
+        public List<PropertyOptionSeed> CatalogMuscles { get; set; } = new List<PropertyOptionSeed>();
+
+        /// <summary>
+        /// Catalog equipment vocabulary (at most 100 options). Default empty.
+        /// </summary>
+        public List<PropertyOptionSeed> CatalogEquipment { get; set; } = new List<PropertyOptionSeed>();
+
         #endregion
     }
 }

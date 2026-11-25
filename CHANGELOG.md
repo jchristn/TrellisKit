@@ -4,6 +4,24 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (reviewed exercise and technique catalog, ported from Trainerdate)
+
+- Reviewed exercise and technique catalog behind the new `features.catalog` switch (default off; independent of `features.library`), the `Catalog` gateable feature key, and the `catalog` kill switch. Entries are authored by library staff, published only after explicit `SystemAdmin` review of content and source licensing, and carry structured descriptors, ordered instructions and cues, licensed sources, directed relationships, lesson references, labels, and tags. Routes: `GET /api/v1/catalog/config`, member `/api/v1/catalog/entries`, anonymous `/api/v1/public/catalog/entries`, staff `/api/v1/admin/catalog/entries` (create, edit, submit, approve, reject, archive, delete, relationships), all bounded at 100 per page. See `REST_API.md`.
+- Property configuration `library.catalogMuscles`, `library.catalogEquipment`, and per-program `library.catalogDescriptorProfiles` (families, attires, instructional levels, notation systems, and localized-name languages; the engine ships no taxonomy), validated by the property validator; `publicPages.catalogPath` (default `catalog`). The neutral sample property carries generic body-region and equipment vocabularies.
+- Typed `modalityDetails` (localized names, family, attire, instructional level, declared notation) and `apparatusSetup` groups; omission preserves a group, an explicit object replaces it. See `docs/CATALOG_MODALITIES.md`.
+- Reviewed catalog import sources (`/api/v1/admin/catalog/import-sources`, `SystemAdmin`) and the `catalog.importSources` job: explicit current-revision license review, bounded HTTPS manifest fetches through the outbound address policy with robots.txt, no redirects, 1 MB and 20 second limits, and draft-only creation and refresh that never overwrites human edits, holds, or published entries. See `docs/CATALOG_IMPORTS.md`.
+- Manual `catalog.generateDrafts` job using the new `CatalogAuthoring` task role and the administrator-editable `catalog.draftAuthoring` prompt, with job budgets and the engine scope guardrail; drafts only. See `docs/CATALOG_GENERATION.md`.
+- Server-rendered catalog entry pages and `sitemap-catalog-{n}.xml` (CreativeWork and BreadcrumbList structured data, escaped text, private data omitted); the website proxy forwards catalog sitemaps. See `docs/CATALOG_PUBLIC_PAGES.md`.
+- `CatalogEntry` content target (visibility, moderation, content review) registered in `ContentTargetRegistry`; catalog tables join `PropertyTables` and the `contentchanges` sources.
+- Migrations 127 (`ExerciseCatalogSchema`), 128 (`CatalogImportSchema`), 129 (`CatalogModalitySchema`), 130 (`CatalogNotationSchema`), and 131 (`CatalogApparatusSchema`).
+- `POST /api/v1/admin/jobs/{key}/run` accepts optional `parameters` (a JSON object string, at most 16384 characters); handlers that implement `IJobParameterValidator` reject invalid parameters with `400 InvalidJobParameters`.
+- Shared client: `shared/src/exerciseCatalog.js` and `exerciseCatalogApi.js` (`exerciseCatalogMethods` on `ApiClient`), `PublicPageKind.Catalog` and `catalogPath`, `AccessFeature.Catalog` in `CatalogFeatures`, and `DefaultOffFeatures` so `propertyFeatureEnabled(property, 'catalog')` is false unless the property turns it on.
+- Suites `ExerciseCatalog`, `CatalogImport`, `CatalogModalities`, `CatalogApparatus`, `CatalogGeneration`, and `CatalogPublicPages`.
+
+### Ported from Trainerdate
+
+- Reviewed exercise and technique catalog from Trainerdate commits `e38b0f8` (catalog, generation, public pages), `d89893d` (reviewed imports), `b3cfcad` (localized names and families), `38eaf76` (attire, instructional levels, notation), `1c207df` (apparatus setup), and `417ab04` (import service fix), with reverse renames, the catalog gated on `features.catalog` instead of `features.library`, sport-specific wording and test data replaced with neutral fixtures, the Trainerdate discovery crawler replaced by an engine manifest fetcher on the existing outbound address policy, and migrations renumbered 110, 114, 119, 120, and 122 to 127 through 131. Web and mobile catalog views are ported separately.
+
 ### Added (profile and public multimedia)
 
 - Owner-managed profile photo/video galleries on web and mobile, with bounded metadata filters, uploads, deletion, per-item reports and Feed moderation. Schema 125 adds property-scoped `profilemedia`; attachment claims an upload atomically. Account export/deletion includes gallery items.

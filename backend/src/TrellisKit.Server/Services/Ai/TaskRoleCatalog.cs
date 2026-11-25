@@ -38,6 +38,7 @@ namespace TrellisKit.Server.Services.Ai
             Role("SearchParse", "Search parsing", "Translate natural-language searches into filters.", false, true, "Configure a completion endpoint", ModelReasoningEffortEnum.Minimal),
             Role("CommunityAssistant", "Community assistant", "Answer community questions.", false, true, "Configure a completion endpoint", ModelReasoningEffortEnum.Medium),
             Role("ContentAssistant", "Content assistant", "Help members draft community content.", false, true, "Configure a completion endpoint", ModelReasoningEffortEnum.Low),
+            Role("CatalogAuthoring", "Catalog authoring", "Source-grounded exercise and technique drafts for human review.", false, false, "Configure a completion endpoint", ModelReasoningEffortEnum.High),
             new TaskRoleDefinition { Role = "Embedding", Title = "Embedding", Description = "Vectors for content and queries.", Kind = ModelEndpointKindEnum.Embedding, Suggested = "Configure an embedding endpoint" }
         };
 

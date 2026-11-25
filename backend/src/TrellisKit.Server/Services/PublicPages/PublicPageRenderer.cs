@@ -185,7 +185,7 @@ namespace TrellisKit.Server.Services.PublicPages
                 ".chips{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:8px 0}.chips li{background:var(--accent-soft);color:var(--on-accent-soft);border-radius:999px;padding:2px 12px;font-size:.9rem}" +
                 ".photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;list-style:none;padding:0;margin:0}.photos video{width:100%;aspect-ratio:4/3;object-fit:contain;background:#000;border-radius:8px}.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px}" +
                 "dl.facts{display:grid;grid-template-columns:minmax(120px,max-content) 1fr;gap:6px 16px;margin:0}dl.facts dt{color:var(--muted);font-weight:600}dl.facts dd{margin:0}" +
-                ".people{list-style:none;padding:0;margin:0;display:grid;gap:8px}.description{white-space:pre-line}" +
+                ".people{list-style:none;padding:0;margin:0;display:grid;gap:8px}.description{white-space:pre-line}.setup-notes{white-space:pre-wrap;overflow-wrap:anywhere}" +
                 ".status{font-weight:700;color:var(--primary)}" +
                 ".button{display:inline-block;background:var(--primary);color:var(--on-primary)!important;text-decoration:none;font-weight:600;padding:10px 18px;border-radius:8px}" +
                 ".button:hover{background:var(--primary-hover)}.button.secondary{background:transparent;color:var(--primary)!important;border:1px solid var(--primary)}" +

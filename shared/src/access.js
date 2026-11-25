@@ -29,7 +29,8 @@ export const AccessFeature = Object.freeze({
   Messaging: 'messaging',
   Assistants: 'assistants',
   Search: 'search',
-  Ideas: 'ideas'
+  Ideas: 'ideas',
+  Catalog: 'catalog'
 });
 
 /** Every gateable feature key, in the contract's order. */
@@ -207,12 +208,12 @@ export function featureAccess(property, me, feature, action = 'read') {
 
 /**
  * Catalog features (docs/PHASE4_CONTRACT.md section 0.4 with resolved decision 2): the library,
- * events, and the venue directory. Unlike forums, their catalogs stay readable to signed-in free
+ * events, the venue directory, and the reviewed exercise and technique catalog (`catalog`). Unlike forums, their catalogs stay readable to signed-in free
  * accounts when gated in `PartiallyGated` (members-only objects arrive as locked stubs), and
  * signed-out visitors may browse their `Public` objects when anonymous browsing is on outside
  * `FullyGated`. The member profile directory (`/members/directory`) keeps `featureAccess`.
  */
-export const CatalogFeatures = Object.freeze([AccessFeature.Library, AccessFeature.Events, AccessFeature.Directory]);
+export const CatalogFeatures = Object.freeze([AccessFeature.Library, AccessFeature.Events, AccessFeature.Directory, AccessFeature.Catalog]);
 
 /**
  * Whether a catalog feature (library, events, venue directory) can be used, and how.
@@ -423,11 +424,16 @@ function hasRole(me, role, resourceType) {
   return roleEntries(me).some((r) => r.role === role && (!resourceType || r.resourceType === resourceType));
 }
 
-/** Whether `features.<key>` is on in the property configuration (missing means on). */
+/** Whether `features.<key>` is on in the property configuration (missing means on, except the `DefaultOffFeatures`). */
 export function propertyFeatureEnabled(property, key) {
   const features = isObject(property) && isObject(property.features) ? property.features : {};
+  // Default-off features: the reviewed exercise and technique catalog is off unless the property turns it on.
+  if (DefaultOffFeatures.includes(key)) return features[key] === true;
   return features[key] !== false;
 }
+
+/** Property features that are off when `features` omits them (every other feature defaults on). */
+export const DefaultOffFeatures = Object.freeze(['catalog']);
 
 /** Whether the caller holds `SystemAdmin`. */
 export function isSystemAdmin(me) {

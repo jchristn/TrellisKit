@@ -88,6 +88,9 @@ namespace TrellisKit.Server.Services
                 case "library":
                     // /library/levels/enumerate
                     return read ? Stub(Declare(FeatureKeyEnum.Library, AccessActionEnum.List, true, m, s)) : null;
+                case "catalog":
+                    // /catalog/entries[/enumerate|/{idOrSlug}|/{id}/relationships]: each published entry decides.
+                    return read ? Stub(Declare(FeatureKeyEnum.Catalog, AccessActionEnum.List, true, m, s)) : null;
                 case "conversations":
                 case "messages":
                     return Messaging(m, s, read);

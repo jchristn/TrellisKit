@@ -656,6 +656,18 @@
       "key": "profileMediaItemId",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "catalogEntryId",
+      "value": "",
+      "type": "string",
+      "description": "A catalog entry id (cex_) or current slug, set from a create response."
+    },
+    {
+      "key": "catalogImportSourceId",
+      "value": "",
+      "type": "string",
+      "description": "A catalog import source id (cis_), set from a create response."
     }
   ],
   "item": [
@@ -59666,6 +59678,1115 @@
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "name": "Catalog",
+      "description": "Reviewed exercise and technique catalog (features.catalog, default off): configuration, member, public, and staff entry routes, relationships, reviewed import sources, the catalog.importSources and catalog.generateDrafts jobs, and the public catalog page. See docs/CATALOG_IMPORTS.md, docs/CATALOG_MODALITIES.md, docs/CATALOG_PUBLIC_PAGES.md, and docs/CATALOG_GENERATION.md.",
+      "item": [
+        {
+          "name": "Catalog configuration",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalog/config",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalog",
+                "config"
+              ]
+            },
+            "description": "Returns bounded per-program descriptorProfiles. Family and language options are property-owned; use configured values when editing names. No taxonomy is enabled by this request."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Catalog configuration is available\", () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Descriptor profiles are bounded\", () => { pm.expect(body.descriptorProfiles).to.be.an(\"array\"); pm.expect(body.descriptorProfiles.length).to.be.at.most(50); body.descriptorProfiles.forEach(profile => { pm.expect(profile.families).to.be.an(\"array\"); pm.expect(profile.families.length).to.be.at.most(100); pm.expect(profile.nameLanguages).to.be.an(\"array\"); pm.expect(profile.nameLanguages.length).to.be.at.most(20); }); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Published catalog entries",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/catalog/entries/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "catalog",
+                "entries",
+                "enumerate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25,\n  \"search\": \"\",\n  \"filters\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Bounded published catalog search, including localized names. Optional filters familyKey and nameLanguage combine with program and existing filters. Use names and keys from Catalog configuration; no property vocabulary is assumed here."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Published catalog page succeeds\", () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Entry descriptors have a bounded read shape\", () => { pm.expect(body.objects).to.be.an(\"array\"); pm.expect(body.objects.length).to.be.at.most(25); body.objects.forEach(entry => { pm.expect(entry.status).to.equal(\"Published\"); pm.expect(entry.modalityDetails).to.be.an(\"object\"); pm.expect(entry.modalityDetails.localizedNames).to.be.an(\"array\"); pm.expect(entry.modalityDetails.localizedNames.length).to.be.at.most(10); }); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Published catalog by configured descriptors",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/catalog/entries/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "catalog",
+                "entries",
+                "enumerate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25,\n  \"filters\": {\n    \"program\": \"{{catalogProgramKey}}\",\n    \"familyKey\": \"{{catalogFamilyKey}}\",\n    \"nameLanguage\": \"{{catalogNameLanguage}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Read-only example. Set catalogProgramKey, catalogFamilyKey and catalogNameLanguage from Catalog configuration. All three exact filters combine; empty pages are valid. Never substitute a user identity or credential rank for catalog descriptors."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Published catalog page succeeds\", () => pm.response.to.have.status(200));",
+                  "const body = pm.response.json();",
+                  "pm.test(\"Entry descriptors have a bounded read shape\", () => { pm.expect(body.objects).to.be.an(\"array\"); pm.expect(body.objects.length).to.be.at.most(25); body.objects.forEach(entry => { pm.expect(entry.status).to.equal(\"Published\"); pm.expect(entry.modalityDetails).to.be.an(\"object\"); pm.expect(entry.modalityDetails.localizedNames).to.be.an(\"array\"); pm.expect(entry.modalityDetails.localizedNames.length).to.be.at.most(10); }); });",
+                  "pm.test(\"Results satisfy configured descriptor filters\", () => { const language = pm.variables.replaceIn(\"{{catalogNameLanguage}}\").toLowerCase(); body.objects.forEach(entry => { pm.expect(entry.program).to.equal(pm.variables.replaceIn(\"{{catalogProgramKey}}\")); pm.expect(entry.modalityDetails.familyKey).to.equal(pm.variables.replaceIn(\"{{catalogFamilyKey}}\")); pm.expect(entry.modalityDetails.localizedNames.some(name => name.languageTag.toLowerCase() === language)).to.equal(true); }); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Published catalog by attire level and notation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/catalog/entries/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "catalog",
+                "entries",
+                "enumerate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25,\n  \"filters\": {\n    \"program\": \"{{catalogProgramKey}}\",\n    \"attireKey\": \"{{catalogAttireKey}}\",\n    \"levelKey\": \"{{catalogLevelKey}}\",\n    \"notationSystemKey\": \"{{catalogNotationSystemKey}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Read-only bounded exact filters. Configure variables from descriptorProfiles for the selected program. Instructional level is catalog content, not a personal credential. Empty pages are valid."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Successful bounded descriptor enumeration\", () => { pm.response.to.have.status(200); const body=pm.response.json(); pm.expect(body.objects.length).to.be.at.most(100); });",
+                  "pm.test(\"Exact selected descriptors and paired notation\", () => { for (const item of pm.response.json().objects) { for (const [field,key] of [[\"attireKey\",\"catalogAttireKey\"],[\"levelKey\",\"catalogLevelKey\"],[\"notationSystemKey\",\"catalogNotationSystemKey\"]]) pm.expect(item.modalityDetails[field]).to.eql(pm.variables.get(key)); pm.expect(item.modalityDetails.notationText).to.be.a(\"string\").and.not.empty; pm.expect(item.modalityDetails.notationText.length).to.be.at.most(500); } });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Catalog staff inventory",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries",
+                "enumerate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25,\n  \"filters\": {\n    \"status\": \"Draft\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create reviewed catalog draft",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"kind\": \"Technique\",\n  \"name\": \"Review example\",\n  \"slug\": \"review-example\",\n  \"summary\": \"Replace with reviewed source content before submission.\",\n  \"difficulty\": \"AllLevels\",\n  \"instructions\": [],\n  \"sources\": [],\n  \"modalityDetails\": {\n    \"localizedNames\": [],\n    \"familyKey\": null,\n    \"attireKey\": null,\n    \"levelKey\": null,\n    \"notationSystemKey\": null,\n    \"notationText\": null\n  },\n  \"apparatusSetup\": {\n    \"apparatusKey\": null,\n    \"manufacturer\": null,\n    \"model\": null,\n    \"setupText\": null,\n    \"springSetupText\": null\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Creates a private Draft. The explicit empty modalityDetails group is valid without configured descriptor options. Add reviewed names/family only after selecting a configured program and its options. Publication remains a separate reviewed action. On update, omission/null preserves this group; an explicit object replaces it. Optional modalityDetails supports configured attireKey/levelKey and paired notationSystemKey/notationText (trimmed NFC, max 500). Omitted/null entire group preserves on update; explicit group replaces all fields, including omitted newfields. Optional separate apparatusSetup requires configured and selected equipment. Model requires manufacturer; springs require apparatus/manufacturer/model. Manufacturer/model max 120, setup/spring text max 500. Whole-group omission/null preserves, explicit object replaces; no model-generated setup."
+          },
+          "response": []
+        },
+        {
+          "name": "Catalog submit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries/{{catalogEntryId}}/submit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "submit"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expectedRevision\": 1,\n  \"note\": \"Source and content review note\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Catalog approve",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries/{{catalogEntryId}}/approve",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "approve"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expectedRevision\": 1,\n  \"note\": \"Source and content review note\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Catalog reject",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries/{{catalogEntryId}}/reject",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "reject"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expectedRevision\": 1,\n  \"note\": \"Source and content review note\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Catalog archive",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries/{{catalogEntryId}}/archive",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "archive"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expectedRevision\": 1,\n  \"note\": \"Source and content review note\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Catalog relationships",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/catalog/entries/{{catalogEntryId}}/relationships/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "relationships",
+                "enumerate"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Replace catalog relationships",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries/{{catalogEntryId}}/relationships",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "relationships"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expectedRevision\": 1,\n  \"relationships\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Published catalog apparatus context",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/catalog/entries/{{catalogEntryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}"
+              ]
+            },
+            "description": "Read an existing published entry. Apparatus fields remain together in the entry, using configured equipment already selected on it. Set catalogEntryId to a human-reviewed published entry; legacy entries return an empty typed group."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Published entry has a typed apparatus group\",()=>{pm.response.to.have.status(200);const s=pm.response.json().apparatusSetup;for(const k of [\"apparatusKey\",\"manufacturer\",\"model\",\"setupText\",\"springSetupText\"])pm.expect(s).to.have.property(k);});",
+                  "pm.test(\"Apparatus context and bounded literal text\",()=>{const e=pm.response.json(),s=e.apparatusSetup;if(s.apparatusKey)pm.expect(e.equipment).to.include(s.apparatusKey);for(const k of [\"manufacturer\",\"model\"])if(s[k]!==null)pm.expect(s[k].length).to.be.at.most(120);for(const k of [\"setupText\",\"springSetupText\"])if(s[k]!==null)pm.expect(s[k].length).to.be.at.most(500);if(s.model)pm.expect(s.manufacturer).to.be.a(\"string\").and.not.empty;if(s.springSetupText)for(const k of [\"apparatusKey\",\"manufacturer\",\"model\"])pm.expect(s[k]).to.be.a(\"string\").and.not.empty;});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enumerate catalog import sources",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/import-sources/enumerate",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 20,\n  \"filters\": {},\n  \"labels\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Bounded sources\", () => { pm.response.to.have.status(200); pm.expect(pm.response.json().objects.length).to.be.at.most(20); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create unreviewed catalog source",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/import-sources",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Reviewed example source\",\n  \"url\": \"https://example.test/catalog.json\",\n  \"license\": \"CC0-1.0\",\n  \"enabled\": false,\n  \"maxEntries\": 20,\n  \"labels\": [\n    \"review-source\"\n  ],\n  \"tags\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Unreviewed source created\", () => { pm.response.to.have.status(201); const s = pm.response.json(); pm.expect(s.reviewedUtc).to.eql(null); pm.collectionVariables.set(\"catalogImportSourceId\", s.id); pm.collectionVariables.set(\"catalogImportRevision\", s.revision); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read catalog source",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/import-sources/{{catalogImportSourceId}}"
+          },
+          "response": []
+        },
+        {
+          "name": "Edit source and revoke review",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/import-sources/{{catalogImportSourceId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Reviewed example source\",\n  \"url\": \"https://example.test/catalog.json\",\n  \"license\": \"CC0-1.0\",\n  \"enabled\": false,\n  \"maxEntries\": 20,\n  \"labels\": [\n    \"review-source\"\n  ],\n  \"tags\": {},\n  \"expectedRevision\": {{catalogImportRevision}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Review revoked\", () => { pm.response.to.have.status(200); const s = pm.response.json(); pm.expect(s.reviewedUtc).to.eql(null); pm.collectionVariables.set(\"catalogImportRevision\", s.revision); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Explicit source license review",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/catalog/import-sources/{{catalogImportSourceId}}/review",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expectedRevision\": {{catalogImportRevision}},\n  \"licenseReviewed\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Source review recorded\", () => { pm.response.to.have.status(200); const s = pm.response.json(); pm.expect(s.reviewedUtc).to.be.a(\"string\"); pm.collectionVariables.set(\"catalogImportRevision\", s.revision); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Preview eligible source imports",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/jobs/catalog.importSources/run",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dryRun\": true,\n  \"parameters\": \"{\\\"sourceIds\\\": []}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Preview queued\", () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Render a catalog page",
+          "request": {
+            "method": "GET",
+            "description": "Published undeleted catalog entries only, with library and public pages enabled. Served at /<catalogPath>/<slug> (default catalog). Private review metadata and unpublished relationship targets are omitted. Catalog pages revalidate caches on each request. Anonymous.",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "*/*"
+              },
+              {
+                "key": "X-Client",
+                "value": "{{client}}"
+              },
+              {
+                "key": "X-Client-Version",
+                "value": "postman"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/public/pages/resolve/catalog/review-example",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "public",
+                "pages",
+                "resolve",
+                "catalog",
+                "review-example"
+              ]
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Dry run catalog draft generation",
+          "request": {
+            "method": "POST",
+            "description": "Preview source-grounded draft generation without model calls or catalog writes. Example source metadata is illustrative only; replace with reviewed material before a real run.",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/jobs/catalog.generateDrafts/run",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "jobs",
+                "catalog.generateDrafts",
+                "run"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dryRun\": true,\n  \"parameters\": \"{\\\"topics\\\":[\\\"Example movement\\\"],\\\"kind\\\":\\\"Technique\\\",\\\"sourceText\\\":\\\"Example movement: stand comfortably, lift one arm slowly, and lower it to its starting position.\\\",\\\"source\\\":{\\\"title\\\":\\\"Example source\\\",\\\"url\\\":\\\"https://example.test/source\\\",\\\"license\\\":\\\"CC0-1.0\\\"},\\\"sourceReviewed\\\":true,\\\"maxOutputTokens\\\":4000}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.collectionVariables.set('jobRunId', pm.response.json().id);",
+                  "pm.test('Catalog preview mode is retained', function () { var r = pm.response.json(); pm.expect(r.key).to.eql('catalog.generateDrafts'); pm.expect(r.isDryRun).to.eql(true); });",
+                  "pm.test('Reviewed source parameters are retained', function () { var p = JSON.parse(pm.response.json().parameters); pm.expect(p.topics).to.have.lengthOf(1); pm.expect(p.sourceReviewed).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Member catalog entries",
+          "request": {
+            "method": "POST",
+            "description": "Published entries for a signed-in caller (features.catalog). EnumerationQuery with maxResults 1 to 100, continuationToken, search, labels, tags, and filters kind, program, difficulty, muscle, equipment, familyKey, nameLanguage, attireKey, levelKey, notationSystemKey. Returns EnumerationResult<CatalogEntry>. 404 NotAvailable when features.catalog is off.",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalog/entries/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalog",
+                "entries",
+                "enumerate"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25,\n  \"filters\": {\n    \"kind\": \"Technique\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Member catalog entry",
+          "request": {
+            "method": "GET",
+            "description": "Published entry by id or current slug. 404 NotFound for drafts and held entries.",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalog/entries/{{catalogEntryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Member catalog relationships",
+          "request": {
+            "method": "POST",
+            "description": "Bounded outgoing relationships of a published entry (maximum 100); filter kind, search target name and note, labels and tags.",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/catalog/entries/{{catalogEntryId}}/relationships/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "relationships",
+                "enumerate"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Staff catalog entry",
+          "request": {
+            "method": "GET",
+            "description": "LibraryEditor or SystemAdmin. Any workflow state, with reviewNote and viewer capabilities.",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries/{{catalogEntryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Edit catalog draft",
+          "request": {
+            "method": "PUT",
+            "description": "Full editable aggregate replacement with expectedRevision. Returns the entry to Draft. Omitted or null modalityDetails and apparatusSetup preserve those groups. 409 CatalogChanged or SlugInUse.",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries/{{catalogEntryId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"expectedRevision\": 1,\n  \"kind\": \"Technique\",\n  \"name\": \"Review example\",\n  \"slug\": \"review-example\",\n  \"difficulty\": \"AllLevels\",\n  \"instructions\": [\n    \"Replace with reviewed source content.\"\n  ],\n  \"sources\": [\n    {\n      \"title\": \"Original reviewed contribution\",\n      \"license\": \"Original\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete catalog entry",
+          "request": {
+            "method": "DELETE",
+            "description": "Library staff soft deletion. Requires the expectedRevision query parameter. 204 No Content; 409 CatalogChanged.",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries/{{catalogEntryId}}?expectedRevision=1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Staff catalog relationships",
+          "request": {
+            "method": "POST",
+            "description": "Library staff view of outgoing relationships, including unpublished targets (maximum 100).",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/catalog/entries/{{catalogEntryId}}/relationships/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "catalog",
+                "entries",
+                "{{catalogEntryId}}",
+                "relationships",
+                "enumerate"
+              ]
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         }
       ]
     }

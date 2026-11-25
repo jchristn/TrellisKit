@@ -56,6 +56,8 @@ namespace TrellisKit.Core.Database
         private static readonly List<string> _Owned = new List<string>
         {
             "profileslugs", "profilepages",
+            // Reviewed exercise and technique catalog (docs/CATALOG_IMPORTS.md): children before entries.
+            "catalogimportitems", "catalogimportsources", "cataloglocalizednames", "catalogrelationships", "catalogsources", "catalogentryvalues", "catalogentries",
             "propertydocumentacceptances", "propertydocumentversions",
             "propertybrandoverrides", "propertybrandcolors", "propertybrandpalettes", "propertyai", "propertypalettechoices",
             "metricfirstactions", "metricseries", "metricannotations", "metricworkerruns", "metricalertstate", "metricstate",
