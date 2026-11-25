@@ -38,6 +38,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// Direct message report queue (Moderator scope).
         /// </summary>
-        Messaging
+        Messaging,
+
+        /// <summary>
+        /// Verified ranks, curricula, and attendance (RankAwarder; resource id is *).
+        /// </summary>
+        Ranks
     }
 }

@@ -73,7 +73,12 @@ namespace Test.Shared.Suites
             { "/api/v1/admin/tickets/{id}", "Ticket (staff): messages preview of at most 20 with totalRecords and the enumerate path" },
             { "/api/v1/admin/broadcasts/{id}", "Broadcast: segment.filters at most 20 with at most 20 values each, labels and tags 50 each" },
             { "/api/v1/admin/broadcasts/segments/{id}", "Broadcast segment: filters at most 20 with at most 20 values each, labels and tags 50 each" },
-            { "/api/v1/admin/moderation/messaging/reports/{reportId}/snapshot", "Report snapshot: messages at most messaging.reportContextMessages + 1 (51)" }
+            { "/api/v1/admin/moderation/messaging/reports/{reportId}/snapshot", "Report snapshot: messages at most messaging.reportContextMessages + 1 (51)" },
+            { "/api/v1/me/rank", "My rank: fields at most 10 Rank fields, history preview at most 20 with historyTotal, lineage at most 100" },
+            { "/api/v1/members/{id}/rank", "Member rank: ranks at most 10 Rank fields, lineage at most 100" },
+            { "/api/v1/curricula/{id}", "Curriculum: items at most 500 (CurriculumService.MaxItems), labels and tags 50 each" },
+            { "/api/v1/admin/curricula/{id}", "Curriculum (staff): items at most 500, labels and tags 50 each" },
+            { "/api/v1/admin/curricula/{id}/progress/{userId}", "Curriculum with one member's progress: items at most 500, labels and tags 50 each" }
         };
 
         #endregion

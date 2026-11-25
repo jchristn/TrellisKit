@@ -63,7 +63,7 @@ namespace TrellisKit.Server.Services
         /// <returns>True for staff roles.</returns>
         public static bool IsStaffRole(RoleEnum role)
         {
-            return role == RoleEnum.SystemAdmin || role == RoleEnum.Moderator || role == RoleEnum.FeedModerator || role == RoleEnum.DirectoryModerator || role == RoleEnum.EventManager || role == RoleEnum.LibraryEditor || role == RoleEnum.SupportAgent || role == RoleEnum.Communicator || role == RoleEnum.ReleaseManager;
+            return role == RoleEnum.SystemAdmin || role == RoleEnum.Moderator || role == RoleEnum.FeedModerator || role == RoleEnum.DirectoryModerator || role == RoleEnum.EventManager || role == RoleEnum.LibraryEditor || role == RoleEnum.SupportAgent || role == RoleEnum.Communicator || role == RoleEnum.ReleaseManager || role == RoleEnum.RankAwarder;
         }
 
         /// <summary>

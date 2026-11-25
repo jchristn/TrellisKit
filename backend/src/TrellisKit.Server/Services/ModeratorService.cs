@@ -86,7 +86,7 @@ namespace TrellisKit.Server.Services
             if (role != null)
             {
                 if (ModerationService.TryParseEnum(role, out RoleEnum parsed) && IsStaffGrant(parsed)) filter.Role = parsed;
-                else errors["filters.role"] = "Use Moderator, FeedModerator, DirectoryModerator, EventManager, or LibraryEditor.";
+                else errors["filters.role"] = "Use Moderator, FeedModerator, DirectoryModerator, EventManager, LibraryEditor, or RankAwarder.";
             }
             if (errors.Count > 0) throw ApiErrorException.Validation(errors);
             EnumerationRequest request = _Services.Enumeration.Prepare(q, ModerationCollections.Moderators, true, "moderators");
@@ -220,7 +220,7 @@ namespace TrellisKit.Server.Services
         {
             if (String.IsNullOrWhiteSpace(raw)) return ResourceTypeEnum.Feed;
             if (ModerationService.TryParseEnum(raw, out ResourceTypeEnum scope) && scope != ResourceTypeEnum.Global) return scope;
-            errors[field] = "Use Feed, Forum, Directory, Events, or Library.";
+            errors[field] = "Use Feed, Forum, Directory, Events, Library, or Ranks.";
             return ResourceTypeEnum.Feed;
         }
 
@@ -240,6 +240,8 @@ namespace TrellisKit.Server.Services
                     return RoleEnum.EventManager;
                 case ResourceTypeEnum.Library:
                     return RoleEnum.LibraryEditor;
+                case ResourceTypeEnum.Ranks:
+                    return RoleEnum.RankAwarder;
                 case ResourceTypeEnum.Forum:
                     return RoleEnum.Moderator;
                 default:
@@ -254,7 +256,7 @@ namespace TrellisKit.Server.Services
         /// <returns>True for Moderator, FeedModerator, DirectoryModerator, EventManager, and LibraryEditor.</returns>
         public static bool IsStaffGrant(RoleEnum role)
         {
-            return role == RoleEnum.Moderator || role == RoleEnum.FeedModerator || role == RoleEnum.DirectoryModerator || role == RoleEnum.EventManager || role == RoleEnum.LibraryEditor;
+            return role == RoleEnum.Moderator || role == RoleEnum.FeedModerator || role == RoleEnum.DirectoryModerator || role == RoleEnum.EventManager || role == RoleEnum.LibraryEditor || role == RoleEnum.RankAwarder;
         }
 
         private async Task<ForumModeratorView> GrantForumAsync(ContentActor actor, RequestInfo info, User user, string? resourceId, CancellationToken token)

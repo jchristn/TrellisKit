@@ -125,7 +125,7 @@ namespace TrellisKit.Server.Services
             if (context == null || !context.IsAuthenticated) throw new ApiErrorException(401, "Unauthorized", "A valid bearer token is required.");
             if (context.IsBreakGlass || String.IsNullOrEmpty(context.UserId))
             {
-                ContentActor glass = new ContentActor { IsBreakGlass = true, IsSystemAdmin = true, IsStaff = true, CanPostToFeed = true, CanPromoteToFeed = true, AllForumsModerator = true, IsDirectoryModerator = true, IsEventManager = true, IsLibraryEditor = true, HasMembership = true, AgeAttested = true, Access = _Access() };
+                ContentActor glass = new ContentActor { IsBreakGlass = true, IsSystemAdmin = true, IsStaff = true, CanPostToFeed = true, CanPromoteToFeed = true, AllForumsModerator = true, IsDirectoryModerator = true, IsEventManager = true, IsLibraryEditor = true, IsRankAwarder = true, HasMembership = true, AgeAttested = true, Access = _Access() };
                 Decorator?.Invoke(glass);
                 return glass;
             }
@@ -160,6 +160,7 @@ namespace TrellisKit.Server.Services
                 IsDirectoryModerator = roles.Any(r => r.Role == RoleEnum.DirectoryModerator),
                 IsEventManager = roles.Any(r => r.Role == RoleEnum.EventManager),
                 IsLibraryEditor = roles.Any(r => r.Role == RoleEnum.LibraryEditor),
+                IsRankAwarder = roles.Any(r => r.Role == RoleEnum.RankAwarder),
                 IsStaff = roles.Any(r => UserSummaryService.IsStaffRole(r.Role)),
                 IsSupportAgent = roles.Any(r => r.Role == RoleEnum.SupportAgent),
                 IsCommunicator = roles.Any(r => r.Role == RoleEnum.Communicator),

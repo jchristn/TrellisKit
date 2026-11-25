@@ -19,6 +19,12 @@ namespace TrellisKit.Core.Models
         /// </summary>
         public int MaxLevel { get; set; } = 0;
 
+        /// <summary>
+        /// Verified rank awarding rules (rank.awarding), or null for the neutral defaults. Option maxLevel values may not
+        /// exceed MaxLevel; awarding keys must name options of the field.
+        /// </summary>
+        public ProfileRankAwarding? Awarding { get; set; } = null;
+
         #endregion
     }
 }

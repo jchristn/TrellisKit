@@ -337,9 +337,9 @@ namespace TrellisKit.Server.Services
             {
                 RoleAssignmentRequest r = request.Roles[i] ?? new RoleAssignmentRequest();
                 string prefix = "roles[" + i + "].";
-                if (!TryParse(r.Role, out RoleEnum role) || role == RoleEnum.User) { errors[prefix + "role"] = "Use SystemAdmin, Moderator, FeedModerator, DirectoryModerator, EventManager, SupportAgent, Communicator, or ReleaseManager."; continue; }
+                if (!TryParse(r.Role, out RoleEnum role) || role == RoleEnum.User) { errors[prefix + "role"] = "Use SystemAdmin, Moderator, FeedModerator, DirectoryModerator, EventManager, LibraryEditor, SupportAgent, Communicator, ReleaseManager, or RankAwarder."; continue; }
                 ResourceTypeEnum resourceType = DefaultResourceType(role);
-                if (!String.IsNullOrWhiteSpace(r.ResourceType) && !TryParse(r.ResourceType, out resourceType)) { errors[prefix + "resourceType"] = "Use Global, Forum, Feed, Directory, Events, or Messaging."; continue; }
+                if (!String.IsNullOrWhiteSpace(r.ResourceType) && !TryParse(r.ResourceType, out resourceType)) { errors[prefix + "resourceType"] = "Use Global, Forum, Feed, Directory, Events, Library, Messaging, or Ranks."; continue; }
                 string resourceId = String.IsNullOrWhiteSpace(r.ResourceId) ? "*" : r.ResourceId.Trim();
                 if (resourceId.Length > 100) { errors[prefix + "resourceId"] = "Use at most 100 characters."; continue; }
                 assignments.Add(new RoleAssignment
@@ -685,6 +685,8 @@ namespace TrellisKit.Server.Services
                     return ResourceTypeEnum.Directory;
                 case RoleEnum.EventManager:
                     return ResourceTypeEnum.Events;
+                case RoleEnum.RankAwarder:
+                    return ResourceTypeEnum.Ranks;
                 default:
                     return ResourceTypeEnum.Global;
             }

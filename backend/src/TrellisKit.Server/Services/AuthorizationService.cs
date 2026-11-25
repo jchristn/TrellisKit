@@ -347,7 +347,8 @@ namespace TrellisKit.Server.Services
         {
             return StartsWith(p, _Api + "/admin/venues") || StartsWith(p, _Api + "/admin/instructors") || StartsWith(p, _Api + "/admin/directory") ||
                 StartsWith(p, _Api + "/admin/events") || StartsWith(p, _Api + "/admin/series") || StartsWith(p, _Api + "/admin/lessons") ||
-                StartsWith(p, _Api + "/admin/library") || StartsWith(p, _Api + "/admin/metrics/events") || StartsWith(p, _Api + "/admin/metrics/library");
+                StartsWith(p, _Api + "/admin/library") || StartsWith(p, _Api + "/admin/metrics/events") || StartsWith(p, _Api + "/admin/metrics/library") ||
+                StartsWith(p, _Api + "/admin/ranks") || StartsWith(p, _Api + "/admin/lineage") || StartsWith(p, _Api + "/admin/curricula") || StartsWith(p, _Api + "/admin/attendance");
         }
 
         private static bool StartsWith(string path, string prefix)

@@ -273,6 +273,7 @@ namespace TrellisKit.Core.Helpers
                 if (field.Rank == null) field.Rank = new ProfileRankSettings();
                 Length(e, prefix + "rank.levelLabel", field.Rank.LevelLabel, 0, 30);
                 if (field.Rank.MaxLevel < 0 || field.Rank.MaxLevel > 20) e[prefix + "rank.maxLevel"] = "Use 0 to 20.";
+                RankAwardingRules(e, prefix, field);
             }
             else if (field.Rank != null) e[prefix + "rank"] = "Only rank fields have rank settings.";
 
@@ -388,7 +389,7 @@ namespace TrellisKit.Core.Helpers
                 Placeholder = source.Placeholder ?? String.Empty,
                 Type = source.Type,
                 Options = source.Options.Where(o => o != null).Select(CopyOption).ToList(),
-                Rank = source.Rank == null ? null : new ProfileRankSettings { LevelLabel = source.Rank.LevelLabel ?? String.Empty, MaxLevel = source.Rank.MaxLevel },
+                Rank = source.Rank == null ? null : new ProfileRankSettings { LevelLabel = source.Rank.LevelLabel ?? String.Empty, MaxLevel = source.Rank.MaxLevel, Awarding = CopyAwarding(source.Rank.Awarding) },
                 SubFields = source.SubFields.Where(s => s != null).Select(s => new ProfileSubField
                 {
                     Id = s.Id, Key = s.Key, Label = s.Label, Type = s.Type, Required = s.Required, MaxLength = s.MaxLength, MinValue = s.MinValue, MaxValue = s.MaxValue,
@@ -420,6 +421,29 @@ namespace TrellisKit.Core.Helpers
         #endregion
 
         #region Private-Methods
+
+        private static ProfileRankAwarding? CopyAwarding(ProfileRankAwarding? a)
+        {
+            if (a == null) return null;
+            return new ProfileRankAwarding { OptionAwarderMinimum = a.OptionAwarderMinimum, AllowEqualOption = a.AllowEqualOption, AllowEqualOptionLevels = a.AllowEqualOptionLevels };
+        }
+
+        private static void RankAwardingRules(Dictionary<string, string> e, string prefix, ProfileField field)
+        {
+            // options[].maxLevel may not exceed rank.maxLevel (missing means rank.maxLevel); rank.awarding keys name options.
+            int max = field.Rank?.MaxLevel ?? 0;
+            for (int i = 0; i < field.Options.Count; i++)
+            {
+                ProfileFieldOption o = field.Options[i];
+                if (o == null || o.MaxLevel == null) continue;
+                string name = prefix + "options[" + i + "].maxLevel";
+                if (!e.ContainsKey(name) && (o.MaxLevel < 0 || o.MaxLevel > max)) e[name] = "Use 0 to rank.maxLevel (" + max + ").";
+            }
+            ProfileRankAwarding? awarding = field.Rank?.Awarding;
+            if (awarding == null || String.IsNullOrWhiteSpace(awarding.OptionAwarderMinimum)) return;
+            if (!field.Options.Any(o => o != null && String.Equals(o.Key, awarding.OptionAwarderMinimum.Trim(), StringComparison.OrdinalIgnoreCase)))
+                e[prefix + "rank.awarding.optionAwarderMinimum"] = "Use the key of one of the field's options.";
+        }
 
         private static ProfileFieldOption CopyOption(ProfileFieldOption o)
         {

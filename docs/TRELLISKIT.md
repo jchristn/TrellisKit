@@ -464,7 +464,7 @@ Decided 2026-11-11: each property's administrators define which profile fields a
 | `key` | Stable identifier (`rank`, `affiliation`, `instagram`); immutable once values exist |
 | `label`, `helpText`, `placeholder` | Display text |
 | `type` | `Text`, `LongText`, `Number`, `Date`, `Boolean`, `Url`, `Email`, `Phone`, `Country`, `SingleSelect`, `MultiSelect`, `Rank` (ordered values with colors plus a level, for example a grade with a level), `History` (repeating entries with configurable sub-fields, for example a rank history) |
-| `options` | For select and rank types: ordered `{ key, label, color? }`; rank adds `levelLabel` and `maxLevel` (optionally per option) |
+| `options` | For select and rank types: ordered `{ key, label, color? }`; rank adds `levelLabel` and `maxLevel` (optionally per option, at most `rank.maxLevel`) and the verified rank awarding rules `rank.awarding` (section 15) |
 | `validation` | Required, minimum and maximum length or value, pattern, maximum entries for `History` and `MultiSelect` |
 | `collectAt` | `SignUp` (asked during onboarding), `Profile` (optional, editable later), or `AdminOnly` (set by staff) |
 | `editableBy` | `Member`, `Staff` |
@@ -616,3 +616,59 @@ An optional list (at most 30). Absent or empty means the property has no documen
 - `GET /api/v1/property` serves `documents` (summaries with the live current version; the ETag follows publishes). `GET /api/v1/public/documents/{key}` serves the current content (anonymous).
 - **Website:** each document is a page at `/<slug>`, prerendered for SEO from the build-time file and replaced at runtime by the live content, with version and last updated; the footer lists documents with `footer: true`; sign-up links the terms-covered documents and shows a required checkbox (with a link to read the full text) for each separately accepted document; checkout links `ShownAtPurchase` documents. The admin console has a Documents page (list, counts, versions, publish, acceptances) and a Documents section in the member drawer; the platform console has the same page per property.
 - **Mobile:** sign-up mirrors the website; a document screen renders any document; Account lists the documents and the member's acceptance history; the paywall and membership screens link `ShownAtPurchase` documents; a setup step after age attestation handles pending documents.
+
+## 15. Ranks, curricula, and attendance
+
+A property's `Rank` profile field (section 11) is its rank system: the member's own value is the **self-reported** rank, and rank awarders record **verified** promotions on top of it. No engine table duplicates the field's options. Everything here is off until the server setting `ranks.enabled` is on (every route answers `404 NotAvailable` while it is off); the feature key `ranks` can additionally be gated in `PartiallyGated` (`access.gatedFeatures`). Routes are listed in `REST_API.md`, section "Ranks, curricula, and attendance".
+
+### 15.1 Property keys (Rank profile fields)
+
+| Key | Values |
+|---|---|
+| `options[]` | Ordered lowest to highest by array position. |
+| `options[].maxLevel` | Optional, `0` to `rank.maxLevel`: the level maximum of that option (for example four levels on most options and the field maximum on the top one). Missing means `rank.maxLevel`. Awards above it are `400 LevelOutOfRange`. |
+| `rank.levelLabel`, `rank.maxLevel` | As before; `rankLabel` texts read "Option, N LevelLabel". |
+| `rank.awarding.optionAwarderMinimum` | Option key, default none: an awarder's verified option must be at or above it to award anything. |
+| `rank.awarding.allowEqualOption` | Default `false`: whether an awarder may award their own option (otherwise the awarded option must be strictly below theirs). Never above the awarder's own level. |
+| `rank.awarding.allowEqualOptionLevels` | Default `true`: whether an awarder may award levels within their own option to a member who already holds it verified (never above the awarder's own level). Levels within lower options are always allowed. |
+
+SystemAdmin is exempt from all three rules. Awards the rules refuse are `403 AwardAboveOwnRank`; nobody awards, verifies, or checks in themselves (`403 SelfAward`, `403 Forbidden`). The validator refuses an option `maxLevel` above `rank.maxLevel` and awarding keys that name no option. The rules are stored with the field (`profilefields.rankawarding`) and edited with the field in the admin console (`PUT /api/v1/admin/profile-fields/{id}` `rank.awarding`).
+
+### 15.2 Settings
+
+| Key | Default | Range | Meaning |
+|---|---|---|---|
+| `ranks.enabled` | `false` | | Turns verified ranks, lineage, curricula, and attendance on. |
+| `ranks.showVerificationLabels` | `true` | | When `false`, clients show no "verified" or "self-reported" label (both rank responses carry `showVerificationLabels`), so a property can verify members in bulk before the labels appear. |
+
+`GET /api/v1/property` reports both switches as `features.ranks` and `features.rankVerificationLabels` (they are part of its ETag).
+| `attendance.checkInWindowBeforeMinutes` | `60` | 0 to 720 | Member check-in opens this long before the start. |
+| `attendance.checkInWindowAfterMinutes` | `120` | 0 to 720 | Member check-in closes this long after the start. |
+| `attendance.codeRotationSeconds` | `60` | 15 to 600 | Each rotating check-in code lasts this long; the previous code is accepted for one more period. |
+
+### 15.3 Model (migrations 132 to 134)
+
+| Table | Holds |
+|---|---|
+| `memberranks` (`mrk_`) | The member's current verified rank per Rank field: option, level, status (`Verified`, `Revoked`, `Disputed`), the award it came from, awarder, award time. One row per member and field. |
+| `rankpromotions` (`rkp_`) | Every award and revoke: member, field, option, level, action, actor, note (at most 500), optional event, revoke reason, and on award rows `revokedUtc`. |
+| `rankrequirements` (`rkq_`) | Requirements for an option and level (level null covers every level of the option without its own row): minimum days in grade, minimum check-ins, notes, optional curriculum. |
+| `lineageentries` (`lin_`) | Self-reported lineage: who promoted the member to an option (a member, or a name) and when, verified by that member or a SystemAdmin. |
+| `curricula` (`cur_`), `curriculumitems` (`cui_`), `curriculumprogress` (`cup_`) | Curricula grouped by the options of a Rank field; items are `Lesson`, `Series`, `CatalogEntry` (a catalog entry identifier stored as text, no foreign key; clients resolve titles), or `Custom` text; progress holds self-completion and verification. |
+| `attendance` (`att_`) | One check-in per member, target (`Event` or `VenueSession`), and occurrence date. |
+
+**Effective rank:** the member's `memberranks` row when its status is `Verified`, otherwise the profile value (self-reported). An award sets the stored profile value to the awarded rank; while a verified rank stands the member cannot change that field (`409 RankVerified`; unchanged values pass, so clients may send the whole profile). A revoke marks the row `Revoked`; the field is self-reported and editable again.
+
+**Curriculum items:** `Lesson` items are satisfied by `LessonProgress.Completed`; `Series` items when every published lesson of the series is complete; `CatalogEntry` and `Custom` items by self-completion when optional and by verification when required. Any item a rank awarder verifies counts.
+
+**Eligibility:** the next rank is the next level of the current option up to its `maxLevel`, then level 0 of the next option that is not retired. Time in grade and attendance count from the current verified award (attendance counts every check-in without one); a requirement's curriculum counts the required items of the next option's group. A member is eligible when every configured requirement is met.
+
+**Attendance:** a check-in target is an event (its occurrence date is its start date in its time zone) or a venue schedule session (`targetId` `{venueId}:{sessionIndex}`, the zero-based position in the venue's `schedule.sessions`; the occurrence date must fall on the session's weekday). The window is measured from the event start, or from the session's start time on the occurrence date in the venue schedule's time zone, so drop-in and regular sessions from the directory count without an event. Members check in with the target's rotating six-digit code (an HMAC of the property, target, date, and period keyed from `auth.tokenEncryptionKey`) or by scanning its QR payload; rank awarders check members in without a code at any time after the window opens.
+
+### 15.4 Roles, audit, notifications, and lifecycle
+
+- `RankAwarder` (resource type `Ranks`, resource id `*`) is property-scoped and assigned like `LibraryEditor`: `POST /api/v1/admin/moderators { userId, resourceType: "Ranks", resourceId: "*" }` or the member roles editor. It awards and revokes ranks, verifies curriculum items, reads eligibility and requirements, and checks members in. SystemAdmin holds every RankAwarder permission; only SystemAdmin replaces requirements. Curricula are edited by SystemAdmin and LibraryEditor.
+- Audited: `rank.award`, `rank.revoke`, `rank.requirements`, `lineage.update`, `lineage.verify`, `curriculum.create`, `curriculum.update`, `curriculum.items`, `curriculum.publish`, `curriculum.archive`, `curriculum.verify`, `attendance.checkIn`, `attendance.delete`.
+- Notifications: `RankPromoted` ("You were promoted to {rank}", in-app and push) with the essential `rank_promoted` email; `LineageVerificationRequested` to a member named as promoter.
+- Member-written text (promotion notes and revoke reasons, lineage promoter names) is word filtered and written to `contentchanges` (`RankPromotion`, `LineageEntry`).
+- Account export adds `memberRanks`, `rankPromotions`, `lineage`, `curriculumProgress`, and `attendance`; account deletion erases them (rows the member wrote about others keep only their identifier). The tables are in `PropertyTables` and purged with the property.

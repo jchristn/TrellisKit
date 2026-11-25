@@ -247,6 +247,19 @@ namespace TrellisKit.Server.Services
         public bool IsLibraryEditor { get; set; } = false;
 
         /// <summary>
+        /// Holds RankAwarder: awards and revokes verified ranks, verifies curriculum items, and checks members in.
+        /// </summary>
+        public bool IsRankAwarder { get; set; } = false;
+
+        /// <summary>
+        /// Rank staff: SystemAdmin or RankAwarder.
+        /// </summary>
+        public bool IsRankStaff
+        {
+            get { return IsSystemAdmin || IsRankAwarder; }
+        }
+
+        /// <summary>
         /// Directory staff: SystemAdmin or DirectoryModerator.
         /// </summary>
         public bool IsDirectoryStaff
@@ -347,6 +360,10 @@ namespace TrellisKit.Server.Services
             if (IsLibraryStaff && (targetType == TrellisKit.Core.Enums.TargetTypeEnum.Series || targetType == TrellisKit.Core.Enums.TargetTypeEnum.Lesson ||
                 targetType == TrellisKit.Core.Enums.TargetTypeEnum.LessonResource || targetType == TrellisKit.Core.Enums.TargetTypeEnum.LessonMarker ||
                 targetType == TrellisKit.Core.Enums.TargetTypeEnum.LessonCaption || targetType == TrellisKit.Core.Enums.TargetTypeEnum.LibraryLevel)) return true;
+            if (IsRankAwarder && (targetType == TrellisKit.Core.Enums.TargetTypeEnum.MemberRank || targetType == TrellisKit.Core.Enums.TargetTypeEnum.RankPromotion ||
+                targetType == TrellisKit.Core.Enums.TargetTypeEnum.LineageEntry || targetType == TrellisKit.Core.Enums.TargetTypeEnum.CurriculumProgress ||
+                targetType == TrellisKit.Core.Enums.TargetTypeEnum.Attendance)) return true;
+            if (IsLibraryStaff && (targetType == TrellisKit.Core.Enums.TargetTypeEnum.Curriculum || targetType == TrellisKit.Core.Enums.TargetTypeEnum.CurriculumItem)) return true;
             if (IsDirectoryStaff && (targetType == TrellisKit.Core.Enums.TargetTypeEnum.Venue || targetType == TrellisKit.Core.Enums.TargetTypeEnum.Instructor ||
                 targetType == TrellisKit.Core.Enums.TargetTypeEnum.VenueInstructor || targetType == TrellisKit.Core.Enums.TargetTypeEnum.DirectoryProgram ||
                 targetType == TrellisKit.Core.Enums.TargetTypeEnum.DirectorySubmission || targetType == TrellisKit.Core.Enums.TargetTypeEnum.VenueReview ||

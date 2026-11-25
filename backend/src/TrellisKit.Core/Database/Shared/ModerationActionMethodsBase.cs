@@ -121,7 +121,7 @@ namespace TrellisKit.Core.Database.Shared
             ArgumentNullException.ThrowIfNull(filter);
             List<string> roleConditions = new List<string> { Scope("ra"), "ra.userid = u.id" };
             if (filter.Role != null) roleConditions.Add("ra.role = " + D.Enum(filter.Role.Value));
-            else roleConditions.Add("ra.role IN " + D.InList(new[] { RoleEnum.Moderator.ToString(), RoleEnum.FeedModerator.ToString(), RoleEnum.DirectoryModerator.ToString(), RoleEnum.EventManager.ToString(), RoleEnum.LibraryEditor.ToString() }));
+            else roleConditions.Add("ra.role IN " + D.InList(new[] { RoleEnum.Moderator.ToString(), RoleEnum.FeedModerator.ToString(), RoleEnum.DirectoryModerator.ToString(), RoleEnum.EventManager.ToString(), RoleEnum.LibraryEditor.ToString(), RoleEnum.RankAwarder.ToString() }));
             if (filter.ResourceType != null) roleConditions.Add("ra.resourcetype = " + D.Enum(filter.ResourceType.Value));
             List<string> conditions = new List<string>
             {

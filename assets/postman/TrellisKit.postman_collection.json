@@ -656,6 +656,54 @@
       "key": "profileMediaItemId",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "rankAwardId",
+      "value": "",
+      "type": "string",
+      "description": "Set by Award a rank."
+    },
+    {
+      "key": "lineageEntryId",
+      "value": "",
+      "type": "string",
+      "description": "Set by Replace my lineage."
+    },
+    {
+      "key": "curriculumId",
+      "value": "",
+      "type": "string",
+      "description": "Set by Create a curriculum."
+    },
+    {
+      "key": "curriculumItemId",
+      "value": "",
+      "type": "string",
+      "description": "Set by Replace curriculum items."
+    },
+    {
+      "key": "checkInEventId",
+      "value": "",
+      "type": "string",
+      "description": "Published event to check in to."
+    },
+    {
+      "key": "checkInCode",
+      "value": "",
+      "type": "string",
+      "description": "Set by Read a check-in code."
+    },
+    {
+      "key": "attendanceId",
+      "value": "",
+      "type": "string",
+      "description": "Set by Check in (staff)."
+    },
+    {
+      "key": "rankMemberId",
+      "value": "",
+      "type": "string",
+      "description": "Member to award or check in."
     }
   ],
   "item": [
@@ -59664,6 +59712,2721 @@
                   "pm.test('Standard bounded enumeration', function () { const p = pm.response.json(); ['success','maxResults','skip','continuationToken','endOfResults','totalRecords','recordsRemaining','timestampUtc','objects'].forEach(k => pm.expect(p).to.have.property(k)); pm.expect(p.objects).to.be.an('array'); pm.expect(p.objects.length).to.be.at.most(p.maxResults); pm.expect(p.maxResults).to.be.at.least(1); if (p.endOfResults) pm.expect(p.continuationToken).to.equal(null); else pm.expect(p.continuationToken).to.be.a('string').and.not.empty; if (p.totalRecords !== null) pm.expect(p.totalRecords).to.be.at.least(p.objects.length); });"
                 ]
               }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ranks, curricula, and attendance",
+      "description": "Verified ranks on Rank profile fields, lineage, curricula, and attendance (docs/TRELLISKIT.md section 15). Every route answers 404 NotAvailable while ranks.enabled is off. Rank staff: SystemAdmin or RankAwarder; curriculum editors: SystemAdmin or LibraryEditor.",
+      "item": [
+        {
+          "name": "Ranks",
+          "item": [
+            {
+              "name": "Read my rank",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/me/rank",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "me",
+                    "rank"
+                  ]
+                },
+                "description": "Effective rank per enabled Rank field (verified, or self-reported), next rank and requirement progress, the 20 most recent awards and revokes with historyTotal, and lineage. 404 NotAvailable while ranks.enabled is off."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Shape', function () { const r = pm.response.json(); ['showVerificationLabels','fields','history','historyTotal','lineage'].forEach(k => pm.expect(r).to.have.property(k)); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Read a member rank",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/members/{{rankMemberId}}/rank",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "members",
+                    "{{rankMemberId}}",
+                    "rank"
+                  ]
+                },
+                "description": "A member's effective rank and verified flag per Rank field the caller may see, with lineage."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Ranks', function () { pm.expect(pm.response.json().ranks).to.be.an('array'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Read a member rank (error: unknown member)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/members/usr_unknown/rank",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "members",
+                    "usr_unknown",
+                    "rank"
+                  ]
+                },
+                "description": "Unknown, deleted, banned, and blocked members are 404 NotFound."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 404', function () { pm.response.to.have.status(404); });",
+                      "pm.test('Error NotFound', function () { pm.expect(pm.response.json().error).to.eql('NotFound'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Replace my lineage",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/me/lineage",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "me",
+                    "lineage"
+                  ]
+                },
+                "description": "Body { fieldKey, entries }: entries [{ optionKey, promotedByUserId | promotedByName, promotedUtc }] (at most 50). A new entry naming a member sends them LineageVerificationRequested. Audited lineage.update.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fieldKey\": \"rank\",\n  \"entries\": [\n    {\n      \"optionKey\": \"Beginner\",\n      \"promotedByName\": \"Visiting Coach\",\n      \"promotedUtc\": \"2024-01-15T00:00:00Z\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Entries', function () { const e = pm.response.json().entries; pm.expect(e).to.be.an('array'); if (e.length) pm.collectionVariables.set('lineageEntryId', e[0].id); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Replace my lineage (error: unknown option)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/me/lineage",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "me",
+                    "lineage"
+                  ]
+                },
+                "description": "Unknown option keys are 400 ValidationFailed.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"entries\": [\n    {\n      \"optionKey\": \"Unknown\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                      "pm.test('Error ValidationFailed', function () { pm.expect(pm.response.json().error).to.eql('ValidationFailed'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Verify a lineage entry",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/lineage/{{lineageEntryId}}/verify",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "lineage",
+                    "{{lineageEntryId}}",
+                    "verify"
+                  ]
+                },
+                "description": "The named promoter or a SystemAdmin verifies an entry. Audited lineage.verify.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Verified', function () { pm.expect(pm.response.json().verified).to.eql(true); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Award a rank",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/awards",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "awards"
+                  ]
+                },
+                "description": "Body { userId, fieldKey, optionKey, level, note, eventId, labels, tags }. RankAwarder within the field's rank.awarding rules, or SystemAdmin. Sets the profile value and locks the field; RankPromoted notification and rank_promoted email; audited rank.award.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": \"{{rankMemberId}}\",\n  \"fieldKey\": \"rank\",\n  \"optionKey\": \"Beginner\",\n  \"level\": 1,\n  \"note\": \"Strong fundamentals\",\n  \"labels\": [\n    \"spring-grading\"\n  ],\n  \"tags\": {}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+                      "pm.test('Award', function () { const r = pm.response.json(); pm.expect(r.action).to.eql('Award'); pm.collectionVariables.set('rankAwardId', r.id); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Award a rank (error: level out of range)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/awards",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "awards"
+                  ]
+                },
+                "description": "Levels above the option's maxLevel (else rank.maxLevel) are 400 LevelOutOfRange.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": \"{{rankMemberId}}\",\n  \"optionKey\": \"Beginner\",\n  \"level\": 99\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                      "pm.test('Error LevelOutOfRange', function () { pm.expect(pm.response.json().error).to.eql('LevelOutOfRange'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Award a rank (error: unknown option)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/awards",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "awards"
+                  ]
+                },
+                "description": "Unknown or retired options are 400 UnknownRankOption.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": \"{{rankMemberId}}\",\n  \"optionKey\": \"Unknown\",\n  \"level\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                      "pm.test('Error UnknownRankOption', function () { pm.expect(pm.response.json().error).to.eql('UnknownRankOption'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Award a rank (error: member without the role)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/awards",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "awards"
+                  ]
+                },
+                "description": "Members without RankAwarder are 403 Forbidden; awards the rules refuse are 403 AwardAboveOwnRank; self awards are 403 SelfAward.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"userId\": \"{{rankMemberId}}\",\n  \"optionKey\": \"Beginner\",\n  \"level\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 403', function () { pm.response.to.have.status(403); });",
+                      "pm.test('Error Forbidden', function () { pm.expect(pm.response.json().error).to.eql('Forbidden'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Revoke a rank award",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/awards/{{rankAwardId}}/revoke",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "awards",
+                    "{{rankAwardId}}",
+                    "revoke"
+                  ]
+                },
+                "description": "Body { reason } (1 to 500). The field becomes self-reported and editable again when this was the current verified rank. Audited rank.revoke.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Entered in error\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Revoke row', function () { pm.expect(pm.response.json().action).to.eql('Revoke'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Revoke a rank award (error: already revoked)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/awards/{{rankAwardId}}/revoke",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "awards",
+                    "{{rankAwardId}}",
+                    "revoke"
+                  ]
+                },
+                "description": "A second revoke is 409 AlreadyRevoked.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Again\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 409', function () { pm.response.to.have.status(409); });",
+                      "pm.test('Error AlreadyRevoked', function () { pm.expect(pm.response.json().error).to.eql('AlreadyRevoked'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List rank awards (GET)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/awards?maxResults=25",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "awards"
+                  ],
+                  "query": [
+                    {
+                      "key": "maxResults",
+                      "value": "25"
+                    }
+                  ]
+                },
+                "description": "Awards and revokes, newest first. Filters userId, fieldKey, optionKey, actorId, action, status (Active or Revoked), fromUtc, toUtc, labels, tags. GET form; filters as query parameters."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List rank awards (POST)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/awards/enumerate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "awards",
+                    "enumerate"
+                  ]
+                },
+                "description": "Awards and revokes, newest first. Filters userId, fieldKey, optionKey, actorId, action, status (Active or Revoked), fromUtc, toUtc, labels, tags. POST form of the enumeration.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maxResults\": 25,\n  \"labels\": [],\n  \"tags\": {},\n  \"filters\": {\n    \"status\": \"Active\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List rank eligibility (GET)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/eligibility?maxResults=25",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "eligibility"
+                  ],
+                  "query": [
+                    {
+                      "key": "maxResults",
+                      "value": "25"
+                    }
+                  ]
+                },
+                "description": "Members with their next rank and requirement progress. Filters fieldKey, optionKey, eligibleOnly (default true). GET form; filters as query parameters."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List rank eligibility (POST)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/eligibility/enumerate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "eligibility",
+                    "enumerate"
+                  ]
+                },
+                "description": "Members with their next rank and requirement progress. Filters fieldKey, optionKey, eligibleOnly (default true). POST form of the enumeration.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maxResults\": 25,\n  \"labels\": [],\n  \"tags\": {},\n  \"filters\": {\n    \"eligibleOnly\": false\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List rank requirements (GET)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/requirements?maxResults=25",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "requirements"
+                  ],
+                  "query": [
+                    {
+                      "key": "maxResults",
+                      "value": "25"
+                    }
+                  ]
+                },
+                "description": "Requirements in position order. Filters fieldKey, optionKey. GET form; filters as query parameters."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List rank requirements (POST)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/requirements/enumerate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "requirements",
+                    "enumerate"
+                  ]
+                },
+                "description": "Requirements in position order. Filters fieldKey, optionKey. POST form of the enumeration.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maxResults\": 25,\n  \"labels\": [],\n  \"tags\": {},\n  \"filters\": {\n    \"fieldKey\": \"rank\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Replace rank requirements",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/requirements",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "requirements"
+                  ]
+                },
+                "description": "Body { fieldKey, requirements } (at most 200). SystemAdmin only. Audited rank.requirements.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"fieldKey\": \"rank\",\n  \"requirements\": [\n    {\n      \"optionKey\": \"Intermediate\",\n      \"level\": 0,\n      \"minimumDaysInGrade\": 90,\n      \"minimumAttendance\": 24,\n      \"notes\": \"Ninety days and 24 classes\",\n      \"curriculumId\": null,\n      \"labels\": [],\n      \"tags\": {}\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Stored', function () { pm.expect(pm.response.json().updated).to.be.a('number'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Replace rank requirements (error: too many days)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/ranks/requirements",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "ranks",
+                    "requirements"
+                  ]
+                },
+                "description": "minimumDaysInGrade above 3650 is 400 ValidationFailed.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"requirements\": [\n    {\n      \"optionKey\": \"Intermediate\",\n      \"minimumDaysInGrade\": 4000\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                      "pm.test('Error ValidationFailed', function () { pm.expect(pm.response.json().error).to.eql('ValidationFailed'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Curricula",
+          "item": [
+            {
+              "name": "List curricula (GET)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/curricula?maxResults=25",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "curricula"
+                  ],
+                  "query": [
+                    {
+                      "key": "maxResults",
+                      "value": "25"
+                    }
+                  ]
+                },
+                "description": "Published curricula the caller may see, with progress. Filters fieldKey. GET form; filters as query parameters."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List curricula (POST)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/curricula/enumerate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "curricula",
+                    "enumerate"
+                  ]
+                },
+                "description": "Published curricula the caller may see, with progress. Filters fieldKey. POST form of the enumeration.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maxResults\": 25,\n  \"labels\": [],\n  \"tags\": {},\n  \"filters\": {}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Create a curriculum",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula"
+                  ]
+                },
+                "description": "Body { name, description, fieldKey, visibility, position, labels, tags }. SystemAdmin or LibraryEditor. Created as Draft. Audited curriculum.create.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Foundations\",\n  \"description\": \"Core skills by rank\",\n  \"fieldKey\": \"rank\",\n  \"visibility\": \"Members\",\n  \"position\": 10,\n  \"labels\": [],\n  \"tags\": {}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+                      "pm.test('Draft', function () { const r = pm.response.json(); pm.expect(r.status).to.eql('Draft'); pm.collectionVariables.set('curriculumId', r.id); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Create a curriculum (error: empty name)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula"
+                  ]
+                },
+                "description": "Names of 1 to 120 characters; otherwise 400 ValidationFailed.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                      "pm.test('Error ValidationFailed', function () { pm.expect(pm.response.json().error).to.eql('ValidationFailed'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Replace curriculum items",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula/{{curriculumId}}/items",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula",
+                    "{{curriculumId}}",
+                    "items"
+                  ]
+                },
+                "description": "Body { items } (at most 500): Lesson and Series need existing targets, CatalogEntry a text identifier, Custom text. Listed ids keep progress. Audited curriculum.items.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"itemType\": \"Custom\",\n      \"customText\": \"Warm-up drill\",\n      \"optionKey\": \"Beginner\",\n      \"required\": false\n    },\n    {\n      \"itemType\": \"CatalogEntry\",\n      \"targetId\": \"cat_example\",\n      \"optionKey\": \"Beginner\",\n      \"required\": true\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Items', function () { const items = pm.response.json().items; pm.expect(items).to.be.an('array'); if (items.length) pm.collectionVariables.set('curriculumItemId', items[0].id); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Replace curriculum items (error: unknown lesson)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula/{{curriculumId}}/items",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula",
+                    "{{curriculumId}}",
+                    "items"
+                  ]
+                },
+                "description": "Unknown lesson or series targets are 400 ValidationFailed.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"items\": [\n    {\n      \"itemType\": \"Lesson\",\n      \"targetId\": \"les_unknown\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                      "pm.test('Error ValidationFailed', function () { pm.expect(pm.response.json().error).to.eql('ValidationFailed'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Publish a curriculum",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula/{{curriculumId}}/publish",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula",
+                    "{{curriculumId}}",
+                    "publish"
+                  ]
+                },
+                "description": "Draft or Archived to Published (needs an item). Audited curriculum.publish.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Published', function () { pm.expect(pm.response.json().status).to.eql('Published'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Publish a curriculum (error: already published)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula/{{curriculumId}}/publish",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula",
+                    "{{curriculumId}}",
+                    "publish"
+                  ]
+                },
+                "description": "Publishing a published curriculum is 409 InvalidStatus; an empty one 409 CurriculumEmpty.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 409', function () { pm.response.to.have.status(409); });",
+                      "pm.test('Error InvalidStatus', function () { pm.expect(pm.response.json().error).to.eql('InvalidStatus'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Read a curriculum",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/curricula/{{curriculumId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "curricula",
+                    "{{curriculumId}}"
+                  ]
+                },
+                "description": "Items with the caller's state (Incomplete, Completed, SelfComplete, Verified). Catalog titles are resolved by clients."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Items', function () { pm.expect(pm.response.json().items).to.be.an('array'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Complete a curriculum item",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/me/curricula/{{curriculumId}}/items/{{curriculumItemId}}/complete",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "me",
+                    "curricula",
+                    "{{curriculumId}}",
+                    "items",
+                    "{{curriculumItemId}}",
+                    "complete"
+                  ]
+                },
+                "description": "Self-complete a CatalogEntry or Custom item (Lesson and Series items are 409 NotSelfCompletable).",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Undo a curriculum item",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/me/curricula/{{curriculumId}}/items/{{curriculumItemId}}/complete",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "me",
+                    "curricula",
+                    "{{curriculumId}}",
+                    "items",
+                    "{{curriculumItemId}}",
+                    "complete"
+                  ]
+                },
+                "description": "Remove a self-completion (verified items are 409 AlreadyVerified)."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List curricula (staff) (GET)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula?maxResults=25",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula"
+                  ],
+                  "query": [
+                    {
+                      "key": "maxResults",
+                      "value": "25"
+                    }
+                  ]
+                },
+                "description": "Every curriculum. Filters fieldKey, status, visibility. GET form; filters as query parameters."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List curricula (staff) (POST)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula/enumerate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula",
+                    "enumerate"
+                  ]
+                },
+                "description": "Every curriculum. Filters fieldKey, status, visibility. POST form of the enumeration.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maxResults\": 25,\n  \"labels\": [],\n  \"tags\": {},\n  \"filters\": {\n    \"status\": \"Published\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Read a curriculum (staff)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula/{{curriculumId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula",
+                    "{{curriculumId}}"
+                  ]
+                },
+                "description": "Any status, with items."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Edit a curriculum",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula/{{curriculumId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula",
+                    "{{curriculumId}}"
+                  ]
+                },
+                "description": "Any create field; omitted fields stay. Audited curriculum.update.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"description\": \"Updated description\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Read a member's curriculum progress",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula/{{curriculumId}}/progress/{{rankMemberId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula",
+                    "{{curriculumId}}",
+                    "progress",
+                    "{{rankMemberId}}"
+                  ]
+                },
+                "description": "The curriculum with the member's state per item."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Verify a curriculum item",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula/{{curriculumId}}/progress/{{rankMemberId}}/items/{{curriculumItemId}}/verify",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula",
+                    "{{curriculumId}}",
+                    "progress",
+                    "{{rankMemberId}}",
+                    "items",
+                    "{{curriculumItemId}}",
+                    "verify"
+                  ]
+                },
+                "description": "Rank staff verify any item for a member. Audited curriculum.verify.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Verified', function () { pm.expect(pm.response.json().state).to.eql('Verified'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Archive a curriculum",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/curricula/{{curriculumId}}/archive",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "curricula",
+                    "{{curriculumId}}",
+                    "archive"
+                  ]
+                },
+                "description": "Hidden from members; progress kept. Audited curriculum.archive.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Attendance",
+          "item": [
+            {
+              "name": "Read a check-in code",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/attendance/check-in-code?targetType=Event&targetId={{checkInEventId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "attendance",
+                    "check-in-code"
+                  ],
+                  "query": [
+                    {
+                      "key": "targetType",
+                      "value": "Event"
+                    },
+                    {
+                      "key": "targetId",
+                      "value": "{{checkInEventId}}"
+                    }
+                  ]
+                },
+                "description": "Rank staff: the target's current six-digit code, expiresUtc, qrPayload, and the check-in window. For a venue session use targetType VenueSession, targetId {venueId}:{sessionIndex}, and occurrenceDate."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('Code', function () { const r = pm.response.json(); pm.expect(r.code).to.match(/^\\d{6}$/); pm.collectionVariables.set('checkInCode', r.code); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Check in",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/attendance/check-in",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "attendance",
+                    "check-in"
+                  ]
+                },
+                "description": "Body { targetType, targetId, occurrenceDate, code, method }: members check in with the current code inside the window around the start. Audited attendance.checkIn.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"targetType\": \"Event\",\n  \"targetId\": \"{{checkInEventId}}\",\n  \"code\": \"{{checkInCode}}\",\n  \"method\": \"SelfWithCode\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+                      "pm.test('Check-in', function () { pm.expect(pm.response.json().targetType).to.eql('Event'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Check in (error: duplicate)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/attendance/check-in",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "attendance",
+                    "check-in"
+                  ]
+                },
+                "description": "A second check-in to the same target and date is 409 AlreadyCheckedIn; a wrong code is 400 InvalidCode; outside the window 422 OutsideCheckInWindow.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"targetType\": \"Event\",\n  \"targetId\": \"{{checkInEventId}}\",\n  \"code\": \"{{checkInCode}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 409', function () { pm.response.to.have.status(409); });",
+                      "pm.test('Error AlreadyCheckedIn', function () { pm.expect(pm.response.json().error).to.eql('AlreadyCheckedIn'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Check in a venue session (error: unknown session)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/attendance/check-in",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "attendance",
+                    "check-in"
+                  ]
+                },
+                "description": "Unknown venues or session positions are 404 NotFound; an occurrenceDate off the session's weekday (in the venue's time zone) is 400 ValidationFailed.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"targetType\": \"VenueSession\",\n  \"targetId\": \"ven_example:0\",\n  \"occurrenceDate\": \"2026-11-25\",\n  \"code\": \"000000\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 404', function () { pm.response.to.have.status(404); });",
+                      "pm.test('Error NotFound', function () { pm.expect(pm.response.json().error).to.eql('NotFound'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Check in (staff)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/attendance/check-in",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "attendance",
+                    "check-in"
+                  ]
+                },
+                "description": "Rank staff check a member in with userId (method Staff, no code).",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"targetType\": \"Event\",\n  \"targetId\": \"{{checkInEventId}}\",\n  \"userId\": \"{{rankMemberId}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+                      "pm.test('Staff', function () { const r = pm.response.json(); pm.expect(r.method).to.eql('Staff'); pm.collectionVariables.set('attendanceId', r.id); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List attendance (GET)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/attendance?maxResults=25",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "attendance"
+                  ],
+                  "query": [
+                    {
+                      "key": "maxResults",
+                      "value": "25"
+                    }
+                  ]
+                },
+                "description": "Check-ins with member summaries. Filters targetType, targetId, occurrenceDate, userId. GET form; filters as query parameters."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List attendance (POST)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/attendance/enumerate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "attendance",
+                    "enumerate"
+                  ]
+                },
+                "description": "Check-ins with member summaries. Filters targetType, targetId, occurrenceDate, userId. POST form of the enumeration.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maxResults\": 25,\n  \"labels\": [],\n  \"tags\": {},\n  \"filters\": {\n    \"targetType\": \"Event\",\n    \"targetId\": \"{{checkInEventId}}\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List my attendance (GET)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/me/attendance?maxResults=25",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "me",
+                    "attendance"
+                  ],
+                  "query": [
+                    {
+                      "key": "maxResults",
+                      "value": "25"
+                    }
+                  ]
+                },
+                "description": "The caller's check-ins. Filters targetType, targetId, occurrenceDate. GET form; filters as query parameters."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "List my attendance (POST)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/me/attendance/enumerate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "me",
+                    "attendance",
+                    "enumerate"
+                  ]
+                },
+                "description": "The caller's check-ins. Filters targetType, targetId, occurrenceDate. POST form of the enumeration.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"maxResults\": 25,\n  \"labels\": [],\n  \"tags\": {},\n  \"filters\": {}\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                      "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r).to.have.property('endOfResults'); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
+            },
+            {
+              "name": "Remove a check-in",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{adminToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/admin/attendance/{{attendanceId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "admin",
+                    "attendance",
+                    "{{attendanceId}}"
+                  ]
+                },
+                "description": "Rank staff remove a check-in recorded by mistake. Audited attendance.delete."
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 204', function () { pm.response.to.have.status(204); });"
+                    ]
+                  }
+                }
+              ],
+              "response": []
             }
           ]
         }

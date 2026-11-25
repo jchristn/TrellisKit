@@ -158,6 +158,20 @@ Every surface that lists or searches anything provides:
 
 On tablets, filters sit in a side panel next to results; on phones, in a bottom sheet opened from a filter button that shows the active filter count.
 
+### 2.6 Ranks, curricula, and attendance collections
+
+| Collection | Routes | Maximum page | Filters |
+|---|---|---|---|
+| `rank-awards` (`RankPromotion`) | `GET /api/v1/admin/ranks/awards`, `POST .../enumerate` | Admin (500) | `userId`, `fieldKey`, `optionKey`, `actorId`, `action`, `status`, `fromUtc`, `toUtc`, labels, tags |
+| `rank-eligibility` (members, `User` labels and tags) | `GET /api/v1/admin/ranks/eligibility`, `POST .../enumerate` | Admin (500) | `fieldKey`, `optionKey`, `eligibleOnly` (pages may hold fewer than `maxResults` eligible members while `endOfResults` is false) |
+| `rank-requirements` (`RankRequirement`) | `GET /api/v1/admin/ranks/requirements`, `POST .../enumerate` | Admin (500; at most 200 rows exist per Rank field) | `fieldKey`, `optionKey`, labels, tags |
+| `curricula` (`Curriculum`) | `GET /api/v1/curricula`, `POST .../enumerate` | Member (100) | `fieldKey`, labels, tags |
+| `admin-curricula` (`Curriculum`) | `GET /api/v1/admin/curricula`, `POST .../enumerate` | Admin (500) | `fieldKey`, `status`, `visibility`, labels, tags |
+| `attendance` (`Attendance`) | `GET /api/v1/admin/attendance`, `POST .../enumerate` | Admin (500) | `targetType`, `targetId`, `occurrenceDate`, `userId`, labels, tags |
+| `my-attendance` (`Attendance`) | `GET /api/v1/me/attendance`, `POST .../enumerate` | Member (100) | `targetType`, `targetId`, `occurrenceDate`, labels, tags |
+
+Fixed-bound GET exceptions (section 2.4, on the enforcement allow-list): `GET /api/v1/me/rank` (at most 10 Rank fields, a 20-row history preview with `historyTotal`, at most 100 lineage entries), `GET /api/v1/members/{id}/rank` (at most 10 Rank fields and 100 lineage entries), and the curriculum details `GET /api/v1/curricula/{id}`, `GET /api/v1/admin/curricula/{id}`, and `GET /api/v1/admin/curricula/{id}/progress/{userId}` (at most 500 items per curriculum). Every rank, promotion, requirement, lineage entry, curriculum, item, progress row, and check-in carries labels and tags.
+
 ---
 
 ## 4. Migration of existing routes

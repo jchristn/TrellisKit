@@ -21,5 +21,6 @@ export const Role = Object.freeze({
   LibraryEditor: 'LibraryEditor',
   SupportAgent: 'SupportAgent',
   Communicator: 'Communicator',
-  ReleaseManager: 'ReleaseManager'
+  ReleaseManager: 'ReleaseManager',
+  RankAwarder: 'RankAwarder'
 });

@@ -18,6 +18,18 @@ namespace TrellisKit.Core.Responses
         /// </summary>
         public string AiPlacement { get; set; } = "Menu";
 
+        /// <summary>
+        /// Whether verified ranks, curricula, and attendance are on (server setting ranks.enabled; docs/TRELLISKIT.md
+        /// section 15). Default false.
+        /// </summary>
+        public bool Ranks { get; set; } = false;
+
+        /// <summary>
+        /// Whether clients show verified or self-reported labels next to Rank fields (server setting
+        /// ranks.showVerificationLabels). Default true.
+        /// </summary>
+        public bool RankVerificationLabels { get; set; } = true;
+
         #endregion
 
         #region Public-Methods

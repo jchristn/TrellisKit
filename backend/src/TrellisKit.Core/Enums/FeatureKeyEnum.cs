@@ -54,6 +54,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// Ideas board.
         /// </summary>
-        Ideas
+        Ideas,
+
+        /// <summary>
+        /// Verified ranks, curricula, and attendance (also needs the ranks.enabled setting).
+        /// </summary>
+        Ranks
     }
 }

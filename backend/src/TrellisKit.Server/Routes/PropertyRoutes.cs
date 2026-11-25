@@ -251,7 +251,8 @@ namespace TrellisKit.Server.Routes
             string revision = await services.ProfileFields.RevisionAsync(ctx.Token).ConfigureAwait(false);
             string document = Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(services.Property.Property.Id + "|" + services.Property.Property.Name + "|" + System.Text.Json.JsonSerializer.Serialize(services.Property.Property)))).Substring(0, 16).ToLowerInvariant();
             string etag = "\"v" + document + "-f" + revision + "-a" + access.Model + access.Revision + "-u" + (response.Updates?.CheckIntervalMinutes ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture) + "-i" + (response.Features.Ai ? response.Features.AiPlacement : "off") + "-p" + Phase4Hash(response) + "-b" + palette.Version.ToString(System.Globalization.CultureInfo.InvariantCulture) + "m" + memberChoices.Mode + memberChoices.Revision.ToString(System.Globalization.CultureInfo.InvariantCulture) +
-                "-d" + response.Ideas.MemberSubmissions + (response.Ideas.PublicBoardEnabled ? "p" : String.Empty) + (response.Ideas.VoteOnClosed ? "c" : String.Empty) + "-k" + services.Documents.Revision() + "\"";
+                "-d" + response.Ideas.MemberSubmissions + (response.Ideas.PublicBoardEnabled ? "p" : String.Empty) + (response.Ideas.VoteOnClosed ? "c" : String.Empty) + "-k" + services.Documents.Revision() +
+                "-r" + (response.Features.Ranks ? "1" : "0") + (response.Features.RankVerificationLabels ? "1" : "0") + "\"";
             ctx.Response.Headers["Cache-Control"] = "public, max-age=" + Math.Min(_CacheSeconds, 300);
             ctx.Response.Headers["ETag"] = etag;
             ctx.Response.Headers["Vary"] = "Host, X-TK-Property";

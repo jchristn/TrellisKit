@@ -19,6 +19,7 @@ import { jobsMethods } from './jobsApi.js';
 import { metricsMethods } from './metricsApi.js';
 import { contentReviewMethods } from './contentReviewApi.js';
 import { publicPageMethods } from './publicPages.js';
+import { ranksMethods } from './ranksApi.js';
 
 /**
  * Minimal fetch-based client for the TrellisKit REST API.
@@ -271,6 +272,7 @@ Object.assign(ApiClient.prototype, contentReviewMethods);
 Object.assign(ApiClient.prototype, documentsMethods);
 // Public landing pages: the member's opt-in profile page and slug checks (docs/PHASE4_CONTRACT.md section 18).
 Object.assign(ApiClient.prototype, publicPageMethods);
+Object.assign(ApiClient.prototype, ranksMethods);
 // `client.messaging`: the direct message methods under their contract names (assistant chats keep
 // `enumerateConversations` and friends on the client itself).
 Object.defineProperty(ApiClient.prototype, 'messaging', {

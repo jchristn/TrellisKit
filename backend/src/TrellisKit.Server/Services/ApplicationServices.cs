@@ -396,6 +396,9 @@ namespace TrellisKit.Server.Services
         /// <summary>Profile photo/video galleries.</summary>
         public ProfileMediaService ProfileMedia { get; }
 
+        /// <summary>Verified ranks, lineage, curricula, and attendance (ranks.enabled).</summary>
+        public RankModule Ranks { get; }
+
         /// <summary>Registry of content visibility and moderation providers.</summary>
         public ContentTargetRegistry ContentTargets { get; } = new ContentTargetRegistry();
 
@@ -583,6 +586,8 @@ namespace TrellisKit.Server.Services
             ContentReview = new ContentReview.ContentReviewService(this);
             ContentReview.Attach();
             AdminSummary = new AdminSummary.AdminSummaryService(this);
+            Ranks = new RankModule(this);
+            Ranks.Attach();
         }
 
         #endregion
