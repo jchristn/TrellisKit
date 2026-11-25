@@ -7,6 +7,7 @@ import { useToast } from '../../context/ToastContext.jsx';
 import useApiQuery from '../../hooks/useApiQuery.js';
 import useDocumentMeta from '../../hooks/useDocumentMeta.js';
 import Icon from '../../components/Icon.jsx';
+import SaveButton from '../../components/SaveButton.jsx';
 import AvatarImage from '../../components/Avatar.jsx';
 import Modal from '../../components/Modal.jsx';
 import { Badge } from '../../components/Badges.jsx';
@@ -119,6 +120,7 @@ function EventDetailView() {
           </span>
           <PublicPageLink url={event.publicUrl} />
         </div>
+        <div className="page-header-actions"><SaveButton targetType="Event" targetId={event.id} title={event.title} /></div>
       </header>
       {canceled && <Banner tone="danger" icon="alert">{t.canceledBanner(event.cancelReason)}</Banner>}
       {!canceled && isPastEvent(event) && <Banner tone="info">{t.past}</Banner>}

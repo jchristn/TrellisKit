@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useCallback, useRef, useState } from 'react';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { formatDuration, isLockedItem, libraryConfig, lockedRequirement } from '@trelliskit/shared';
 import strings from '../../strings.js';
 import { useAuth } from '../../context/AuthContext.jsx';
@@ -19,6 +19,9 @@ import LessonPlayer from '../../components/library/LessonPlayer.jsx';
 import { LevelChips, ProgressBar } from '../../components/library/LibraryCards.jsx';
 import { errorText } from '../../utils/engagement.js';
 import { appPaths, mediaFileUrl, phase4Errors } from '../../utils/phase4.js';
+import SaveButton from '../../components/SaveButton.jsx';
+import { LessonTechniques } from '../training/LessonTechniques.jsx';
+import { trainingPaths } from '../training/trainingModel.js';
 
 const t = strings.library;
 
@@ -73,13 +76,15 @@ function LessonView() {
   const [override, setOverride] = useState(null);
   const [reporting, setReporting] = useState(false);
   const [busy, setBusy] = useState(false);
+  const seekRef = useRef(null);
+  const inHub = useLocation().pathname.startsWith(trainingPaths.overview + '/');
   const base = query.data;
   const lesson = base && override && override.id === base.id ? { ...base, ...override } : base;
   useDocumentMeta(strings.member.metaTitle(lesson ? lesson.title : t.title));
 
   const back = lesson && lesson.series
-    ? <Link to={appPaths.series(lesson.series.slug || lesson.series.id)} className="back-link small"><Icon name="chevronLeft" size={14} /><span>{t.backToSeries(lesson.series.title)}</span></Link>
-    : <Link to={appPaths.library} className="back-link small"><Icon name="chevronLeft" size={14} /><span>{t.back}</span></Link>;
+    ? <Link to={(inHub ? trainingPaths.series : appPaths.series)(lesson.series.slug || lesson.series.id)} className="back-link small"><Icon name="chevronLeft" size={14} /><span>{t.backToSeries(lesson.series.title)}</span></Link>
+    : <Link to={inHub ? trainingPaths.segment('courses') : appPaths.library} className="back-link small"><Icon name="chevronLeft" size={14} /><span>{t.back}</span></Link>;
 
   if (query.error && query.error.status === 404) {
     return <div className="member-view">{back}<EmptyState icon="book" title={t.lessonNotFound}>{t.notFoundBody}</EmptyState></div>;
@@ -122,6 +127,7 @@ function LessonView() {
           </span>
           <LevelChips levels={lesson.levels} />
         </div>
+        <div className="page-header-actions"><SaveButton targetType="Lesson" targetId={lesson.id} title={lesson.title} /></div>
       </header>
 
       {locked ? (
@@ -138,6 +144,7 @@ function LessonView() {
                 resumeTailSeconds={config.resumeTailSeconds}
                 reportProgress={Boolean(me) && viewer.canPlay !== false}
                 onProgress={setProgress}
+                seekRef={seekRef}
               />
             )}
             {lesson.description && <section className="panel"><MarkdownBody body={lesson.description} allowHeadings linkMentions={false} /></section>}
@@ -163,6 +170,7 @@ function LessonView() {
                 <p className="muted small">{t.historyNote}</p>
               </section>
             )}
+            <LessonTechniques client={client} lessonId={lesson.id} onSeek={lesson.kind === 'Video' ? (seconds) => { if (!seekRef.current) return false; seekRef.current(seconds); return true; } : null} />
             <Resources resources={lesson.resources} />
             {(lesson.captions || []).length > 0 && <p className="muted small">{t.captionsNote}</p>}
             {me && viewer.canReport !== false && <button type="button" className="link-button small" onClick={() => setReporting(true)}><Icon name="flag" size={12} /> {t.report}</button>}

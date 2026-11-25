@@ -7,6 +7,7 @@ import { useToast } from '../../context/ToastContext.jsx';
 import useApiQuery from '../../hooks/useApiQuery.js';
 import useDocumentMeta from '../../hooks/useDocumentMeta.js';
 import Icon from '../../components/Icon.jsx';
+import SaveButton from '../../components/SaveButton.jsx';
 import ActionMenu from '../../components/ActionMenu.jsx';
 import ConfirmModal from '../../components/ConfirmModal.jsx';
 import Modal from '../../components/Modal.jsx';
@@ -202,6 +203,7 @@ function ThreadView() {
             ) : null}
           />
           <div className="post-head-actions">
+            <SaveButton targetType="Thread" targetId={thread.id} title={thread.title} compact />
             {viewer.canFollow !== false && (
               <FollowButton
                 followed={Boolean(thread.isFollowed)}

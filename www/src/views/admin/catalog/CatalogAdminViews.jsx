@@ -16,6 +16,7 @@ import ConfirmModal from '../../../components/ConfirmModal.jsx';
 import EntityPicker from '../../../components/admin/EntityPicker.jsx';
 import { ErrorBanner, Loading } from '../../../components/States.jsx';
 import { CatalogEntryContent, CatalogFilters, CatalogListState, CatalogRelationships } from '../../catalog/CatalogViews.jsx';
+import { TaughtInLessons } from '../library/LessonTechniquesEditor.jsx';
 
 const t = strings.exerciseCatalog;
 const fail = (error) => error?.code === 'CatalogChanged' ? t.changed : error?.status === 400 ? Object.values(error.fieldErrors || error.body?.fieldErrors || {}).join(' ') || t.invalid : error?.message || t.saveFailed;
@@ -134,7 +135,7 @@ function CatalogAdminEntry({ id }) {
       {entry.reviewNote && <p className="banner banner-info">{entry.reviewNote}</p>}
       <div className="badge-row">{entry.viewer?.canEdit && <><button className="button button-secondary" disabled={busy} onClick={() => setMode('edit')}>{t.edit}</button><button className="button button-secondary" disabled={busy} onClick={() => setMode(mode === 'relationships' ? '' : 'relationships')}>{t.editRelationships}</button></>}{entry.viewer?.canSubmit && <button className="button button-primary" disabled={busy} onClick={() => run('submit')}>{t.submit}</button>}{entry.viewer?.canReview && <><button className="button button-primary" disabled={busy} onClick={() => setConfirm('approve')}>{t.approve}</button><button className="button button-secondary" disabled={busy} onClick={() => run('reject')}>{t.reject}</button></>}{isSystemAdmin && entry.status !== 'Archived' && <button className="button button-secondary" disabled={busy} onClick={() => setConfirm('archive')}>{t.archive}</button>}</div>
       {entry.viewer?.canReview && <label className="field"><span className="label-text">{t.reviewNote}</span><textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={2000} /></label>}
-      {mode === 'relationships' ? <RelationshipEditor key={entry.revision} client={client} entry={entry} onSaved={saved} onCancel={() => setMode('')} /> : <><CatalogEntryContent entry={entry} config={config.data} /><CatalogRelationships key={entry.revision} client={client} entryId={entry.id} admin /></>}
+      {mode === 'relationships' ? <RelationshipEditor key={entry.revision} client={client} entry={entry} onSaved={saved} onCancel={() => setMode('')} /> : <><CatalogEntryContent entry={entry} config={config.data} /><CatalogRelationships key={entry.revision} client={client} entryId={entry.id} admin /><TaughtInLessons key={'taught-' + entry.id} client={client} entryId={entry.id} /></>}
     </>}
     <ConfirmModal open={Boolean(confirm)} title={confirm === 'approve' ? t.confirmApprove : t.confirmArchive} message={t.confirmBody} confirmLabel={confirm === 'approve' ? t.approve : t.archive} busy={busy} danger={confirm !== 'approve'} onCancel={() => setConfirm('')} onConfirm={() => run(confirm)} />
   </div>;

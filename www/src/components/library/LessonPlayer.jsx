@@ -44,9 +44,12 @@ export function playerShortcut(e) {
  * progress reporter that sends `PUT /lessons/{id}/progress` every `intervalSeconds` while playing and
  * on pause, seek end, end, tab hide, and leaving the page.
  *
- * @param {{ lesson: object, client: object, intervalSeconds?: number, resumeTailSeconds?: number, onProgress?: (progress: object) => void, reportProgress?: boolean }} props
+ * `seekRef` (optional ref object) receives `seek(seconds)` while the video is playable and null
+ * otherwise, so other parts of the page (Techniques in this lesson) can jump to a time.
+ *
+ * @param {{ lesson: object, client: object, intervalSeconds?: number, resumeTailSeconds?: number, onProgress?: (progress: object) => void, reportProgress?: boolean, seekRef?: { current: ((seconds: number) => void)|null } }} props
  */
-function LessonPlayer({ lesson, client, intervalSeconds = 15, resumeTailSeconds = 10, onProgress, reportProgress = true }) {
+function LessonPlayer({ lesson, client, intervalSeconds = 15, resumeTailSeconds = 10, onProgress, reportProgress = true, seekRef = null }) {
   const ref = useRef(null);
   const reporterRef = useRef(null);
   const [failed, setFailed] = useState(false);
@@ -91,8 +94,10 @@ function LessonPlayer({ lesson, client, intervalSeconds = 15, resumeTailSeconds 
     return attachVideoSource(element, { hlsUrl: source.hlsUrl, mp4Url: source.mp4Url }, () => setFailed(true));
   }, [source, ready]);
 
-  if (!source) return <Banner tone="info">{t.noVideo}</Banner>;
-  if (!ready) return <Banner tone="info" icon="clock">{t.processing}</Banner>;
+  if (!source || !ready) {
+    if (seekRef) seekRef.current = null;
+    return source ? <Banner tone="info" icon="clock">{t.processing}</Banner> : <Banner tone="info">{t.noVideo}</Banner>;
+  }
 
   const video = () => ref.current;
   const seek = (seconds) => {
@@ -102,6 +107,7 @@ function LessonPlayer({ lesson, client, intervalSeconds = 15, resumeTailSeconds 
     el.currentTime = target;
     setPosition(target);
   };
+  if (seekRef) seekRef.current = seek;
   const changeRate = (value) => {
     setRate(value);
     if (video()) video().playbackRate = value;

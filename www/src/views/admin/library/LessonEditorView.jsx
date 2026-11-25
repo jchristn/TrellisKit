@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { LIBRARY_LIMITS, languageOptions, LessonKinds, ResourceKinds, formatDuration, libraryLevels, metadataForSave, metadataOf } from '@trelliskit/shared';
+import { LIBRARY_LIMITS, catalogFeatureEnabled, languageOptions, LessonKinds, ResourceKinds, formatDuration, libraryLevels, metadataForSave, metadataOf } from '@trelliskit/shared';
 import strings from '../../../strings.js';
 import { useAdminAuth } from '../../../context/AdminAuthContext.jsx';
 import { useToast } from '../../../context/ToastContext.jsx';
@@ -23,6 +23,7 @@ import { localInputToIso } from '../../../utils/time.js';
 import { appPaths, phase4Errors } from '../../../utils/phase4.js';
 import { useProperty } from '../../../context/PropertyContext.jsx';
 import TableColumns from '../../../components/TableColumns.jsx';
+import LessonTechniquesEditor from './LessonTechniquesEditor.jsx';
 
 const s = strings.admin.libraryAdmin;
 const lib = strings.library;
@@ -243,6 +244,7 @@ function LessonEditor({ lesson, reload }) {
         <MetadataEditor value={{ labels: form.labels, tags: form.tags }} onChange={(meta) => set(meta)} isStaff client={client} targetType="Lesson" disabled={busy} />
         <div className="form-actions"><button type="submit" className="button button-primary" disabled={busy}>{strings.common.save}</button></div>
       </form>
+      {catalogFeatureEnabled(property) && <LessonTechniquesEditor client={client} lessonId={lesson.id} />}
       <Viewers client={client} lessonId={lesson.id} />
       {dialog === 'schedule' && (
         <Modal open size="sm" onClose={() => setDialog(null)} title={s.schedule}

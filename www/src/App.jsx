@@ -1,5 +1,5 @@
 import { Suspense, lazy } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useParams } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { AppContentProvider, useRemoteStringsRevision } from './context/AppContentContext.jsx';
@@ -70,6 +70,13 @@ import { EmbedAssistantView, PublicAssistantView } from './views/ai/PublicAssist
 import { aiAvailable, purchasesEnabled } from '@trelliskit/shared';
 import { AccessPromptProvider } from './components/AccessPrompt.jsx';
 import TrainingLayout from './views/training/TrainingLayout.jsx';
+import OverviewView from './views/training/OverviewView.jsx';
+import LibraryView from './views/training/LibraryView.jsx';
+import SavedView from './views/training/SavedView.jsx';
+import ScheduleView from './views/training/ScheduleView.jsx';
+import ProgressView from './views/training/ProgressView.jsx';
+import CurriculumView from './views/training/CurriculumView.jsx';
+import { trainingHubEnabled, trainingPaths } from './views/training/trainingModel.js';
 import { MEMBER_ROUTES, featureEnabled, memberRoutesFor, routeAvailable } from './views/member/memberRoutes.js';
 import { LEVELS } from './utils/onboarding.js';
 import { Loading } from './components/States.jsx';
@@ -79,6 +86,7 @@ import './forums.css';
 import './ai.css';
 import './phase4.css';
 import './phase5.css';
+import './training.css';
 
 const AdminApp = lazy(() => import('./AdminApp.jsx'));
 const PlatformApp = lazy(() => import('./PlatformApp.jsx'));
@@ -90,6 +98,18 @@ const trainingRoute = MEMBER_ROUTES.find((route) => route.id === 'training');
 const eventsRoute = MEMBER_ROUTES.find((route) => route.id === 'events');
 const directoryRoute = MEMBER_ROUTES.find((route) => route.id === 'directory');
 const catalogRoute = MEMBER_ROUTES.find((route) => route.id === 'catalog');
+
+/**
+ * A redirect that keeps the query string and hash, for addresses that moved into the Training hub
+ * (`/app/library` to `/app/training/library/courses`, `/app/lessons/:id` to
+ * `/app/training/lessons/:id`, and so on).
+ * @param {{ to: (params: object) => string }} props
+ */
+function KeepQueryRedirect({ to }) {
+  const params = useParams();
+  const location = useLocation();
+  return <Navigate to={{ pathname: to(params), search: location.search, hash: location.hash }} replace />;
+}
 
 /** `/announcements/:id` (the notification path) opens the announcement in the member app. */
 function AnnouncementRedirect() {
@@ -116,6 +136,9 @@ export function AppRoutes({ fetchImpl = null, adminFetchImpl = null, restoreOnLo
   // Re-render every route when remote string overrides change (strings apply on the next render).
   useRemoteStringsRevision();
   const meta = siteMetaFor(site);
+  // The Training hub owns the library addresses when it is on; otherwise they keep working alone.
+  const hub = trainingHubEnabled(property) && routeAvailable(property, trainingRoute) && routeAvailable(property, libraryRoute);
+  const catalogOn = featureEnabled(property, 'catalog') && routeAvailable(property, catalogRoute);
   return (
     <RealtimeConfigContext.Provider value={realtime || EMPTY_REALTIME}>
     <AuthProvider fetchImpl={fetchImpl || adminFetchImpl} restoreOnLoad={restoreOnLoad}>
@@ -166,15 +189,39 @@ export function AppRoutes({ fetchImpl = null, adminFetchImpl = null, restoreOnLo
               </>
             )}
             <Route path="search" element={<RequireMember level={LEVELS.member} feature="search">{routeAvailable(property, searchRoute) ? <SearchView /> : <ComingSoonView route={searchRoute} />}</RequireMember>} />
-            {featureEnabled(property, 'library') && routeAvailable(property, libraryRoute) && (
+            {featureEnabled(property, 'library') && routeAvailable(property, libraryRoute) && !hub && (
               <>
                 <Route path="library" element={<RequireMember level={LEVELS.member} catalog="library"><LibraryHomeView /></RequireMember>} />
                 <Route path="series/:id" element={<RequireMember level={LEVELS.member} catalog="library"><SeriesView /></RequireMember>} />
                 <Route path="lessons/:id" element={<RequireMember level={LEVELS.member} catalog="library"><LessonView /></RequireMember>} />
               </>
             )}
-            {featureEnabled(property, 'training') && featureEnabled(property, 'library') && routeAvailable(property, trainingRoute) && (
-              <Route path="training" element={<RequireMember level={LEVELS.member} catalog="library"><TrainingLayout /></RequireMember>} />
+            {hub && (
+              <>
+                {/* The Library lives inside Training; the old addresses keep their query string. */}
+                <Route path="library" element={<KeepQueryRedirect to={() => trainingPaths.segment('courses')} />} />
+                <Route path="series/:id" element={<KeepQueryRedirect to={(params) => trainingPaths.series(params.id)} />} />
+                <Route path="lessons/:id" element={<KeepQueryRedirect to={(params) => trainingPaths.lesson(params.id)} />} />
+                {catalogOn && <Route path="catalog" element={<KeepQueryRedirect to={() => trainingPaths.segment('techniques')} />} />}
+                {catalogOn && <Route path="catalog/:id" element={<KeepQueryRedirect to={(params) => trainingPaths.catalog(params.id)} />} />}
+                <Route path="training" element={<RequireMember level={LEVELS.member} catalog="library"><TrainingLayout /></RequireMember>}>
+                  <Route index element={<OverviewView />} />
+                  <Route path="library" element={<LibraryView />}>
+                    <Route index element={<KeepQueryRedirect to={() => trainingPaths.segment('courses')} />} />
+                    <Route path="courses" element={<LibraryHomeView embedded />} />
+                    {catalogOn && <Route path="techniques" element={<CatalogHomeView embedded />} />}
+                    <Route path="saved" element={<SavedView />} />
+                    <Route path="*" element={<KeepQueryRedirect to={() => trainingPaths.segment('courses')} />} />
+                  </Route>
+                  <Route path="schedule" element={<ScheduleView />} />
+                  <Route path="progress" element={<ProgressView />} />
+                  {featureEnabled(property, 'ranks') && <Route path="curricula" element={<CurriculaListView />} />}
+                </Route>
+                <Route path="training/series/:id" element={<RequireMember level={LEVELS.member} catalog="library"><SeriesView /></RequireMember>} />
+                <Route path="training/lessons/:id" element={<RequireMember level={LEVELS.member} catalog="library"><LessonView /></RequireMember>} />
+                {catalogOn && <Route path="training/catalog/:id" element={<RequireMember level={LEVELS.member} catalog="library"><CatalogEntryView /></RequireMember>} />}
+                {featureEnabled(property, 'ranks') && <Route path="training/curricula/:id" element={<RequireMember level={LEVELS.member} feature="ranks"><CurriculumView /></RequireMember>} />}
+              </>
             )}
             {featureEnabled(property, 'events') && routeAvailable(property, eventsRoute) && (
               <>
@@ -193,7 +240,7 @@ export function AppRoutes({ fetchImpl = null, adminFetchImpl = null, restoreOnLo
                 <Route path="instructors/:id" element={<RequireMember level={LEVELS.member} catalog="directory"><InstructorView /></RequireMember>} />
               </>
             )}
-            {featureEnabled(property, 'catalog') && routeAvailable(property, catalogRoute) && (
+            {catalogOn && !hub && (
               <>
                 <Route path="catalog" element={<RequireMember level={LEVELS.member} catalog="library"><CatalogHomeView /></RequireMember>} />
                 <Route path="catalog/:id" element={<RequireMember level={LEVELS.member} catalog="library"><CatalogEntryView /></RequireMember>} />

@@ -25,8 +25,9 @@ export const MEMBER_ROUTES = [
   { id: 'training', label: n.training, icon: 'barbell', feature: 'training', live: true, access: 'training', catalog: true, killSwitch: 'training' },
   { id: 'events', label: n.events, icon: 'calendar', feature: 'events', live: true, access: 'events', catalog: true, killSwitch: 'events' },
   { id: 'directory', label: n.directory, icon: 'pin', feature: 'directory', live: true, access: 'directory', catalog: true, killSwitch: 'directory' },
-  // The reviewed exercise and technique catalog is opt-in (features.catalog) and uses the library access rules.
-  { id: 'catalog', label: strings.exerciseCatalog.nav, icon: 'book', feature: 'catalog', live: true, access: 'library', catalog: true, killSwitch: 'catalog' },
+  // The reviewed exercise and technique catalog is opt-in (features.catalog) and uses the library access rules;
+  // the Training hub embeds it as the Library's Techniques segment.
+  { id: 'catalog', label: strings.exerciseCatalog.nav, icon: 'book', feature: 'catalog', live: true, access: 'library', catalog: true, killSwitch: 'catalog', coveredBy: 'training' },
   { id: 'messages', label: n.messages, icon: 'message', feature: 'messaging', live: true, access: 'messaging', killSwitch: 'messaging' },
   { id: 'ideas', label: n.ideas, icon: 'trending', feature: 'ideas', live: true, lock: 'ideas' },
   { id: 'announcements', label: n.announcements, icon: 'megaphone', feature: 'broadcasts', live: true },

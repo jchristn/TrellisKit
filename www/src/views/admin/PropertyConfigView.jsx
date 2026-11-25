@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ApiError, domainVerificationState, stripeWebhookPath } from '@trelliskit/shared';
+import { ApiError, domainVerificationState, resolveMobileNavigation, stripeWebhookPath } from '@trelliskit/shared';
 import strings from '../../strings.js';
 import { useAdminAuth } from '../../context/AdminAuthContext.jsx';
 import { useProperty } from '../../context/PropertyContext.jsx';
@@ -14,6 +14,7 @@ import Icon from '../../components/Icon.jsx';
 import { Badge } from '../../components/Badges.jsx';
 import { ErrorBanner, Loading } from '../../components/States.jsx';
 import TableColumns from '../../components/TableColumns.jsx';
+import { memberRoutesFor } from '../member/memberRoutes.js';
 
 const p = strings.admin.propertyConfig;
 const route = strings.admin.routes.property;
@@ -23,6 +24,39 @@ export function stripeWebhookUrl(property, origin = window.location.origin) {
   const api = property && property.domains && property.domains.api;
   const base = api ? 'https://' + api : origin;
   return base + stripeWebhookPath(property && property.id);
+}
+
+/**
+ * Read-only effective navigation for a property: the website's member sections in order, and the
+ * mobile bottom bar, drawer, and account menu for a signed-in member, after feature switches,
+ * labels, and covered destinations are applied.
+ */
+export function effectiveNavigation(property) {
+  const mobile = resolveMobileNavigation(property, { id: 'preview' });
+  const names = (entries) => entries.map((entry) => entry.label);
+  return {
+    web: names(memberRoutesFor(property)),
+    bar: names(mobile.shortcuts),
+    drawer: names(mobile.drawerItems),
+    account: names(mobile.accountMenu)
+  };
+}
+
+function EffectiveNavigation({ property }) {
+  const n = strings.training.admin;
+  const nav = effectiveNavigation(property);
+  const rows = [[n.navigationWeb, nav.web, 'web'], [n.navigationMobileBar, nav.bar, 'bar'], [n.navigationMobileDrawer, nav.drawer, 'drawer'], [n.navigationMobileAccount, nav.account, 'account']];
+  return (
+    <section className="panel" aria-labelledby="property-navigation-title" data-testid="effective-navigation">
+      <div className="panel-header"><h2 id="property-navigation-title">{n.navigationTitle}</h2></div>
+      <p className="muted small">{n.navigationIntro}</p>
+      <dl className="kv-grid kv-grid-wide">
+        {rows.map(([label, items, key]) => (
+          <div key={key} className="kv-item"><dt>{label}</dt><dd data-testid={'effective-navigation-' + key}>{items.length ? items.join(', ') : n.navigationNone}</dd></div>
+        ))}
+      </dl>
+    </section>
+  );
 }
 
 function KvCopy({ label, value }) {
@@ -198,6 +232,8 @@ function PropertyConfigView() {
         </dl>
         <p className="muted small">{p.stripeHint}</p>
       </section>
+
+      <EffectiveNavigation property={property} />
 
       <DomainsPanel />
     </div>

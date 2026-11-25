@@ -112,13 +112,18 @@ function SeriesGrid({ client, property, meta }) {
  * and series grouped by level. Search, level chips, type, length, progress, and label and tag filters
  * live in the URL and switch the page to matching lessons. Locked stubs carry a lock badge; the
  * footer states that staff can see viewing history (resolved decision 17).
+ *
+ * `embedded` is the Training hub's Courses segment: the hub supplies the page header and the one
+ * unified search box (with label and tag filters), so this view drops its own and ignores `search`.
+ * @param {{ embedded?: boolean }} props
  */
-function LibraryHomeView() {
+function LibraryHomeView({ embedded = false }) {
   const { client, me } = useAuth();
   const { property, fill } = useProperty();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [meta, setMeta] = useEnumerationUrlState();
-  useDocumentMeta(strings.member.metaTitle(t.title));
+  const [urlMeta, setMeta] = useEnumerationUrlState();
+  const meta = useMemo(() => (embedded && urlMeta.search ? { ...urlMeta, search: '' } : urlMeta), [embedded, urlMeta]);
+  useDocumentMeta(embedded ? null : strings.member.metaTitle(t.title));
   const levels = libraryLevels(property);
   const filters = useMemo(() => lessonFiltersFrom(searchParams), [searchParams]);
   const selectedLevels = filters.levels || [];
@@ -139,9 +144,9 @@ function LibraryHomeView() {
   };
 
   return (
-    <div className="member-view library-view">
-      <PageHeader title={t.title} summary={fill(t.summary)} />
-      <MetadataFilterBar value={meta} onChange={setMeta} client={client} targetType="Lesson" showSearch searchLabel={t.searchLabel} />
+    <div className={embedded ? 'stack library-view' : 'member-view library-view'}>
+      {!embedded && <PageHeader title={t.title} summary={fill(t.summary)} />}
+      {!embedded && <MetadataFilterBar value={meta} onChange={setMeta} client={client} targetType="Lesson" showSearch searchLabel={t.searchLabel} />}
       {levels.length > 0 && (
         <div className="chip-row" role="group" aria-label={t.levelChips}>
           {levels.map((level) => (

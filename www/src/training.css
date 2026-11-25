@@ -1,0 +1,45 @@
+/* Training hub, Library segments and search, saves and collections (docs/TRELLISKIT.md, Training hub).
+ * Colors come from theme tokens only, so the light and dark themes both apply. */
+
+.training-tabs { display: flex; gap: var(--space-2); overflow-x: auto; max-width: 100%; padding: 2px; }
+.training-tab {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; min-width: 44px;
+  padding: 0 var(--space-4); border: 1px solid var(--color-border-strong); border-radius: var(--radius-pill);
+  background: var(--color-surface); color: var(--color-text); text-decoration: none; white-space: nowrap;
+  font-weight: var(--font-weight-medium);
+}
+.training-tab:hover { color: var(--color-text); border-color: var(--color-accent); }
+.training-tab.active { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-accent-contrast); }
+.training-tab:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.training-panel { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+
+.training-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: var(--space-4); align-items: start; }
+.training-card { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+.training-card > .panel { margin: 0; }
+.training-card-title { display: flex; align-items: center; gap: var(--space-2); }
+.training-card-title .icon { color: var(--color-accent); }
+.training-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.training-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.training-list-link { display: flex; flex-direction: column; gap: 2px; min-height: 44px; justify-content: center; padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); color: var(--color-text); text-decoration: none; }
+a.training-list-link:hover { background: var(--color-surface-alt); color: var(--color-text); }
+a.training-list-link:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.training-list-title { font-weight: var(--font-weight-semibold); overflow-wrap: anywhere; }
+.training-list-unavailable { color: var(--color-text-muted); }
+.training-technique-row, .training-progress-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); padding: var(--space-2) 0; }
+.training-progress-row .p4-progress { flex-basis: 100%; }
+.training-search { display: flex; flex-direction: column; gap: var(--space-2); }
+
+.training-saved { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-4); align-items: start; }
+@media (max-width: 900px) { .training-saved { grid-template-columns: minmax(0, 1fr); } }
+.training-saved-row { align-items: center; flex-wrap: wrap; }
+.training-saved-link { display: flex; flex-direction: column; gap: 2px; color: var(--color-text); }
+.training-collections { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.training-collection-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.training-inline-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); }
+
+.save-toggle-wrap { display: inline-flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.save-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; }
+.save-toggle.saved { border-color: var(--color-accent); color: var(--color-text); background: var(--color-accent-soft); }
+.save-row { display: flex; justify-content: flex-end; }
+.save-collections { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.save-new-collection { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); }

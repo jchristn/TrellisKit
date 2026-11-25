@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import useApiQuery from '../../hooks/useApiQuery.js';
 import useDocumentMeta from '../../hooks/useDocumentMeta.js';
 import Icon from '../../components/Icon.jsx';
+import SaveButton from '../../components/SaveButton.jsx';
 import { EmptyState, ErrorBanner, Loading } from '../../components/States.jsx';
 import PostCard from '../../components/feed/PostCard.jsx';
 import CommentThread from '../../components/feed/CommentThread.jsx';
@@ -63,6 +64,7 @@ function FeedPostView() {
       {query.error && <ErrorBanner message={errorText(query.error, {}, f.loadError)} onRetry={query.reload} />}
       {post && (
         <>
+          {!isLockedItem(post) && <div className="save-row"><SaveButton targetType="Post" targetId={post.id} title={post.title || strings.training.saved.typeOne.Post} /></div>}
           <PostCard post={post} detail headingLevel={1} onChange={setOverride} onDeleted={() => navigate('/app/feed', { replace: true })} onBlocked={() => navigate('/app/feed', { replace: true })} />
           {!isLockedItem(post) && <CommentThread key={post.id + ':' + (focusId || '')} post={post} focusId={focusId} onCountChange={setCount} />}
         </>

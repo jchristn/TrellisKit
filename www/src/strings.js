@@ -17,6 +17,7 @@ import platformMetrics from './platformMetricsStrings.js';
 import exerciseCatalog from './views/catalog/catalogStrings.js';
 import catalogImport from './views/admin/catalog/catalogImportStrings.js';
 import ranks from './views/ranks/ranksStrings.js';
+import training from './views/training/trainingStrings.js';
 
 const strings = {
   chartKit,
@@ -24,6 +25,7 @@ const strings = {
   exerciseCatalog,
   catalogImport,
   ranks,
+  training,
   engine: {
     name: 'TrellisKit',
     poweredBy: 'Powered by TrellisKit'

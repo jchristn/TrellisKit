@@ -298,16 +298,19 @@ test.each([
   [{ features: { catalog: true } }, true]
 ])('the catalog is opt-in: member and admin navigation follow features.catalog %j', (property, on) => {
   expect(featureEnabled(property, 'catalog')).toBe(on);
-  expect(memberRoutesFor(property).some((route) => route.id === 'catalog')).toBe(on);
+  // Without the Training hub the catalog is its own section; the hub covers it (Techniques segment).
+  const standalone = { ...property, features: { ...(property.features || {}), training: false } };
+  expect(memberRoutesFor(standalone).some((route) => route.id === 'catalog')).toBe(on);
+  expect(memberRoutesFor(property).some((route) => route.id === 'catalog')).toBe(false);
   const adminIds = groupedAdminRoutes(property).flatMap((group) => group.routes).map((route) => route.id);
   expect(adminIds.includes('catalog')).toBe(on);
   expect(featureEnabled(property, 'library')).toBe(true);
 });
 
 test('signed-out visitors browse the catalog only when it is on and anonymous library browsing is allowed', () => {
-  const open = { features: { catalog: true }, access: { model: 'Open', anonymousBrowsing: true } };
+  const open = { features: { catalog: true, training: false }, access: { model: 'Open', anonymousBrowsing: true } };
   expect(guestRoutesFor(open).some((route) => route.id === 'catalog')).toBe(true);
-  expect(guestRoutesFor({ ...open, features: {} }).some((route) => route.id === 'catalog')).toBe(false);
+  expect(guestRoutesFor({ ...open, features: { training: false } }).some((route) => route.id === 'catalog')).toBe(false);
   expect(guestRoutesFor({ ...open, access: { model: 'FullyGated' } }).some((route) => route.id === 'catalog')).toBe(false);
 });
 

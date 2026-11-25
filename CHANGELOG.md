@@ -4,6 +4,18 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (Training hub on the website)
+
+- `/app/training` is the Training hub: section tabs (an arrow-key `tablist`) from `GET /me/training` `sections`, showing only `available: true` keys the website knows (Overview, Library, Schedule, Programs as Curricula, Progress) and ignoring the rest. Signed-out visitors, and everyone while the `training` kill switch is on, see only the Library without calling `/me/training`; a `403`, `404`, or `503` overview also falls back to the Library.
+- Overview cards in order, each only with real data: Up next, Continue training, Your rank and its curriculum card (ranks on, `rank` present), Ask your coach (links to assistants), Recently saved, New for you. A first-run card shows real featured courses and the directory and events entries.
+- One Library at `/app/training/library/courses|techniques|saved` with one unified search box (`POST /library/search`, label and tag filters, "Show more" per kind through its own enumeration route). Techniques needs `features.catalog` and the overview's `Techniques` segment; Saved needs a signed-in member and `features.saves`.
+- Saved: type and collection filters, notes ("visible to you and moderators"), edit and remove with rollback, and collection management (create, rename, reorder, delete). `SaveButton` (`aria-pressed`, "Save {title}" or "Saved", collection and note picker, one batched `POST /me/saves/state` per page through `createSaveStateBatcher`) on lesson, series, catalog entry, venue, instructor, event, post, and thread pages and on catalog list cards; hidden signed out or with `features.saves` off.
+- Schedule (upcoming Going RSVPs from `/me/events`, check-ins when ranks are on) and Progress (completed lessons and followed courses from the library progress routes; rank history, attendance, and curricula when ranks are on). `/app/training/curricula/:id` shows a curriculum.
+- "Techniques in this lesson" on the lesson page (start times seek the player) and "Lessons that teach this" on the technique page; `LessonPlayer` takes an optional `seekRef`.
+- `/app/library`, `/app/series/:id`, `/app/lessons/:id`, and `/app/catalog[/:id]` redirect into `/app/training/...` keeping the query string and hash, only while Training and the library are on; otherwise they keep working. Public lesson and catalog pages are unchanged. The `catalog` member section is now `coveredBy: "training"`.
+- Admin console: "Techniques in this lesson" picker on the lesson form (published entries, `m:ss` start time, order, saved with `PUT /admin/lessons/{id}/catalog-entries`; nothing is saved over links that did not load), "Taught in lessons" on the catalog entry, and read-only effective navigation (website sections and mobile bar, drawer, and account menu) on the property page.
+- Strings in `www/src/views/training/trainingStrings.js` (`web.training.*` in the string catalog).
+
 ### Added (Training destination and navigation contract)
 
 - `training` navigation destination (label "Training", icon `barbell`, `/training`, `features.training`, default on), placed after `library`. `library` and the new `catalog` destination (technique catalog, `/training/library/techniques`, `features.catalog`) are `coveredBy: "training"`: placing Training keeps them out of the drawer, and they return when Training is off or hidden. Seventeen destination ids; the default drawer (`DefaultMobileDrawerItems`) lists every destination that is not embedded. The mobile `/training` stack and the website `/app/training` route are placeholders that show the Library home until the hub screens land.

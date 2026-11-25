@@ -10,6 +10,7 @@ import useApiQuery from '../../hooks/useApiQuery.js';
 import useCursorList from '../../hooks/useCursorList.js';
 import useDocumentMeta from '../../hooks/useDocumentMeta.js';
 import Icon from '../../components/Icon.jsx';
+import SaveButton from '../../components/SaveButton.jsx';
 import Modal from '../../components/Modal.jsx';
 import ConfirmModal from '../../components/ConfirmModal.jsx';
 import { Badge } from '../../components/Badges.jsx';
@@ -150,6 +151,7 @@ export function VenueView() {
         </div>
         {me && !locked && (
           <div className="page-header-actions">
+            <SaveButton targetType="Venue" targetId={venue.id} title={venue.name} />
             {config.submissions && viewer.canSuggestEdit !== false && <Link to={appPaths.submit('EditVenue', venue.id)} className="button button-secondary button-sm"><Icon name="edit" size={14} /><span>{v.suggestEdit}</span></Link>}
             {config.submissions && viewer.canReportClosed !== false && venue.status !== 'Closed' && <button type="button" className="button button-secondary button-sm" onClick={() => setDialog('closed')}>{v.reportClosed}</button>}
             {viewer.canReport !== false && <button type="button" className="button button-secondary button-sm" onClick={() => setDialog('report')}><Icon name="flag" size={14} /><span>{v.report}</span></button>}
@@ -271,6 +273,7 @@ export function InstructorView() {
         </div>
         {me && !locked && (
           <div className="page-header-actions">
+            <SaveButton targetType="Instructor" targetId={instructor.id} title={instructor.displayName} />
             {isMe && <button type="button" className="button button-secondary button-sm" onClick={() => setDialog('unlink')}>{v.unlink}</button>}
             {!instructor.linkedUser && config.claims && viewer.canClaim !== false && <button type="button" className="button button-primary button-sm" onClick={() => setDialog('claim')}>{v.claim}</button>}
             {config.submissions && viewer.canSuggestEdit !== false && <Link to={appPaths.submit('EditInstructor', instructor.id)} className="button button-secondary button-sm"><Icon name="edit" size={14} /><span>{v.suggestEdit}</span></Link>}

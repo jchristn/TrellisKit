@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { formatTotalDuration, isLockedItem, lockedRequirement } from '@trelliskit/shared';
 import strings from '../../strings.js';
 import { useAuth } from '../../context/AuthContext.jsx';
@@ -14,6 +14,8 @@ import { AccessPromptCard } from '../../components/AccessPrompt.jsx';
 import { LessonRow, LevelChips, ProgressBar } from '../../components/library/LibraryCards.jsx';
 import { errorText } from '../../utils/engagement.js';
 import { appPaths, mediaThumbUrl, phase4Errors } from '../../utils/phase4.js';
+import SaveButton from '../../components/SaveButton.jsx';
+import { trainingPaths } from '../training/trainingModel.js';
 
 const t = strings.library;
 
@@ -26,6 +28,7 @@ function SeriesView() {
   const { id } = useParams();
   const { client, me } = useAuth();
   const navigate = useNavigate();
+  const inHub = useLocation().pathname.startsWith(trainingPaths.overview + '/');
   const fetcher = useCallback((signal) => client.getSeries(id, signal), [client, id]);
   const query = useApiQuery(fetcher);
   const [followed, setFollowed] = useState(null);
@@ -35,10 +38,10 @@ function SeriesView() {
   const lessons = useCursorList(fetchPage, { enabled: Boolean(series) });
 
   useEffect(() => {
-    if (series && series.slug && id !== series.slug && id === series.id) navigate(appPaths.series(series.slug), { replace: true });
-  }, [series, id, navigate]);
+    if (series && series.slug && id !== series.slug && id === series.id) navigate((inHub ? trainingPaths.series : appPaths.series)(series.slug), { replace: true });
+  }, [series, id, navigate, inHub]);
 
-  const back = <Link to={appPaths.library} className="back-link small"><Icon name="chevronLeft" size={14} /><span>{t.back}</span></Link>;
+  const back = <Link to={inHub ? trainingPaths.segment('courses') : appPaths.library} className="back-link small"><Icon name="chevronLeft" size={14} /><span>{t.back}</span></Link>;
   if (query.error && query.error.status === 404) {
     return <div className="member-view">{back}<EmptyState icon="book" title={t.seriesNotFound}>{t.notFoundBody}</EmptyState></div>;
   }
@@ -65,6 +68,7 @@ function SeriesView() {
           <LevelChips levels={series.levels} />
         </div>
         <div className="page-header-actions">
+          <SaveButton targetType="Series" targetId={series.id} title={series.title} />
           {me && series.viewer && series.viewer.canFollow !== false && (
             <FollowButton
               followed={isFollowed}

@@ -32,7 +32,8 @@ export const SOURCES = [
   { file: 'www/src/views/admin/catalog/catalogImportStrings.js', binding: 'catalogImport', prefix: 'web.catalogImport', client: 'web' },
   { file: 'mobile/src/catalogStrings.js', binding: 'catalogTemplates', prefix: 'mobile.exerciseCatalog', client: 'mobile' },
   { file: 'www/src/views/ranks/ranksStrings.js', binding: 'ranks', prefix: 'web.ranks', client: 'web' },
-  { file: 'mobile/src/ranksStrings.js', binding: 'ranksTemplates', prefix: 'mobile.ranks', client: 'mobile' }
+  { file: 'mobile/src/ranksStrings.js', binding: 'ranksTemplates', prefix: 'mobile.ranks', client: 'mobile' },
+  { file: 'www/src/views/training/trainingStrings.js', binding: 'training', prefix: 'web.training', client: 'web' }
 ];
 
 const TOKEN = /\{([A-Za-z][A-Za-z0-9]*)\}/g;
