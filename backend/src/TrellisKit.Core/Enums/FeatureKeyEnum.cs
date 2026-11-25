@@ -69,6 +69,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// Saves and private collections (features.saves).
         /// </summary>
-        Saves
+        Saves,
+
+        /// <summary>
+        /// Reviewed exercise and technique catalog (features.catalog, default off).
+        /// </summary>
+        Catalog
     }
 }

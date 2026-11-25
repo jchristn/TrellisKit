@@ -102,6 +102,7 @@ namespace TrellisKit.Core.PropertyConfig
             ValidateDirectory(property.DirectorySection, problems);
             ValidateEvents(property.EventsSection, problems);
             ValidateLibrary(property.LibrarySection, problems);
+            ValidateCatalogProfiles(property.LibrarySection, property.DirectorySection, problems);
             ValidatePublicPages(property.PublicPages, problems);
             ValidateIdeas(property.Ideas, problems);
             ValidateSupport(property.Support, problems);
@@ -369,6 +370,7 @@ namespace TrellisKit.Core.PropertyConfig
             Path(pages.VenuesPath, "publicPages.venuesPath");
             Path(pages.EventsPath, "publicPages.eventsPath");
             Path(pages.ProfilesPath, "publicPages.profilesPath");
+            Path(pages.CatalogPath, "publicPages.catalogPath");
         }
 
         private static void ValidateLibrary(PropertyLibrarySection? library, List<string> problems)
@@ -380,6 +382,46 @@ namespace TrellisKit.Core.PropertyConfig
             if (source == "ProfileField" && (String.IsNullOrWhiteSpace(library.LevelFieldKey) || !_Key.IsMatch(library.LevelFieldKey)))
                 problems.Add("library.levelFieldKey is required when library.levelSource is ProfileField");
             Options(library.Levels, "library.levels", 50, true, problems);
+            Options(library.CatalogMuscles, "library.catalogMuscles", 100, false, problems);
+            Options(library.CatalogEquipment, "library.catalogEquipment", 100, false, problems);
+        }
+
+        private static void ValidateCatalogProfiles(PropertyLibrarySection? library, PropertyDirectorySection? directory, List<string> problems)
+        {
+            if (library == null) return;
+            List<PropertyCatalogDescriptorProfile>? profiles = library.CatalogDescriptorProfiles;
+            if (profiles == null || profiles.Count > 50)
+            {
+                problems.Add("library.catalogDescriptorProfiles must contain 0 to 50 profiles");
+                return;
+            }
+            HashSet<string> programs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (PropertyCatalogDescriptorProfile profile in profiles)
+            {
+                if (profile == null)
+                {
+                    problems.Add("library.catalogDescriptorProfiles cannot contain null");
+                    continue;
+                }
+                string path = "library.catalogDescriptorProfiles[" + profile.ProgramKey + "]";
+                if (String.IsNullOrWhiteSpace(profile.ProgramKey) || !programs.Add(profile.ProgramKey) || !(directory?.Programs?.Any(p => p != null && p.Key == profile.ProgramKey) ?? false))
+                    problems.Add(path + " needs a unique configured directory programKey");
+                Label(profile.FamilyLabel, path + ".familyLabel", 80, problems);
+                Label(profile.AttireLabel, path + ".attireLabel", 80, problems);
+                Label(profile.LevelLabel, path + ".levelLabel", 80, problems);
+                if (profile.Families == null || profile.NameLanguages == null || profile.Attires == null || profile.Levels == null || profile.NotationSystems == null)
+                {
+                    problems.Add(path + " requires nonnull families, nameLanguages, attires, levels, and notationSystems arrays");
+                    continue;
+                }
+                Options(profile.Attires, path + ".attires", 100, false, problems);
+                Options(profile.Levels, path + ".levels", 100, false, problems);
+                Options(profile.NotationSystems, path + ".notationSystems", 100, false, problems);
+                Options(profile.Families, path + ".families", 100, false, problems);
+                Options(profile.NameLanguages, path + ".nameLanguages", 20, false, problems);
+                foreach (PropertyOptionSeed option in profile.NameLanguages)
+                    if (option != null && CatalogLanguageTags.Normalize(option.Key) == null) problems.Add(path + ".nameLanguages requires language[-Script][-REGION] tags");
+            }
         }
 
         private static void Label(string? value, string path, int max, List<string> problems)

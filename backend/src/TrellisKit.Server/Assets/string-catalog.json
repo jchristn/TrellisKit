@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "e84aed1015454d65727af9cf1227aebf010cdd290cd989ce4d84d2e3429e5baa",
+ "sha256": "4def1338cf9af501013629995da28afb6d32759b4dcfbf9df4338be884ed4a02",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -14981,6 +14981,13 @@
    "maxLength": 200
   },
   {
+   "key": "web.access.features.catalog",
+   "client": "web",
+   "default": "Techniques",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.access.features.directory",
    "client": "web",
    "default": "Member directory",
@@ -15631,6 +15638,13 @@
    "key": "web.admin.accessModel.featureHints.assistants",
    "client": "web",
    "default": "The AI assistants.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.admin.accessModel.featureHints.catalog",
+   "client": "web",
+   "default": "The exercise and technique catalog (when features.catalog is on).",
    "tokens": [],
    "maxLength": 200
   },

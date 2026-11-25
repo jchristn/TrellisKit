@@ -32,7 +32,8 @@ export const AccessFeature = Object.freeze({
   Ideas: 'ideas',
   Training: 'training',
   Ranks: 'ranks',
-  Saves: 'saves'
+  Saves: 'saves',
+  Catalog: 'catalog'
 });
 
 /** Every gateable feature key, in the contract's order. */
@@ -210,12 +211,12 @@ export function featureAccess(property, me, feature, action = 'read') {
 
 /**
  * Catalog features (docs/PHASE4_CONTRACT.md section 0.4 with resolved decision 2): the library,
- * events, and the venue directory. Unlike forums, their catalogs stay readable to signed-in free
+ * events, the venue directory, and the reviewed exercise and technique catalog (`catalog`). Unlike forums, their catalogs stay readable to signed-in free
  * accounts when gated in `PartiallyGated` (members-only objects arrive as locked stubs), and
  * signed-out visitors may browse their `Public` objects when anonymous browsing is on outside
  * `FullyGated`. The member profile directory (`/members/directory`) keeps `featureAccess`.
  */
-export const CatalogFeatures = Object.freeze([AccessFeature.Library, AccessFeature.Events, AccessFeature.Directory]);
+export const CatalogFeatures = Object.freeze([AccessFeature.Library, AccessFeature.Events, AccessFeature.Directory, AccessFeature.Catalog]);
 
 /**
  * Whether a catalog feature (library, events, venue directory) can be used, and how.

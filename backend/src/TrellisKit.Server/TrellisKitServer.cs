@@ -426,6 +426,8 @@ namespace TrellisKit.Server
             new AppManifestRoutes(Directory).Register(Server);
             new AdminAppConfigRoutes(Directory).Register(Server);
             new AdminAppContentRoutes(Directory).Register(Server);
+            new ExerciseCatalogRoutes(Directory).Register(Server);
+            new CatalogImportRoutes(Directory).Register(Server);
         }
 
         private void ApplyCors(HttpContextBase ctx)

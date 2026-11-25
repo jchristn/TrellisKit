@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  ApiClient, PublicPageKind, deriveSlug, isValidSlug, normalizeSlugInput, publicPagePath, publicPageUrl, publicPagesConfig, shareUrlOf, slugProblem
+  ApiClient, PublicPageKind, deriveSlug, isValidSlug, normalizeSlugInput, publicPagePath, publicPagePathWord, publicPageUrl, publicPagesConfig, shareUrlOf, slugProblem
 } from '../src/index.js';
 
 const property = { domains: { web: 'example.test' }, publicPages: { venuesPath: 'places' } };
@@ -9,6 +9,7 @@ const property = { domains: { web: 'example.test' }, publicPages: { venuesPath: 
 test('publicPagesConfig fills the engine defaults', () => {
   assert.deepEqual(publicPagesConfig({}), { enabled: true, venuesPath: 'venues', eventsPath: 'events', profilesPath: 'profiles', catalogPath: 'catalog' });
   assert.equal(publicPagesConfig(property).venuesPath, 'places');
+  assert.equal(publicPagePathWord({ publicPages: { catalogPath: 'techniques' } }, PublicPageKind.Catalog), 'techniques');
   assert.equal(publicPagesConfig({ publicPages: { enabled: false } }).enabled, false);
 });
 

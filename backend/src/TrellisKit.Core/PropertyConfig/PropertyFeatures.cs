@@ -86,8 +86,9 @@ namespace TrellisKit.Core.PropertyConfig
         public bool Saves { get; set; } = true;
 
         /// <summary>
-        /// The reviewed exercise and technique catalog. Default false when absent: unlike the other switches, a
-        /// missing value means off, so the catalog appears only when the property turns it on.
+        /// Reviewed exercise and technique catalog (docs/CATALOG_PUBLIC_PAGES.md, docs/CATALOG_IMPORTS.md). Default false
+        /// when absent: catalog routes, imports, public pages, and sitemaps return 404 NotAvailable until the property
+        /// turns it on. Independent of features.library.
         /// </summary>
         public bool Catalog { get; set; } = false;
 

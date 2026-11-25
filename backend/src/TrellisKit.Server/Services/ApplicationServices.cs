@@ -430,6 +430,11 @@ namespace TrellisKit.Server.Services
         /// </summary>
         public TrellisKit.Server.Services.Realtime.RealtimeModule Realtime { get; }
 
+        /// <summary>
+        /// Reviewed catalog import sources and the catalog.importSources job (docs/CATALOG_IMPORTS.md).
+        /// </summary>
+        public CatalogImport.CatalogImportService CatalogImports { get; }
+
         #endregion
 
         #region Private-Members
@@ -595,6 +600,9 @@ namespace TrellisKit.Server.Services
             Ranks.Attach();
             Favorites = new FavoriteService(this);
             Favorites.Attach();
+            CatalogImports = new CatalogImport.CatalogImportService(this);
+            Jobs.Registry.Register(new CatalogImport.CatalogImportJobHandler());
+            Jobs.Registry.Register(new CatalogGeneration.CatalogDraftJobHandler());
         }
 
         #endregion

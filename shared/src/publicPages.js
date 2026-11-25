@@ -1,7 +1,7 @@
 /**
  * Public landing pages (docs/PHASE4_CONTRACT.md section 18): server-rendered pages for member profiles (opt-in),
- * venues, events, and catalog entries at `/<path word>/<slug>`, where the path words come from the property's `publicPages` section
- * (engine defaults `venues`, `events`, `profiles`, `catalog`). The backend is authoritative; these helpers mirror its slug rules
+ * venues, events, and catalog entries at `/<path word>/<slug>`, where the path words come from the property's `publicPages`
+ * section (engine defaults `venues`, `events`, `profiles`, `catalog`). The backend is authoritative; these helpers mirror its slug rules
  * for live validation and build the page URLs for share and copy actions.
  */
 

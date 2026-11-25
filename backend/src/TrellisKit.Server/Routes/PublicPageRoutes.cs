@@ -56,15 +56,15 @@ namespace TrellisKit.Server.Routes
             WatsonWebserver.Core.Routing.RoutingGroup pre = server.Routes.PreAuthentication;
             WatsonWebserver.Core.Routing.RoutingGroup post = server.Routes.PostAuthentication;
             pre.Parameter.Add(HttpMethod.GET, _Base + "/resolve/{path}/{slug}", ResolveAsync, RouteHelper.HandleExceptionAsync,
-                openApiMetadata: Doc("Render a public landing page", _Tag, "The page at /{path}/{slug}: path is one of the property's publicPages path words (venuesPath, eventsPath, profilesPath). 200 a complete HTML document " +
+                openApiMetadata: Doc("Render a public landing page", _Tag, "The page at /{path}/{slug}: path is one of the property's publicPages path words (venuesPath, eventsPath, profilesPath, catalogPath; catalog pages need features.catalog). 200 a complete HTML document " +
                     "(title, description, canonical, Open Graph, Twitter, JSON-LD); 301 to the current slug for a previous slug; 404 an HTML not found page (noindex). A path that is not a public page path answers 404 with " +
                     "X-Accel-Redirect: /spa.html so the website proxy serves the website instead. Cache-Control: public, max-age=300. Rate limited per IP (rateLimits.publicPagesPerMinute). Anonymous.")
                     .PathParam("path", "First path segment").PathParam("slug", "Slug").File("text/html", "Page").Resp(301, "Moved Permanently (previous slug)").Resp(404, "Not found page or X-Accel-Redirect").Resp(429, "RateLimited"));
             pre.Static.Add(HttpMethod.GET, _Base + "/sitemap.xml", SitemapIndexAsync, RouteHelper.HandleExceptionAsync,
-                openApiMetadata: Doc("Sitemap index", _Tag, "Served at /sitemap.xml: the website's /sitemap-pages.xml plus /sitemap-{venues|events|profiles}-{n}.xml (10,000 URLs each). Cache-Control: public, max-age=3600. Anonymous.")
+                openApiMetadata: Doc("Sitemap index", _Tag, "Served at /sitemap.xml: the website's /sitemap-pages.xml plus /sitemap-{venues|events|profiles|catalog}-{n}.xml (10,000 URLs each). Cache-Control: public, max-age=3600. Anonymous.")
                     .File("application/xml", "Sitemap index").Resp(429, "RateLimited"));
             pre.Parameter.Add(HttpMethod.GET, _Base + "/sitemaps/{name}", SitemapAsync, RouteHelper.HandleExceptionAsync,
-                openApiMetadata: Doc("Child sitemap", _Tag, "Served at /sitemap-{name}: venues-{n}.xml, events-{n}.xml, or profiles-{n}.xml (loc, lastmod, changefreq, priority). Events leave the sitemap once they end. Anonymous.")
+                openApiMetadata: Doc("Child sitemap", _Tag, "Served at /sitemap-{name}: venues-{n}.xml, events-{n}.xml, profiles-{n}.xml, or catalog-{n}.xml (loc, lastmod, changefreq, priority). Events leave the sitemap once they end. Catalog entries appear only while Published, unmoderated, and undeleted with features.catalog on; catalog sitemaps require revalidation. Anonymous.")
                     .PathParam("name", "For example venues-1.xml").File("application/xml", "Sitemap").Resp(404, "Unknown sitemap").Resp(429, "RateLimited"));
             pre.Static.Add(HttpMethod.GET, _Base + "/well-known/apple-app-site-association", AppleAppSiteAssociationAsync, RouteHelper.HandleExceptionAsync,
                 openApiMetadata: Doc("Apple app site association", _Tag, "Served at /.well-known/apple-app-site-association: { webcredentials: { apps: [\"<mobile.appleTeamId>.<mobile.bundleId>\"] } }, so iOS offers to save and autofill the app's passwords for the website domain. 404 when mobile.appleTeamId or mobile.bundleId is not set. Cache-Control: public, max-age=3600. Anonymous.")

@@ -344,6 +344,20 @@
     "messaging": true,
     "training": true
   },
+  "library": {
+    "catalogMuscles": [
+      { "key": "upper-body", "label": "Upper body" },
+      { "key": "lower-body", "label": "Lower body" },
+      { "key": "core", "label": "Core" },
+      { "key": "full-body", "label": "Full body" }
+    ],
+    "catalogEquipment": [
+      { "key": "none", "label": "No equipment" },
+      { "key": "mat", "label": "Mat" },
+      { "key": "band", "label": "Resistance band" },
+      { "key": "partner", "label": "Partner" }
+    ]
+  },
   "web": {
     "theme": "web/theme.css",
     "content": "web/content",

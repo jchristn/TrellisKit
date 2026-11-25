@@ -63,7 +63,7 @@ namespace TrellisKit.Server.Services
             _Resolvers[FavoriteTargetTypeEnum.Venue] = new ContentTargetSaveResolver(registry, "Venue", () => _Services.Property.Property.Features.Directory);
             _Resolvers[FavoriteTargetTypeEnum.Instructor] = new ContentTargetSaveResolver(registry, "Instructor", () => _Services.Property.Property.Features.Directory);
             _Resolvers[FavoriteTargetTypeEnum.Event] = new ContentTargetSaveResolver(registry, "Event", () => _Services.Property.Property.Features.Events);
-            _Resolvers[FavoriteTargetTypeEnum.CatalogEntry] = new ContentTargetSaveResolver(registry, "CatalogEntry", () => true);
+            _Resolvers[FavoriteTargetTypeEnum.CatalogEntry] = new ContentTargetSaveResolver(registry, "CatalogEntry", () => _Services.Property.Property.Features.Catalog);
             _Resolvers[FavoriteTargetTypeEnum.Post] = new FeedPostSaveResolver(services);
             _Resolvers[FavoriteTargetTypeEnum.Thread] = new ThreadSaveResolver(services);
         }

@@ -77,7 +77,8 @@ namespace TrellisKit.Server.Services.PublicPages
         {
             { PublicPageKindEnum.Venue, "venues" },
             { PublicPageKindEnum.Event, "events" },
-            { PublicPageKindEnum.Profile, "profiles" }
+            { PublicPageKindEnum.Profile, "profiles" },
+            { PublicPageKindEnum.Catalog, "catalog" }
         };
 
         #endregion
@@ -184,6 +185,28 @@ namespace TrellisKit.Server.Services.PublicPages
         public string? EventUrl(EventRecord? e)
         {
             return EventHasPage(e) ? UrlOf(PublicPageKindEnum.Event, e!.Slug) : null;
+        }
+
+        /// <summary>
+        /// Whether a catalog entry has a public page: pages on, features.catalog on, and the entry Published,
+        /// unmoderated, undeleted, and slugged.
+        /// </summary>
+        /// <param name="entry">Entry or null.</param>
+        /// <returns>True when public.</returns>
+        public bool CatalogHasPage(CatalogEntry? entry)
+        {
+            return entry != null && Config().Enabled && _Services.Property.Property.Features.Catalog && entry.DeletedUtc == null &&
+                entry.Status == "Published" && entry.ModerationState == ModerationStateEnum.None && !String.IsNullOrWhiteSpace(entry.Slug);
+        }
+
+        /// <summary>
+        /// The public page URL of a catalog entry, or null for an unavailable entry.
+        /// </summary>
+        /// <param name="entry">Entry or null.</param>
+        /// <returns>Absolute canonical URL or null.</returns>
+        public string? CatalogUrl(CatalogEntry? entry)
+        {
+            return CatalogHasPage(entry) ? UrlOf(PublicPageKindEnum.Catalog, entry!.Slug) : null;
         }
 
         /// <summary>
@@ -318,6 +341,7 @@ namespace TrellisKit.Server.Services.PublicPages
             PublicPageKindEnum? kind = config.Enabled ? config.KindOf(path) : null;
             if (kind == PublicPageKindEnum.Venue && !_Services.Property.Property.Features.Directory) kind = null;
             if (kind == PublicPageKindEnum.Event && !_Services.Property.Property.Features.Events) kind = null;
+            if (kind == PublicPageKindEnum.Catalog && !_Services.Property.Property.Features.Catalog) kind = null;
             if (kind == null)
             {
                 TrellisKitTelemetry.Increment(PublicPageTelemetry.Requests, "kind", "None", "outcome", "PassThrough");
@@ -330,6 +354,7 @@ namespace TrellisKit.Server.Services.PublicPages
             if (key.Length == 0 || key.Length > 200) result = NotFound();
             else if (kind == PublicPageKindEnum.Venue) result = await VenuePageAsync(key, token).ConfigureAwait(false);
             else if (kind == PublicPageKindEnum.Event) result = await EventPageAsync(key, sourceIp, token).ConfigureAwait(false);
+            else if (kind == PublicPageKindEnum.Catalog) result = await CatalogPageAsync(key, token).ConfigureAwait(false);
             else result = await ProfilePageAsync(key, token).ConfigureAwait(false);
             string outcome = result.Location != null ? "Redirect" : result.StatusCode == 200 ? "Ok" : "NotFound";
             TrellisKitTelemetry.Increment(PublicPageTelemetry.Requests, "kind", kind.Value.ToString(), "outcome", outcome);
@@ -377,7 +402,7 @@ namespace TrellisKit.Server.Services.PublicPages
         public async Task<PublicPageResult> SitemapAsync(string? name, string? sourceIp, CancellationToken token = default)
         {
             _Services.Limits.EnforceIp(sourceIp, "public-pages", _Services.Settings.RateLimits.PublicPagesPerMinute, RateLimitService.Minute);
-            System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(name ?? String.Empty, "^(venues|events|profiles)-([1-9][0-9]{0,3})\\.xml$");
+            System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(name ?? String.Empty, "^(venues|events|profiles|catalog)-([1-9][0-9]{0,3})\\.xml$");
             PublicPageKindEnum? kind = null;
             if (m.Success) kind = SitemapNames.First(p => p.Value == m.Groups[1].Value).Key;
             if (kind == null || !Kinds().Contains(kind.Value)) return SitemapNotFound();
@@ -398,7 +423,7 @@ namespace TrellisKit.Server.Services.PublicPages
             }
             xml.Append("</urlset>\n");
             TrellisKitTelemetry.Increment(PublicPageTelemetry.Requests, "kind", "Sitemap", "outcome", "Ok");
-            return new PublicPageResult { ContentType = _XmlType, Body = xml.ToString(), CacheControl = _SitemapCache };
+            return new PublicPageResult { ContentType = _XmlType, Body = xml.ToString(), CacheControl = kind == PublicPageKindEnum.Catalog ? "public, max-age=0, must-revalidate" : _SitemapCache };
         }
 
         /// <summary>
@@ -479,6 +504,7 @@ namespace TrellisKit.Server.Services.PublicPages
             if (_Services.Property.Property.Features.Directory) kinds.Add(PublicPageKindEnum.Venue);
             if (_Services.Property.Property.Features.Events) kinds.Add(PublicPageKindEnum.Event);
             kinds.Add(PublicPageKindEnum.Profile);
+            if (_Services.Property.Property.Features.Catalog) kinds.Add(PublicPageKindEnum.Catalog);
             return kinds;
         }
 
@@ -842,6 +868,146 @@ namespace TrellisKit.Server.Services.PublicPages
                 AppUrl = site + "/app/events/" + Uri.EscapeDataString(e.Id),
                 AppLabel = PublicPageText.OpenEventInApp
             });
+        }
+
+        private async Task<PublicPageResult> CatalogPageAsync(string key, CancellationToken token)
+        {
+            CatalogEntry? entry = await _Services.Database.ExerciseCatalog.ReadAsync(key, token).ConfigureAwait(false);
+            if (!CatalogHasPage(entry)) return NotFound();
+            if (!String.Equals(entry!.Slug, key, StringComparison.Ordinal)) return Redirect(PublicPageKindEnum.Catalog, entry.Slug);
+            EnumerationRequest request = _Services.Enumeration.Prepare(new EnumerationQuery { MaxResults = 50 }, ExerciseCatalogCollections.Relationships, false, entry.Id);
+            EnumerationResult<CatalogRelationship> related = await _Services.Database.ExerciseCatalog.RelationshipsAsync(request, entry.Id, true, token).ConfigureAwait(false);
+            string url = CatalogUrl(entry)!;
+            string site = _Services.Property.PublicBaseUrl;
+            StringBuilder main = new StringBuilder();
+            main.Append("<nav aria-label=\"").Append(PublicPageRenderer.Attr(PublicCatalogText.Breadcrumb)).Append("\">")
+                .Append(Link(site + "/", PublicPageText.Home)).Append(" / <span aria-current=\"page\">").Append(PublicPageRenderer.Attr(entry.Name)).Append("</span></nav>");
+            main.Append("<section class=\"card\"><p class=\"eyebrow\">").Append(PublicPageRenderer.Attr(entry.Kind)).Append("</p><h1>")
+                .Append(PublicPageRenderer.Attr(entry.Name)).Append("</h1>");
+            if (!String.IsNullOrWhiteSpace(entry.Summary)) main.Append("<p class=\"description\">").Append(PublicPageRenderer.Attr(entry.Summary)).Append("</p>");
+            main.Append("</section>");
+            List<KeyValuePair<string, string>> facts = new List<KeyValuePair<string, string>>();
+            void Fact(string label, string? value)
+            {
+                if (!String.IsNullOrWhiteSpace(value)) facts.Add(new KeyValuePair<string, string>(label, PublicPageRenderer.Attr(value)));
+            }
+            PropertyCatalogDescriptorProfile? descriptors=_Services.Property.Property.LibrarySection?.CatalogDescriptorProfiles.FirstOrDefault(p=>p.ProgramKey==entry.Program);
+            if(entry.ModalityDetails!=null)
+            {
+                foreach(CatalogLocalizedName name in entry.ModalityDetails.LocalizedNames)
+                {
+                    string label=descriptors?.NameLanguages.FirstOrDefault(o=>CatalogLanguageTags.Normalize(o.Key)==name.LanguageTag)?.Label??name.LanguageTag;
+                    Fact(PublicCatalogText.LocalizedNames+" ("+label+")",name.Text);
+                }
+                CatalogModalityDetails details=entry.ModalityDetails;
+                Fact(descriptors?.AttireLabel??PublicCatalogText.Attire,descriptors?.Attires.FirstOrDefault(o=>o.Key==details.AttireKey)?.Label??details.AttireKey);
+                Fact(descriptors?.LevelLabel??PublicCatalogText.Level,descriptors?.Levels.FirstOrDefault(o=>o.Key==details.LevelKey)?.Label??details.LevelKey);
+                if(details.NotationSystemKey!=null)Fact(PublicCatalogText.Notation+" ("+(descriptors?.NotationSystems.FirstOrDefault(o=>o.Key==details.NotationSystemKey)?.Label??details.NotationSystemKey)+")",details.NotationText);
+                string? family=entry.ModalityDetails.FamilyKey;
+                Fact(descriptors?.FamilyLabel??PublicCatalogText.Family,descriptors?.Families.FirstOrDefault(o=>o.Key==family)?.Label??family);
+            }
+            Fact(PublicCatalogText.Difficulty, entry.Difficulty == "AllLevels" ? PublicCatalogText.AllLevels : entry.Difficulty);
+            Fact(PublicCatalogText.MovementPattern, entry.MovementPattern);
+            Fact(PublicCatalogText.Plane, entry.Plane);
+            Fact(PublicCatalogText.Laterality, entry.Laterality);
+            Fact(PublicCatalogText.TechniqueType, entry.TechniqueType);
+            Fact(PublicCatalogText.FromPosition, entry.FromPosition);
+            Fact(PublicCatalogText.ToPosition, entry.ToPosition);
+            main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(PublicPageText.Details)).Append("</h2>").Append(Facts(facts)).Append("</section>");
+            CatalogApparatusSetup? apparatus=entry.ApparatusSetup;
+            if(apparatus?.ApparatusKey!=null)
+            {
+                main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(PublicCatalogText.ApparatusSetup)).Append("</h2>");
+                facts.Clear();
+                Fact(PublicCatalogText.Apparatus,_Services.Property.Property.LibrarySection?.CatalogEquipment.FirstOrDefault(o=>o.Key==apparatus.ApparatusKey)?.Label??apparatus.ApparatusKey);
+                Fact(PublicCatalogText.Manufacturer,apparatus.Manufacturer);Fact(PublicCatalogText.Model,apparatus.Model);main.Append(Facts(facts));
+                void SetupText(string label,string? text)
+                {
+                    if(text==null)return;
+                    main.Append("<h3>").Append(PublicPageRenderer.Attr(label)).Append("</h3><p class=\"setup-notes\">").Append(PublicPageRenderer.Attr(text)).Append("</p>");
+                }
+                SetupText(PublicCatalogText.SetupNotes,apparatus.SetupText);SetupText(PublicCatalogText.SpringSetup,apparatus.SpringSetupText);
+                if(apparatus.SpringSetupText!=null)main.Append("<p>").Append(PublicPageRenderer.Attr(PublicCatalogText.SpringContext)).Append("</p>");
+                main.Append("</section>");
+            }
+            void Section(string label, IEnumerable<string> values, bool ordered = false)
+            {
+                List<string> rows = values.Where(v => !String.IsNullOrWhiteSpace(v)).Take(50).ToList();
+                if (rows.Count == 0) return;
+                string tag = ordered ? "ol" : "ul";
+                main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(label)).Append("</h2><").Append(tag).Append('>');
+                foreach (string value in rows) main.Append("<li>").Append(PublicPageRenderer.Attr(value)).Append("</li>");
+                main.Append("</").Append(tag).Append("></section>");
+            }
+            PropertyLibrarySection? library = _Services.Property.Property.LibrarySection;
+            string Vocabulary(string key, List<PropertyOptionSeed>? options) => options?.FirstOrDefault(o => o.Key == key)?.Label ?? key;
+            Section(PublicCatalogText.Aliases, entry.Aliases);
+            Section(PublicCatalogText.PrimaryMuscles, entry.PrimaryMuscles.Select(k => Vocabulary(k, library?.CatalogMuscles)));
+            Section(PublicCatalogText.SecondaryMuscles, entry.SecondaryMuscles.Select(k => Vocabulary(k, library?.CatalogMuscles)));
+            Section(PublicCatalogText.Equipment, entry.Equipment.Select(k => Vocabulary(k, library?.CatalogEquipment)));
+            Section(PublicCatalogText.Instructions, entry.Instructions, true);
+            Section(PublicCatalogText.Cues, entry.Cues);
+            Section(PublicCatalogText.CommonErrors, entry.CommonErrors);
+            Section(PublicCatalogText.Regressions, entry.Regressions);
+            Section(PublicCatalogText.Progressions, entry.Progressions);
+            Section(PublicCatalogText.Substitutions, entry.Substitutions);
+            Section(PublicCatalogText.Contraindications, entry.Contraindications);
+            List<object?> relatedSchema = new List<object?>();
+            if (related.Objects.Count > 0)
+            {
+                main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(PublicCatalogText.Related)).Append("</h2><ul>");
+                foreach (CatalogRelationship relation in related.Objects)
+                {
+                    string? targetUrl = UrlOf(PublicPageKindEnum.Catalog, relation.TargetSlug);
+                    if (targetUrl == null || String.IsNullOrWhiteSpace(relation.TargetName)) continue;
+                    main.Append("<li>").Append(PublicPageRenderer.Attr(relation.Kind)).Append(": ").Append(Link(targetUrl, relation.TargetName));
+                    if (!String.IsNullOrWhiteSpace(relation.Note)) main.Append("<p>").Append(PublicPageRenderer.Attr(relation.Note)).Append("</p>");
+                    main.Append("</li>");
+                    relatedSchema.Add(new Dictionary<string, object?> { ["@type"] = "CreativeWork", ["name"] = relation.TargetName, ["url"] = targetUrl });
+                }
+                main.Append("</ul></section>");
+            }
+            List<object?> citations = new List<object?>();
+            if (entry.Sources.Count > 0)
+            {
+                main.Append("<section class=\"card\"><h2>").Append(PublicPageRenderer.Attr(PublicCatalogText.Sources)).Append("</h2><ul>");
+                foreach (CatalogSource source in entry.Sources.Take(20))
+                {
+                    string? sourceUrl = IsHttpUrl(source.Url) ? source.Url : null;
+                    main.Append("<li>").Append(sourceUrl == null ? PublicPageRenderer.Attr(source.Title) : Link(sourceUrl, source.Title))
+                        .Append(" <span>").Append(PublicPageRenderer.Attr(source.License)).Append("</span>");
+                    if (!String.IsNullOrWhiteSpace(source.Attribution)) main.Append("<p>").Append(PublicPageRenderer.Attr(source.Attribution)).Append("</p>");
+                    main.Append("</li>");
+                    citations.Add(new Dictionary<string, object?> { ["@type"] = "CreativeWork", ["name"] = source.Title, ["url"] = sourceUrl, ["creditText"] = source.Attribution });
+                }
+                main.Append("</ul></section>");
+            }
+            Dictionary<string, object?> work = new Dictionary<string, object?>
+            {
+                ["@type"] = "CreativeWork", ["@id"] = url, ["url"] = url, ["name"] = entry.Name,
+                ["description"] = Excerpt(entry.Summary), ["genre"] = entry.Kind,
+                ["alternateName"] = entry.Aliases.Concat(entry.ModalityDetails?.LocalizedNames.Select(n=>n.Text)??Enumerable.Empty<string>()).Distinct(StringComparer.Ordinal).ToList(),
+                ["datePublished"] = entry.PublishedUtc?.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture),
+                ["dateModified"] = entry.UpdatedUtc.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", CultureInfo.InvariantCulture),
+                ["citation"] = citations, ["mentions"] = relatedSchema
+            };
+            Dictionary<string, object?> breadcrumb = new Dictionary<string, object?>
+            {
+                ["@type"] = "BreadcrumbList", ["itemListElement"] = new List<object?>
+                {
+                    new Dictionary<string, object?> { ["@type"] = "ListItem", ["position"] = 1, ["name"] = PublicPageText.Home, ["item"] = site + "/" },
+                    new Dictionary<string, object?> { ["@type"] = "ListItem", ["position"] = 2, ["name"] = entry.Name, ["item"] = url }
+                }
+            };
+            PublicPageResult result = Page(new PublicPageDocument
+            {
+                Title = PublicPageText.Title(entry.Name, _Services.Property.Name), Description = Excerpt(entry.Summary, entry.Name),
+                CanonicalUrl = url, OgType = "article", MainHtml = main.ToString(),
+                JsonLd = Json(new Dictionary<string, object?> { ["@context"] = "https://schema.org", ["@graph"] = new List<object?> { work, breadcrumb } }),
+                AppUrl = site + "/app/catalog/" + Uri.EscapeDataString(entry.Slug), AppLabel = PublicCatalogText.OpenInApp
+            });
+            result.CacheControl = "public, max-age=0, must-revalidate";
+            return result;
         }
 
         private async Task<PublicPageResult> ProfilePageAsync(string key, CancellationToken token)

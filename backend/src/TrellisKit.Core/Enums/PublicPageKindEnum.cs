@@ -18,6 +18,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// A member's opt-in profile (the property's profilesPath).
         /// </summary>
-        Profile
+        Profile,
+
+        /// <summary>
+        /// A published, unmoderated catalog entry (the property's catalogPath; requires features.catalog).
+        /// </summary>
+        Catalog
     }
 }

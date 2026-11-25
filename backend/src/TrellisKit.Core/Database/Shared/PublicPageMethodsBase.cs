@@ -67,6 +67,9 @@ namespace TrellisKit.Core.Database.Shared
                     sql = "SELECT COUNT(*) AS cnt FROM (SELECT id FROM venues WHERE " + Scope() + " AND deletedutc IS NULL AND lower(slug) = " + s + (except.Length > 0 ? " AND id <> " + except : String.Empty) +
                         " UNION ALL SELECT venueid FROM venueslugs WHERE " + Scope() + " AND slug = " + s + (except.Length > 0 ? " AND venueid <> " + except : String.Empty) + ") t;";
                     break;
+                case PublicPageKindEnum.Catalog:
+                    sql = "SELECT COUNT(*) AS cnt FROM catalogentries WHERE " + Scope() + " AND deletedutc IS NULL AND lower(slug) = " + s + (except.Length > 0 ? " AND id <> " + except : String.Empty) + ";";
+                    break;
                 case PublicPageKindEnum.Event:
                     sql = "SELECT COUNT(*) AS cnt FROM (SELECT id FROM events WHERE " + Scope() + " AND deletedutc IS NULL AND lower(slug) = " + s + (except.Length > 0 ? " AND id <> " + except : String.Empty) +
                         " UNION ALL SELECT eventid FROM eventslugs WHERE " + Scope() + " AND slug = " + s + (except.Length > 0 ? " AND eventid <> " + except : String.Empty) + ") t;";
@@ -106,6 +109,8 @@ namespace TrellisKit.Core.Database.Shared
             {
                 case PublicPageKindEnum.Venue:
                     return "FROM venues x WHERE " + Scope("x") + " AND x.deletedutc IS NULL AND x.status = 'Active' AND x.moderationstate = 'None'";
+                case PublicPageKindEnum.Catalog:
+                    return "FROM catalogentries x WHERE " + Scope("x") + " AND x.deletedutc IS NULL AND x.status = 'Published' AND x.moderationstate = 'None' AND x.slug <> ''";
                 case PublicPageKindEnum.Event:
                     return "FROM events x WHERE " + Scope("x") + " AND x.deletedutc IS NULL AND x.status = 'Published' AND x.audience = 'Public' AND x.moderationstate = 'None' AND x.endutc >= " + D.Ts(nowUtc);
                 default:

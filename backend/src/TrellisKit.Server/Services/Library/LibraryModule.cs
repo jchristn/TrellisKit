@@ -62,6 +62,11 @@ namespace TrellisKit.Server.Services
         /// </summary>
         public LibraryContentProvider Provider { get; }
 
+        /// <summary>
+        /// Reviewed exercise and technique catalog (features.catalog, docs/CATALOG_MODALITIES.md).
+        /// </summary>
+        public ExerciseCatalogService ExerciseCatalog { get; }
+
         #endregion
 
         #region Private-Members
@@ -91,6 +96,8 @@ namespace TrellisKit.Server.Services
             Notifications = new LibraryNotificationService(services);
             Provider = new LibraryContentProvider(services);
             services.ContentTargets.Register(Provider);
+            ExerciseCatalog = new ExerciseCatalogService(services);
+            services.ContentTargets.Register(new ExerciseCatalogContentProvider(services));
         }
 
         #endregion

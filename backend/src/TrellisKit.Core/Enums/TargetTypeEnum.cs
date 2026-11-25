@@ -532,6 +532,15 @@ namespace TrellisKit.Core.Enums
         Favorite,
 
         /// <summary>A member's named collection of saved items (fvc_), private to the member.</summary>
-        FavoriteCollection
+        FavoriteCollection,
+
+        /// <summary>A reviewed exercise or technique catalog entry (cex_).</summary>
+        CatalogEntry,
+
+        /// <summary>A directed relationship between catalog entries (cre_).</summary>
+        CatalogRelationship,
+
+        /// <summary>An administrator-reviewed catalog import source (cis_), administrators only.</summary>
+        CatalogImportSource
     }
 }

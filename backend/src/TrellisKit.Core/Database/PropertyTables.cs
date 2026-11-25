@@ -57,6 +57,8 @@ namespace TrellisKit.Core.Database
         {
             "favoritecollectionitems", "favoritecollections", "favorites",
             "profileslugs", "profilepages",
+            // Reviewed exercise and technique catalog (docs/CATALOG_IMPORTS.md): children before entries.
+            "catalogimportitems", "catalogimportsources", "cataloglocalizednames", "catalogrelationships", "catalogsources", "catalogentryvalues", "catalogentries",
             "propertydocumentacceptances", "propertydocumentversions",
             "propertybrandoverrides", "propertybrandcolors", "propertybrandpalettes", "propertyai", "propertypalettechoices",
             "metricfirstactions", "metricseries", "metricannotations", "metricworkerruns", "metricalertstate", "metricstate",

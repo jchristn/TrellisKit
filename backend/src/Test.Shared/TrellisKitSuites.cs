@@ -143,6 +143,12 @@ namespace Test.Shared
                     SyncSuite.Build(),
                     MessagingLapseSuite.Build(),
                     MessagingLifecycleSuite.Build(),
+                    ExerciseCatalogSuite.Build(),
+                    CatalogImportSuite.Build(),
+                    CatalogModalitySuite.Build(),
+                    CatalogApparatusSuite.Build(),
+                    CatalogGenerationSuite.Build(),
+                    CatalogPublicPageSuite.Build(),
                 };
                 return core.Concat(IntegrationSuites.All).ToList();
             }

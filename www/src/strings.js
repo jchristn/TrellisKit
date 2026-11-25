@@ -4382,7 +4382,8 @@ const strings = {
         assistants: 'The AI assistants.',
         ideas: 'The ideas board (reading, voting, and submitting ideas).',
         search: 'Global search across posts, threads, comments, and members (independent of the forums).',
-        saves: 'Saving content and creating collections (members can still read and remove their saves).'
+        saves: 'Saving content and creating collections (members can still read and remove their saves).',
+        catalog: 'The exercise and technique catalog (when features.catalog is on).'
       },
       audienceLabel: 'Default audience for new content',
       audienceModelDefault: (label) => 'Model default (' + label + ')',
@@ -4874,7 +4875,8 @@ const strings = {
       directory: 'Member directory', messaging: 'Messages', assistants: 'Assistants', search: 'Search', ideas: 'Ideas',
       training: 'Training',
       ranks: 'Ranks and attendance',
-      saves: 'Saves'
+      saves: 'Saves',
+      catalog: 'Techniques'
     },
     audiences: { Public: 'Public', SignedIn: 'Signed-in accounts', Members: 'Members only' },
     audienceHints: {

@@ -356,6 +356,12 @@ namespace TrellisKit.Core.Database
         /// </summary>
         public IContentChangeMethods ContentChanges { get; protected internal set; } = null!;
 
+        /// <summary>Reviewed exercise and technique catalog entries and relationships, bound to the property.</summary>
+        public IExerciseCatalogMethods ExerciseCatalog { get; protected internal set; } = null!;
+
+        /// <summary>Reviewed catalog import sources and their per-key provenance, bound to the property.</summary>
+        public ICatalogImportMethods CatalogImports { get; protected internal set; } = null!;
+
 
         /// <summary>
         /// Live update (code update) methods.
