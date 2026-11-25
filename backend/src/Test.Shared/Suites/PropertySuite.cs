@@ -209,7 +209,7 @@ namespace Test.Shared.Suites
                 ["web.navigation.primary"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["primary"] = new JsonArray("feed", "forums", "search", "members", "library", "training", "events", "directory", "messages") },
                 ["web.navigation.primary[1]"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["primary"] = new JsonArray("feed", "feed") },
                 ["web.navigation.primary[0]"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["primary"] = new JsonArray("settings") },
-                ["web.navigation.labels.catalog"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["labels"] = new JsonObject { ["catalog"] = "Techniques" } },
+                ["web.navigation.labels.nonexistent"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["labels"] = new JsonObject { ["nonexistent"] = "Techniques" } },
                 ["web.navigation.labels.training"] = j => Obj(j, "web")["navigation"] = new JsonObject { ["labels"] = new JsonObject { ["training"] = new string('x', 25) } },
                 ["mobile.navigation.accountMenu[1]"] = j => Obj(Obj(j, "mobile"), "navigation")["accountMenu"] = new JsonArray("profile", "profile"),
                 ["mobile.navigation.accountMenu[0]"] = j => Obj(Obj(j, "mobile"), "navigation")["accountMenu"] = new JsonArray("/admin"),
