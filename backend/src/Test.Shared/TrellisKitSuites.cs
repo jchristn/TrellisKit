@@ -89,6 +89,7 @@ namespace Test.Shared
                     OpenApiDocsSuite.Build(),
                     UsageSuite.Build(),
                     MetricsSuite.Build(),
+                    AdminSummarySuite.Build(),
                     ProductMetricsSuite.Build(),
                     BrandingSuite.Build(),
                     PalettePresetSuite.Build(),

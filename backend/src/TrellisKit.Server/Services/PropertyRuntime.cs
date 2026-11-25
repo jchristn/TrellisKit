@@ -196,6 +196,8 @@ namespace TrellisKit.Server.Services
             _Workers.Add(new UsageWorker(s.Database, s.Usage, _Settings.Usage, _Logger));
             _Workers.Add(new JobWorker(s.Jobs, _Settings.Jobs, _Logger));
             _Workers.Add(new MetricsWorker(s.Metrics, _Logger));
+            _Workers.Add(new LeasedPassWorker(s.Database, AdminSummary.AdminSummaryService.WorkerName, () => TimeSpan.FromMinutes(5), TimeSpan.FromMinutes(2),
+                ct => s.AdminSummary.RunDueAsync(ct), _Logger) { LeaseDuration = TimeSpan.FromMinutes(10) });
             s.Library.AddWorkers(_Workers, token);
             s.Events.AddWorkers(_Workers, token);
             s.Directory.AddWorkers(_Workers, token);

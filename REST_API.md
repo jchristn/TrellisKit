@@ -4121,7 +4121,7 @@ These property-scoped routes require `SystemAdmin` or the property admin token. 
 | GET / POST | `/api/v1/admin/metrics/pages` / `/api/v1/admin/metrics/pages/enumerate` | `EnumerationQuery` -> `EnumerationResult<MetricPageDeclaration>`; six engine pages plus at most 20 property pages, at most 24 chart declarations per page. |
 | GET / POST | `/api/v1/admin/metrics/workers` / `/api/v1/admin/metrics/workers/enumerate` | `EnumerationQuery` -> `EnumerationResult<WorkerPassRecord>`; filters worker/outcome/from/to; actual start timestamps, SQL keyset paging across retained history. No 2,000-row truncation. |
 | GET / POST | `/api/v1/admin/metrics/annotations` / `/api/v1/admin/metrics/annotations/enumerate` | `EnumerationQuery` -> `EnumerationResult<MetricAnnotation>`; filters kind/from/to, SQL keyset paging. |
-| POST | `/api/v1/admin/metrics/query`, `/api/v1/admin/metrics/query/enumerate` | `MetricEnumerationQuery` -> `EnumerationResult<MetricObservationRow>` with scalar metric/unit/timeZone/completeThroughUtc context. |
+| POST | `/api/v1/admin/metrics/query`, `POST /api/v1/admin/metrics/query/enumerate` | `MetricEnumerationQuery` -> `EnumerationResult<MetricObservationRow>` with scalar metric/unit/timeZone/completeThroughUtc context. |
 
 Metric queries page actual current/comparison observations. Each object has `id`, `period` (`Current` or `Previous`), `seriesKey`, `startUtc`, `endUtc`, nullable `value`, `complete`, `suppressed`, `samples`, `labels`, and `tags`. Standard `filters.period` and `filters.seriesKey` select rows. The nested `query` selects the metric and source window; its dimension filters are separate from enumeration filters. Cursors are bound to the entire selection and property. Annotations are a separate enumeration. Queries are capped at 2,000 buckets, 20 leading groups plus `Other`, eight exact dimension filters and 1,830 days; each transport page obeys the normal admin cap. Clients follow cursors for the selected chart window before reconstructing rendering series.
 
@@ -4143,6 +4143,37 @@ Metric queries page actual current/comparison observations. Each object has `id`
 ```
 
 Missing observations remain null; they are not fabricated zeros. Member-sensitive grouped points with fewer than five members are suppressed with null value and zero samples. Operational series use UTC; business days/weeks use the property's usage calendar. Hour buckets are UTC instants, so repeated daylight-saving hours stay distinct. Distribution queries merge histogram counts before selecting the percentile; they never average precomputed percentiles. Previous series cover the immediately preceding equal-duration interval.
+
+## Admin: daily summary (SystemAdmin)
+
+The daily administrator summary email and its report. Recipients, the send hour, and extra lines are deployment settings (`AdminSummary` in the settings JSON file; see [Admin summary](docs/ADMIN_SUMMARY.md)). Both routes require `SystemAdmin` or the property admin token.
+
+| Method and path | Body or query | Success | Errors |
+|---|---|---|---|
+| `GET /api/v1/admin/summary` | `date` (`yyyy-MM-dd`, default yesterday in `usage.timeZone`) | `200 AdminSummaryReport` | `400 ValidationFailed` (format, future date, more than 1,800 days ago), `403 Forbidden` |
+| `POST /api/v1/admin/summary/send` | `{ date?, to? }` | `200 AdminSummarySendResult { date, queued, alreadySent }` | `400 ValidationFailed` (date, invalid `to`, or no `to` and no configured recipients), `403 Forbidden` |
+
+`AdminSummaryReport`: `propertyId`, `propertyName`, `date`, `timeZone`, `fromUtc`, `toUtc` (the local day, exclusive end), `generatedUtc`, `sections` (`[{ title, rows }]`), and `skipped` (configured items that could not be reported, with the reason). A row has `metric`, `label`, nullable `group`, `unit`, nullable `value`, `previousValue`, `sevenDayAverage`, and `change` (relative to the day before), `complete`, `suppressed`, `timeZone` (the bucket calendar: `usage.timeZone`, or `UTC` for operational metrics), and `display`, the formatted line the email shows. Missing data stays null and displays as `No data`; member-sensitive groups smaller than five are withheld. The report is bounded by the engine default items plus at most 60 configured items, each with at most 20 groups plus a total and `Other`.
+
+`send` with `to` always queues one copy to that address. Without `to` it queues one message per configured recipient that has not received that date's summary; the daily worker shares the same once-per-date-and-recipient key, so a manual send never causes a duplicate. Audited `admin_summary.send`.
+
+```json
+{
+  "propertyId": "app_...",
+  "propertyName": "Example Community",
+  "date": "2026-11-23",
+  "timeZone": "America/Los_Angeles",
+  "sections": [
+    {
+      "title": "Members",
+      "rows": [
+        { "metric": "users.new", "label": "New sign-ups", "group": null, "unit": "count", "value": 12, "previousValue": 9, "sevenDayAverage": 10.43, "change": 0.3333, "complete": true, "suppressed": false, "timeZone": "America/Los_Angeles", "display": "12 (day before 9, +33%; 7-day average 10.43)" }
+      ]
+    }
+  ],
+  "skipped": []
+}
+```
 
 ## Collection contract migration (2026-11-23)
 

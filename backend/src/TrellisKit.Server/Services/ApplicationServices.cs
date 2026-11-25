@@ -381,6 +381,11 @@ namespace TrellisKit.Server.Services
         /// </summary>
         public ContentReview.ContentReviewService ContentReview { get; }
 
+        /// <summary>
+        /// Daily administrator summary email (docs/ADMIN_SUMMARY.md).
+        /// </summary>
+        public AdminSummary.AdminSummaryService AdminSummary { get; }
+
 
         /// <summary>
         /// Public landing pages: venue, event, and opt-in member profile pages, the sitemap, and robots.txt
@@ -575,6 +580,7 @@ namespace TrellisKit.Server.Services
             Jobs = new Jobs.JobService(this);
             ContentReview = new ContentReview.ContentReviewService(this);
             ContentReview.Attach();
+            AdminSummary = new AdminSummary.AdminSummaryService(this);
         }
 
         #endregion

@@ -79,6 +79,7 @@ namespace TrellisKit.Server.Services.Email
             new StaffContentReviewDigestEmail(),
             new StaffIntegrationFailureEmail(),
             new StaffMetricAlertEmail(),
+            new StaffAdminSummaryEmail(),
             new StaffDirectorySubmissionEmail(),
             new StaffEventProposalEmail(),
             new StaffEventRsvpDigestEmail(),

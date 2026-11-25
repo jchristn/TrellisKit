@@ -56332,6 +56332,122 @@
       ]
     },
     {
+      "name": "Admin: summary",
+      "description": "Daily administrator summary email (docs/ADMIN_SUMMARY.md). Recipients, send hour, and extra lines come from the server settings JSON (AdminSummary section). SystemAdmin or the admin token.",
+      "item": [
+        {
+          "name": "Read the summary of a day",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/summary?date=2026-11-23",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "summary"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-11-23"
+                }
+              ]
+            },
+            "description": "Returns AdminSummaryReport for one local day (usage.timeZone; operational lines use UTC days): sections of lines with the value, the day before, the seven-day average, and the formatted display, plus skipped configured items. date defaults to yesterday."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Report shape', function () { const r = pm.response.json(); ['propertyId','date','timeZone','fromUtc','toUtc','sections','skipped'].forEach(k => pm.expect(r).to.have.property(k)); pm.expect(r.sections).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Send the summary now",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/summary/send",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "summary",
+                "send"
+              ]
+            },
+            "description": "Body { date?, to? }. With to, one copy goes to that address. Without it, each configured adminSummary.recipients address that has not received the date's summary gets one. Audited admin_summary.send.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": null,\n  \"to\": \"ops@example.test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Send result', function () { const r = pm.response.json(); pm.expect(r.queued).to.be.an('array'); pm.expect(r.alreadySent).to.be.an('array'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "name": "Standard collection enumeration",
       "description": "Canonical paged replacements for catalog and aggregate retrievals. See REST_API.md collection migration.",
       "item": [
