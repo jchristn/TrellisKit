@@ -116,6 +116,7 @@ namespace Test.Shared
                     RankSuite.Build(),
                     CurriculumSuite.Build(),
                     AttendanceSuite.Build(),
+                    FavoriteSuite.Build(),
                     EngagementSuite.Build(),
                     Phase4StaffSuite.Build(),
                     EventSuite.Build(),

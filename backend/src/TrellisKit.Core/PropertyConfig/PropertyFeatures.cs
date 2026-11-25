@@ -80,7 +80,8 @@ namespace TrellisKit.Core.PropertyConfig
         public bool Training { get; set; } = true;
 
         /// <summary>
-        /// Saves and private collections. Default true when absent. Independent of <see cref="Training"/>.
+        /// Saves and private collections (/api/v1/me/saves, /api/v1/me/save-collections). Default true when absent;
+        /// false makes the saves routes 404 NotAvailable. Independent of <see cref="Training"/> and any navigation switch.
         /// </summary>
         public bool Saves { get; set; } = true;
 

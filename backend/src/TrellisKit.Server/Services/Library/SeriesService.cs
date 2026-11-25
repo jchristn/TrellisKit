@@ -312,6 +312,7 @@ namespace TrellisKit.Server.Services
                 throw new ApiErrorException(409, "SeriesNotEmpty", "This series still has lessons; archive it instead.");
             await _Services.Media.UnpublishTargetAsync(TargetTypeEnum.Series, series.Id, token).ConfigureAwait(false);
             await _Services.Media.DetachAsync(TargetTypeEnum.Series, series.Id, null, token).ConfigureAwait(false);
+            await _Services.Favorites.TargetDeletedAsync(FavoriteTargetTypeEnum.Series, series.Id, token).ConfigureAwait(false);
             await _Services.Audit.WriteAsync(info, "series.delete", TargetTypeEnum.Series.ToString(), series.Id, series.Title, token).ConfigureAwait(false);
             await _Services.Forums.Search.EnqueueAsync(TargetTypeEnum.Series, series.Id, token).ConfigureAwait(false);
         }

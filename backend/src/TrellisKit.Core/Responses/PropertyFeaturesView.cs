@@ -20,7 +20,7 @@ namespace TrellisKit.Core.Responses
 
         /// <summary>
         /// Whether verified ranks, curricula, and attendance are on (server setting ranks.enabled; docs/TRELLISKIT.md
-        /// section 15). Default false.
+        /// section 16). Default false.
         /// </summary>
         public bool Ranks { get; set; } = false;
 

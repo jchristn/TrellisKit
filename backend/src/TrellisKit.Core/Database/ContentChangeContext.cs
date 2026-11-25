@@ -54,7 +54,7 @@ namespace TrellisKit.Core.Database
 
         private static readonly AsyncLocal<ContentChangeContext?> _Current = new AsyncLocal<ContentChangeContext?>();
         private static readonly string[] _WriteKeywords = new[] { "INSERT", "UPDATE", "DELETE" };
-        private static readonly string[] _Watched = TrellisKit.Core.Database.Postgresql.Queries.ContentChangesSchema.Sources.Select(s => s.Table).Distinct(StringComparer.Ordinal).ToArray();
+        private static readonly string[] _Watched = TrellisKit.Core.Database.Postgresql.Queries.ContentChangesSchema.AllSources.Select(s => s.Table).Distinct(StringComparer.Ordinal).ToArray();
 
         #endregion
 

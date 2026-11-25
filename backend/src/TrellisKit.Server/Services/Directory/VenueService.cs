@@ -277,6 +277,7 @@ namespace TrellisKit.Server.Services
             if (!await _Services.Database.DirectoryListings.Venues.SoftDeleteAsync(venue.Id, DateTime.UtcNow, token).ConfigureAwait(false)) throw ApiErrorException.NotFound("Venue");
             await _Services.Media.UnpublishTargetAsync(TargetTypeEnum.Venue, venue.Id, token).ConfigureAwait(false);
             await _Services.Directory.ChangedAsync(TargetTypeEnum.Venue, venue.Id, token).ConfigureAwait(false);
+            await _Services.Favorites.TargetDeletedAsync(FavoriteTargetTypeEnum.Venue, venue.Id, token).ConfigureAwait(false);
             await _Services.Audit.WriteAsync(info, "venue.delete", TargetTypeEnum.Venue.ToString(), venue.Id, venue.Name, token).ConfigureAwait(false);
             TrellisKitTelemetry.Add(DirectoryTelemetry.Venues, 1, "action", "delete", "outcome", "ok");
         }

@@ -4381,7 +4381,8 @@ const strings = {
         messaging: 'Direct messages.',
         assistants: 'The AI assistants.',
         ideas: 'The ideas board (reading, voting, and submitting ideas).',
-        search: 'Global search across posts, threads, comments, and members (independent of the forums).'
+        search: 'Global search across posts, threads, comments, and members (independent of the forums).',
+        saves: 'Saving content and creating collections (members can still read and remove their saves).'
       },
       audienceLabel: 'Default audience for new content',
       audienceModelDefault: (label) => 'Model default (' + label + ')',
@@ -4872,7 +4873,8 @@ const strings = {
       feed: 'Feed', members: 'Member profiles', forums: 'Forums', library: 'Library', events: 'Events',
       directory: 'Member directory', messaging: 'Messages', assistants: 'Assistants', search: 'Search', ideas: 'Ideas',
       training: 'Training',
-      ranks: 'Ranks and attendance'
+      ranks: 'Ranks and attendance',
+      saves: 'Saves'
     },
     audiences: { Public: 'Public', SignedIn: 'Signed-in accounts', Members: 'Members only' },
     audienceHints: {

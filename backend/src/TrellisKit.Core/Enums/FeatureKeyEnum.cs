@@ -64,6 +64,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// Verified ranks, curricula, and attendance (also needs the ranks.enabled setting).
         /// </summary>
-        Ranks
+        Ranks,
+
+        /// <summary>
+        /// Saves and private collections (features.saves).
+        /// </summary>
+        Saves
     }
 }

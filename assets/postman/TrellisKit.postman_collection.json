@@ -704,6 +704,16 @@
       "value": "",
       "type": "string",
       "description": "Member to award or check in."
+    },
+    {
+      "key": "favoriteId",
+      "value": "",
+      "description": "Save id; set by Save a lesson."
+    },
+    {
+      "key": "saveCollectionId",
+      "value": "",
+      "description": "Save collection id; set by Create a save collection."
     }
   ],
   "item": [
@@ -59719,7 +59729,7 @@
     },
     {
       "name": "Ranks, curricula, and attendance",
-      "description": "Verified ranks on Rank profile fields, lineage, curricula, and attendance (docs/TRELLISKIT.md section 15). Every route answers 404 NotAvailable while ranks.enabled is off. Rank staff: SystemAdmin or RankAwarder; curriculum editors: SystemAdmin or LibraryEditor.",
+      "description": "Verified ranks on Rank profile fields, lineage, curricula, and attendance (docs/TRELLISKIT.md section 16). Every route answers 404 NotAvailable while ranks.enabled is off. Rank staff: SystemAdmin or RankAwarder; curriculum editors: SystemAdmin or LibraryEditor.",
       "item": [
         {
           "name": "Ranks",
@@ -62427,6 +62437,1010 @@
                 }
               ],
               "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Saves",
+      "description": "Generic saves and private collections (REST_API.md, Saves). Signed-in members ({{accessToken}}). 404 NotAvailable when features.saves is false; 503 FeatureDisabled under the saves kill switch. Saved lists never show the title of a target the member can no longer open.",
+      "item": [
+        {
+          "name": "Save a lesson",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/saves/Lesson/{{lessonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "saves",
+                "Lesson",
+                "{{lessonId}}"
+              ]
+            },
+            "description": "Idempotent: creates the save or updates it. targetType is Lesson, Series, CatalogEntry, Venue, Instructor, Event, Post, or Thread. Every body field is optional: collectionIds (at most 20 of your collections; replaces the set), note (at most 500 characters, visible to you and moderators; null clears it), labels, tags. 402 MembershipRequired when saves are gated, 403 Forbidden when you cannot open the target, 404 NotFound or NotAvailable, 409 LimitReached (saves.maxPerMember).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"collectionIds\": [\n    \"{{saveCollectionId}}\"\n  ],\n  \"note\": \"Drill this before class\",\n  \"labels\": [\n    \"review\"\n  ],\n  \"tags\": {\n    \"focus\": \"guard\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('FavoriteView', function () { const r = pm.response.json(); ['id','targetType','targetId','note','collectionIds','target','labels','tags','createdUtc','lastUpdateUtc'].forEach(k => pm.expect(r).to.have.property(k)); pm.collectionVariables.set('favoriteId', r.id); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Save an unknown target type (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/saves/Nope/{{lessonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "saves",
+                "Nope",
+                "{{lessonId}}"
+              ]
+            },
+            "description": "Unknown target types answer 400 ValidationFailed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Error ValidationFailed', function () { pm.expect(pm.response.json().error).to.eql('ValidationFailed'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Save a catalog entry without a catalog (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/saves/CatalogEntry/cat_missing",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "saves",
+                "CatalogEntry",
+                "cat_missing"
+              ]
+            },
+            "description": "A target type whose content is not present or whose feature is off answers 404 NotAvailable.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Error NotAvailable', function () { pm.expect(pm.response.json().error).to.eql('NotAvailable'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Save a missing lesson (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/saves/Lesson/les_missing",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "saves",
+                "Lesson",
+                "les_missing"
+              ]
+            },
+            "description": "A target that does not exist answers 404 NotFound.",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 404', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Error NotFound', function () { pm.expect(pm.response.json().error).to.eql('NotFound'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Remove a save",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/saves/Lesson/{{lessonId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "saves",
+                "Lesson",
+                "{{lessonId}}"
+              ]
+            },
+            "description": "Idempotent; 204 whether or not the target was saved."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List your saves",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/saves?targetTypes=Lesson,Series&maxResults=25",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "saves"
+              ],
+              "query": [
+                {
+                  "key": "targetTypes",
+                  "value": "Lesson,Series"
+                },
+                {
+                  "key": "maxResults",
+                  "value": "25"
+                }
+              ]
+            },
+            "description": "EnumerationResult<FavoriteView>. Orderings CreatedDescending (default), CreatedAscending, UpdatedDescending. Filters targetTypes (array or comma list), collectionId; labels, tags, search (notes), created window. Unavailable targets have target.available false and no title, image, or link."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r.maxResults).to.be.at.most(100); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enumerate your saves",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/saves/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "saves",
+                "enumerate"
+              ]
+            },
+            "description": "EnumerationQuery body. Member maximum 100.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 25,\n  \"ordering\": \"CreatedDescending\",\n  \"labels\": [\n    \"review\"\n  ],\n  \"tags\": {\n    \"focus\": \"guard\"\n  },\n  \"filters\": {\n    \"targetTypes\": [\n      \"Lesson\",\n      \"CatalogEntry\"\n    ],\n    \"collectionId\": null\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r.maxResults).to.be.at.most(100); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enumerate with an invalid continuation token (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/saves/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "saves",
+                "enumerate"
+              ]
+            },
+            "description": "A token from another query or a forged token answers 400 InvalidContinuationToken.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"continuationToken\": \"not-a-token\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Error InvalidContinuationToken', function () { pm.expect(pm.response.json().error).to.eql('InvalidContinuationToken'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read saved state",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/saves/state",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "saves",
+                "state"
+              ]
+            },
+            "description": "Body { targets } with 1 to 100 targets. Returns { items: [{ targetType, targetId, saved, favoriteId }] } in request order.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targets\": [\n    {\n      \"targetType\": \"Lesson\",\n      \"targetId\": \"{{lessonId}}\"\n    },\n    {\n      \"targetType\": \"Event\",\n      \"targetId\": \"{{eventId}}\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Items in order', function () { const r = pm.response.json(); pm.expect(r.items).to.have.length(2); pm.expect(r.items[0]).to.have.property('saved'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Read saved state with no targets (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/saves/state",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "saves",
+                "state"
+              ]
+            },
+            "description": "Empty or more than 100 targets answer 400 ValidationFailed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"targets\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Error ValidationFailed', function () { pm.expect(pm.response.json().error).to.eql('ValidationFailed'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create a save collection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/save-collections",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "save-collections"
+              ]
+            },
+            "description": "Body { name (1 to 60, unique per member, case-insensitive), labels, tags }. 409 DuplicateName or LimitReached (saves.maxCollectionsPerMember).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Guard work\",\n  \"labels\": [\n    \"guard\"\n  ],\n  \"tags\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('FavoriteCollection', function () { const r = pm.response.json(); ['id','name','position','itemCount','labels','tags'].forEach(k => pm.expect(r).to.have.property(k)); pm.collectionVariables.set('saveCollectionId', r.id); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create a duplicate collection (409)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/save-collections",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "save-collections"
+              ]
+            },
+            "description": "Names are unique per member, case-insensitive.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"guard WORK\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 409', function () { pm.response.to.have.status(409); });",
+                  "pm.test('Error DuplicateName', function () { pm.expect(pm.response.json().error).to.eql('DuplicateName'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List your save collections",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/save-collections",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "save-collections"
+              ]
+            },
+            "description": "EnumerationResult<FavoriteCollection> with item counts. Orderings PositionAscending (default), NameAscending, CreatedDescending, CreatedAscending."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r.maxResults).to.be.at.most(100); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Enumerate your save collections",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/save-collections/enumerate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "save-collections",
+                "enumerate"
+              ]
+            },
+            "description": "EnumerationQuery body.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"maxResults\": 50,\n  \"ordering\": \"PositionAscending\",\n  \"search\": \"guard\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('EnumerationResult', function () { const r = pm.response.json(); pm.expect(r.objects).to.be.an('array'); pm.expect(r.maxResults).to.be.at.most(100); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update a save collection",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/save-collections/{{saveCollectionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "save-collections",
+                "{{saveCollectionId}}"
+              ]
+            },
+            "description": "Body { name, labels, tags } (each optional). 404 NotFound for another member's collection; 409 DuplicateName.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Guard retention\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Renamed', function () { pm.expect(pm.response.json().name).to.eql('Guard retention'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Order save collections",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/save-collections/order",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "save-collections",
+                "order"
+              ]
+            },
+            "description": "Body { ids }: every one of your collections exactly once (at most saves.maxCollectionsPerMember); otherwise 400 ValidationFailed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\n    \"{{saveCollectionId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Order save collections with a missing id (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/save-collections/order",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "save-collections",
+                "order"
+              ]
+            },
+            "description": "The list must name every collection exactly once.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": []\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('Error ValidationFailed', function () { pm.expect(pm.response.json().error).to.eql('ValidationFailed'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete a save collection",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{accessToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/me/save-collections/{{saveCollectionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "me",
+                "save-collections",
+                "{{saveCollectionId}}"
+              ]
+            },
+            "description": "Removes the grouping only; its saves stay. 404 NotFound when absent or not yours."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
             }
           ]
         }

@@ -526,6 +526,12 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// A member's check-in to an event or venue session occurrence.
         /// </summary>
-        Attendance
+        Attendance,
+
+        /// <summary>A member's saved item (fav_), private to the member.</summary>
+        Favorite,
+
+        /// <summary>A member's named collection of saved items (fvc_), private to the member.</summary>
+        FavoriteCollection
     }
 }

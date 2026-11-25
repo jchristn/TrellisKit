@@ -55,6 +55,7 @@ namespace TrellisKit.Core.Database
 
         private static readonly List<string> _Owned = new List<string>
         {
+            "favoritecollectionitems", "favoritecollections", "favorites",
             "profileslugs", "profilepages",
             "propertydocumentacceptances", "propertydocumentversions",
             "propertybrandoverrides", "propertybrandcolors", "propertybrandpalettes", "propertyai", "propertypalettechoices",

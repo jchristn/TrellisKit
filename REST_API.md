@@ -2614,6 +2614,38 @@ Objects: `EffectiveRankView { fieldKey, fieldLabel, optionKey, optionLabel, colo
 | `DELETE /api/v1/admin/attendance/{id}` | Rank staff | | `204`; audited `attendance.delete` | `403`, `404` |
 | `GET /api/v1/me/attendance` and `POST /api/v1/me/attendance/enumerate` | Member | filters `targetType`, `targetId`, `occurrenceDate`, labels, tags | `200 EnumerationResult<AttendanceView>` | `400`, `404 NotAvailable` |
 
+## Saves (signed in)
+
+Generic saves and named private collections. A member saves a `Lesson`, `Series`, `CatalogEntry`, `Venue`, `Instructor`, `Event`, `Post` (feed post), or `Thread`; each type follows its own feature switch and read rules (`features.library`, `features.directory`, `features.events`, `features.forums`; `CatalogEntry` resolves through the catalog's content target provider and is unavailable while no catalog is present). The whole area is the `saves` feature: `features.saves: false` answers `404 NotAvailable` on every route below, and the `saves` kill switch answers `503 FeatureDisabled`. Saves are independent of any navigation or hub switch. The routes need a session (route group SignedIn). Writes (`PUT /me/saves/...`, creating a collection) need the write tier of the `saves` feature: a membership in `FullyGated`, or when `saves` is listed in `access.gatedFeatures` (`402 MembershipRequired` with `feature: "saves"`); reads and deletes stay open so a lapsed member can still see and remove saves.
+
+Saved lists never leak content the member can no longer open: when a target is archived, unpublished, moderated, behind a turned-off feature, or no longer readable by the member, its `target.available` is `false` and `title`, `imageUrl`, and `href` are `null`. Deleting a target (lesson, series, venue, instructor, event, post, thread, including purges) deletes every member's saves of it. Account deletion deletes the member's saves and collections; account exports carry the sections `saves` (with notes, `collectionIds`, labels, tags) and `saveCollections`.
+
+Notes are visible to the member and to moderators (never call them private in a client): they pass the word filter (`400 ContentFiltered`) and every create, edit, and clear writes a `contentchanges` row (target type `Favorite`, context the saved target) for content review. Labels and tags use the shared metadata tables (target types `Favorite` and `FavoriteCollection`, owner-editable through the generic metadata routes, discoverable only by their owner).
+
+### Shapes
+
+- `FavoriteView`: `{ id (fav_), targetType, targetId, note, collectionIds, target { available, title, imageUrl, href }, labels, tags, createdUtc, lastUpdateUtc }`. `collectionIds` follow the member's collection order.
+- `FavoriteCollection`: `{ id (fvc_), userId, name, position, itemCount, labels, tags, createdUtc, lastUpdateUtc }`.
+- `FavoriteRequest` (every field optional; omitted keeps the stored value): `{ collectionIds (at most 20 of your collections; replaces the set; [] removes it from every collection), note (at most 500 characters; null or empty clears it), labels, tags }`.
+
+### Routes
+
+| Method and path | Body | Success | Errors |
+|---|---|---|---|
+| `PUT /api/v1/me/saves/{targetType}/{targetId}` | `FavoriteRequest` | `200 FavoriteView` (idempotent: created or updated) | `400 ValidationFailed` (unknown type, note over 500, more than 20 collections, labels or tags), `400 ContentFiltered`, `401`, `402 MembershipRequired`, `403 Forbidden` (you cannot open the target), `404 NotFound` (target or collection), `404 NotAvailable` (saves off, or the target type unavailable), `409 LimitReached` (`saves.maxPerMember`) |
+| `DELETE /api/v1/me/saves/{targetType}/{targetId}` | | `204` (idempotent) | `400 ValidationFailed` (unknown type), `404 NotAvailable` |
+| `GET /api/v1/me/saves`, `POST /api/v1/me/saves/enumerate` | `EnumerationQuery`; orderings `CreatedDescending` (default), `CreatedAscending`, `UpdatedDescending`; filters `targetTypes` (array or comma list), `collectionId`; `labels`, `labelMatch`, `tags`, `search` (notes), `createdAfterUtc`, `createdBeforeUtc` | `200 EnumerationResult<FavoriteView>` (member maximum 100) | `400 InvalidContinuationToken`, `400 ValidationFailed`, `404 NotFound` (`collectionId` not yours), `404 NotAvailable` |
+| `POST /api/v1/me/saves/state` | `{ targets: [{ targetType, targetId }] }` (1 to 100) | `200 { items: [{ targetType, targetId, saved, favoriteId }] }` in request order | `400 ValidationFailed` (empty, over 100 targets, unknown type, missing id), `404 NotAvailable` |
+| `GET /api/v1/me/save-collections`, `POST /api/v1/me/save-collections/enumerate` | `EnumerationQuery`; orderings `PositionAscending` (default), `NameAscending`, `CreatedDescending`, `CreatedAscending`; `search` (names), labels and tags | `200 EnumerationResult<FavoriteCollection>` | `400 InvalidContinuationToken`, `400 ValidationFailed`, `404 NotAvailable` |
+| `POST /api/v1/me/save-collections` | `{ name (1 to 60, unique per member, case-insensitive), labels, tags }` | `201 FavoriteCollection` (last in your order) | `400 ValidationFailed`, `400 ContentFiltered`, `402 MembershipRequired`, `404 NotAvailable`, `409 DuplicateName`, `409 LimitReached` (`saves.maxCollectionsPerMember`) |
+| `PUT /api/v1/me/save-collections/{id}` | `{ name, labels, tags }` (each optional) | `200 FavoriteCollection` | `400 ValidationFailed`, `400 ContentFiltered`, `404 NotFound`, `404 NotAvailable`, `409 DuplicateName` |
+| `PUT /api/v1/me/save-collections/order` | `{ ids }`: every one of your collections exactly once (at most `saves.maxCollectionsPerMember`) | `204` | `400 ValidationFailed`, `404 NotAvailable` |
+| `DELETE /api/v1/me/save-collections/{id}` | | `204` (the saves stay; only the grouping is removed) | `404 NotFound`, `404 NotAvailable` |
+
+A collection membership always links a save and a collection of the same member in the same property; the database refuses any other link and the route answers `404 NotFound`.
+
+Settings: `saves.maxPerMember` (default 2000, 100 to 20000), `saves.maxCollectionsPerMember` (default 50, 1 to 500). Metrics: `trelliskit.saves.created` and `trelliskit.saves.removed`, labeled `target_type` (`Any` for account deletion).
+
 ## Events (Phase 4)
 
 Events, recurring events, RSVPs, reminders, member proposals, and calendars (docs/PHASE4_CONTRACT.md section 4; resolved decisions 10, 11, 12, 13, 14, 21). Feature key `events`: `features.events: false` answers `404 NotAvailable` on every route below (member, me, public, calendar, and admin); the `events` kill switch answers `503 FeatureDisabled` on the member, me, public, and calendar routes (admin routes stay open). Member routes are declared object gated: the route needs a signed-in caller (or none for anonymous-eligible reads under anonymous browsing) and the event service decides per event (locked stubs, `rsvpAudience`). In `FullyGated` every event route needs a membership.

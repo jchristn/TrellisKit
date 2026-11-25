@@ -1,6 +1,6 @@
 {
  "version": 1,
- "sha256": "288a7cb0aa6d97a50b6c6e67e52f5557399bfe37d367c9610485d68ce87d56c2",
+ "sha256": "e84aed1015454d65727af9cf1227aebf010cdd290cd989ce4d84d2e3429e5baa",
  "entries": [
   {
    "key": "mobile.about.apiUrl",
@@ -15044,6 +15044,13 @@
    "maxLength": 200
   },
   {
+   "key": "web.access.features.saves",
+   "client": "web",
+   "default": "Saves",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
    "key": "web.access.features.search",
    "client": "web",
    "default": "Search",
@@ -15680,6 +15687,13 @@
    "key": "web.admin.accessModel.featureHints.messaging",
    "client": "web",
    "default": "Direct messages.",
+   "tokens": [],
+   "maxLength": 200
+  },
+  {
+   "key": "web.admin.accessModel.featureHints.saves",
+   "client": "web",
+   "default": "Saving content and creating collections (members can still read and remove their saves).",
    "tokens": [],
    "maxLength": 200
   },

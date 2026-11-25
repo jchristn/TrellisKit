@@ -75,3 +75,5 @@ export * from './catalogFeature.js';
 export { ranksMethods } from './ranksApi.js';
 export * from './ranks.js';
 export * from './qrCode.js';
+export { favoritesMethods } from './favoritesApi.js';
+export * from './favorites.js';

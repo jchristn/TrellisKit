@@ -358,6 +358,7 @@ namespace TrellisKit.Server.Services
                 activity?.SetTag("thread.id", context.Thread.Id);
                 bool deleted = await _Services.Database.Threads.SoftDeleteAsync(context.Thread.Id, byUserId, DateTime.UtcNow, token).ConfigureAwait(false);
                 if (!deleted) return false;
+                await _Services.Favorites.TargetDeletedAsync(FavoriteTargetTypeEnum.Thread, context.Thread.Id, token).ConfigureAwait(false);
                 await _Services.Forums.Promotions.EndPromotionAsync(context.Thread, token).ConfigureAwait(false);
                 if (context.Thread.Kind == ThreadKindEnum.LinkedFeedPost && context.Thread.SourceId != null)
                     await _Services.Database.FeedPosts.SetDiscussionAsync(context.Thread.SourceId, null, null, DateTime.UtcNow, token).ConfigureAwait(false);

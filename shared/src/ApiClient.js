@@ -9,6 +9,7 @@ import { aiMethods } from './aiApi.js';
 import { libraryMethods } from './libraryApi.js';
 import { eventMethods } from './eventsApi.js';
 import { profileMediaMethods } from './profileMediaApi.js';
+import { favoritesMethods } from './favoritesApi.js';
 import { directoryMethods } from './directoryApi.js';
 import { directMessagesApi, messagingMethods } from './messagingApi.js';
 import { supportMethods } from './supportApi.js';
@@ -258,6 +259,7 @@ Object.assign(ApiClient.prototype, libraryMethods);
 Object.assign(ApiClient.prototype, eventMethods);
 Object.assign(ApiClient.prototype, directoryMethods);
 Object.assign(ApiClient.prototype, profileMediaMethods);
+Object.assign(ApiClient.prototype, favoritesMethods);
 // Phase 5: direct messages, support tickets, ideas board, broadcasts and announcements (docs/PHASE5_CONTRACT.md).
 Object.assign(ApiClient.prototype, messagingMethods);
 Object.assign(ApiClient.prototype, supportMethods);

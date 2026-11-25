@@ -663,6 +663,7 @@ namespace TrellisKit.Server.Services
             else
             {
                 await _Services.Database.Events.Records.DeleteAsync(new[] { e.Id }, now, token).ConfigureAwait(false);
+                await _Services.Favorites.TargetDeletedAsync(FavoriteTargetTypeEnum.Event, e.Id, token).ConfigureAwait(false);
                 if (e.RecurrenceId != null) await _Services.Events.Recurrence.UpsertExceptionAsync(e.RecurrenceId, e, EventRecurrenceExceptionKindEnum.Deleted, token).ConfigureAwait(false);
             }
             if (e.CoverMediaId != null) await _Services.Media.DetachAsync(TargetTypeEnum.Event, e.Id, null, token).ConfigureAwait(false);

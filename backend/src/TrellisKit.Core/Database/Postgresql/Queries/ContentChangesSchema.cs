@@ -50,6 +50,23 @@ namespace TrellisKit.Core.Database.Postgresql.Queries
             new ContentChangeSource("aimessages", "aimessages", "AssistantMessage", "id", "", "content", "", null, "AssistantConversation", "conversationid", requireText: true)
         };
 
+        /// <summary>
+        /// Watched tables whose own later migration creates the table and installs its triggers (not part of migration
+        /// 101). Every watched table, for request attribution, is <see cref="AllSources"/>.
+        /// </summary>
+        internal static readonly IReadOnlyList<ContentChangeSource> LaterSources = new List<ContentChangeSource>
+        {
+            FavoriteSchema.NoteSource
+        };
+
+        /// <summary>
+        /// Every watched source: <see cref="Sources"/> and <see cref="LaterSources"/>.
+        /// </summary>
+        internal static IEnumerable<ContentChangeSource> AllSources
+        {
+            get { return Sources.Concat(LaterSources); }
+        }
+
         #endregion
 
         #region Internal-Methods

@@ -623,6 +623,7 @@ namespace TrellisKit.Server.Services
             List<string> ids = occurrences.Select(o => o.Id).ToList();
             if (r.TemplateEventId != null) ids.Add(r.TemplateEventId);
             int deleted = await _Services.Database.Events.Records.DeleteAsync(ids, now, token).ConfigureAwait(false);
+            await _Services.Favorites.TargetsDeletedAsync(FavoriteTargetTypeEnum.Event, ids, token).ConfigureAwait(false);
             await _Services.Database.Events.Recurrences.DeleteAsync(r.Id, now, token).ConfigureAwait(false);
             return deleted;
         }
