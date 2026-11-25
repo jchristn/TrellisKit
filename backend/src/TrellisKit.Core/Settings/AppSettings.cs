@@ -520,6 +520,16 @@ namespace TrellisKit.Core.Settings
         }
 
         /// <summary>
+        /// Daily administrator summary email (docs/ADMIN_SUMMARY.md).
+        /// </summary>
+        /// <exception cref="ArgumentNullException">The value is null.</exception>
+        public AdminSummarySettings AdminSummary
+        {
+            get { return _AdminSummary; }
+            set { _AdminSummary = value ?? throw new ArgumentNullException(nameof(AdminSummary)); }
+        }
+
+        /// <summary>
         /// Engine secrets key (per-property integration secrets, queued email payloads, stored update signing keys, AI endpoint secrets).
         /// </summary>
         /// <exception cref="ArgumentNullException">The value is null.</exception>
@@ -585,6 +595,7 @@ namespace TrellisKit.Core.Settings
         private SupportSettings _Support = new SupportSettings();
         private IdeaSettings _Ideas = new IdeaSettings();
         private BroadcastSettings _Broadcasts = new BroadcastSettings();
+        private AdminSummarySettings _AdminSummary = new AdminSummarySettings();
 
         #endregion
     }

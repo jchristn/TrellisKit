@@ -18,7 +18,7 @@ namespace TrellisKit.Server.Settings
         /// <summary>
         /// All editable settings.
         /// </summary>
-        public static readonly IReadOnlyList<SettingFieldDefinition> All = Build().Concat(AiSettingFields.Build()).Concat(UsageSettingFields.Build()).Concat(JobSettingFields.Build()).Concat(ContentReviewSettingFields.Build()).Concat(LibrarySettingFields.Build()).Concat(EventsSettingFields.Build()).Concat(DirectorySettingFields.Build()).Concat(Phase5SettingFields.Build()).ToList();
+        public static readonly IReadOnlyList<SettingFieldDefinition> All = Build().Concat(AiSettingFields.Build()).Concat(UsageSettingFields.Build()).Concat(JobSettingFields.Build()).Concat(ContentReviewSettingFields.Build()).Concat(LibrarySettingFields.Build()).Concat(EventsSettingFields.Build()).Concat(DirectorySettingFields.Build()).Concat(Phase5SettingFields.Build()).Concat(AdminSummarySettingFields.Build()).ToList();
 
         #endregion
 

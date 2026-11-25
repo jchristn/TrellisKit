@@ -404,6 +404,7 @@ namespace TrellisKit.Server
             new AdminAiPromptRoutes(Directory).Register(Server);
             new AdminJobRoutes(Directory).Register(Server);
             new AdminMetricsRoutes(Directory).Register(Server);
+            new AdminSummaryRoutes(Directory).Register(Server);
             new ProductMetricsRoutes(Directory).Register(Server);
             new AdminAiRoleRoutes(Directory).Register(Server);
             new AdminAiHarnessRoutes(Directory).Register(Server);

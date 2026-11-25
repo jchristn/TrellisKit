@@ -535,6 +535,7 @@ The engine records a Mailgun send span alongside its `trelliskit.email.*` metric
 | New report, content auto-hidden, moderation overdue | Moderators | Staff | Respects moderator scope |
 | Directory submission, event RSVP changes, support ticket opened (later phases) | Staff | Staff | |
 | Integration failures (webhook errors, failing model endpoint, payment provider errors) | Platform and property admins | Staff | Rate-limited |
+| Daily administrator summary (`staff_admin_summary`): members, sign-ups, active members, activity by type, items needing attention, platform health | Addresses in the deployment setting `AdminSummary.Recipients` | Staff | Once per day per recipient after `AdminSummary.SendHour`; see [ADMIN_SUMMARY.md](ADMIN_SUMMARY.md) |
 
 Essential messages ignore marketing preferences but never go to suppressed addresses. Optional messages respect notification preferences and include one-click unsubscribe headers (`List-Unsubscribe`, `List-Unsubscribe-Post`).
 

@@ -4,6 +4,11 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Added (daily administrator summary)
+
+- Daily administrator summary email (`staff_admin_summary`) sent to the addresses in the new `AdminSummary` settings section once per day after `AdminSummary.SendHour` in the property's usage time zone: total members, new sign-ups, deleted accounts, daily, weekly, and monthly active members, activity by type, items needing attention, and platform health, each compared with the day before and the seven-day average. Lines come from registered metrics; `AdminSummary.Items` adds more (including property-declared metrics) by key. Delivery is once per property, date, and recipient across instances. See `docs/ADMIN_SUMMARY.md`.
+- `GET /api/v1/admin/summary` returns the report of a day and `POST /api/v1/admin/summary/send` sends it now (audited `admin_summary.send`). Settings registry fields `adminSummary.enabled`, `.recipients`, `.sendHour`, `.includeDefaultItems`, and `.maxGroups` with `TK_ADMIN_SUMMARY_ENABLED`, `TK_ADMIN_SUMMARY_RECIPIENTS`, and `TK_ADMIN_SUMMARY_SEND_HOUR` overrides. Off by default.
+
 ### Added (directory schedules and copy)
 
 - Structured weekly opening hours and class sessions on venue records, with local times, an IANA time zone, overnight intervals, optional instructors and notes. Web/mobile editors, detail views, previews, member proposals, moderation, public pages and search use the schedule; existing free-text data remains available.

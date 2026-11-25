@@ -112,4 +112,4 @@ MIT. Copyright (c) 2026 Joel Christner. See [LICENSE.md](LICENSE.md).
 
 ## Reusable service extensions
 
-The [integration guide](docs/INTEGRATION.md) covers durable jobs, worker-only harnesses, AI roles and prompt gates, content review and property email layouts. The [metrics contract](docs/METRICS_CONTRACT.md) explains registry extensions, declarative dashboards, alerts, privacy and aggregate retention. These capabilities use neutral engine defaults and property-owned configuration.
+The [integration guide](docs/INTEGRATION.md) covers durable jobs, worker-only harnesses, AI roles and prompt gates, content review and property email layouts. The [metrics contract](docs/METRICS_CONTRACT.md) explains registry extensions, declarative dashboards, alerts, privacy and aggregate retention. The [daily administrator summary](docs/ADMIN_SUMMARY.md) emails configured operators a report of members, sign-ups, active members, activity by type and platform health built from those metrics. These capabilities use neutral engine defaults and property-owned configuration.
