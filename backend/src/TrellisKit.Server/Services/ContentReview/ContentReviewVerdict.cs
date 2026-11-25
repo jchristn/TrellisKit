@@ -67,7 +67,11 @@ namespace TrellisKit.Server.Services.ContentReview
             { "personaldata", ContentReviewCategoryEnum.PersonalData },
             { "pii", ContentReviewCategoryEnum.PersonalData },
             { "privacy", ContentReviewCategoryEnum.PersonalData },
-            { "doxxing", ContentReviewCategoryEnum.PersonalData }
+            { "doxxing", ContentReviewCategoryEnum.PersonalData },
+            { "profanity", ContentReviewCategoryEnum.Profanity },
+            { "obscenity", ContentReviewCategoryEnum.Profanity },
+            { "vulgarity", ContentReviewCategoryEnum.Profanity },
+            { "vulgar", ContentReviewCategoryEnum.Profanity }
         };
 
         #endregion

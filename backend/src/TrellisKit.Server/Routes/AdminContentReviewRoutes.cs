@@ -24,7 +24,7 @@ namespace TrellisKit.Server.Routes
         private const string _Admin = " SystemAdmin or the admin token.";
         private const string _Item = "ContentChange { id, targetType, targetId, contextType, contextId, action: Create | Update | Delete, actor: UserSummary | null, author: UserSummary | null, " +
             "client: Web | Mobile | Api | System, snapshot, mediaRefs, reviewStatus: Pending | Clean | Flagged | Dismissed | Actioned, reviewedUtc, reviewedBy, reviewerKind: Model | Administrator | System, " +
-            "categories (SexualContent, HarassmentAndHate, Violence, IllegalActivity, SelfHarm, Spam, Scam, PersonalData), severity: None | Low | Medium | High | Critical, reviewerNote, reviewAttempts, " +
+            "categories (SexualContent, HarassmentAndHate, Violence, IllegalActivity, SelfHarm, Spam, Scam, PersonalData, Profanity), severity: None | Low | Medium | High | Critical, reviewerNote, reviewAttempts, " +
             "lastError, notifiedUtc, moderationActionId, moderationTargetType, createdUtc, updatedUtc, labels, tags }";
         private readonly PropertyDirectory _Directory;
 

@@ -4,6 +4,12 @@ All notable changes to TrellisKit are documented in this file.
 
 ## [Unreleased]
 
+### Fixed (messages, readability on the soft accent, profanity alerts)
+
+- Mobile messages: after Send the keyboard closes and the conversation scrolls to the message just sent. A new message that arrives while the newest message is in view also scrolls into view. FlashList keeps the visible position by default, which left new messages below the visible area of the inverted list.
+- Notifications on mobile and the website: unread rows use the neutral surface with a primary-colored edge instead of the property's soft accent, which is unreadable with ordinary text when a property chooses a strong soft accent. Other text on the soft accent now uses the property's on-soft-accent color (selected reaction chips and picker labels, chosen country chips, message search highlights, pressed filter suggestions; on the website: selected options, menus, mentions, votes, poll and type options, calendar markers and events, saved toggles, text selection), and the comment highlight, admin bulk bar and grant card use the neutral surface.
+- Word filter alerts and a starter list. A `Flag` match used to file a silent moderation report, and the default list is empty. Now when a `Flag` term files a new system report, every SystemAdmin (at most `contentReview.maxNotifiedAdmins`) gets an in-app and push notification (`ContentFlagged`, with the matched terms and the start of the text) and the `staff_new_report` email, all linking to `/admin/moderation?target=<type>%3A<id>`. `POST /api/v1/admin/moderation/word-filter/starter` and **Load starter list** on Moderation, Word filter add about 80 common English swear words, sexual vulgarities and slurs as `Flag` terms. The AI content review gains a `Profanity` category and its default prompt asks for it. Member report emails link to the reported item. No migration.
+
 ### Added (Training hub on the website)
 
 - `/app/training` is the Training hub: section tabs (an arrow-key `tablist`) from `GET /me/training` `sections`, showing only `available: true` keys the website knows (Overview, Library, Schedule, Programs as Curricula, Progress) and ignoring the rest. Signed-out visitors, and everyone while the `training` kill switch is on, see only the Library without calling `/me/training`; a `403`, `404`, or `503` overview also falls back to the Library.

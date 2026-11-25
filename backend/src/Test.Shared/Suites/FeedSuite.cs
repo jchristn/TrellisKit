@@ -51,7 +51,8 @@ namespace Test.Shared.Suites
                 Case("Feed.Delete", "Author and SystemAdmin delete (soft); others get 403 or 404; deleted posts and their comments are unreachable", DeleteAsync),
                 Case("Feed.Mentions", "Mentions resolve case-insensitively, keep the handle as written, notify once, skip self and blocks, honor the cap, and notify only new members on edit", MentionsAsync),
                 Case("Feed.LinkPreview", "The first URL gets a preview card unless showLinkPreview is false", LinkPreviewAsync),
-                Case("Feed.WordFilter", "Block terms reject title, body, alt text, and comments with ContentFiltered; Flag terms save and file one system report", WordFilterAsync),
+                Case("Feed.WordFilter", "Block terms reject title, body, alt text, and comments with ContentFiltered; Flag terms save, file one system report, and alert SystemAdmins with a link", WordFilterAsync),
+                Case("Feed.WordFilterStarter", "The starter list loads as Flag terms once; a second load skips every term", WordFilterStarterAsync),
                 Case("Feed.Validation", "Title, body, publishAtUtc, and Public visibility are validated", ValidationAsync),
                 Case("Regression.API06.PinnedTotals", "ordering=Feed counts pinned posts in totalRecords on every page", async (f, ct) =>
                 {
@@ -416,10 +417,47 @@ namespace Test.Shared.Suites
             await ExpectFiltered(f, poster, "/api/v1/feed", new { body = "fine", mediaIds = new[] { media } }, "mediaIds[0].altText", ct).ConfigureAwait(false);
             string id = await ContentTestKit.PostIdAsync(f, poster.AccessToken, "a flaggedword post", ct).ConfigureAwait(false);
             Check.Equal(1L, await ContentTestKit.ScalarAsync(f, "SELECT COUNT(*) AS cnt FROM reports WHERE reporteruserid IS NULL AND targetid = '" + id + "';", ct).ConfigureAwait(false), "One system report for a flagged post");
+            TestMember admin = await Api.AdminAsync(f, ct).ConfigureAwait(false);
+            string flaggedAgain = await ContentTestKit.PostIdAsync(f, poster.AccessToken, "another flaggedword post", ct).ConfigureAwait(false);
+            string expectedPath = "/admin/moderation?target=FeedPost%3A" + flaggedAgain;
+            Check.True(await ContentTestKit.ScalarAsync(f, "SELECT COUNT(*) AS cnt FROM notifications WHERE type = 'ContentFlagged' AND targettype = 'FeedPost' AND targetid = '" + flaggedAgain + "' AND path = '" + expectedPath + "';", ct).ConfigureAwait(false) >= 1L,
+                "A flagged post alerts SystemAdmins with a link to the post in the moderation queue");
+            List<Notification> alerts = (await NotificationTestKit.ListAsync(f, admin.Id, ct).ConfigureAwait(false)).Where(n => n.Type == NotificationTypeEnum.ContentFlagged && n.TargetId == flaggedAgain).ToList();
+            if (alerts.Count > 0)
+            {
+                Check.Equal(expectedPath, alerts[0].Path, "Alert path");
+                Check.True((alerts[0].Body ?? String.Empty).Contains("flaggedword", StringComparison.Ordinal), "The alert shows the flagged text");
+            }
+            await ContentTestKit.CommentIdAsync(f, poster.AccessToken, flaggedAgain, "flaggedword reply", null, ct).ConfigureAwait(false);
+            Check.True(await ContentTestKit.ScalarAsync(f, "SELECT COUNT(*) AS cnt FROM notifications WHERE type = 'ContentFlagged' AND targettype = 'Comment' AND path LIKE '/admin/moderation?target=Comment%%';", ct).ConfigureAwait(false) >= 1L,
+                "A flagged comment alerts SystemAdmins too");
             await ExpectFiltered(f, poster, "/api/v1/feed/" + id + "/comments", new { body = "blockedword" }, "body", ct).ConfigureAwait(false);
             await ExpectFiltered(f, poster, "/api/v1/feed/" + id + "/comments", new { body = "ok", labels = new[] { "blockedword" } }, "labels[0]", ct).ConfigureAwait(false);
             ApiResult edit = await Api.SendAsync(f, HttpMethod.Put, "/api/v1/feed/" + id, poster.AccessToken, new { body = "now blockedword" }, ct).ConfigureAwait(false);
             Check.Equal("ContentFiltered", edit.Error, "Edits are filtered too");
+        }
+
+        private static async Task WordFilterStarterAsync(HttpFixture f, CancellationToken ct)
+        {
+            int expected = WordFilterStarterList.All().Count;
+            ApiResult first = await Api.SendAsync(f, HttpMethod.Post, "/api/v1/admin/moderation/word-filter/starter", HttpFixture.AdminToken, new { }, ct).ConfigureAwait(false);
+            Check.Equal(HttpStatusCode.OK, first.Status, "Starter load (" + first.Text + ")");
+            int added = first.Body.GetProperty("added").GetInt32();
+            int skipped = first.Body.GetProperty("skipped").GetInt32();
+            Check.Equal(expected, added + skipped, "Every starter term is added or skipped");
+            ApiResult second = await Api.SendAsync(f, HttpMethod.Post, "/api/v1/admin/moderation/word-filter/starter", HttpFixture.AdminToken, new { }, ct).ConfigureAwait(false);
+            Check.Equal(0, second.Body.GetProperty("added").GetInt32(), "A second load adds nothing");
+            Check.Equal(0L, await ContentTestKit.ScalarAsync(f, "SELECT COUNT(*) AS cnt FROM wordfilterterms WHERE normalizedterm IN ('fuck', 'bitch') AND action <> 'Flag';", ct).ConfigureAwait(false), "Starter terms are Flag terms");
+            TestMember member = await ContentTestKit.MemberAsync(f, ct, "Plain").ConfigureAwait(false);
+            ApiResult plain = await Api.SendAsync(f, HttpMethod.Post, "/api/v1/admin/moderation/word-filter/starter", member.AccessToken, new { }, ct).ConfigureAwait(false);
+            Check.Equal(HttpStatusCode.Forbidden, plain.Status, "Members cannot load the starter list");
+
+            // Leave the shared list as other cases expect it: remove the starter terms, then add and delete a term so
+            // the server drops its compiled cache.
+            string list = String.Join(", ", WordFilterStarterList.All().Select(t => "'" + t + "'"));
+            await ContentTestKit.ScalarAsync(f, "WITH gone AS (DELETE FROM wordfilterterms WHERE term IN (" + list + ") RETURNING 1) SELECT COUNT(*) AS cnt FROM gone;", ct).ConfigureAwait(false);
+            ApiResult marker = await Api.SendAsync(f, HttpMethod.Post, "/api/v1/admin/moderation/word-filter", HttpFixture.AdminToken, new { term = "starterresetmarker", action = "Flag" }, ct).ConfigureAwait(false);
+            await Api.SendAsync(f, HttpMethod.Delete, "/api/v1/admin/moderation/word-filter/" + Api.Str(marker.Body, "id"), HttpFixture.AdminToken, null, ct).ConfigureAwait(false);
         }
 
         private static async Task ExpectFiltered(HttpFixture f, TestMember member, string path, object body, string field, CancellationToken ct)

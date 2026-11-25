@@ -219,6 +219,17 @@ function WordFilterTab() {
     setDialog(null);
     list.reload();
   };
+  const loadStarter = async () => {
+    setBusy(true);
+    try {
+      const result = await api.loadWordFilterStarter();
+      done(s.importDone(result ? result.added : 0, result ? result.skipped : 0));
+    } catch (err) {
+      toast.error(errorMessage(err, strings.common.errorGeneric));
+    } finally {
+      setBusy(false);
+    }
+  };
   const remove = async () => {
     setBusy(true);
     try {
@@ -262,6 +273,7 @@ function WordFilterTab() {
         <div className="table-toolbar">
           <div className="toolbar-left" />
           <div className="toolbar-right">
+            <button type="button" className="button button-secondary button-sm" onClick={() => setDialog({ kind: 'starter' })}><Icon name="shield" size={14} /><span>{s.starterButton}</span></button>
             <button type="button" className="button button-secondary button-sm" onClick={() => setDialog({ kind: 'import' })}><Icon name="upload" size={14} /><span>{s.importButton}</span></button>
             <button type="button" className="button button-primary button-sm" onClick={() => setDialog({ kind: 'add' })}><Icon name="plus" size={14} /><span>{s.add}</span></button>
           </div>
@@ -273,6 +285,7 @@ function WordFilterTab() {
       <p className="muted small">{s.disabledNote}</p>
       {dialog && (dialog.kind === 'add' || dialog.kind === 'edit') && <TermDialog term={dialog.term || null} onClose={() => setDialog(null)} onSaved={done} />}
       {dialog && dialog.kind === 'import' && <ImportDialog onClose={() => setDialog(null)} onDone={done} />}
+      <ConfirmModal open={Boolean(dialog && dialog.kind === 'starter')} title={s.starterTitle} message={s.starterBody} confirmLabel={s.starterConfirm} danger={false} busy={busy} onCancel={() => setDialog(null)} onConfirm={loadStarter} />
       <ConfirmModal open={Boolean(dialog && dialog.kind === 'delete')} title={dialog && dialog.term ? s.deleteTitle(dialog.term.term) : ''} message={s.deleteBody} confirmLabel={strings.common.delete} busy={busy} onCancel={() => setDialog(null)} onConfirm={remove} />
       <JsonViewerModal open={Boolean(jsonRow)} onClose={() => setJsonRow(null)} subtitle={jsonRow && jsonRow.id} value={jsonRow} />
     </>

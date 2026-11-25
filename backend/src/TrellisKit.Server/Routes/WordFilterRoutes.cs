@@ -65,6 +65,11 @@ namespace TrellisKit.Server.Routes
             post.Static.Add(HttpMethod.POST, _Base + "/import", ImportAsync, RouteHelper.HandleExceptionAsync,
                 openApiMetadata: Doc("Import word filter terms", _Tag, "Up to 1000 terms; duplicates and invalid entries are skipped." + _Admin)
                     .Body("{ terms: [], matchType?, action? }").Returns("{ added, skipped }").Resp(400, "ValidationFailed"));
+            post.Static.Add(HttpMethod.POST, _Base + "/starter", StarterAsync, RouteHelper.HandleExceptionAsync,
+                openApiMetadata: Doc("Load the starter word filter list", _Tag, "Adds the engine's starter list of common English profanity and slurs with action Flag " +
+                    "(whole-word terms plus a few unambiguous Substring roots); terms already on the list are skipped. Flagged contributions are saved, filed in the moderation queue, " +
+                    "and alerted to SystemAdmins (in-app, push, and the staff_new_report email) with a link to the content. No body." + _Admin)
+                    .Returns("{ added, skipped }"));
             post.Static.Add(HttpMethod.POST, _Base + "/test", TestAsync, RouteHelper.HandleExceptionAsync,
                 openApiMetadata: Doc("Test text against the word filter", _Tag, "start and length are UTF-16 positions in the original text." + _Admin)
                     .Body("{ text }").Returns("{ matches: [{ termId, term, action, start, length }] }").Resp(400, "ValidationFailed"));
@@ -120,6 +125,11 @@ namespace TrellisKit.Server.Routes
         {
             WordFilterImportRequest request = RouteHelper.ReadJson<WordFilterImportRequest>(ctx);
             await RouteHelper.SendJsonAsync(ctx, 200, await _Directory.For(ctx).WordFilter.ImportAsync(request, Info(ctx), ctx.Token).ConfigureAwait(false)).ConfigureAwait(false);
+        }
+
+        private async Task StarterAsync(HttpContextBase ctx)
+        {
+            await RouteHelper.SendJsonAsync(ctx, 200, await _Directory.For(ctx).WordFilter.ImportStarterAsync(Info(ctx), ctx.Token).ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         private async Task TestAsync(HttpContextBase ctx)

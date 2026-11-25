@@ -83,7 +83,7 @@ export default function ReactionBar({ target, fields, onChange, canReact = true,
             })}
           >
             <AppText importantForAccessibility="no">{chip.emoji}</AppText>
-            <AppText variant="caption" style={{ fontWeight: chip.mine ? '700' : '400' }}>
+            <AppText variant="caption" color={chip.mine ? 'onAccentSoft' : 'text'} style={{ fontWeight: chip.mine ? '700' : '400' }}>
               {formatCount(chip.count)}
             </AppText>
           </Pressable>
@@ -137,7 +137,7 @@ export default function ReactionBar({ target, fields, onChange, canReact = true,
                 <AppText style={{ fontSize: 26, lineHeight: 32 }} importantForAccessibility="no">
                   {r.emoji}
                 </AppText>
-                <AppText variant="caption" color="textMuted" importantForAccessibility="no">
+                <AppText variant="caption" color={mine ? 'onAccentSoft' : 'textMuted'} importantForAccessibility="no">
                   {r.label}
                 </AppText>
               </Pressable>

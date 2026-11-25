@@ -225,8 +225,8 @@ function CountryMultiPicker({ label, value, onChange, required, testID }) {
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: theme.spacing.xs }}>
           {chosen.map((code) => (
             <View key={code} style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.xs, paddingHorizontal: theme.spacing.md, minHeight: 36, borderRadius: theme.radii.pill, borderWidth: 1, borderColor: theme.colors.primary, backgroundColor: theme.colors.accentSoft }} testID={testID + '-chosen-' + code}>
-              <AppText>{countryName(code)}</AppText>
-              {multiple || !required ? <IconButton icon="close" label={t().clearValue(countryName(code))} onPress={() => onChange(multiple ? chosen.filter((c) => c !== code) : '')} testID={testID + '-remove-' + code} /> : null}
+              <AppText color="onAccentSoft">{countryName(code)}</AppText>
+              {multiple || !required ? <IconButton icon="close" label={t().clearValue(countryName(code))} onPress={() => onChange(multiple ? chosen.filter((c) => c !== code) : '')} color="onAccentSoft" testID={testID + '-remove-' + code} /> : null}
             </View>
           ))}
         </View>

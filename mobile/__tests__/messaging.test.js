@@ -4,7 +4,8 @@ import * as Haptics from 'expo-haptics';
 import { router as appRouter } from 'expo-router';
 import { renderRouter } from 'expo-router/testing-library';
 import path from 'path';
-import { AppState } from 'react-native';
+import { AppState, Keyboard } from 'react-native';
+import { newestMessageKey } from '../src/components/messaging/ConversationView';
 import MessageBubble from '../src/components/messaging/MessageBubble';
 import { setActiveConversationId } from '../src/messaging/activeConversation';
 import { setRealtimeEnabled, setRealtimeTimers, setWebSocketImpl } from '../src/messaging/realtimeConfig';
@@ -123,6 +124,28 @@ describe('a conversation', () => {
     const sent = fake.state.messages.find((m) => m.body === 'See you there');
     expect(await screen.findByTestId('message-' + sent.id + '-receipt')).toHaveTextContent(t.sent);
     expect(screen.getByTestId('message-composer-body').props.value).toBe('');
+  });
+
+  test('sending dismisses the keyboard', async () => {
+    const dismiss = jest.spyOn(Keyboard, 'dismiss');
+    try {
+      const { fake, inbox } = seeded();
+      serveFakes([fake]);
+      await renderRouter(APP_DIR, { initialUrl: '/messages/' + inbox.id });
+      await screen.findByText('Are you coming Thursday?');
+      await fireEvent.changeText(screen.getByTestId('message-composer-body'), 'On my way');
+      await fireEvent.press(screen.getByTestId('message-composer-send'));
+      expect(await screen.findByText('On my way')).toBeOnTheScreen();
+      expect(dismiss).toHaveBeenCalled();
+    } finally {
+      dismiss.mockRestore();
+    }
+  });
+
+  test('the newest message key prefers the client id of an optimistic send', () => {
+    expect(newestMessageKey([])).toBeNull();
+    expect(newestMessageKey([{ id: 'msg_1' }, { id: 'msg_2' }])).toBe('msg_2');
+    expect(newestMessageKey([{ id: 'msg_1' }, { clientMessageId: 'c_1', localId: 'l_1' }])).toBe('c_1');
   });
 
   test('a rejected send stays with Retry, and Retry sends the same clientMessageId', async () => {

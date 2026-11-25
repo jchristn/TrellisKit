@@ -172,6 +172,8 @@ export function createAdminApi(client, { onUnauthorized } = {}) {
     deleteWordFilterTerm: (id) => call(() => client.delete('/admin/moderation/word-filter/' + enc(id))),
     /** POST /admin/moderation/word-filter/import. */
     importWordFilter: (body) => call(() => client.post('/admin/moderation/word-filter/import', body)),
+    /** POST /admin/moderation/word-filter/starter: add the engine's starter profanity list (action Flag). */
+    loadWordFilterStarter: () => call(() => client.post('/admin/moderation/word-filter/starter', {})),
     /** POST /admin/moderation/word-filter/test. */
     testWordFilter: (text) => call(() => client.post('/admin/moderation/word-filter/test', { text })),
 

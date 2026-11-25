@@ -48,7 +48,7 @@ export default function CommentItem({ comment, depth, collapsed, onToggleCollaps
   const placeholder = isPlaceholder(comment);
 
   const container = (children) => (
-    <View testID={id} style={{ marginLeft: indent, borderLeftWidth: depth > 0 ? 2 : 0, borderLeftColor: theme.colors.border, paddingLeft: depth > 0 ? theme.spacing.md : 0, paddingVertical: theme.spacing.sm, gap: theme.spacing.sm, backgroundColor: highlighted ? theme.colors.accentSoft : undefined }} accessibilityLabel={depth > 0 ? strings.comments.depthLabel(depth) : undefined}>
+    <View testID={id} style={{ marginLeft: indent, borderLeftWidth: depth > 0 || highlighted ? 2 : 0, borderLeftColor: highlighted ? theme.colors.primary : theme.colors.border, paddingLeft: depth > 0 || highlighted ? theme.spacing.md : 0, paddingVertical: theme.spacing.sm, gap: theme.spacing.sm, backgroundColor: highlighted ? theme.colors.surface : undefined }} accessibilityLabel={depth > 0 ? strings.comments.depthLabel(depth) : undefined}>
       {children}
     </View>
   );

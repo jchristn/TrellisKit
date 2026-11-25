@@ -148,7 +148,7 @@ namespace TrellisKit.Server.Services
                     throw new InvalidOperationException("The report was neither stored nor found.");
                 }
                 if (request.Labels != null || request.Tags != null) await _Services.Metadata.ApplyAsync(actor, TargetTypeEnum.Report, stored.Id, request.Labels, request.Tags, token).ConfigureAwait(false);
-                await _Services.Email.NotifyStaffAsync("staff_new_report", "report:" + stored.Id, token, ("targetType", Email.EmailLabels.TargetType(target.TargetType)), ("reason", Email.EmailLabels.ReportReason(stored.Reason)), ("link", _Services.Email.Link("/admin/moderation"))).ConfigureAwait(false);
+                await _Services.Email.NotifyStaffAsync("staff_new_report", "report:" + stored.Id, token, ("targetType", Email.EmailLabels.TargetType(target.TargetType)), ("reason", Email.EmailLabels.ReportReason(stored.Reason)), ("link", _Services.Email.Link(WordFilterService.ModerationPath(target.TargetType, target.TargetId)))).ConfigureAwait(false);
                 TrellisKitTelemetry.Add(TrellisKitTelemetry.Reports, 1, "target_type", target.TargetType.ToString(), "reason", stored.Reason.ToString());
                 if (target.TargetType == TargetTypeEnum.FeedPost) await _Services.Feed.RecomputeOpenReportCountAsync(target.TargetId, token).ConfigureAwait(false);
                 else if (target.TargetType == TargetTypeEnum.Thread) await _Services.Database.Threads.RecomputeOpenReportCountAsync(target.TargetId, token).ConfigureAwait(false);

@@ -533,7 +533,7 @@ namespace TrellisKit.Server.Services
             FeedPostEmails = new FeedPostEmailService(Email, Property, settings, NotificationPreferences, logger);
             Media = new MediaService(settings, database, integrations, Limits, Summaries, Metadata, Enumeration, Tokens, logger, property.Id);
             Media.Access = () => Access.Current;
-            WordFilter = new WordFilterService(database, settings, Audit, Enumeration, Metadata);
+            WordFilter = new WordFilterService(database, settings, Audit, Enumeration, Metadata) { Notifications = Notifications, Email = Email, Logger = logger };
             Metadata.TextFilter = WordFilter.MetadataTextFilterAsync;
             Profiles.WordFilter = WordFilter;
             ProfileValues.WordFilter = WordFilter;

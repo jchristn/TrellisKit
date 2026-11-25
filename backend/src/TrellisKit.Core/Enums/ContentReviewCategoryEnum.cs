@@ -43,6 +43,11 @@ namespace TrellisKit.Core.Enums
         /// <summary>
         /// Someone's personal data (home addresses, phone numbers, identity or payment details).
         /// </summary>
-        PersonalData
+        PersonalData,
+
+        /// <summary>
+        /// Profanity, obscenity, or sexually crude language.
+        /// </summary>
+        Profanity
     }
 }

@@ -85,7 +85,7 @@ export default function AutocompleteField({ label, value, onChangeText, onSubmit
               style={({ pressed }) => ({ minHeight: 36, justifyContent: 'center', paddingHorizontal: theme.spacing.md, borderRadius: theme.radii.pill, borderWidth: 1, borderColor: theme.colors.border, backgroundColor: pressed ? theme.colors.accentSoft : theme.colors.surface })}
               testID={testID ? testID + '-suggestion-' + text : undefined}
             >
-              <AppText variant="caption">{text}</AppText>
+              {({ pressed }) => <AppText variant="caption" color={pressed ? 'onAccentSoft' : 'text'}>{text}</AppText>}
             </Pressable>
           ))}
         </View>

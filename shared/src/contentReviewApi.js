@@ -15,7 +15,7 @@ const ADMIN = { maxLimit: ENUMERATION_MAX_RESULTS_ADMIN };
 export const ContentReviewStatuses = Object.freeze(['Pending', 'Clean', 'Flagged', 'Dismissed', 'Actioned']);
 
 /** Terms of Service categories the reviewer reports. */
-export const ContentReviewCategories = Object.freeze(['SexualContent', 'HarassmentAndHate', 'Violence', 'IllegalActivity', 'SelfHarm', 'Spam', 'Scam', 'PersonalData']);
+export const ContentReviewCategories = Object.freeze(['SexualContent', 'HarassmentAndHate', 'Violence', 'IllegalActivity', 'SelfHarm', 'Spam', 'Scam', 'PersonalData', 'Profanity']);
 
 /** Severities, lowest first. */
 export const ContentReviewSeverities = Object.freeze(['None', 'Low', 'Medium', 'High', 'Critical']);

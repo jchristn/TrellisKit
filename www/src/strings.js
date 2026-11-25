@@ -3747,7 +3747,7 @@ const strings = {
 
     wordFilter: {
       title: 'Word filter',
-      summary: 'Terms are matched after normalizing case, accents, look-alike characters, and repeated letters. Block rejects the write; Flag allows it and sends it to the queue.',
+      summary: 'Terms are matched after normalizing case, accents, look-alike characters, and repeated letters. Block rejects the write; Flag allows it, sends it to the queue, and alerts administrators with a link to the content.',
       searchLabel: 'Term',
       searchPlaceholder: 'Search terms',
       action: 'Action',
@@ -3769,6 +3769,10 @@ const strings = {
       deleteBody: 'New writes are no longer screened for it. Existing content is not changed.',
       deleted: 'Term deleted.',
       importButton: 'Import',
+      starterButton: 'Load starter list',
+      starterTitle: 'Load the starter profanity list?',
+      starterBody: 'Adds about 80 common English swear words, sexual vulgarities, and slurs with the action Flag: matching posts, comments, and threads are saved, put in the moderation queue, and sent to administrators as a notification and email with a link to the content. Terms already on the list are skipped. You can change any term to Block or delete it afterwards.',
+      starterConfirm: 'Load starter list',
       importTitle: 'Import terms',
       importLabel: 'Terms, one per line (up to 1000)',
       importSubmit: 'Import terms',
@@ -3781,7 +3785,7 @@ const strings = {
       testSubmit: 'Test',
       testNone: 'No terms match.',
       testMatches: (n) => (n === 1 ? '1 match' : n + ' matches'),
-      empty: 'The list is empty. Add terms that should be blocked or flagged.',
+      empty: 'The list is empty, so nothing is screened. Load the starter list or add terms that should be blocked or flagged.',
       emptyFiltered: 'No terms match these filters.',
       disabledNote: 'The filter can be switched off without deleting the list in Settings (moderation.wordFilterEnabled).'
     },
@@ -5538,7 +5542,7 @@ const strings = {
     statuses: { Pending: 'Pending', Clean: 'Clean', Flagged: 'Flagged', Dismissed: 'Dismissed', Actioned: 'Actioned' },
     categories: {
       SexualContent: 'Sexual content', HarassmentAndHate: 'Harassment and hate', Violence: 'Violence', IllegalActivity: 'Illegal activity', SelfHarm: 'Self-harm',
-      Spam: 'Spam', Scam: 'Scam', PersonalData: 'Personal data'
+      Spam: 'Spam', Scam: 'Scam', PersonalData: 'Personal data', Profanity: 'Profanity'
     },
     severities: { None: 'None', Low: 'Low', Medium: 'Medium', High: 'High', Critical: 'Critical' },
     changeActions: { Create: 'Created', Update: 'Edited', Delete: 'Deleted' },

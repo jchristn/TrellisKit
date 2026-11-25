@@ -18,7 +18,8 @@ test('content review ApiClient methods exist and map to their routes', async () 
   for (const name of names) assert.equal(typeof ApiClient.prototype[name], 'function', name);
   assert.equal(Object.keys(contentReviewMethods).length, names.length);
   assert.deepEqual(ContentReviewStatuses, ['Pending', 'Clean', 'Flagged', 'Dismissed', 'Actioned']);
-  assert.equal(ContentReviewCategories.length, 8);
+  assert.equal(ContentReviewCategories.length, 9);
+  assert.ok(ContentReviewCategories.includes('Profanity'));
   assert.equal(ContentReviewSeverities[ContentReviewSeverities.length - 1], 'Critical');
 
   const { calls, client } = recorder();

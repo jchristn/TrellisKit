@@ -1,6 +1,6 @@
 import { FlashList } from '@shopify/flash-list';
-import { useState } from 'react';
-import { View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Keyboard, View } from 'react-native';
 import KeyboardAvoider from '../KeyboardAvoider';
 import { useAuth } from '../../auth/AuthProvider';
 import { reactionSet } from '../../content/reactions';
@@ -28,6 +28,19 @@ const t = strings.messaging;
 
 /** How many of the property's reactions the message menu offers directly. */
 const MENU_REACTIONS = 4;
+
+/** Within this distance (pixels) of the newest message, an arriving message scrolls into view. */
+const NEWEST_THRESHOLD = 120;
+
+/**
+ * Key of the newest message (its server id, or the local id of an optimistic send).
+ * @param {object[]} messages Oldest first.
+ * @returns {string|null}
+ */
+export function newestMessageKey(messages) {
+  const last = messages && messages.length ? messages[messages.length - 1] : null;
+  return last ? last.clientMessageId || last.localId || last.id || null : null;
+}
 
 /**
  * The request banner (contract section 3.2): Accept, Decline, and Block and report for a pending
@@ -92,6 +105,22 @@ export default function ConversationView({ conversationId, onConversationChange,
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState(null);
   const reactions = reactionSet(property).items.slice(0, MENU_REACTIONS);
+  const listRef = useRef(null);
+  const nearNewest = useRef(true);
+  const revealNewest = useRef(false);
+  const newestKey = c.messages && c.messages.length ? newestMessageKey(c.messages) : null;
+
+  // A sent message, or a new message while the newest one is in view, scrolls the inverted list to its start
+  // (the bottom of the screen). FlashList otherwise keeps the visible content in place, which leaves a new message
+  // below the visible area.
+  useEffect(() => {
+    if (!newestKey || !(revealNewest.current || nearNewest.current)) return undefined;
+    revealNewest.current = false;
+    const frame = requestAnimationFrame(() => {
+      if (listRef.current && typeof listRef.current.scrollToOffset === 'function') listRef.current.scrollToOffset({ offset: 0, animated: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [newestKey]);
 
   if (c.status === 'loading' && !c.conversation) return <Loading label={strings.common.loading} testID={testID + '-loading'} />;
   if (c.status === 'gone' || (c.status === 'error' && !c.conversation)) {
@@ -127,6 +156,8 @@ export default function ConversationView({ conversationId, onConversationChange,
 
   async function send(draft) {
     setReplyTo(null);
+    revealNewest.current = true;
+    Keyboard.dismiss();
     const result = await c.send(draft);
     if (!result.ok && result.error && !(result.error.status === 0 || result.error.status >= 500)) setActionError(describeMessagingError(result.error));
   }
@@ -241,8 +272,14 @@ export default function ConversationView({ conversationId, onConversationChange,
       </View>
       <View style={{ flex: 1 }}>
         <FlashList
+          ref={listRef}
           testID={testID + '-messages'}
           inverted
+          onScroll={(event) => {
+            const y = event && event.nativeEvent && event.nativeEvent.contentOffset ? event.nativeEvent.contentOffset.y : 0;
+            nearNewest.current = y <= NEWEST_THRESHOLD;
+          }}
+          scrollEventThrottle={64}
           data={rows}
           keyExtractor={(row) => row.key}
           getItemType={(row) => row.type}

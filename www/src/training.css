@@ -39,7 +39,7 @@ a.training-list-link:focus-visible { outline: 2px solid var(--color-focus); outl
 
 .save-toggle-wrap { display: inline-flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
 .save-toggle { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; }
-.save-toggle.saved { border-color: var(--color-accent); color: var(--color-text); background: var(--color-accent-soft); }
+.save-toggle.saved { border-color: var(--color-accent); color: var(--color-on-accent-soft); background: var(--color-accent-soft); }
 .save-row { display: flex; justify-content: flex-end; }
 .save-collections { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .save-new-collection { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-2); }

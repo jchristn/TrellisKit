@@ -1,5 +1,6 @@
 namespace TrellisKit.Server.Services
 {
+    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -27,11 +28,37 @@ namespace TrellisKit.Server.Services
             get { return _Flags.Count > 0; }
         }
 
+        /// <summary>
+        /// The start of the first field with a Flag match (at most <see cref="MaxExcerptLength"/> characters, line
+        /// breaks folded to spaces), shown to administrators in the alert. Null when nothing was flagged.
+        /// </summary>
+        public string? Excerpt
+        {
+            get { return _Excerpt; }
+            set { _Excerpt = String.IsNullOrWhiteSpace(value) ? null : Fold(value); }
+        }
+
+        /// <summary>
+        /// Longest <see cref="Excerpt"/>, in characters.
+        /// </summary>
+        public const int MaxExcerptLength = 160;
+
         #endregion
 
         #region Private-Members
 
         private List<WordFilterFieldMatch> _Flags = new List<WordFilterFieldMatch>();
+        private string? _Excerpt = null;
+
+        #endregion
+
+        #region Private-Methods
+
+        private static string Fold(string value)
+        {
+            string text = value.Replace('\r', ' ').Replace('\n', ' ').Trim();
+            return text.Length > MaxExcerptLength ? text.Substring(0, MaxExcerptLength) : text;
+        }
 
         #endregion
     }

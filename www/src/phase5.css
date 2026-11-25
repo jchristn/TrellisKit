@@ -3,7 +3,7 @@
 .count-badge { display: inline-block; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 6px; border-radius: 9px; background: var(--color-danger); color: #ffffff; font-size: 0.6875rem; font-weight: var(--font-weight-semibold); line-height: 18px; text-align: center; }
 .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
 .chip-button { border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text); border-radius: 999px; padding: 4px 12px; font-size: var(--font-size-sm); cursor: pointer; }
-.chip-button.active { border-color: var(--color-accent); background: var(--color-accent-soft); }
+.chip-button.active { border-color: var(--color-accent); background: var(--color-accent-soft); color: var(--color-on-accent-soft); }
 
 /* Messages */
 .messages-view { max-width: none; }
@@ -104,7 +104,7 @@ a.idea-title:hover { color: var(--color-accent); text-decoration: underline; }
 .idea-head { display: flex; gap: 12px; align-items: flex-start; }
 .idea-head h1 { margin: 0; }
 .vote-button { display: flex; flex-direction: column; align-items: center; min-width: 56px; padding: 6px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); cursor: pointer; }
-.vote-button.voted { border-color: var(--color-accent); background: var(--color-accent-soft); }
+.vote-button.voted { border-color: var(--color-accent); background: var(--color-accent-soft); color: var(--color-on-accent-soft); }
 .vote-button:disabled { cursor: default; opacity: 0.7; }
 .vote-count { font-weight: var(--font-weight-semibold); }
 .idea-status { border: 1px solid var(--color-border-strong); background: transparent; }

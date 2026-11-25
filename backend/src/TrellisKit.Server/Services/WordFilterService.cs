@@ -64,6 +64,22 @@ namespace TrellisKit.Server.Services
             set { _CacheTtl = value < TimeSpan.FromSeconds(1) ? TimeSpan.FromSeconds(1) : value > TimeSpan.FromHours(1) ? TimeSpan.FromHours(1) : value; }
         }
 
+        /// <summary>
+        /// In-app and push notifications for administrator alerts, or null (no alerts). Default null; the property
+        /// services set it.
+        /// </summary>
+        public NotificationService? Notifications { get; set; } = null;
+
+        /// <summary>
+        /// Staff email for administrator alerts, or null (no email). Default null; the property services set it.
+        /// </summary>
+        public EmailService? Email { get; set; } = null;
+
+        /// <summary>
+        /// Logger for alert failures, or null. Default null.
+        /// </summary>
+        public AppLogger? Logger { get; set; } = null;
+
         #endregion
 
         #region Private-Members
@@ -147,7 +163,11 @@ namespace TrellisKit.Server.Services
                         if (!seen.Add(match.TermId)) continue;
                         WordFilterFieldMatch item = new WordFilterFieldMatch { Field = field.Key, TermId = match.TermId, Term = match.Term, Action = match.Action };
                         if (match.Action == WordFilterActionEnum.Block) blocks.Add(item);
-                        else result.Flags.Add(item);
+                        else
+                        {
+                            result.Flags.Add(item);
+                            if (result.Excerpt == null) result.Excerpt = field.Value;
+                        }
                     }
                 }
                 activity?.SetTag("word_filter.blocks", blocks.Count);
@@ -252,9 +272,53 @@ namespace TrellisKit.Server.Services
             foreach (WordFilterFieldMatch flag in result.Flags) TrellisKitTelemetry.Add(TrellisKitTelemetry.WordFilterMatches, 1, "action", "flag", "field", FieldLabel(flag.Field));
             string details = "Word filter: " + String.Join("; ", result.Flags.GroupBy(f => f.Field).Select(g => g.Key + " (" + String.Join(", ", g.Select(f => f.Term).Distinct()) + ")"));
             DateTime due = now.AddHours(_Settings.Moderation.ReviewTargetHours);
-            bool created = await _Database.WordFilter.CreateSystemReportAsync(IdGenerator.Generate(Constants.ReportIdPrefix), targetType, targetId, targetAuthorUserId, details, scopeType, scopeId, now, due, token).ConfigureAwait(false);
-            if (created) TrellisKitTelemetry.Add(TrellisKitTelemetry.Reports, 1, "target_type", targetType.ToString(), "reason", ReportReasonEnum.Filter.ToString());
+            string reportId = IdGenerator.Generate(Constants.ReportIdPrefix);
+            bool created = await _Database.WordFilter.CreateSystemReportAsync(reportId, targetType, targetId, targetAuthorUserId, details, scopeType, scopeId, now, due, token).ConfigureAwait(false);
+            if (created)
+            {
+                TrellisKitTelemetry.Add(TrellisKitTelemetry.Reports, 1, "target_type", targetType.ToString(), "reason", ReportReasonEnum.Filter.ToString());
+                await AlertAdministratorsAsync(result, targetType, targetId, reportId, now, token).ConfigureAwait(false);
+            }
             return created;
+        }
+
+        /// <summary>
+        /// The moderation queue address that opens one target's details, for example
+        /// /admin/moderation?target=Comment%3Acmt_x.
+        /// </summary>
+        /// <param name="targetType">Kind of content.</param>
+        /// <param name="targetId">Content identifier.</param>
+        /// <returns>Path and query.</returns>
+        /// <exception cref="ArgumentNullException">The target id is null or empty.</exception>
+        public static string ModerationPath(TargetTypeEnum targetType, string targetId)
+        {
+            if (String.IsNullOrEmpty(targetId)) throw new ArgumentNullException(nameof(targetId));
+            return "/admin/moderation?target=" + Uri.EscapeDataString(targetType.ToString() + ":" + targetId);
+        }
+
+        /// <summary>
+        /// Add the engine's starter list of common English profanity and slurs (<see cref="WordFilterStarterList"/>)
+        /// with action Flag, so matching contributions are saved, filed in the moderation queue, and alerted to
+        /// administrators. Terms already on the list are skipped; administrators can change any term to Block or
+        /// delete it afterwards.
+        /// </summary>
+        /// <param name="info">Request information for the audit entry.</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Added and skipped counts.</returns>
+        /// <exception cref="ArgumentNullException">info is null.</exception>
+        public async Task<WordFilterImportResponse> ImportStarterAsync(RequestInfo info, CancellationToken token = default)
+        {
+            ArgumentNullException.ThrowIfNull(info);
+            WordFilterImportResponse total = new WordFilterImportResponse();
+            foreach (WordFilterMatchTypeEnum matchType in new[] { WordFilterMatchTypeEnum.Word, WordFilterMatchTypeEnum.Substring })
+            {
+                List<string?> terms = WordFilterStarterList.Terms(matchType).Cast<string?>().ToList();
+                if (terms.Count == 0) continue;
+                WordFilterImportResponse part = await ImportAsync(new WordFilterImportRequest { Terms = terms, MatchType = matchType, Action = WordFilterActionEnum.Flag }, info, token).ConfigureAwait(false);
+                total.Added += part.Added;
+                total.Skipped += part.Skipped;
+            }
+            return total;
         }
 
         /// <summary>
@@ -517,6 +581,49 @@ namespace TrellisKit.Server.Services
         #endregion
 
         #region Private-Methods
+
+        private async Task AlertAdministratorsAsync(WordFilterResult result, TargetTypeEnum targetType, string targetId, string reportId, DateTime now, CancellationToken token)
+        {
+            string path = ModerationPath(targetType, targetId);
+            string noun = TrellisKit.Server.Services.Email.EmailLabels.TargetType(targetType);
+            string terms = String.Join(", ", result.Flags.Select(f => f.Term).Distinct(StringComparer.OrdinalIgnoreCase).Take(5));
+            try
+            {
+                if (Notifications != null)
+                {
+                    List<RoleAssignment> admins = await _Database.RoleAssignments.EnumerateByRoleAsync(RoleEnum.SystemAdmin, _Settings.ContentReview.MaxNotifiedAdmins, token).ConfigureAwait(false);
+                    List<string> recipients = admins.Select(a => a.UserId).Distinct(StringComparer.Ordinal).ToList();
+                    if (recipients.Count > 0)
+                    {
+                        NotificationDraft draft = new NotificationDraft
+                        {
+                            Type = NotificationTypeEnum.ContentFlagged,
+                            TargetType = targetType,
+                            TargetId = targetId,
+                            SubjectNoun = noun,
+                            TitleText = "Word filter flagged a " + noun + ": " + terms,
+                            Body = result.Excerpt,
+                            Path = path,
+                            EventUtc = now,
+                            QueuePush = true
+                        };
+                        await Notifications.CreateForRecipientsAsync(draft, recipients, token).ConfigureAwait(false);
+                    }
+                }
+                if (Email != null)
+                {
+                    await Email.NotifyStaffAsync("staff_new_report", "report:" + reportId, token,
+                        ("targetType", noun),
+                        ("reason", TrellisKit.Server.Services.Email.EmailLabels.ReportReason(ReportReasonEnum.Filter) + " (" + terms + ")"),
+                        ("link", Email.Link(path))).ConfigureAwait(false);
+                }
+            }
+            catch (Exception e) when (e is not OperationCanceledException)
+            {
+                // The contribution is saved and the report is filed; a failed alert must not fail the write.
+                Logger?.Warn("word filter alert for " + targetType + " " + targetId + " failed: " + e.Message);
+            }
+        }
 
         private async Task<List<WordFilterTerm>> TermsAsync(CancellationToken token)
         {

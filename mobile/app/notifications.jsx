@@ -37,7 +37,7 @@ function NotificationRow({ item, onOpen, onToggleRead }) {
   const t = strings.notifications;
   const label = [unread ? t.unread : null, item.title, item.body, formatRelativeTime(item.updatedUtc || item.createdUtc)].filter(Boolean).join('. ');
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: theme.colors.border, backgroundColor: unread ? theme.colors.accentSoft : theme.colors.background }} testID={'notification-' + item.id}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: theme.colors.border, borderLeftWidth: 4, borderLeftColor: unread ? theme.colors.primary : 'transparent', backgroundColor: unread ? theme.colors.surface : theme.colors.background }} testID={'notification-' + item.id}>
       <Pressable
         onPress={() => onOpen(item)}
         accessibilityRole="button"

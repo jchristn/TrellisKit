@@ -19468,6 +19468,76 @@
           ]
         },
         {
+          "name": "Load starter list",
+          "request": {
+            "method": "POST",
+            "description": "Adds the engine's starter list of common English profanity and slurs with action Flag; terms already on the list are skipped. Flagged contributions alert SystemAdmins with a link to the content. No body. Returns { added, skipped }.",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Client",
+                "value": "{{client}}"
+              },
+              {
+                "key": "X-Client-Version",
+                "value": "postman"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/admin/moderation/word-filter/starter",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "admin",
+                "moderation",
+                "word-filter",
+                "starter"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{adminToken}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Has counts', function () { pm.expect(pm.response.json()).to.include.keys('added','skipped'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Test text",
           "request": {
             "method": "POST",

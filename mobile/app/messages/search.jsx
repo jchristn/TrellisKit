@@ -32,7 +32,7 @@ function ResultRow({ hit, onOpen }) {
       <AppText color="textMuted" testID={'message-hit-text-' + (hit.message ? hit.message.id : hit.conversationId)}>
         {parts.map((part, i) =>
           part.match ? (
-            <AppText key={i} color="text" style={{ fontWeight: '700', backgroundColor: theme.colors.accentSoft }}>
+            <AppText key={i} color="onAccentSoft" style={{ fontWeight: '700', backgroundColor: theme.colors.accentSoft }}>
               {part.text}
             </AppText>
           ) : (
