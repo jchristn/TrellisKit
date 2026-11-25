@@ -59,6 +59,8 @@ namespace Test.Shared.Suites
             { "/api/v1/admin/email/templates/{key}", "One template: its tokens (fixed by the engine version)" },
             { "/api/v1/admin/email/test/catalog", "POST: one result per template of the engine catalog plus the property's own templates (fixed by the engine version and the property directory)" },
             { "/api/v1/admin/email/messages/{id}", "Email record: labels and tags 50 each" },
+            { "/api/v1/admin/summary", "Administrator summary of one day: the engine default items plus at most 60 configured items (AdminSummarySettings.MaxItems), each with at most 20 groups plus a total and Other; skipped at most one entry per item" },
+            { "/api/v1/admin/summary/send", "POST: queued and alreadySent at most 20 recipients each (AdminSummarySettings.MaxRecipients)" },
             { "/api/v1/admin/update-groups/{id}", "Update group: updates at most 2 (one per platform), rolloutPlan at most 10 stages, assets preview at most 20 with totalRecords and the enumerate path" },
             { "/api/v1/admin/app/flags/{id}", "Flag detail: rules at most appConfig.maxRulesPerFlag, history preview at most 10 with totalRecords and the enumerate path" },
             { "/api/v1/admin/app/strings/{key}", "Remote string detail: tokens of one catalog key, history preview at most 10 with totalRecords and the enumerate path" },
