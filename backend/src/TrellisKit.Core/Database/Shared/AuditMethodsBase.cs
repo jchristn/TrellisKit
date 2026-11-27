@@ -61,6 +61,15 @@ namespace TrellisKit.Core.Database.Shared
             return table.Rows.Cast<DataRow>().Select(Map).ToList();
         }
 
+        public async Task<int> CountByActionAndIpSinceAsync(string action, string sourceIp, DateTime sinceUtc, int cap, CancellationToken token = default)
+        {
+            RequireText(action, nameof(action));
+            RequireText(sourceIp, nameof(sourceIp));
+            DataTable table = await QueryAsync("SELECT COUNT(*) AS n FROM (SELECT 1 FROM auditrecords WHERE " + Scope() + " AND action = " + D.Str(action) +
+                " AND createdutc >= " + D.Ts(sinceUtc) + " AND sourceip = " + D.Str(sourceIp) + " LIMIT " + D.Num(Math.Clamp(cap, 1, 1000)) + ") capped;", token).ConfigureAwait(false);
+            return table.Rows.Count == 0 ? 0 : Convert.ToInt32(table.Rows[0]["n"], System.Globalization.CultureInfo.InvariantCulture);
+        }
+
         private static AuditRecord Map(DataRow row)
         {
             return new AuditRecord

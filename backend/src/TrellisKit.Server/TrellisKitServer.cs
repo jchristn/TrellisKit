@@ -290,8 +290,7 @@ namespace TrellisKit.Server
 
         private static string ResolveVersion()
         {
-            System.Version? version = typeof(TrellisKitServer).Assembly.GetName().Version;
-            return version == null ? "0.0.0" : version.ToString(3);
+            return TrellisKit.Server.Services.ServerVersion.Current;
         }
 
         private void ConfigureServer()

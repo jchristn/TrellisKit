@@ -152,6 +152,7 @@ namespace Test.Shared
                     CatalogApparatusSuite.Build(),
                     CatalogGenerationSuite.Build(),
                     CatalogPublicPageSuite.Build(),
+                    StaffEmailDetailsSuite.Build(),
                 };
                 return core.Concat(IntegrationSuites.All).ToList();
             }

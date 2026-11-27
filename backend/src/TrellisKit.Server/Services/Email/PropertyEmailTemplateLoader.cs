@@ -52,7 +52,7 @@ namespace TrellisKit.Server.Services.Email
 
         private static readonly HashSet<string> _Types = new HashSet<string>(StringComparer.Ordinal)
         {
-            "body", "button", "paragraph", "subheading", "callout", "notice", "list", "fields", "code", "markdown", "divider"
+            "body", "button", "paragraph", "subheading", "callout", "notice", "list", "fields", "code", "markdown", "divider", "details"
         };
 
         #endregion

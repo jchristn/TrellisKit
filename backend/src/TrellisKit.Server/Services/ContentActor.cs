@@ -120,6 +120,12 @@ namespace TrellisKit.Server.Services
         public string? SourceIp { get; set; } = null;
 
         /// <summary>
+        /// The HTTP request this actor was resolved from (IP address, client, platform, version, request id), or null when
+        /// resolved outside a request. Used for the request details on staff emails (docs/EMAIL.md, "Staff email details").
+        /// </summary>
+        public RequestInfo? Request { get; set; } = null;
+
+        /// <summary>
         /// The property's access policy at the time the caller was resolved. Never null; default FullyGated.
         /// </summary>
         /// <exception cref="ArgumentNullException">Set to null.</exception>

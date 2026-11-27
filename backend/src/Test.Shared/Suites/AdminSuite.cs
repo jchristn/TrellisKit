@@ -172,7 +172,7 @@ namespace Test.Shared.Suites
                     JsonElement audit = await Api.ExpectAsync(f, HttpMethod.Get, "/api/v1/admin/audit?targetId=" + member.Id + "&ordering=CreatedAscending", admin.AccessToken, null, HttpStatusCode.OK, ct).ConfigureAwait(false);
                     string[] actions = audit.GetProperty("objects").EnumerateArray().Select(a => Api.Str(a, "action")).ToArray();
                     foreach (string action in new[] { "member.comp", "member.mute", "member.ban", "member.sessions.revoke" }) Check.True(actions.Contains(action), "Audited " + action);
-                    JsonElement record = audit.GetProperty("objects").EnumerateArray().First(a => Api.Str(a, "action") != "document.accept");
+                    JsonElement record = audit.GetProperty("objects").EnumerateArray().First(a => Api.Str(a, "action") != "document.accept" && Api.Str(a, "action") != "account.signup");
                     Check.Equal(admin.Id, Api.Str(record, "actorUserId"), "Actor");
                     Check.Equal("Admin Person", Api.Str(record, "actorName"), "Actor name");
                     Check.Equal("User", Api.Str(record, "targetType"), "Target type");

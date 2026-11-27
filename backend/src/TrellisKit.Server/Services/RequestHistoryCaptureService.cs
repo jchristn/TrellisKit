@@ -155,6 +155,7 @@ namespace TrellisKit.Server.Services
 
             RequestHistoryEntry entry = new RequestHistoryEntry
             {
+                Id = RequestIds.Of(ctx),
                 MetricRoute = Metrics.MetricRequestDimensions.Route(ctx.Request.Method.ToString(), ctx.Request.Url.RawWithoutQuery),
                 MetricApp = Metrics.MetricRequestDimensions.Header(ctx.Request.Headers, "X-Client"),
                 MetricPlatform = Metrics.MetricRequestDimensions.Header(ctx.Request.Headers, "X-Client-Platform"),

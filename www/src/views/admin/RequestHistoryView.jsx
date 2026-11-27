@@ -72,7 +72,8 @@ function RequestHistoryView() {
   const selected = selection.key === selectionKey ? selection.ids : [];
   const setSelected = (ids) => setSelection({ key: selectionKey, ids });
 
-  const [detailId, setDetailId] = useState(null);
+  // ?id=req_... opens one request directly (the request id link on staff emails, docs/EMAIL.md).
+  const [detailId, setDetailId] = useState(() => (/^req_[A-Za-z0-9]+$/.test(searchParams.get('id') || '') ? searchParams.get('id') : null));
   const [jsonRow, setJsonRow] = useState(null);
   const [confirm, setConfirm] = useState(null);
   const [busy, setBusy] = useState(false);

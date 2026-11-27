@@ -83,6 +83,7 @@ namespace TrellisKit.Server.Services.Email.Templates
 
         private static readonly Dictionary<string, string> _Samples = new Dictionary<string, string>(StringComparer.Ordinal)
         {
+            { StaffEmailDetails.Token, StaffEmailSamples.TicketOverdue },
             { "ticketNumber", "#1042" },
             { "title", "Charged twice" },
             { "dueUtc", "November 13, 2026" },

@@ -148,7 +148,8 @@ namespace TrellisKit.Server.Services
                     throw new InvalidOperationException("The report was neither stored nor found.");
                 }
                 if (request.Labels != null || request.Tags != null) await _Services.Metadata.ApplyAsync(actor, TargetTypeEnum.Report, stored.Id, request.Labels, request.Tags, token).ConfigureAwait(false);
-                await _Services.Email.NotifyStaffAsync("staff_new_report", "report:" + stored.Id, token, ("targetType", Email.EmailLabels.TargetType(target.TargetType)), ("reason", Email.EmailLabels.ReportReason(stored.Reason)), ("link", _Services.Email.Link(WordFilterService.ModerationPath(target.TargetType, target.TargetId)))).ConfigureAwait(false);
+                await _Services.Email.NotifyStaffAsync("staff_new_report", "report:" + stored.Id, token, ("targetType", Email.EmailLabels.TargetType(target.TargetType)), ("reason", Email.EmailLabels.ReportReason(stored.Reason)),
+                    ("link", _Services.Email.Link(WordFilterService.ModerationPath(target.TargetType, target.TargetId))), (Email.StaffEmailDetails.Token, await StaffDetailsAsync(actor, target, stored, token).ConfigureAwait(false))).ConfigureAwait(false);
                 TrellisKitTelemetry.Add(TrellisKitTelemetry.Reports, 1, "target_type", target.TargetType.ToString(), "reason", stored.Reason.ToString());
                 if (target.TargetType == TargetTypeEnum.FeedPost) await _Services.Feed.RecomputeOpenReportCountAsync(target.TargetId, token).ConfigureAwait(false);
                 else if (target.TargetType == TargetTypeEnum.Thread) await _Services.Database.Threads.RecomputeOpenReportCountAsync(target.TargetId, token).ConfigureAwait(false);
@@ -175,6 +176,31 @@ namespace TrellisKit.Server.Services
         #endregion
 
         #region Private-Methods
+
+        private async Task<string> StaffDetailsAsync(ContentActor actor, ModerationTarget target, Report report, CancellationToken token)
+        {
+            // Staff email details (docs/EMAIL.md): the report, the reported content and its author, the reporter, and the request.
+            try
+            {
+                Email.StaffEmailDetailsService details = _Services.StaffEmailDetails;
+                Email.StaffEmailDetails sections = new Email.StaffEmailDetails();
+                sections.Add(new Email.StaffEmailSection("Report")
+                    .Row("Reason", Email.EmailLabels.ReportReason(report.Reason))
+                    .Row("Details", report.Details)
+                    .Row("Scope", report.ScopeType)
+                    .Row("Review due", await details.TimeAsync(report.DueUtc, token).ConfigureAwait(false)));
+                sections.Add(await details.ContentAsync(target, report.ScopeType, token).ConfigureAwait(false));
+                sections.Add(await details.AuthorAsync(target.AuthorUserId, token).ConfigureAwait(false));
+                sections.Add(await details.ReporterAsync(report.ReporterUserId, token).ConfigureAwait(false));
+                sections.Add(await details.RequestAsync(actor.Request, token).ConfigureAwait(false));
+                return sections.Serialize();
+            }
+            catch (Exception e) when (e is not OperationCanceledException)
+            {
+                _Services.Logger.Warn("[ReportService] staff details for report " + report.Id + " unavailable: " + e.Message);
+                return String.Empty;
+            }
+        }
 
         private async Task<ReportCreateOutcome> OutcomeAsync(ContentActor actor, Report report, bool created, bool hidden, CancellationToken token)
         {

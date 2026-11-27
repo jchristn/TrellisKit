@@ -25,6 +25,8 @@ namespace TrellisKit.Server.Services.Email.Templates
         /// <inheritdoc />
         public override string? ButtonLabel => "Open metrics";
         /// <inheritdoc />
-        public override IReadOnlyDictionary<string,string> Samples => new Dictionary<string,string>{{"metric","Server error rate"},{"detail","Server errors exceeded the configured threshold."},{"link","https://example.test/admin/metrics/health"}};
+        public override string? StaffOrigin => "Metric alert check (scheduled)";
+        /// <inheritdoc />
+        public override IReadOnlyDictionary<string,string> Samples => new Dictionary<string,string>{{StaffEmailDetails.Token, StaffEmailSamples.System("Metric alert check (scheduled)")},{"metric","Server error rate"},{"detail","Server errors exceeded the configured threshold."},{"link","https://example.test/admin/metrics/health"}};
     }
 }

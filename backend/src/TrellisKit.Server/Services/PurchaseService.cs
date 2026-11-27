@@ -14,8 +14,10 @@ namespace TrellisKit.Server.Services
     using TrellisKit.Core.Integrations.Models;
     using TrellisKit.Core.Models;
     using TrellisKit.Core.Observability;
+    using TrellisKit.Core.PropertyConfig;
     using TrellisKit.Core.Responses;
     using TrellisKit.Core.Settings;
+    using TrellisKit.Server.Services.Email;
 
     /// <summary>
     /// Store purchases: Stripe Checkout and the customer portal, App Store and Google Play verification, and the shared
@@ -561,6 +563,41 @@ namespace TrellisKit.Server.Services
             return subscription;
         }
 
+        private async Task<string> StaffDetailsAsync(Subscription s, User user, SubscriptionStatusEnum? before, bool autoRenewBefore, DateTime? endBefore, CancellationToken token)
+        {
+            // Staff email details (docs/EMAIL.md): the member, the plan and store transaction, and the previous state. The source is a
+            // store notification or verification, never a member request, so there is no IP address.
+            StaffEmailDetailsService? builder = Email?.StaffDetails;
+            if (builder == null) return String.Empty;
+            try
+            {
+                PropertyMembership plan = _Property.Property.Membership;
+                StaffEmailSection subscription = new StaffEmailSection("Subscription")
+                    .Row("Plan", plan.ProductName)
+                    .Row("Product id", s.ProductId)
+                    .Row("List price", plan.PriceUsdCents > 0 ? (plan.PriceUsdCents / 100m).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + " USD per " + plan.Interval.ToLowerInvariant() : null)
+                    .Row("Store", s.Store + (s.Environment == StoreEnvironmentEnum.Production ? String.Empty : " (" + s.Environment + ")"))
+                    .Row("Store subscription id", s.StoreSubscriptionId)
+                    .Row("Latest transaction id", s.LatestTransactionId)
+                    .Row("Status", before == null ? s.Status.ToString() : before + " to " + s.Status)
+                    .Row("Auto-renew", autoRenewBefore == s.AutoRenew ? (s.AutoRenew ? "On" : "Off") : (autoRenewBefore ? "On" : "Off") + " to " + (s.AutoRenew ? "On" : "Off"))
+                    .Row("Current period", s.CurrentPeriodStartUtc == null && s.CurrentPeriodEndUtc == null ? null
+                        : (s.CurrentPeriodStartUtc == null ? "?" : EmailService.FormatDate(s.CurrentPeriodStartUtc.Value)) + " to " + (s.CurrentPeriodEndUtc == null ? "?" : EmailService.FormatDate(s.CurrentPeriodEndUtc.Value)))
+                    .Row("Previous period end", endBefore == null || endBefore == s.CurrentPeriodEndUtc ? null : EmailService.FormatDate(endBefore.Value))
+                    .Row("Subscription id", s.Id);
+                StaffEmailDetails sections = new StaffEmailDetails();
+                sections.Add(subscription);
+                sections.Add(await builder.MemberAsync(user.Id, "Member", token).ConfigureAwait(false));
+                sections.Add(builder.Origin(s.Store == StoreEnum.Apple ? "App Store notification or verification" : s.Store == StoreEnum.Google ? "Google Play notification or verification" : "Stripe webhook or checkout"));
+                return sections.Serialize();
+            }
+            catch (Exception e) when (e is not OperationCanceledException)
+            {
+                _Logger.Warn("[PurchaseService] staff details for subscription " + s.Id + " unavailable: " + e.Message);
+                return String.Empty;
+            }
+        }
+
         private async Task NotifyAsync(Subscription s, SubscriptionStatusEnum? before, bool autoRenewBefore, DateTime? endBefore, CancellationToken token)
         {
             // Billing lifecycle emails (docs/TRELLISKIT.md section 12.3), one per event: the idempotency key carries the
@@ -578,10 +615,11 @@ namespace TrellisKit.Server.Services
                 bool active = s.Status == SubscriptionStatusEnum.Active;
                 bool wasActive = before == SubscriptionStatusEnum.Active || before == SubscriptionStatusEnum.InGrace || before == SubscriptionStatusEnum.InBillingRetry;
                 string key = "sub:" + s.Id + ":";
+                string details = await StaffDetailsAsync(s, user, before, autoRenewBefore, endBefore, token).ConfigureAwait(false);
                 if (active && !wasActive)
                 {
                     await Email.SendToMemberAsync("membership_started", user, key + "started:" + period, token, ("plan", _Property.Property.Membership.ProductName), ("store", store), ("renewalDate", end), ("link", link)).ConfigureAwait(false);
-                    await Email.NotifyStaffAsync("staff_new_subscription", key + "started:" + period, token, ("subjectName", user.DisplayName), ("store", store), ("link", admin)).ConfigureAwait(false);
+                    await Email.NotifyStaffAsync("staff_new_subscription", key + "started:" + period, token, ("subjectName", user.DisplayName), ("store", store), ("link", admin), (StaffEmailDetails.Token, details)).ConfigureAwait(false);
                 }
                 else if (active && before == SubscriptionStatusEnum.Active && endBefore != null && s.CurrentPeriodEndUtc != null && s.CurrentPeriodEndUtc > endBefore)
                     await Email.SendToMemberAsync("renewal_succeeded", user, key + "renewed:" + period, token, ("store", store), ("renewalDate", end), ("link", link)).ConfigureAwait(false);
@@ -589,19 +627,19 @@ namespace TrellisKit.Server.Services
                 {
                     string fix = s.Store == StoreEnum.Apple ? "Update your payment method in your Apple account settings." : s.Store == StoreEnum.Google ? "Update your payment method in Google Play." : "Update your card on the membership page.";
                     await Email.SendToMemberAsync("payment_failed", user, key + "failed:" + s.Status + ":" + period, token, ("store", store), ("fixInstructions", fix), ("link", link)).ConfigureAwait(false);
-                    await Email.NotifyStaffAsync("staff_payment_failure", key + "failed:" + s.Status + ":" + period, token, ("subjectName", user.DisplayName), ("store", store), ("link", admin)).ConfigureAwait(false);
+                    await Email.NotifyStaffAsync("staff_payment_failure", key + "failed:" + s.Status + ":" + period, token, ("subjectName", user.DisplayName), ("store", store), ("link", admin), (StaffEmailDetails.Token, details)).ConfigureAwait(false);
                 }
                 if (autoRenewBefore && !s.AutoRenew && (active || s.Status == SubscriptionStatusEnum.InGrace))
                 {
                     await Email.SendToMemberAsync("subscription_canceled", user, key + "canceled:" + period, token, ("endDate", end), ("link", link)).ConfigureAwait(false);
-                    await Email.NotifyStaffAsync("staff_cancellation", key + "canceled:" + period, token, ("subjectName", user.DisplayName), ("store", store), ("endDate", end), ("link", admin)).ConfigureAwait(false);
+                    await Email.NotifyStaffAsync("staff_cancellation", key + "canceled:" + period, token, ("subjectName", user.DisplayName), ("store", store), ("endDate", end), ("link", admin), (StaffEmailDetails.Token, details)).ConfigureAwait(false);
                 }
                 if (s.Status == SubscriptionStatusEnum.Expired && before != null && before != SubscriptionStatusEnum.Expired)
                     await Email.SendToMemberAsync("membership_expired", user, key + "expired:" + period, token, ("link", Email.Link("/join"))).ConfigureAwait(false);
                 if ((s.Status == SubscriptionStatusEnum.Refunded || s.Status == SubscriptionStatusEnum.Revoked) && before != s.Status)
                 {
                     await Email.SendToMemberAsync("refund_revoked", user, key + "refund", token, ("store", store)).ConfigureAwait(false);
-                    await Email.NotifyStaffAsync("staff_refund", key + "refund", token, ("subjectName", user.DisplayName), ("store", store), ("link", admin)).ConfigureAwait(false);
+                    await Email.NotifyStaffAsync("staff_refund", key + "refund", token, ("subjectName", user.DisplayName), ("store", store), ("link", admin), (StaffEmailDetails.Token, details)).ConfigureAwait(false);
                 }
             }
             catch (Exception e) when (e is not OperationCanceledException)

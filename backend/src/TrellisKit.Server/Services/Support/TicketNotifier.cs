@@ -62,8 +62,9 @@ namespace TrellisKit.Server.Services
         /// <param name="ticket">Ticket.</param>
         /// <param name="type">Its type (recipients), or null.</param>
         /// <param name="token">Cancellation token.</param>
+        /// <param name="request">The member request that opened it (request details on the staff email), or null.</param>
         /// <returns>Task.</returns>
-        public async Task TicketCreatedAsync(Ticket ticket, TicketType? type, CancellationToken token = default)
+        public async Task TicketCreatedAsync(Ticket ticket, TicketType? type, CancellationToken token = default, RequestInfo? request = null)
         {
             ArgumentNullException.ThrowIfNull(ticket);
             await SafeAsync("ticket_created", async () =>
@@ -76,6 +77,7 @@ namespace TrellisKit.Server.Services
                     await _Services.Email.QueueAsync(email, token).ConfigureAwait(false);
                 }
                 List<string> recipients = (type?.StaffRecipients ?? new List<string>()).Distinct(StringComparer.OrdinalIgnoreCase).Take(10).ToList();
+                string details = recipients.Count == 0 ? String.Empty : await StaffDetailsAsync(ticket, type, request, false, token).ConfigureAwait(false);
                 foreach (string recipient in recipients)
                 {
                     EmailRequest staff = new EmailRequest { Template = "staff_ticket_opened", To = recipient, IdempotencyKey = "staff_ticket_opened:" + ticket.Id + ":" + recipient.ToLowerInvariant() };
@@ -86,6 +88,7 @@ namespace TrellisKit.Server.Services
                     staff.Tokens["requesterName"] = requester?.DisplayName ?? "Deleted member";
                     staff.Tokens["adminLink"] = _Services.Email.Link(AdminPath(ticket));
                     staff.Tokens["link"] = staff.Tokens["adminLink"];
+                    staff.Tokens[StaffEmailDetails.Token] = details;
                     await _Services.Email.QueueAsync(staff, token).ConfigureAwait(false);
                 }
                 List<string> staffIds = await _Module.StaffUserIdsAsync(token).ConfigureAwait(false);
@@ -182,6 +185,7 @@ namespace TrellisKit.Server.Services
                 if (recipients.Count == 0) return;
                 List<User> users = await _Services.Database.Users.ReadManyAsync(recipients, token).ConfigureAwait(false);
                 List<NotificationPreference> preferences = await _Services.Database.NotificationPreferences.EnumerateAsync(recipients, token).ConfigureAwait(false);
+                string details = await StaffDetailsAsync(ticket, null, null, true, token).ConfigureAwait(false);
                 foreach (User user in users.Where(u => !u.IsDeleted && !String.IsNullOrWhiteSpace(u.Email)))
                 {
                     if (!NotificationPreferenceService.Effective(user.Id, preferences, NotificationCategoryEnum.Support).Email) continue;
@@ -192,6 +196,7 @@ namespace TrellisKit.Server.Services
                     email.Tokens["dueUtc"] = ticket.FirstResponseDueUtc == null ? String.Empty : EmailService.FormatDate(ticket.FirstResponseDueUtc.Value);
                     email.Tokens["adminLink"] = _Services.Email.Link(AdminPath(ticket));
                     email.Tokens["link"] = email.Tokens["adminLink"];
+                    email.Tokens[StaffEmailDetails.Token] = details;
                     await _Services.Email.QueueAsync(email, token).ConfigureAwait(false);
                 }
             }).ConfigureAwait(false);
@@ -245,6 +250,53 @@ namespace TrellisKit.Server.Services
         #endregion
 
         #region Private-Methods
+
+        private async Task<string> StaffDetailsAsync(Ticket ticket, TicketType? type, RequestInfo? request, bool overdue, CancellationToken token)
+        {
+            // Staff email details (docs/EMAIL.md): the ticket, the client it was sent from, the requester, and the request (opened only).
+            try
+            {
+                StaffEmailDetailsService builder = _Services.StaffEmailDetails;
+                DateTime now = builder.Clock();
+                StaffEmailSection section = new StaffEmailSection("Ticket")
+                    .Row("Number", Number(ticket))
+                    .Row("Type", type?.Label ?? ticket.TypeKey)
+                    .Row("Priority", ticket.Priority.ToString())
+                    .Row("Status", ticket.Status.ToString());
+                if (overdue)
+                {
+                    section.Row("Age", StaffEmailDetailsService.Age(now - ticket.CreatedUtc));
+                    if (ticket.FirstResponseDueUtc.HasValue) section.Row("First response due", await builder.TimeAsync(ticket.FirstResponseDueUtc.Value, token).ConfigureAwait(false));
+                    User? assignee = String.IsNullOrEmpty(ticket.AssigneeUserId) ? null : await _Services.Database.Users.ReadAsync(ticket.AssigneeUserId, token).ConfigureAwait(false);
+                    section.Row("Assigned to", assignee == null ? "Unassigned" : assignee.DisplayName);
+                }
+                else
+                {
+                    section.Row("Body", StaffEmailDetailsService.Excerpt(ticket.Body, 300));
+                }
+                StaffEmailSection client = new StaffEmailSection("Client (from the ticket)")
+                    .Row("Client", ticket.DeviceClient)
+                    .Row("App version", ticket.DeviceClientVersion)
+                    .Row("Platform", ticket.DevicePlatform)
+                    .Row("Operating system", ticket.DeviceOsVersion)
+                    .Row("Device", ticket.DeviceModel)
+                    .Row("Update id", ticket.DeviceUpdateId)
+                    .Row("Locale", ticket.DeviceLocale)
+                    .Row("Time zone", ticket.DeviceTimeZone);
+                StaffEmailDetails sections = new StaffEmailDetails();
+                sections.Add(section);
+                sections.Add(await builder.MemberAsync(ticket.RequesterUserId, "Requester", token).ConfigureAwait(false));
+                if (!overdue) sections.Add(client);
+                if (!overdue) sections.Add(await builder.RequestAsync(request, token).ConfigureAwait(false));
+                if (overdue) sections.Add(builder.Origin("First response check (scheduled)"));
+                return sections.Serialize();
+            }
+            catch (Exception e) when (e is not OperationCanceledException)
+            {
+                _Services.Logger.Warn("[TicketNotifier] staff details for " + ticket.Id + " unavailable: " + e.Message);
+                return String.Empty;
+            }
+        }
 
         private async Task MemberNotificationAsync(Ticket ticket, string? actorUserId, string title, CancellationToken token)
         {

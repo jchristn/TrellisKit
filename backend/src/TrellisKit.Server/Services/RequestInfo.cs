@@ -36,6 +36,21 @@ namespace TrellisKit.Server.Services
         public string? ClientPlatform { get; set; } = null;
 
         /// <summary>
+        /// Client app version from the X-Client-Version header (trimmed, at most 32 characters), or null.
+        /// </summary>
+        public string? ClientVersion { get; set; } = null;
+
+        /// <summary>
+        /// Request history id of this request (see <see cref="RequestIds"/>), or null when not built from an HTTP request.
+        /// </summary>
+        public string? RequestId { get; set; } = null;
+
+        /// <summary>
+        /// When the request arrived (UTC).
+        /// </summary>
+        public DateTime ReceivedUtc { get; set; } = DateTime.UtcNow;
+
+        /// <summary>
         /// Authenticated context, or null for anonymous routes.
         /// </summary>
         public RequestContext? Context { get; set; } = null;
@@ -49,6 +64,11 @@ namespace TrellisKit.Server.Services
         /// Header that names the client platform (ios, android, or web).
         /// </summary>
         public const string ClientPlatformHeader = "X-Client-Platform";
+
+        /// <summary>
+        /// Header that names the client app version.
+        /// </summary>
+        public const string ClientVersionHeader = "X-Client-Version";
 
         #endregion
 
@@ -82,6 +102,9 @@ namespace TrellisKit.Server.Services
                 UserAgent = String.IsNullOrWhiteSpace(agent) ? null : agent,
                 ClientType = ParseClient(ctx.Request.RetrieveHeaderValue(Constants.ClientHeader)),
                 ClientPlatform = Platform(ctx.Request.RetrieveHeaderValue(ClientPlatformHeader)),
+                ClientVersion = Platform(ctx.Request.RetrieveHeaderValue(ClientVersionHeader)),
+                RequestId = RequestIds.Of(ctx),
+                ReceivedUtc = ctx.Timestamp.Start,
                 Context = ctx.Metadata as RequestContext,
                 IsInsecureLoopback = !https && IsLoopbackHost(ctx.Request.RetrieveHeaderValue("Host"))
             };

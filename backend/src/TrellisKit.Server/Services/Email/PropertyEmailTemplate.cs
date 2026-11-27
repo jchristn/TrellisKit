@@ -137,8 +137,11 @@ namespace TrellisKit.Server.Services.Email
                     case "markdown": email.Markdown(email.Token(block.Token ?? String.Empty)); break;
                     case "divider": email.Divider(); break;
                     case "notice": email.Notice(block.Text, block.Label, block.UrlToken == null ? null : email.Token(block.UrlToken)); break;
+                    case "details": StaffEmailDetails.Render(email); break;
                 }
             }
+            // Staff details (docs/EMAIL.md, "Staff email details") always reach staff: a layout without a details block gets them last.
+            if (!_Blocks.Any(b => Normalize(b.Type) == "details")) StaffEmailDetails.Render(email);
         }
 
         /// <summary>

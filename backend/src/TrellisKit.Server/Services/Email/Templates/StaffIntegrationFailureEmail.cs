@@ -66,6 +66,12 @@ namespace TrellisKit.Server.Services.Email.Templates
         }
 
         /// <inheritdoc />
+        public override string? StaffOrigin
+        {
+            get { return "Integration monitor"; }
+        }
+
+        /// <inheritdoc />
         public override IReadOnlyDictionary<string, string> Samples
         {
             get { return _Samples; }
@@ -77,6 +83,7 @@ namespace TrellisKit.Server.Services.Email.Templates
 
         private static readonly Dictionary<string, string> _Samples = new Dictionary<string, string>(StringComparer.Ordinal)
         {
+            { StaffEmailDetails.Token, StaffEmailSamples.System("Integration monitor") },
             { "link", "https://example.test/admin" },
             { "integration", "Stripe webhook" },
             { "detail", "Signature verification failed." }

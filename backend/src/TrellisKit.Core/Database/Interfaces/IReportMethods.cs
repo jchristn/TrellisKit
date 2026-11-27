@@ -151,6 +151,35 @@ namespace TrellisKit.Core.Database.Interfaces
         Task<long> CountAgainstAuthorAsync(string authorUserId, DateTime sinceUtc, CancellationToken token = default);
 
         /// <summary>
+        /// Reports a member filed since a time (the reporter history on staff report emails, docs/EMAIL.md).
+        /// </summary>
+        /// <param name="reporterUserId">Reporter.</param>
+        /// <param name="sinceUtc">Window start.</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Count; 0 for an empty id.</returns>
+        Task<long> CountByReporterAsync(string reporterUserId, DateTime sinceUtc, CancellationToken token = default);
+
+        /// <summary>
+        /// Open reports on one target by reason (reason name to count), plus the distinct member reporters under the key
+        /// <c>reporters</c> (the auto-hide staff email, docs/EMAIL.md). Bounded by the reason set.
+        /// </summary>
+        /// <param name="targetType">Target type.</param>
+        /// <param name="targetId">Target id.</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Counts; empty for an empty id.</returns>
+        Task<Dictionary<string, long>> OpenBreakdownOnTargetAsync(TargetTypeEnum targetType, string targetId, CancellationToken token = default);
+
+        /// <summary>
+        /// Open reports past their review target by scope and by reason (the overdue staff email, docs/EMAIL.md),
+        /// keyed "scope:{name}" and "reason:{name}", plus "oldest" holding the creation time of the oldest overdue report
+        /// in Unix seconds. Bounded by the scope and reason sets.
+        /// </summary>
+        /// <param name="nowUtc">Now (UTC).</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Counts; empty when nothing is overdue.</returns>
+        Task<Dictionary<string, long>> OverdueBreakdownAsync(DateTime nowUtc, CancellationToken token = default);
+
+        /// <summary>
         /// A keyset batch of the reports a member filed, by identifier (account export).
         /// </summary>
         /// <param name="reporterUserId">Reporter.</param>

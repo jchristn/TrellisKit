@@ -217,6 +217,37 @@ namespace TrellisKit.Core.Database.Shared
             return CountAsync("SELECT COUNT(*) AS cnt FROM reports WHERE " + Scope() + " AND targetauthoruserid = " + D.Str(authorUserId) + " AND createdutc >= " + D.Ts(sinceUtc) + ";", token);
         }
 
+        public Task<long> CountByReporterAsync(string reporterUserId, DateTime sinceUtc, CancellationToken token = default)
+        {
+            if (String.IsNullOrEmpty(reporterUserId)) return Task.FromResult(0L);
+            return CountAsync("SELECT COUNT(*) AS cnt FROM reports WHERE " + Scope() + " AND reporteruserid = " + D.Str(reporterUserId) + " AND createdutc >= " + D.Ts(sinceUtc) + ";", token);
+        }
+
+        public async Task<Dictionary<string, long>> OpenBreakdownOnTargetAsync(TargetTypeEnum targetType, string targetId, CancellationToken token = default)
+        {
+            Dictionary<string, long> counts = new Dictionary<string, long>(StringComparer.Ordinal);
+            if (String.IsNullOrEmpty(targetId)) return counts;
+            string where = " FROM reports WHERE " + Scope() + " AND targettype = " + D.Enum(targetType) + " AND targetid = " + D.Str(targetId) + " AND status = " + D.Enum(ReportStatusEnum.Open);
+            DataTable reasons = await QueryAsync("SELECT reason, COUNT(*) AS cnt" + where + " GROUP BY reason ORDER BY reason;", token).ConfigureAwait(false);
+            foreach (DataRow row in reasons.Rows) counts[RowReader.GetString(row, "reason")] = Convert.ToInt64(row["cnt"], System.Globalization.CultureInfo.InvariantCulture);
+            counts["reporters"] = await CountAsync("SELECT COUNT(DISTINCT reporteruserid) AS cnt" + where + " AND reporteruserid IS NOT NULL;", token).ConfigureAwait(false);
+            return counts;
+        }
+
+        public async Task<Dictionary<string, long>> OverdueBreakdownAsync(DateTime nowUtc, CancellationToken token = default)
+        {
+            Dictionary<string, long> counts = new Dictionary<string, long>(StringComparer.Ordinal);
+            string where = " FROM reports WHERE " + Scope() + " AND status = " + D.Enum(ReportStatusEnum.Open) + " AND dueutc < " + D.Ts(nowUtc);
+            DataTable scopes = await QueryAsync("SELECT scopetype AS k, COUNT(*) AS cnt" + where + " GROUP BY scopetype ORDER BY scopetype LIMIT 50;", token).ConfigureAwait(false);
+            foreach (DataRow row in scopes.Rows) counts["scope:" + RowReader.GetString(row, "k")] = Convert.ToInt64(row["cnt"], System.Globalization.CultureInfo.InvariantCulture);
+            DataTable reasons = await QueryAsync("SELECT reason AS k, COUNT(*) AS cnt" + where + " GROUP BY reason ORDER BY reason LIMIT 50;", token).ConfigureAwait(false);
+            foreach (DataRow row in reasons.Rows) counts["reason:" + RowReader.GetString(row, "k")] = Convert.ToInt64(row["cnt"], System.Globalization.CultureInfo.InvariantCulture);
+            DataTable oldest = await QueryAsync("SELECT MIN(createdutc) AS oldest" + where + ";", token).ConfigureAwait(false);
+            if (oldest.Rows.Count > 0 && oldest.Rows[0]["oldest"] != DBNull.Value)
+                counts["oldest"] = new DateTimeOffset(DateTime.SpecifyKind(RowReader.GetDateTime(oldest.Rows[0], "oldest"), DateTimeKind.Utc)).ToUnixTimeSeconds();
+            return counts;
+        }
+
         public async Task<List<Report>> ListByReporterAsync(string reporterUserId, string? afterId, int limit, CancellationToken token = default)
         {
             RequireText(reporterUserId, nameof(reporterUserId));

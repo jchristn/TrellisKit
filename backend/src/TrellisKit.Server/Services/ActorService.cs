@@ -22,6 +22,12 @@ namespace TrellisKit.Server.Services
         #region Public-Members
 
         /// <summary>
+        /// Listener settings used to resolve the caller's IP address (trusted proxies) for <see cref="ContentActor.Request"/>.
+        /// Null leaves the request details unset.
+        /// </summary>
+        public TrellisKit.Core.Settings.RestSettings? Rest { get; set; } = null;
+
+        /// <summary>
         /// Scheme of the request context the authentication hook builds for a signed-out caller on a route that
         /// anonymous browsing opens (docs/ACCESS_MODELS_CONTRACT.md section 3).
         /// </summary>
@@ -76,12 +82,20 @@ namespace TrellisKit.Server.Services
         /// <param name="token">Cancellation token.</param>
         /// <returns>Actor.</returns>
         /// <exception cref="ApiErrorException">401 Unauthorized when the request is not authenticated, 404 when the member no longer exists.</exception>
-        public Task<ContentActor> ResolveAsync(HttpContextBase ctx, CancellationToken token = default)
+        public async Task<ContentActor> ResolveAsync(HttpContextBase ctx, CancellationToken token = default)
         {
             ArgumentNullException.ThrowIfNull(ctx);
             RequestContext? context = ctx.Metadata as RequestContext;
-            if (IsAnonymous(context)) return Task.FromResult(Anonymous(ctx.Request.Source?.IpAddress));
-            return ResolveAsync(context, token);
+            RequestInfo? request = Rest == null ? null : RequestInfo.From(ctx, Rest);
+            if (IsAnonymous(context))
+            {
+                ContentActor anonymous = Anonymous(request?.SourceIp ?? ctx.Request.Source?.IpAddress);
+                anonymous.Request = request;
+                return anonymous;
+            }
+            ContentActor actor = await ResolveAsync(context, token).ConfigureAwait(false);
+            actor.Request = request;
+            return actor;
         }
 
         /// <summary>

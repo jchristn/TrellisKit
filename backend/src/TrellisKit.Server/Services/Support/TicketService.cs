@@ -158,7 +158,7 @@ namespace TrellisKit.Server.Services
                 await _Services.Metadata.ApplyAsync(actor, TargetTypeEnum.Ticket, ticket.Id, request.Labels, request.Tags, token).ConfigureAwait(false);
                 SupportTelemetry.Count("create", ticket.TypeKey, "member");
                 activity?.SetTag("ticket.id", ticket.Id);
-                await _Module.Notifier.TicketCreatedAsync(ticket, type, token).ConfigureAwait(false);
+                await _Module.Notifier.TicketCreatedAsync(ticket, type, token, actor.Request).ConfigureAwait(false);
                 return await _Module.Views.DetailAsync(ticket, actor, false, token).ConfigureAwait(false);
             }
         }

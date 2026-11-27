@@ -84,6 +84,12 @@ namespace TrellisKit.Server.Services
         /// </summary>
         public Action? Signal { get; set; } = null;
 
+        /// <summary>
+        /// Builder of the request, member, and origin sections of staff emails (docs/EMAIL.md, "Staff email details"). Set by the property
+        /// services; null in tests that build the email service alone.
+        /// </summary>
+        public StaffEmailDetailsService? StaffDetails { get; set; } = null;
+
         #endregion
 
         #region Private-Members
@@ -263,6 +269,10 @@ namespace TrellisKit.Server.Services
             EmailTemplate template = Templates.Get(request.Template);
             DateTime now = DateTime.UtcNow;
             Dictionary<string, string> tokens = await TokensAsync(request.Tokens, token).ConfigureAwait(false);
+            // Request and member details (docs/EMAIL.md, "Staff email details") are for staff only: never stored on a member email.
+            if (template.Category != EmailCategoryEnum.Staff) tokens.Remove(Email.StaffEmailDetails.Token);
+            else if (template.StaffOrigin != null && StaffDetails != null && String.IsNullOrEmpty(tokens.GetValueOrDefault(Email.StaffEmailDetails.Token)))
+                tokens[Email.StaffEmailDetails.Token] = new Email.StaffEmailDetails().Add(StaffDetails.Origin(template.StaffOrigin)).Serialize();
             string id = IdGenerator.Generate(Constants.EmailMessageIdPrefix);
             EmailPayload payload = new EmailPayload { Tokens = tokens, Headers = request.AddListUnsubscribe && !request.Essential ? UnsubscribeHeaders(template, tokens, request.Headers) : new Dictionary<string, string>(request.Headers, StringComparer.OrdinalIgnoreCase) };
             EmailMessageRecord record = new EmailMessageRecord

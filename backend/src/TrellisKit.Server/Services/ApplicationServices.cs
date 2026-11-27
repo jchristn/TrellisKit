@@ -333,6 +333,11 @@ namespace TrellisKit.Server.Services
         public ModerationService Moderation { get; }
 
         /// <summary>
+        /// Request, member, and origin details on staff notification emails (docs/EMAIL.md, "Staff email details").
+        /// </summary>
+        public Email.StaffEmailDetailsService StaffEmailDetails { get; }
+
+        /// <summary>
         /// Moderators admin (grant and revoke FeedModerator).
         /// </summary>
         public ModeratorService Moderators { get; }
@@ -473,7 +478,7 @@ namespace TrellisKit.Server.Services
 
             RateLimiter = new SlidingWindowRateLimiter();
             Limits = new RateLimitService(RateLimiter);
-            Actors = new ActorService(database) { Decorator = ContentTargets.Decorate };
+            Actors = new ActorService(database) { Decorator = ContentTargets.Decorate, Rest = settings.Rest };
             Summaries = new UserSummaryService(database, Property);
             Enumeration = new EnumerationService(settings) { PropertyId = property.Id };
             Metadata = new MetadataService(database, Enumeration);
@@ -551,6 +556,8 @@ namespace TrellisKit.Server.Services
             Feed.Attach();
             Reports = new ReportService(this);
             Moderation = new ModerationService(this);
+            StaffEmailDetails = new Email.StaffEmailDetailsService(this);
+            Email.StaffDetails = StaffEmailDetails;
             Moderators = new ModeratorService(this);
             Feed.ModerationActionsPreview = Moderation.FeedPostActionsPreviewAsync;
             ContentExportSections.Register(this);

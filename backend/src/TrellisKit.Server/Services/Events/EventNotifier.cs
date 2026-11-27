@@ -180,13 +180,15 @@ namespace TrellisKit.Server.Services
         /// <param name="e">Proposed event.</param>
         /// <param name="submitterName">Proposer's display name.</param>
         /// <param name="token">Cancellation token.</param>
+        /// <param name="request">The member request that proposed it (request details on the staff email), or null.</param>
         /// <returns>Task.</returns>
-        public async Task StaffProposalAsync(EventRecord e, string submitterName, CancellationToken token = default)
+        public async Task StaffProposalAsync(EventRecord e, string submitterName, CancellationToken token = default, RequestInfo? request = null)
         {
             ArgumentNullException.ThrowIfNull(e);
-            string[] tokens = new[] { "eventTitle", e.Title, "submitterName", submitterName, "startLocal", EventTimeZones.Friendly(e.StartUtc, e.TimeZone, e.IsAllDay), "adminLink", _Services.Email.Link("/admin/events/proposals") };
+            string details = await ProposalDetailsAsync(e, request, token).ConfigureAwait(false);
+            string[] tokens = new[] { "eventTitle", e.Title, "submitterName", submitterName, "startLocal", EventTimeZones.Friendly(e.StartUtc, e.TimeZone, e.IsAllDay), "adminLink", _Services.Email.Link("/admin/events/proposals"), StaffEmailDetails.Token, details };
             await _Services.Email.NotifyStaffAsync(StaffEventProposalEmail.TemplateKey, "staff_event_proposal:" + e.Id, token,
-                (tokens[0], tokens[1]), (tokens[2], tokens[3]), (tokens[4], tokens[5]), (tokens[6], tokens[7])).ConfigureAwait(false);
+                (tokens[0], tokens[1]), (tokens[2], tokens[3]), (tokens[4], tokens[5]), (tokens[6], tokens[7]), (tokens[8], tokens[9])).ConfigureAwait(false);
             await EventManagersAsync(StaffEventProposalEmail.TemplateKey, "staff_event_proposal:" + e.Id, tokens, token).ConfigureAwait(false);
         }
 
@@ -262,6 +264,49 @@ namespace TrellisKit.Server.Services
         #endregion
 
         #region Private-Methods
+
+        private async Task<string> ProposalDetailsAsync(EventRecord e, RequestInfo? request, CancellationToken token)
+        {
+            // Staff email details (docs/EMAIL.md): the proposal (when, where, category), the proposer with their 90-day history, and the request.
+            try
+            {
+                StaffEmailDetailsService builder = _Services.StaffEmailDetails;
+                string? place = e.Format == EventFormatEnum.Online ? e.OnlinePlatformLabel ?? "Online"
+                    : String.Join(", ", new[] { e.LocationName, e.Locality, e.Region, e.CountryCode }.Where(p => !String.IsNullOrWhiteSpace(p)));
+                StaffEmailSection section = new StaffEmailSection("Proposal")
+                    .Row("Title", e.Title)
+                    .Row("When", EventTimeZones.Friendly(e.StartUtc, e.TimeZone, e.IsAllDay) + " (" + e.TimeZone + ")")
+                    .Row("Format", e.Format.ToString())
+                    .Row("Where", place)
+                    .Row("Category", e.CategoryKey)
+                    .Row("Capacity", e.Capacity?.ToString(CultureInfo.InvariantCulture))
+                    .Row("Audience", e.Audience.ToString())
+                    .Row("Summary", StaffEmailDetailsService.Excerpt(e.Summary ?? e.Description, 300))
+                    .Row("Note to staff", StaffEmailDetailsService.Excerpt(e.ProposalNote, 300));
+                StaffEmailSection? proposer = await builder.MemberAsync(e.ProposedByUserId, "Proposer", token).ConfigureAwait(false);
+                if (proposer != null)
+                {
+                    Dictionary<string, long> raw = await _Services.Database.Events.Records.ProposalStatusCountsSinceAsync(e.ProposedByUserId!, builder.Clock().AddDays(-90), token).ConfigureAwait(false);
+                    Dictionary<string, long> grouped = new Dictionary<string, long>(StringComparer.Ordinal);
+                    foreach (KeyValuePair<string, long> pair in raw)
+                    {
+                        string key = pair.Key == "Proposed" ? "Pending" : pair.Key == "Rejected" || pair.Key == "Withdrawn" ? pair.Key : "Accepted";
+                        grouped[key] = (grouped.TryGetValue(key, out long n) ? n : 0) + pair.Value;
+                    }
+                    proposer.Row("Proposals in 90 days", StaffEmailDetailsService.History(grouped, "Accepted"));
+                }
+                StaffEmailDetails sections = new StaffEmailDetails();
+                sections.Add(section);
+                sections.Add(proposer);
+                sections.Add(await builder.RequestAsync(request, token).ConfigureAwait(false));
+                return sections.Serialize();
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _Services.Logger.Warn("[EventNotifier] staff details for " + e.Id + " unavailable: " + ex.Message);
+                return String.Empty;
+            }
+        }
 
         private async Task<int> NewEventAsync(NotificationFanout job, EventRecord e, string holder, TimeSpan claimDuration, int batchSize, CancellationToken token)
         {

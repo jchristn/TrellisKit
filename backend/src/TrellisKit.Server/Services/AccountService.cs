@@ -205,7 +205,7 @@ namespace TrellisKit.Server.Services
                 await SendVerificationAsync(user, token).ConfigureAwait(false);
                 TrellisKitTelemetry.Increment(TrellisKitTelemetry.SignUps, "method", "Email", "outcome", "success");
                 activity?.SetTag("outcome", "success");
-                await _Email.NotifyStaffAsync("staff_new_member", "new_member:" + user.Id, token, ("subjectName", user.DisplayName), ("subjectEmail", user.Email ?? String.Empty), ("link", _Email.Link("/admin/members/" + user.Id))).ConfigureAwait(false);
+                await NotifyNewMemberAsync(user, info, documents.Select(d => d.Config.Title + " " + d.Current.Version).ToList(), token).ConfigureAwait(false);
                 if (ProductEvents != null)
                 {
                     await ProductEvents.ObserveAsync("signup.registered", user.Id, token).ConfigureAwait(false);
@@ -389,7 +389,7 @@ namespace TrellisKit.Server.Services
                 TrellisKitTelemetry.Increment(TrellisKitTelemetry.SignUps, "method", method, "outcome", "success");
                 TrellisKitTelemetry.Increment(TrellisKitTelemetry.SignIns, "method", method, "outcome", "success");
                 if (user.EmailVerified) await _Email.SendToMemberAsync("welcome", user, "welcome:" + user.Id, token).ConfigureAwait(false);
-                await _Email.NotifyStaffAsync("staff_new_member", "new_member:" + user.Id, token, ("subjectName", user.DisplayName), ("subjectEmail", user.Email ?? String.Empty), ("link", _Email.Link("/admin/members/" + user.Id))).ConfigureAwait(false);
+                await NotifyNewMemberAsync(user, info, null, token).ConfigureAwait(false);
                 if (ProductEvents != null)
                 {
                     await ProductEvents.ObserveAsync("signup.registered", user.Id, token).ConfigureAwait(false);
@@ -1041,6 +1041,47 @@ namespace TrellisKit.Server.Services
         private static ApiErrorException RateLimited(int retryAfterSeconds)
         {
             return ApiErrorException.RateLimited(retryAfterSeconds);
+        }
+
+        private async Task NotifyNewMemberAsync(User user, RequestInfo info, List<string>? documents, CancellationToken token)
+        {
+            // Staff email details (docs/EMAIL.md): an audit record per sign-up (the same-IP signal) and request and member details for staff.
+            // The new member is the actor: they created the account themselves.
+            await _Database.Audit.CreateAsync(new AuditRecord
+            {
+                Id = IdGenerator.GenerateAuditRecordId(),
+                ActorUserId = user.Id,
+                ActorName = user.DisplayName,
+                Action = Email.StaffEmailDetailsService.SignupAuditAction,
+                TargetType = "User",
+                TargetId = user.Id,
+                Summary = "Account created",
+                SourceIp = info.SourceIp,
+                CreatedUtc = DateTime.UtcNow
+            }, token).ConfigureAwait(false);
+            string details = String.Empty;
+            Email.StaffEmailDetailsService? builder = _Email.StaffDetails;
+            if (builder != null)
+            {
+                try
+                {
+                    Email.StaffEmailDetails sections = new Email.StaffEmailDetails();
+                    Email.StaffEmailSection signup = new Email.StaffEmailSection("Sign-up");
+                    int? sameIp = await builder.SameIpSignupsAsync(info.SourceIp, token).ConfigureAwait(false);
+                    if (sameIp.HasValue) signup.Row("Accounts from this IP in 24 hours", sameIp.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) + (sameIp.Value > 1 ? " (including this one)" : " (this one)"));
+                    if (documents != null && documents.Count > 0) signup.Row("Documents accepted", String.Join(", ", documents));
+                    sections.Add(await builder.MemberAsync(user.Id, "Member", token).ConfigureAwait(false));
+                    sections.Add(signup);
+                    sections.Add(await builder.RequestAsync(info, token).ConfigureAwait(false));
+                    details = sections.Serialize();
+                }
+                catch (Exception e) when (e is not OperationCanceledException)
+                {
+                    _Logger.Warn("[AccountService] staff details for " + user.Id + " unavailable: " + e.Message);
+                }
+            }
+            await _Email.NotifyStaffAsync("staff_new_member", "new_member:" + user.Id, token, ("subjectName", user.DisplayName), ("subjectEmail", user.Email ?? String.Empty),
+                ("link", _Email.Link("/admin/members/" + user.Id)), (Email.StaffEmailDetails.Token, details)).ConfigureAwait(false);
         }
 
         #endregion

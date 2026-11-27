@@ -81,6 +81,16 @@ namespace TrellisKit.Server.Services.Email
         }
 
         /// <summary>
+        /// For a Staff template that a worker, job, or monitor sends (never a member request): where it comes from, for
+        /// example "Scheduled job". When set, a message queued without a <see cref="StaffEmailDetails.Token"/> value gets an
+        /// Origin section (source, site, server version, trace id; docs/EMAIL.md). Default null.
+        /// </summary>
+        public virtual string? StaffOrigin
+        {
+            get { return null; }
+        }
+
+        /// <summary>
         /// Tokens whose values are Markdown (the Phase 2 subset): a body paragraph that is exactly one of these tokens is
         /// rendered to safe HTML instead of encoded text. Default none.
         /// </summary>
@@ -103,11 +113,16 @@ namespace TrellisKit.Server.Services.Email
         }
 
         /// <summary>
-        /// Every token the template accepts.
+        /// Every token the template accepts. Staff templates also accept <see cref="StaffEmailDetails.Token"/>.
         /// </summary>
         public IReadOnlyList<string> Tokens
         {
-            get { return CommonTokens.Concat(Samples.Keys).Distinct(StringComparer.Ordinal).ToList(); }
+            get
+            {
+                IEnumerable<string> tokens = CommonTokens.Concat(Samples.Keys);
+                if (Category == EmailCategoryEnum.Staff) tokens = tokens.Append(StaffEmailDetails.Token);
+                return tokens.Distinct(StringComparer.Ordinal).ToList();
+            }
         }
 
         #endregion
@@ -115,8 +130,9 @@ namespace TrellisKit.Server.Services.Email
         #region Public-Methods
 
         /// <summary>
-        /// Build the message body. The default adds the body paragraphs (<see cref="EmailComposer.BodyParagraphs"/>) and
-        /// the template's button (<see cref="EmailComposer.DefaultButton"/>). Override to add tables, code blocks,
+        /// Build the message body. The default adds the body paragraphs (<see cref="EmailComposer.BodyParagraphs"/>), the
+        /// staff details sections of a Staff template (<see cref="StaffEmailDetails.Render"/>, docs/EMAIL.md), and the
+        /// template's button (<see cref="EmailComposer.DefaultButton"/>). Override to add tables, code blocks,
         /// callouts, lists, or blocks of your own; keep calling BodyParagraphs so administrators' body overrides still
         /// apply. Read values with <see cref="EmailComposer.Token"/>: anything a template needs must be in its tokens,
         /// because queued messages are rendered again from their stored tokens on every delivery attempt.
@@ -126,7 +142,9 @@ namespace TrellisKit.Server.Services.Email
         public virtual void Compose(EmailComposer email)
         {
             ArgumentNullException.ThrowIfNull(email);
-            email.BodyParagraphs().DefaultButton();
+            email.BodyParagraphs();
+            StaffEmailDetails.Render(email);
+            email.DefaultButton();
         }
 
         #endregion

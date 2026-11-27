@@ -61,6 +61,8 @@ namespace TrellisKit.Server.Settings
                     "Verifies POST /api/v1/webhooks/mailgun/{propertyId} (delivered, failed, complained, unsubscribed). Stored encrypted.", SettingTypeEnum.Secret),
                 new PropertySettingDefinition("email.validationEnabled", email, "Validate addresses at sign-up",
                     "Check new addresses with Mailgun validation: high risk or undeliverable addresses are refused; unknown results are allowed.", SettingTypeEnum.Boolean, "false"),
+                new PropertySettingDefinition("email.staffRequestDetails", email, "Request details on staff emails",
+                    "Staff notification emails triggered by a member request show the IP address, client, platform, app version, browser, and request id. Member details are always shown. Staff only; member emails never carry them.", SettingTypeEnum.Boolean, "true"),
                 new PropertySettingDefinition("email.mailgunValidationApiKey", email, "Mailgun validation API key", "Empty uses the sending API key. Stored encrypted.", SettingTypeEnum.Secret),
                 new PropertySettingDefinition("email.smtpHost", email, "SMTP host", "This property's own SMTP server (fallback provider).", SettingTypeEnum.String, maxLength: 253),
                 new PropertySettingDefinition("email.smtpPort", email, "SMTP port", "Default 587.", SettingTypeEnum.Integer, "587", null, 1, 65535),

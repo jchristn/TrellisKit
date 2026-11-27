@@ -79,7 +79,7 @@ namespace TrellisKit.Server.Services
             await _Services.Audit.WriteAsync(info, "event.propose", "Event", e.Id, e.Title, token).ConfigureAwait(false);
             EventTelemetry.Count(EventTelemetry.Events, 1, "action", "propose");
             UserSummary me = await _Services.Summaries.BuildOneAsync(userId, token).ConfigureAwait(false);
-            await _Services.Events.Notifier.StaffProposalAsync(e, me.DisplayName, token).ConfigureAwait(false);
+            await _Services.Events.Notifier.StaffProposalAsync(e, me.DisplayName, token, actor.Request ?? info).ConfigureAwait(false);
             return (await ViewsAsync(actor, new List<EventRecord> { e }, token).ConfigureAwait(false))[0];
         }
 

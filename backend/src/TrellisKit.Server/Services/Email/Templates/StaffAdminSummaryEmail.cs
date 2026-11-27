@@ -82,6 +82,12 @@ namespace TrellisKit.Server.Services.Email.Templates
         }
 
         /// <inheritdoc />
+        public override string? StaffOrigin
+        {
+            get { return "Daily admin summary (scheduled)"; }
+        }
+
+        /// <inheritdoc />
         public override IReadOnlyDictionary<string, string> Samples
         {
             get { return _Samples; }
@@ -93,6 +99,7 @@ namespace TrellisKit.Server.Services.Email.Templates
 
         private static readonly Dictionary<string, string> _Samples = new Dictionary<string, string>(StringComparer.Ordinal)
         {
+            { StaffEmailDetails.Token, StaffEmailSamples.System("Daily admin summary (scheduled)") },
             { "date", "Monday, January 5, 2026" },
             { "timeZone", "America/Los_Angeles" },
             { "newMembers", "12" },
@@ -121,7 +128,7 @@ namespace TrellisKit.Server.Services.Email.Templates
         #region Public-Methods
 
         /// <summary>
-        /// Body paragraphs, one titled table per report section, the button, then a notice explaining why the recipient
+        /// Body paragraphs, one titled table per report section, the origin details, the button, then a notice explaining why the recipient
         /// gets the summary.
         /// </summary>
         /// <param name="email">Composer.</param>
@@ -137,6 +144,7 @@ namespace TrellisKit.Server.Services.Email.Templates
                 email.Add(new EmailSubheadingBlock(section.Title));
                 email.Add(new EmailFieldsBlock(section.Lines.Where(l => l != null)));
             }
+            StaffEmailDetails.Render(email);
             email.DefaultButton();
             email.Notice("You receive this summary because your address is listed in the server's adminSummary.recipients setting.");
         }

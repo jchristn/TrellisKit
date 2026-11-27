@@ -17,6 +17,7 @@ namespace TrellisKit.Server.Services
     using TrellisKit.Core.Requests;
     using TrellisKit.Core.Responses;
     using TrellisKit.Core.Settings;
+    using TrellisKit.Server.Services.Email;
     using TrellisKit.Server.Services.Email.Templates;
 
     /// <summary>
@@ -817,7 +818,38 @@ namespace TrellisKit.Server.Services
             string name = actor.User?.DisplayName ?? "A member";
             await _Services.Email.NotifyStaffAsync(StaffDirectorySubmissionEmail.TemplateKey, "directory_submission:" + submission.Id, token,
                 ("submissionType", submission.Type.ToString()), ("targetName", submission.TargetName ?? String.Empty), ("submitterName", name),
-                ("adminLink", _Services.Email.Link(StaffPath))).ConfigureAwait(false);
+                ("adminLink", _Services.Email.Link(StaffPath)), (StaffEmailDetails.Token, await StaffDetailsAsync(actor, submission, token).ConfigureAwait(false))).ConfigureAwait(false);
+        }
+
+        private async Task<string> StaffDetailsAsync(ContentActor actor, DirectorySubmission submission, CancellationToken token)
+        {
+            // Staff email details (docs/EMAIL.md): the submission, the submitter with their 90-day history, and the request.
+            try
+            {
+                StaffEmailDetailsService builder = _Services.StaffEmailDetails;
+                StaffEmailSection section = new StaffEmailSection("Submission")
+                    .Row("Type", submission.Type.ToString())
+                    .Row("Target", submission.TargetName)
+                    .Row("Target id", submission.TargetId)
+                    .Row("Note", StaffEmailDetailsService.Excerpt(submission.Note, 300))
+                    .Row("Proposed map point", submission.ProposedLat.HasValue && submission.ProposedLng.HasValue
+                        ? submission.ProposedLat.Value.ToString("0.#####", System.Globalization.CultureInfo.InvariantCulture) + ", " + submission.ProposedLng.Value.ToString("0.#####", System.Globalization.CultureInfo.InvariantCulture) : null);
+                foreach (DirectorySubmissionField field in submission.Fields.OrderBy(f => f.Position).Take(12))
+                    section.Row(field.Field, StaffEmailDetailsService.Excerpt(field.ProposedValue, 200));
+                StaffEmailSection? submitter = await builder.MemberAsync(submission.SubmitterUserId, "Submitter", token).ConfigureAwait(false);
+                if (submitter != null)
+                    submitter.Row("Submissions in 90 days", StaffEmailDetailsService.History(await _Services.Database.DirectoryListings.Submissions.StatusCountsByUserSinceAsync(submission.SubmitterUserId!, builder.Clock().AddDays(-90), token).ConfigureAwait(false), "Approved"));
+                StaffEmailDetails sections = new StaffEmailDetails();
+                sections.Add(section);
+                sections.Add(submitter);
+                sections.Add(await builder.RequestAsync(actor.Request, token).ConfigureAwait(false));
+                return sections.Serialize();
+            }
+            catch (Exception e) when (e is not OperationCanceledException)
+            {
+                _Services.Logger.Warn("[DirectorySubmissionService] staff details for " + submission.Id + " unavailable: " + e.Message);
+                return String.Empty;
+            }
         }
 
         private async Task NotifyDecisionAsync(DirectorySubmission submission, bool approved, string? reviewerUserId, CancellationToken token)

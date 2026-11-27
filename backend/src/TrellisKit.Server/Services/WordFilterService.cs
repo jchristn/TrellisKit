@@ -277,7 +277,7 @@ namespace TrellisKit.Server.Services
             if (created)
             {
                 TrellisKitTelemetry.Add(TrellisKitTelemetry.Reports, 1, "target_type", targetType.ToString(), "reason", ReportReasonEnum.Filter.ToString());
-                await AlertAdministratorsAsync(result, targetType, targetId, reportId, now, token).ConfigureAwait(false);
+                await AlertAdministratorsAsync(result, targetType, targetId, targetAuthorUserId, scopeType, reportId, now, token).ConfigureAwait(false);
             }
             return created;
         }
@@ -582,7 +582,7 @@ namespace TrellisKit.Server.Services
 
         #region Private-Methods
 
-        private async Task AlertAdministratorsAsync(WordFilterResult result, TargetTypeEnum targetType, string targetId, string reportId, DateTime now, CancellationToken token)
+        private async Task AlertAdministratorsAsync(WordFilterResult result, TargetTypeEnum targetType, string targetId, string? authorUserId, string scopeType, string reportId, DateTime now, CancellationToken token)
         {
             string path = ModerationPath(targetType, targetId);
             string noun = TrellisKit.Server.Services.Email.EmailLabels.TargetType(targetType);
@@ -612,10 +612,27 @@ namespace TrellisKit.Server.Services
                 }
                 if (Email != null)
                 {
+                    string details = String.Empty;
+                    if (Email.StaffDetails != null)
+                    {
+                        // Staff email details (docs/EMAIL.md): a system report has no reporter or request; say where it came from.
+                        TrellisKit.Server.Services.Email.StaffEmailDetails sections = new TrellisKit.Server.Services.Email.StaffEmailDetails();
+                        sections.Add(new TrellisKit.Server.Services.Email.StaffEmailSection("Report")
+                            .Row("Reason", TrellisKit.Server.Services.Email.EmailLabels.ReportReason(ReportReasonEnum.Filter))
+                            .Row("Matched terms", terms)
+                            .Row("Scope", scopeType)
+                            .Row("Excerpt", TrellisKit.Server.Services.Email.StaffEmailDetailsService.Excerpt(result.Excerpt, 300))
+                            .Row("Type", noun)
+                            .Row("Id", targetId));
+                        sections.Add(await Email.StaffDetails.AuthorAsync(authorUserId, token).ConfigureAwait(false));
+                        sections.Add(Email.StaffDetails.Origin("Word filter"));
+                        details = sections.Serialize();
+                    }
                     await Email.NotifyStaffAsync("staff_new_report", "report:" + reportId, token,
                         ("targetType", noun),
                         ("reason", TrellisKit.Server.Services.Email.EmailLabels.ReportReason(ReportReasonEnum.Filter) + " (" + terms + ")"),
-                        ("link", Email.Link(path))).ConfigureAwait(false);
+                        ("link", Email.Link(path)),
+                        (TrellisKit.Server.Services.Email.StaffEmailDetails.Token, details)).ConfigureAwait(false);
                 }
             }
             catch (Exception e) when (e is not OperationCanceledException)

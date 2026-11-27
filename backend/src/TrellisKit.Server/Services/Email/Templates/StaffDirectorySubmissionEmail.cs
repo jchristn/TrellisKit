@@ -88,6 +88,7 @@ namespace TrellisKit.Server.Services.Email.Templates
 
         private static readonly Dictionary<string, string> _Samples = new Dictionary<string, string>(StringComparer.Ordinal)
         {
+            { StaffEmailDetails.Token, StaffEmailSamples.DirectorySubmission },
             { "submissionType", "EditVenue" },
             { "targetName", "Example Club Downtown" },
             { "submitterName", "Alex Chen" },

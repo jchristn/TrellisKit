@@ -54,5 +54,18 @@ namespace TrellisKit.Core.Database.Interfaces
         /// <returns>Up to limit records.</returns>
         /// <exception cref="ArgumentNullException">The member identifier is null or empty.</exception>
         Task<List<AuditRecord>> EnumerateByUserAfterAsync(string userId, string? afterId, int limit, CancellationToken token = default);
+
+        /// <summary>
+        /// Count audit records with an action from one source IP since a time (staff email abuse signals, docs/EMAIL.md).
+        /// Bounded: counts at most <paramref name="cap"/> rows.
+        /// </summary>
+        /// <param name="action">Action, for example account.signup.</param>
+        /// <param name="sourceIp">Source IP.</param>
+        /// <param name="sinceUtc">Earliest creation time, inclusive.</param>
+        /// <param name="cap">Maximum counted (1 to 1000).</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Count, at most cap.</returns>
+        /// <exception cref="ArgumentNullException">action or sourceIp is null or empty.</exception>
+        Task<int> CountByActionAndIpSinceAsync(string action, string sourceIp, DateTime sinceUtc, int cap, CancellationToken token = default);
     }
 }

@@ -51,6 +51,17 @@ namespace TrellisKit.Core.Database.Interfaces
         Task<long> CountPendingByUserAsync(string userId, CancellationToken token = default);
 
         /// <summary>
+        /// A member's submissions since a time by status name (the submitter history on staff emails, docs/EMAIL.md).
+        /// Bounded by the status set.
+        /// </summary>
+        /// <param name="userId">Submitter.</param>
+        /// <param name="sinceUtc">Window start.</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Status name to count.</returns>
+        /// <exception cref="ArgumentNullException">userId is null or empty.</exception>
+        Task<Dictionary<string, long>> StatusCountsByUserSinceAsync(string userId, DateTime sinceUtc, CancellationToken token = default);
+
+        /// <summary>
         /// Whether a member has a pending claim on an instructor.
         /// </summary>
         /// <param name="userId">Member.</param>

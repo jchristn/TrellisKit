@@ -154,6 +154,17 @@ namespace TrellisKit.Core.Database.Interfaces
         Task<long> CountPendingProposalsAsync(string userId, CancellationToken token = default);
 
         /// <summary>
+        /// A member's proposals created since a time by status name (the proposer history on staff emails, docs/EMAIL.md).
+        /// Bounded by the status set.
+        /// </summary>
+        /// <param name="userId">Proposer.</param>
+        /// <param name="sinceUtc">Window start.</param>
+        /// <param name="token">Cancellation token.</param>
+        /// <returns>Status name to count.</returns>
+        /// <exception cref="ArgumentNullException">userId is null or empty.</exception>
+        Task<Dictionary<string, long>> ProposalStatusCountsSinceAsync(string userId, DateTime sinceUtc, CancellationToken token = default);
+
+        /// <summary>
         /// Undeleted events signed-out visitors may see (Public audience, not moderated, Published or Canceled) that use
         /// a cover image; templates of recurring series are not counted.
         /// </summary>

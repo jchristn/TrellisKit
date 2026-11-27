@@ -77,6 +77,12 @@ namespace TrellisKit.Server.Services.Email.Templates
         }
 
         /// <inheritdoc />
+        public override string? StaffOrigin
+        {
+            get { return "Event RSVP digest (scheduled)"; }
+        }
+
+        /// <inheritdoc />
         public override IReadOnlyDictionary<string, string> Samples
         {
             get { return _Samples; }
@@ -88,6 +94,7 @@ namespace TrellisKit.Server.Services.Email.Templates
 
         private static readonly Dictionary<string, string> _Samples = new Dictionary<string, string>(StringComparer.Ordinal)
         {
+            { StaffEmailDetails.Token, StaffEmailSamples.System("Event RSVP digest (scheduled)") },
             { "eventTitle", "Autumn meetup" },
             { "going", "37" },
             { "waitlisted", "2" },

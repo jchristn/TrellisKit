@@ -77,6 +77,7 @@ namespace TrellisKit.Server.Services.Email.Templates
 
         private static readonly Dictionary<string, string> _Samples = new Dictionary<string, string>(StringComparer.Ordinal)
         {
+            { StaffEmailDetails.Token, StaffEmailSamples.NewMember },
             { "link", "https://example.test/admin/members/usr_sample" },
             { "subjectName", "Pat Example" },
             { "subjectEmail", "pat@example.test" }

@@ -199,7 +199,8 @@ namespace TrellisKit.Server.Services
                 }, token).ConfigureAwait(false);
                 await _Services.Forums.Promotions.SyncTargetAsync(target.TargetType, target.TargetId, token).ConfigureAwait(false);
                 await _Services.Email.NotifyStaffAsync("staff_content_auto_hidden", "autohide:" + target.TargetType + ":" + target.TargetId + ":" + _Clock().Ticks, token,
-                    ("targetType", Email.EmailLabels.TargetType(target.TargetType)), ("link", _Services.Email.Link("/admin/moderation"))).ConfigureAwait(false);
+                    ("targetType", Email.EmailLabels.TargetType(target.TargetType)), ("link", _Services.Email.Link("/admin/moderation")),
+                    (Email.StaffEmailDetails.Token, await AutoHideDetailsAsync(target.TargetType, target.TargetId, target, threshold, token).ConfigureAwait(false))).ConfigureAwait(false);
                 TrellisKitTelemetry.Add(TrellisKitTelemetry.ModerationActions, 1, "action", "auto_hide", "target_type", target.TargetType.ToString());
                 activity?.SetStatus(ActivityStatusCode.Ok);
                 return true;
@@ -283,7 +284,8 @@ namespace TrellisKit.Server.Services
                     CreatedUtc = _Clock()
                 };
                 if (!await _Services.Database.Reports.TryAutoHideAsync(action, threshold, token).ConfigureAwait(false)) return false;
-                await _Services.Email.NotifyStaffAsync("staff_content_auto_hidden", "autohide:" + action.Id, token, ("targetType", Email.EmailLabels.TargetType(targetType)), ("link", _Services.Email.Link("/admin/moderation"))).ConfigureAwait(false);
+                await _Services.Email.NotifyStaffAsync("staff_content_auto_hidden", "autohide:" + action.Id, token, ("targetType", Email.EmailLabels.TargetType(targetType)), ("link", _Services.Email.Link("/admin/moderation")),
+                    (Email.StaffEmailDetails.Token, await AutoHideDetailsAsync(targetType, targetId, null, threshold, token).ConfigureAwait(false))).ConfigureAwait(false);
                 if (targetType == TargetTypeEnum.FeedPost) await _Services.Feed.SetModerationStateAsync(targetId, ModerationStateEnum.Hidden, null, reason, token).ConfigureAwait(false);
                 else if (targetType == TargetTypeEnum.Thread)
                 {
@@ -791,7 +793,8 @@ namespace TrellisKit.Server.Services
                 }
                 if (claims.Count > 0)
                     await _Services.Email.NotifyStaffAsync("staff_moderation_overdue", "overdue:" + now.ToString("yyyyMMddHH", System.Globalization.CultureInfo.InvariantCulture), token,
-                        ("count", claims.Select(c => c.TargetType + ":" + c.TargetId).Distinct(StringComparer.Ordinal).Count().ToString(System.Globalization.CultureInfo.InvariantCulture)), ("link", _Services.Email.Link("/admin/moderation"))).ConfigureAwait(false);
+                        ("count", claims.Select(c => c.TargetType + ":" + c.TargetId).Distinct(StringComparer.Ordinal).Count().ToString(System.Globalization.CultureInfo.InvariantCulture)), ("link", _Services.Email.Link("/admin/moderation")),
+                        (Email.StaffEmailDetails.Token, await OverdueDetailsAsync(now, token).ConfigureAwait(false))).ConfigureAwait(false);
                 activity?.SetTag("job.batch_size", claims.Count);
                 activity?.SetStatus(ActivityStatusCode.Ok);
             }
@@ -867,6 +870,61 @@ namespace TrellisKit.Server.Services
         #endregion
 
         #region Private-Methods
+
+        private async Task<string> AutoHideDetailsAsync(TargetTypeEnum targetType, string targetId, ModerationTarget? loaded, int threshold, CancellationToken token)
+        {
+            // Staff email details (docs/EMAIL.md): the hidden content, its author, distinct reporters, and the reasons breakdown.
+            try
+            {
+                Email.StaffEmailDetailsService details = _Services.StaffEmailDetails;
+                ModerationTarget? target = loaded;
+                if (target == null)
+                {
+                    try { target = await LoadTargetAsync(targetType, targetId, token).ConfigureAwait(false); }
+                    catch (ApiErrorException) { target = null; }
+                }
+                Dictionary<string, long> breakdown = await _Services.Database.Reports.OpenBreakdownOnTargetAsync(targetType, targetId, token).ConfigureAwait(false);
+                Email.StaffEmailSection reports = new Email.StaffEmailSection("Reports");
+                reports.Row("Distinct reporters", breakdown.TryGetValue("reporters", out long reporters) ? reporters.ToString(System.Globalization.CultureInfo.InvariantCulture) : null);
+                reports.Row("Hide threshold", threshold.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                reports.Row("Reasons", String.Join(", ", breakdown.Where(p => p.Key != "reporters").Select(p => Email.EmailLabels.ReportReason(TryParseEnum(p.Key, out ReportReasonEnum r) ? r : ReportReasonEnum.Other) + " " + p.Value)));
+                Email.StaffEmailDetails sections = new Email.StaffEmailDetails();
+                if (target != null) sections.Add(await details.ContentAsync(target, null, token).ConfigureAwait(false));
+                sections.Add(reports);
+                sections.Add(await details.AuthorAsync(target?.AuthorUserId, token).ConfigureAwait(false));
+                sections.Add(details.Origin("Automatic hide after member reports"));
+                return sections.Serialize();
+            }
+            catch (Exception e) when (e is not OperationCanceledException)
+            {
+                _Services.Logger.Warn("[ModerationService] staff details for " + targetType + " " + targetId + " unavailable: " + e.Message);
+                return String.Empty;
+            }
+        }
+
+        private async Task<string> OverdueDetailsAsync(DateTime now, CancellationToken token)
+        {
+            // Staff email details (docs/EMAIL.md): the oldest overdue report's age and counts by scope and by reason.
+            try
+            {
+                Dictionary<string, long> breakdown = await _Services.Database.Reports.OverdueBreakdownAsync(now, token).ConfigureAwait(false);
+                Email.StaffEmailSection overdue = new Email.StaffEmailSection("Overdue reports");
+                if (breakdown.TryGetValue("oldest", out long oldest))
+                    overdue.Row("Oldest report", Email.StaffEmailDetailsService.Age(now - DateTimeOffset.FromUnixTimeSeconds(oldest).UtcDateTime) + " old");
+                overdue.Row("By scope", String.Join(", ", breakdown.Where(p => p.Key.StartsWith("scope:", StringComparison.Ordinal)).Select(p => p.Key.Substring(6) + " " + p.Value)));
+                overdue.Row("By reason", String.Join(", ", breakdown.Where(p => p.Key.StartsWith("reason:", StringComparison.Ordinal))
+                    .Select(p => Email.EmailLabels.ReportReason(TryParseEnum(p.Key.Substring(7), out ReportReasonEnum r) ? r : ReportReasonEnum.Other) + " " + p.Value)));
+                Email.StaffEmailDetails sections = new Email.StaffEmailDetails();
+                sections.Add(overdue);
+                sections.Add(_Services.StaffEmailDetails.Origin("Overdue report check (scheduled)"));
+                return sections.Serialize();
+            }
+            catch (Exception e) when (e is not OperationCanceledException)
+            {
+                _Services.Logger.Warn("[ModerationService] overdue staff details unavailable: " + e.Message);
+                return String.Empty;
+            }
+        }
 
         private bool HoldsExtensionScope(ContentActor actor)
         {

@@ -61,6 +61,16 @@ namespace TrellisKit.Core.Database.Shared
             return page;
         }
 
+        public async Task<Dictionary<string, long>> StatusCountsByUserSinceAsync(string userId, DateTime sinceUtc, CancellationToken token = default)
+        {
+            RequireText(userId, nameof(userId));
+            DataTable table = await QueryAsync("SELECT status, COUNT(*) AS cnt FROM directorysubmissions WHERE " + Scope() + " AND submitteruserid = " + D.Str(userId) +
+                " AND createdutc >= " + D.Ts(sinceUtc) + " GROUP BY status ORDER BY status LIMIT 20;", token).ConfigureAwait(false);
+            Dictionary<string, long> counts = new Dictionary<string, long>(StringComparer.Ordinal);
+            foreach (DataRow row in table.Rows) counts[RowReader.GetString(row, "status")] = Convert.ToInt64(row["cnt"], System.Globalization.CultureInfo.InvariantCulture);
+            return counts;
+        }
+
         public Task<long> CountPendingByUserAsync(string userId, CancellationToken token = default)
         {
             RequireText(userId, nameof(userId));
